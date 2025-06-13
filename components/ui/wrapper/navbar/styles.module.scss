@@ -1,0 +1,27 @@
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  min-width: 100%;
+  background-color: #FAFAFA;
+  display: flex;
+  justify-content: center;
+  padding: 8px 0;
+
+  .ul {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 480px;
+
+    .li {
+      font-weight: 400;
+      font-size: 18px;
+      line-height: 24px;
+      letter-spacing: 0.15px;
+      color: #333333;
+      padding: 16px 8px;
+      margin: 0 8px;
+    }
+  }
+}
