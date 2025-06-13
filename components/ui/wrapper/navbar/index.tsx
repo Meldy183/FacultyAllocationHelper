@@ -17,8 +17,8 @@ const routes: Routes[] = [
 		path: "/courses"
 	},
 	{
-		name: "Teaching assistants",
-		path: "/assistants"
+		name: "Faculty",
+		path: "/faculty"
 	},
 	{
 		name: "My profile",
