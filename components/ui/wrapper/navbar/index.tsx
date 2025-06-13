@@ -1,6 +1,8 @@
-import React from "react";
+"use client"
+import React, { use } from "react";
 import Link from "next/link";
 import styles from "./styles.module.scss";
+import { usePathname } from "next/navigation";
 
 //переместить
 interface Routes {
@@ -27,11 +29,15 @@ const routes: Routes[] = [
 ]
 
 const NavBar: React.FunctionComponent = () => {
+	const pagePath = usePathname();
+
+	const isActiveTab = (path: string) => pagePath === path;
+
 	return <div className={ styles.navbar }>
 		<ul className={ styles.ul }>
 			{
 				routes.map( ({ name, path }) => (
-					<li key={ name } className={ styles.li }>
+					<li key={ name } className={ `${ styles.li } ${ isActiveTab(path) && styles.active }` }>
 						<Link href={ path }>{ name }</Link>
 					</li>
 				))
