@@ -37,7 +37,7 @@ const Track: React.FC = () => {
 		<div className={ styles.element }>t.assistant@innopolis.university</div>
 		<div className={ styles.element }>Robotics</div>
 		<div className={ styles.element }>2017-2025</div>
-		<div className={ styles.element }>8 h/w</div>
+		<div className={ styles.element }>0.25 (2h/w)</div>
 	</div>
 }
 
