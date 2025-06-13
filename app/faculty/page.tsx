@@ -1,20 +1,16 @@
 "use client";
 
 import React from "react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import SideBar from "@/components/ui/wrapper/sidebar";
 import SideBarContent from "@/app/courses/SideBarContent";
 import styles from "./styles.module.scss";
 
 const AssistantsPage: React.FC = () => {
-	const pathname = usePathname();
-
 	return <>
 		<SideBar hiddenText={ "Filters" }><SideBarContent/></SideBar>
 		<div className={ styles.container }>
-			<Button className={ styles.button }><Link href={ pathname + "/add-ta"}>Add a TA</Link></Button>
+			<Button className={ styles.button }>Add a TA</Button>
 			<div className={ styles.head }>
 				<ul>
 					<li>Name</li>

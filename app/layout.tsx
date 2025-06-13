@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Montserrat } from "next/font/google";
+import { CustomProvider } from "./providers";
 import Wrapper from "@/components/ui/wrapper";
+import { Geist, Geist_Mono, Montserrat } from "next/font/google";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -31,7 +32,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} ${montserrat.variable} antialiased`}>
-        <Wrapper> { children } </Wrapper>
+        <CustomProvider>
+          <Wrapper> { children } </Wrapper>
+        </CustomProvider>
       </body>
     </html>
   );
