@@ -8,7 +8,7 @@
     only:
       - frontend
     variables:
-      VERCEL_TOKEN: aYVS1W8XA93K4qQDAOdTV7hn
+      VERCEL_TOKEN: ghIWwCWnxvOhyxiLeuh8S70o
       VERCEL_ORG_ID: team_yvgFinMriL5lSV7jlxCi59Qr
       VERCEL_PROJECT_ID: prj_hesboIGfVOJLvyy6pRi8iSwHQdLR
     before_script:
