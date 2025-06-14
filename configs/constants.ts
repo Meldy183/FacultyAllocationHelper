@@ -1,0 +1,1 @@
+export const API_PATH = process.env.BASE_API;
