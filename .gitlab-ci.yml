@@ -14,6 +14,6 @@
       - npm run build
       - vercel --prod
     variables:
-      VERCEL_TOKEN: JMqAq6JIAIddPvsgNPZd3UsB
+      VERCEL_TOKEN: aYVS1W8XA93K4qQDAOdTV7hn
       VERCEL_ORG_ID: team_yvgFinMriL5lSV7jlxCi59Qr
       VERCEL_PROJECT_ID: prj_hesboIGfVOJLvyy6pRi8iSwHQdLR
