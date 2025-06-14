@@ -16,4 +16,4 @@
       - npm install --force
     script:
       - npm run build
-      - vercel --prod --token "$VERCEL_TOKEN" --team "$VERCEL_ORG_ID" --project "$VERCEL_PROJECT_ID"
+      - vercel --prod --token "$VERCEL_TOKEN" --scope "$VERCEL_ORG_ID"
