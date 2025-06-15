@@ -1,11 +1,12 @@
 import React from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
+import Wrapper from "@/components/ui/wrapper";
 import crossSvg from "@/public/icons/svg/cross.svg";
 import styles from "./styles.module.scss";
 
 const RegistrationPage: React.FC = () => {
-	return <>
+	return <Wrapper>
 		<div className={ styles.menu }>
 			<div className={ styles.top }>
 				<Image className={ styles.image } src={ crossSvg } alt={ "" } />
@@ -23,7 +24,7 @@ const RegistrationPage: React.FC = () => {
 				<Button className={ styles.button }>Submit</Button>
 			</div>
 		</div>
-	</>
+	</Wrapper>
 }
 
 export default RegistrationPage

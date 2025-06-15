@@ -1,6 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import { StaticImport } from "next/dist/shared/lib/get-img-props";
+import Wrapper from "@/components/ui/wrapper";
 import bookIcon from "@/public/icons/main-page/book.svg";
 import clockIcon from "@/public/icons/main-page/clock.svg";
 import userIcon from "@/public/icons/main-page/user.svg";
@@ -31,7 +32,8 @@ const elementsInformation: elementType[] = [
 ]
 
 const Home: React.FC = () => {
-	return <div className={ styles.mainScreen }>
+	return <Wrapper>
+		<div className={ styles.mainScreen }>
 		<h1 className={ styles.title }>Welcome!</h1>
 		<div className={ styles.previewElements }>
 			{
@@ -39,6 +41,7 @@ const Home: React.FC = () => {
 			}
 		</div>
 	</div>
+	</Wrapper>
 }
 
 const Element: React.FC<elementType> = ({ icon, title, description }) => {

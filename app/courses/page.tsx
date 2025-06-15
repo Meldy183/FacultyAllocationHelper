@@ -2,6 +2,7 @@
 import React from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import Wrapper from "@/components/ui/wrapper";
 import SideBar from "@/components/ui/wrapper/sidebar";
 import SideBarContent from "@/app/courses/SideBarContent";
 import styles from "./styles.module.scss";
@@ -11,7 +12,7 @@ const CoursesPage: React.FC = () => {
 	const pathname = usePathname();
 
 	return (
-		<>
+		<Wrapper>
 			<SideBar hiddenText={ "Filters" }><SideBarContent /></SideBar>
 			<div className={ styles.container }>
 				<div className={ styles.head }>
@@ -28,7 +29,7 @@ const CoursesPage: React.FC = () => {
 					</div>
 				</div>
 			</div>
-		</>
+		</Wrapper>
 	)
 }
 

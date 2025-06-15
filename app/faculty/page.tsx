@@ -2,12 +2,13 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
+import Wrapper from "@/components/ui/wrapper";
 import SideBar from "@/components/ui/wrapper/sidebar";
 import SideBarContent from "@/app/courses/SideBarContent";
 import styles from "./styles.module.scss";
 
 const AssistantsPage: React.FC = () => {
-	return <>
+	return <Wrapper>
 		<SideBar hiddenText={ "Filters" }><SideBarContent/></SideBar>
 		<div className={ styles.container }>
 			<Button className={ styles.button }>Add a TA</Button>
@@ -24,7 +25,7 @@ const AssistantsPage: React.FC = () => {
 				</div>
 			</div>
 		</div>
-	</>
+	</Wrapper>
 }
 
 const Track: React.FC = () => {
