@@ -14,4 +14,9 @@ export const routesAuth: routeType[] = [
 	}
 ]
 
+export const dashboardRoute: routeType = {
+	routeName: "Dashboard",
+	routePath: "/dashboard"
+}
+
 export const Routes = [...routesAuth];

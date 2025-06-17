@@ -12,7 +12,7 @@ interface Routes {
 const routes: Routes[] = [
 	{
 		name: "Home",
-		path: "/home"
+		path: "/dashboard"
 	},
 	{
 		name: "Courses",

@@ -4,13 +4,14 @@ import NavBar from "./navbar";
 
 interface Props {
 	children: ReactNode;
+	hasNavBar?: boolean
 }
 
-const Wrapper: React.FunctionComponent<Props> = ({ children }: Props) => {
+const Wrapper: React.FunctionComponent<Props> = ({ children, hasNavBar = true }: Props) => {
 	return (
 		<div className={ styles.wrapper }>
 			<header>
-				<NavBar />
+				{ hasNavBar && <NavBar /> }
 			</header>
 			<main className={ styles.container }>
 				{ children }

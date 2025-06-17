@@ -1,1 +1,1 @@
-export const API_PATH = process.env.BASE_API;
+export const API_PATH = process.env.BASE_API || "http://localhost:3000";

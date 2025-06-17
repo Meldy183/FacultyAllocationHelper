@@ -1,8 +1,10 @@
+"use client"
 import React from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { routesAuth } from "@/configs/routes";
 import styles from "./styles.module.scss";
+import { GetServerSideProps } from "next";
 
 const StartPage: React.FC = () => {
     return <main className={ styles.main }>

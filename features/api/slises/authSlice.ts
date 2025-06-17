@@ -8,15 +8,15 @@ import type {
 import { API_PATH } from "@/configs/constants";
 
 export const authSlice = createApi({
-	reducerPath: `/api`,
+	reducerPath: "api/auth",
 	baseQuery: fetchBaseQuery(
 		{
-			baseUrl: API_PATH,
+			baseUrl: `${ API_PATH }/auth`,
 			credentials: "include"
 		}),
 	endpoints: (builder) => ({
 		//позже типизировать как builder.query<типы>
-		register: builder.query<RegisterProcessType["response"], RegisterProcessType["request"]>({
+		register: builder.mutation<RegisterProcessType["response"], RegisterProcessType["request"]>({
 			query: (body) => ({
 				url: "/register",
 				method: "POST",
@@ -24,28 +24,41 @@ export const authSlice = createApi({
 				body: body
 			}),
 		}),
-		login: builder.query<LoginProcessType["response"], LoginProcessType["request"]>({
+		login: builder.mutation<LoginProcessType["response"], LoginProcessType["request"]>({
 			query: (body) => ({
 				url: "/login",
 				method: "POST",
 				body: body
 			})
 		}),
-		refresh: builder.query<RefreshProcessType["response"], RefreshProcessType["request"]>({
+		refresh: builder.mutation<RefreshProcessType["response"], RefreshProcessType["request"]>({
 			query: () => ({
 				url: "/refresh",
 				method: "POST",
 				body: {}
 			})
 		}),
-		logout: builder.query<LogoutProcessType["response"], LogoutProcessType["request"]>({
+		logout: builder.mutation<LogoutProcessType["response"], LogoutProcessType["request"]>({
 			query: () => ({
 				url: "/logout",
 				method: "POST",
+				body: {}
+			})
+		}),
+		session: builder.query({
+			query: () => ({
+				url: "/session",
+				method: "GET",
 				body: {}
 			})
 		})
 	})
 });
 
-export const authApiSliceKey = "auth";
+export const {
+	useRegisterMutation,
+	useLoginMutation,
+	useRefreshMutation,
+	useLogoutMutation,
+	useSessionQuery
+} = authSlice;
