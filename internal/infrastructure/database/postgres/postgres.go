@@ -63,22 +63,22 @@ func InitTables(ctx context.Context, pool *pgxpool.Pool) error {
 	CREATE TABLE IF NOT EXISTS roles (
 		id SERIAL PRIMARY KEY,
 		name VARCHAR(50) UNIQUE NOT NULL,
-		Foreign Key (permission_ids) REFERENCES permissions(id))
 		);`
 	conn.Exec(ctx, query)
-	query = `
-	CREATE TABLE IF NOT EXISTS role_permissions (
-    	role_id INT REFERENCES roles(id) ON DELETE CASCADE,
-    	permission_id INT REFERENCES permissions(id) ON DELETE CASCADE,
-    	PRIMARY KEY (role_id, permission_id)
-	);`
-	conn.Exec(ctx, query)
-	query = `
-	CREATE TABLE IF NOT EXISTS permissions (
-		id SERIAL PRIMARY KEY,
-		action VARCHAR(50) UNIQUE NOT NULL
-		resource VARCHAR(50) NOT NULL,
-		);`
-	conn.Exec(ctx, query)
+	tx, err := conn.Begin(ctx)
+	if err != nil {
+		return fmt.Errorf("failed to begin transaction: %w", err)
+	}
+	roleCreatQuery := `INSERT INTO roles (name) VALUES ($1) ON CONFLICT (name) DO NOTHING`
+	roles := []string{"Super_Admin", "Institute_Repr", "Support", "Education_Dept", "Faculty"}
+	for _, role := range roles {
+		_, err := tx.Exec(ctx, roleCreatQuery, role)
+		if err != nil {
+			return fmt.Errorf("failed to insert role %s: %w", role, err)
+		}
+	}
+	if err := tx.Commit(ctx); err != nil {
+		return fmt.Errorf("failed to commit transaction: %w", err)
+	}
 	return nil
 }
