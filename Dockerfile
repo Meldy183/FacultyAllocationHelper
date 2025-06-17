@@ -1,4 +1,4 @@
-From golang:1.23.6-alpine3.21 as builder
+FROM golang:1.23.10-alpine3.22 AS builder
 
 WORKDIR /app
 
@@ -8,12 +8,12 @@ RUN go mod download
 
 RUN go build -o /service ./cmd/main.go
 
-FROM alpine:3.21
+FROM alpine:3.22
 
 WORKDIR /app
 
 COPY --from=builder /service .
 COPY --from=builder /app/config ./config
 
-EXPOSE 8080
+EXPOSE 8081
 CMD ["./service"]

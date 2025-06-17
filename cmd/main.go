@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -26,6 +27,7 @@ func main() {
 	ctx, stop := signal.NotifyContext(ctx, os.Interrupt, syscall.SIGTERM, syscall.SIGINT)
 	defer stop()
 	config, err := config.New()
+	fmt.Printf("%+v\n", config)
 	if err != nil {
 		log.Fatalf("Error loading configuration: %v", err)
 	}
@@ -38,8 +40,7 @@ func main() {
 	authService := app.NewAuthService(domainService, jwtService, cookiesService, *config)
 	handlers := handlers.NewHandlers(authService)
 	r := chi.NewRouter()
-	r.Use(middlewareService.AuthMiddleware)
-	r.Use(middlewareService.RequireRoles([]int{1, 2})) // Example roles, adjust as needed
+	r.Use(middlewareService.AuthMiddleware) // Example roles, adjust as needed
 	r.Post("/auth/login", handlers.Login)
 	r.Post("/auth/logout", handlers.Logout)
 	r.Post("/auth/register", handlers.Register)
@@ -52,6 +53,7 @@ func main() {
 		IdleTimeout:  config.HTTPserver.IdleTimeout,
 	}
 	log.Printf("RUNNIN'")
+	log.Printf(srv.Addr)
 	if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 		log.Fatalf("Error starting server: %v", err)
 	}

@@ -9,7 +9,7 @@ import (
 )
 
 type Config struct {
-	HTTPserver HTTPserver `yaml:"http_server"`
+	HTTPserver HTTPserver `yaml:"server"`
 	Database   Database   `yaml:"database"`
 	JWT        JWT        `yaml:"jwt"`
 	Cookies    Cookies    `yaml:"cookies"`
@@ -46,7 +46,7 @@ type TokenCookies struct {
 }
 type Sequrity struct {
 	Bcrypt    Bcrypt    `yaml:"bcrypt"`
-	RateLimit RateLimit `yaml:"rate_limit"`
+	RateLimit RateLimit `yaml:"rate_limiting"`
 	CORS      CORS      `yaml:"cors"`
 }
 type Bcrypt struct {
@@ -78,7 +78,7 @@ type Database struct {
 }
 
 func New() (*Config, error) {
-	cfgPath := "config/config.yaml"
+	cfgPath := "./config/config.yaml"
 	if cfgPath == "" {
 		log.Fatal("CONFIG_PATH environment variable is not set")
 	}

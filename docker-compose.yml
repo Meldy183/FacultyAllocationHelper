@@ -4,7 +4,7 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "8080:8080"
+      - "8081:8081"
     environment:
       - JWT_ACCESS_SECRET=your-super-secret-access-key-min-32-chars
       - JWT_REFRESH_SECRET=your-super-secret-refresh-key-min-32-chars
