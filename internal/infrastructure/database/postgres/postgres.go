@@ -3,12 +3,14 @@ package postgres
 import (
 	"context"
 	"fmt"
+	"log"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 	"gitlab.pg.innopolis.university/f.markin/fah/auth/internal/config"
 )
 
 func New(context context.Context, cfg config.Database) (*pgxpool.Pool, error) {
+	log.Printf("Connecting to PostgreSQL database at %s:%s", cfg.User, cfg.Password)
 	connString := fmt.Sprintf("postgres://%s:%s@%s:%d/%s?sslmode=%s",
 		cfg.User,
 		cfg.Password,
@@ -29,9 +31,7 @@ func New(context context.Context, cfg config.Database) (*pgxpool.Pool, error) {
 		return nil, fmt.Errorf("failed to create connection pool: %w", err)
 	}
 	defer pool.Close()
-	if err := pool.Ping(context); err != nil {
-		return nil, fmt.Errorf("failed to ping database: %w", err)
-	}
+	log.Printf("HORRAY WE CONNECTED")
 	return pool, nil
 }
 

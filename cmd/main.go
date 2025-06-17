@@ -51,6 +51,7 @@ func main() {
 		WriteTimeout: config.HTTPserver.WriteTimeout,
 		IdleTimeout:  config.HTTPserver.IdleTimeout,
 	}
+	log.Printf("RUNNIN'")
 	if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 		log.Fatalf("Error starting server: %v", err)
 	}

@@ -10,7 +10,7 @@ database:
   port: 5432
   name: "auth_db"
   user: "user"
-  password: "${DB_PASSWORD}"
+  password: "actual_database_password_here"
   ssl_mode: "disable" 
   max_open_connections: 25
   max_idle_connections: 5

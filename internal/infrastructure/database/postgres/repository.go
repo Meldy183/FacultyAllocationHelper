@@ -32,6 +32,8 @@ func NewRepo(ctx context.Context, config config.Database) *Repository {
 	pg, err := New(ctx, config)
 	if err != nil {
 		panic("failed to connect to database: " + err.Error())
+	} else {
+		InitTables(ctx, pg)
 	}
 	return &Repository{
 		pool: pg,
