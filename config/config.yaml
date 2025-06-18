@@ -6,9 +6,9 @@ server:
   idle_timeout: 60s
 
 database:
-  host: "localhost"
+  host: "auth_db"
   port: 5432
-  name: "auth_db"
+  name: "postgres"
   user: "user"
   password: "actual_database_password_here"
   ssl_mode: "disable" 

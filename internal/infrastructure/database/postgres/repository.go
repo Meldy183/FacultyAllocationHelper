@@ -3,6 +3,7 @@ package postgres
 import (
 	"context"
 	"fmt"
+	"log"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
@@ -28,44 +29,53 @@ func NewUser(email string, role_ID int, passhash []byte) *User {
 		RoleID:       role_ID,
 	}
 }
-func NewRepo(ctx context.Context, config config.Database) *Repository {
-	pg, err := New(ctx, config)
+func NewRepo(ctx context.Context, config *config.Config) *Repository {
+	log.Println("are you alive?")
+	pg, err := New(ctx, config.Database)
 	if err != nil {
+		log.Println("proebali")
 		panic("failed to connect to database: " + err.Error())
 	} else {
-		InitTables(ctx, pg)
+		log.Println("creating tables")
+		err = InitTables(ctx, pg)
+		if err != nil {
+			log.Println("failed creating tables")
+			return nil
+		}
 	}
 	return &Repository{
 		pool: pg,
 	}
 }
 func (r *Repository) CloseConn() {
-	if r.pool != nil {
-		r.pool.Close()
-	}
+	r.pool.Close()
 }
 func (r *Repository) CreateUser(ctx context.Context, user User) error {
-	tx, err := r.pool.Begin(ctx)
+	log.Println("starting pool")
+	conn, err := r.pool.Acquire(ctx)
 	if err != nil {
+		log.Println("starting pool failed")
 		return fmt.Errorf("failed to begin transaction: %w", err)
 	}
-	defer tx.Rollback(ctx)
-	query := `INSERT INTO users (id,email, password_hash, role_id) VALUES ($1, $2, $3,$4) ON CONFLICT (email) DO NOTHING`
-	_, err = tx.Exec(ctx, query, user.ID, user.Email, user.PasswordHash, user.RoleID)
+	defer conn.Release()
+	query := `INSERT INTO users (id, email, password_hash, role_id) VALUES ($1, $2, $3, $4)`
+	log.Println("creating in DB")
+	_, err = conn.Exec(ctx, query, user.ID, user.Email, user.PasswordHash, user.RoleID)
 	if err != nil {
+		log.Println("failed creating in DB")
 		return err
 	}
 	return nil
 }
 func (r *Repository) GetUserByEmail(ctx context.Context, email string) (*User, error) {
-	tx, err := r.pool.Begin(ctx)
+	conn, err := r.pool.Acquire(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("failed to begin transaction: %w", err)
 	}
-	defer tx.Rollback(ctx)
+	defer conn.Release()
 	query := `SELECT id, password_hash, role_id FROM users WHERE email = $1`
 	var User User
-	err = tx.QueryRow(ctx, query, email).Scan(&User.ID, &User.PasswordHash, &User.RoleID)
+	err = conn.QueryRow(ctx, query, email).Scan(&User.ID, &User.PasswordHash, &User.RoleID)
 	if err != nil {
 		if err == pgx.ErrNoRows {
 			return &User, nil

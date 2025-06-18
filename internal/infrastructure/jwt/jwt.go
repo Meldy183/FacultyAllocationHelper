@@ -3,6 +3,7 @@ package jwt
 import (
 	"context"
 	"errors"
+	"log"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -58,6 +59,7 @@ func (s *JWTserv) GenerateAccessToken(ctx context.Context, email string, roleID 
 	token := jwt.NewWithClaims(jwt.GetSigningMethod(s.JWT.AccessToken.Algorithm), Claims)
 	tokenString, err := token.SignedString([]byte(s.JWT.AccessToken.Secret))
 	if err != nil {
+		log.Printf("err creating: %v", err)
 		return "", err
 	}
 	return tokenString, nil
@@ -71,8 +73,9 @@ func (s *JWTserv) GenerateRefreshToken(ctx context.Context, email string, role_i
 		return "", err
 	}
 	Claims := &Claims{
-		Email: user.Email,
-		Role:  user.RoleID,
+		UserID: user.ID,
+		Email:  user.Email,
+		Role:   user.RoleID,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(s.JWT.RefreshToken.Expiry)), // Different expiry!
 			IssuedAt:  jwt.NewNumericDate(time.Now()),

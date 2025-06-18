@@ -3,6 +3,7 @@ package auth
 import (
 	"context"
 	"errors"
+	"log"
 	"strings"
 
 	"gitlab.pg.innopolis.university/f.markin/fah/auth/internal/config"
@@ -20,18 +21,27 @@ func NewService(repo postgres.Repository) *Service {
 	}
 }
 func (s *Service) CreateUser(ctx context.Context, config config.Config, email string, password string, roleId int) (*postgres.User, error) {
+	log.Println("validing mail")
 	if !ValidateEmail(email) {
-		return nil, errors.New("Not inno mail")
+		log.Println("ivalid")
+		return nil, errors.New("not inno mail")
 	}
+	log.Println("validing pass")
 	if len(password) < 8 {
-		return nil, errors.New("Too small password")
+		log.Println("ivalid")
+		return nil, errors.New("too small password")
 	}
+	log.Println("hashing pass")
 	passhash, err := bcrypt.GenerateFromPassword([]byte(password), config.Sequrity.Bcrypt.Cost)
 	if err != nil {
+		log.Println("failed to hashing pass")
 		return nil, err
 	}
+	log.Println("creating user")
 	user := postgres.NewUser(email, roleId, passhash)
+	log.Println("creating user in db")
 	if err := s.repo.CreateUser(ctx, *user); err != nil {
+		log.Println("creating user in db failed")
 		return nil, err
 	}
 	return user, nil

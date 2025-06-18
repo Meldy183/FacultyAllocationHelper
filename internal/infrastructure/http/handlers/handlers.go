@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 
 	app "gitlab.pg.innopolis.university/f.markin/fah/auth/internal/application/service"
@@ -29,9 +30,18 @@ func (h *Handlers) Login(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid request body", http.StatusBadRequest)
 		return
 	}
-	logresp, err := h.AuthService.Login(r.Context(), loginData.Email, loginData.Password)
+	logresp, access, refresh, err := h.AuthService.Login(r.Context(), loginData.Email, loginData.Password)
 	if err != nil {
 		http.Error(w, "Failed to login", http.StatusInternalServerError)
+		return
+	}
+	if err := h.AuthService.CookieService.SetAccessTokenCookie(w, access); err != nil {
+		log.Println("setting to cookie failed")
+		return
+	}
+	log.Println("setting to cookie")
+	if err := h.AuthService.CookieService.SetRefreshTokenCookie(w, refresh); err != nil {
+		log.Println("setting to cookie failed")
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
@@ -70,7 +80,7 @@ func (h *Handlers) Logout(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handlers) RefreshToken(w http.ResponseWriter, r *http.Request) {
-	tokenCookie, err := r.Cookie("refresh_token")
+	tokenCookie, err := r.Cookie(h.AuthService.CookieService.Cookie.RefreshToken.Name)
 	if err != nil {
 		http.Error(w, "Refresh token not found", http.StatusUnauthorized)
 		return
@@ -109,9 +119,15 @@ func (h *Handlers) Register(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid request body", http.StatusBadRequest)
 		return
 	}
-	logresp, err := h.AuthService.Register(r.Context(), registerData.Email, registerData.Password, registerData.RoleID)
+	logresp, access, refresh, err := h.AuthService.Register(r.Context(), registerData.Email, registerData.Password, registerData.RoleID)
 	if err != nil {
 		http.Error(w, "Failed to register", http.StatusInternalServerError)
+		return
+	}
+	if err := h.AuthService.CookieService.SetAccessTokenCookie(w, access); err != nil {
+		return
+	}
+	if err := h.AuthService.CookieService.SetRefreshTokenCookie(w, refresh); err != nil {
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")

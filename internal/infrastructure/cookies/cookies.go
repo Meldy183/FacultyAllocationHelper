@@ -2,6 +2,7 @@ package cookies
 
 import (
 	"errors"
+	"log"
 	"net/http"
 
 	"gitlab.pg.innopolis.university/f.markin/fah/auth/internal/config"
@@ -19,7 +20,7 @@ func NewCookiesService(cookieConfig config.Cookies) *CookiesService {
 
 func (c *CookiesService) SetAccessTokenCookie(w http.ResponseWriter, token string) error {
 	if token == "" {
-
+		log.Printf("err: empty token")
 		return errors.New("empty JWT token provided")
 	}
 	var a http.SameSite

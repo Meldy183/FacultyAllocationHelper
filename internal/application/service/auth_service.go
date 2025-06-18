@@ -2,7 +2,7 @@ package app
 
 import (
 	"context"
-	"net/http"
+	"log"
 
 	"gitlab.pg.innopolis.university/f.markin/fah/auth/internal/config"
 	auth "gitlab.pg.innopolis.university/f.markin/fah/auth/internal/domain/auth/service"
@@ -28,58 +28,57 @@ func NewAuthService(domainService *auth.Service, jwtService *jwt.JWTserv, cookie
 		Config:        &config,
 	}
 }
-func (s *AuthService) Register(ctx context.Context, email string, password string, roleId int) (*LoginResponse, error) {
+func (s *AuthService) Register(ctx context.Context, email string, password string, roleId int) (*LoginResponse, string, string, error) {
+	log.Println("Creating user")
 	user, err := s.DomainService.CreateUser(ctx, *s.Config, email, password, roleId)
 	if err != nil {
-		return &LoginResponse{Message: "Fail"}, err
+		log.Println("Creating user failed")
+		return &LoginResponse{Message: "Fail"}, "", "", err
 	}
+	log.Println("generating access token")
 	accessToken, err := s.JwtService.GenerateAccessToken(ctx, user.Email, user.RoleID, user.ID)
 	if err != nil {
-		return &LoginResponse{Message: "Fail"}, err
+		log.Println("generating access token failed")
+		return &LoginResponse{Message: "Fail"}, "", "", err
 	}
+	log.Println("generating refresh token")
 	refreshToken, err := s.JwtService.GenerateRefreshToken(ctx, user.Email, user.RoleID)
 	if err != nil {
-		return &LoginResponse{Message: "Fail"}, err
+		log.Println("generating refresh token failed")
+		return &LoginResponse{Message: "Fail"}, "", "", err
 	}
-	if err := s.CookieService.SetAccessTokenCookie(ctx.Value("response").(http.ResponseWriter), accessToken); err != nil {
-		return &LoginResponse{Message: "Fail"}, err
-	}
-	if err := s.CookieService.SetRefreshTokenCookie(ctx.Value("response").(http.ResponseWriter), refreshToken); err != nil {
-		return &LoginResponse{Message: "Fail"}, err
-	}
-	return &LoginResponse{Message: "Success"}, nil
+	log.Println("setting to cookie")
+	return &LoginResponse{Message: "Success"}, accessToken, refreshToken, nil
 }
-func (s *AuthService) Login(ctx context.Context, email string, password string) (*LoginResponse, error) {
+func (s *AuthService) Login(ctx context.Context, email string, password string) (*LoginResponse, string, string, error) {
 	user, err := s.DomainService.LoginUser(ctx, email, password)
 	if err != nil {
-		return &LoginResponse{Message: "Fail"}, err
+		return &LoginResponse{Message: "Fail"}, "", "", err
 	}
 	if user == nil {
-		return &LoginResponse{Message: "User not found"}, nil
+		return &LoginResponse{Message: "User not found"}, "", "", nil
 	}
 	accessToken, err := s.JwtService.GenerateAccessToken(ctx, user.Email, user.RoleID, user.ID)
 	if err != nil {
-		return &LoginResponse{Message: "Fail"}, err
+		return &LoginResponse{Message: "Fail"}, "", "", err
 	}
 	refreshToken, err := s.JwtService.GenerateRefreshToken(ctx, user.Email, user.RoleID)
 	if err != nil {
-		return &LoginResponse{Message: "Fail"}, err
+		return &LoginResponse{Message: "Fail"}, "", "", err
 	}
-	if err := s.CookieService.SetAccessTokenCookie(ctx.Value("response").(http.ResponseWriter), accessToken); err != nil {
-		return &LoginResponse{Message: "Fail"}, err
-	}
-	if err := s.CookieService.SetRefreshTokenCookie(ctx.Value("response").(http.ResponseWriter), refreshToken); err != nil {
-		return &LoginResponse{Message: "Fail"}, err
-	}
-	return &LoginResponse{Message: "Success"}, nil
+	return &LoginResponse{Message: "Success"}, accessToken, refreshToken, nil
+
 }
+
 func (s *AuthService) Refresh(ctx context.Context, token string) (string, *LoginResponse, error) {
 	claims, err := s.JwtService.ValidateRefreshToken(ctx, token)
 	if err != nil {
+		log.Printf("Err validating: %v", err)
 		return "", &LoginResponse{Message: "Fail"}, err
 	}
 	accessToken, err := s.JwtService.GenerateAccessToken(ctx, claims.Email, claims.Role, claims.UserID)
 	if err != nil {
+		log.Printf("Err generating: %v", err)
 		return "", &LoginResponse{Message: "Fail"}, err
 	}
 
