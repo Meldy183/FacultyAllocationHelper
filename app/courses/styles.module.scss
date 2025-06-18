@@ -1,64 +1,18 @@
 .container {
   background-color: #ffffff;
   min-width: 1200px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  padding: 15px 0;
 }
 
 .head {
-  ul {
-    display: flex;
-    align-items: center;
-    justify-content: space-around;
-    padding: 29px 0 14px 0;
 
-    li {
-      //font-family: Poppins;
-      font-weight: 500;
-      font-size: 14px;
-      line-height: 100%;
-      letter-spacing: -1%;
-      color: #B5B7C0;
-    }
-
-    .button {
-      color: #FFFFFF;
-      font-size: 16px;
-      line-height: 24px;
-      text-align: center;
-      padding: 8.5px 16px;
-      background-color: #40BA2199;
-    }
-  }
 }
 
-.courses {
-  .course {
-    display: flex;
-    align-items: center;
-    justify-content: space-around;
-    //font-family: Poppins;
-    font-weight: 500;
-    font-size: 14px;
-    line-height: 100%;
-    letter-spacing: -1%;
-    color: #292D32;
-    padding: 18px 0;
-    border-top: 1px solid #EEEEEE ;
-    .name { }
-    .academic-year { }
-    .track { }
-    .semester { }
-    .year { }
-    .button {
-      font-weight: 500;
-      font-size: 14px;
-      line-height: 100%;
-      letter-spacing: -1%;
-      color: #008767;
-      background-color: #40BA2161;
-      padding: 4px 12px;
-      border: 1px solid #008767;
-    }
-  }
+.field {
+  margin-bottom: 15px;
 }
 
 .sideBar {
