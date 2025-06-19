@@ -5,6 +5,7 @@
   border-radius: 8px;
   background-color: #40BA210D;
   overflow: hidden;
+  min-width: 0;
 
   .header {
     display: flex;
@@ -27,6 +28,7 @@
   .instructors {
     display: flex;
     flex-direction: column;
+    min-width: 0;
     .instructor {
       display: flex;
       align-items: center;

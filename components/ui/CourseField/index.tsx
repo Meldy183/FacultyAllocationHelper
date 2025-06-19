@@ -1,6 +1,7 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import styles from "./styles.module.scss";
+import Link from "next/link";
 
 interface Course {
 	courseName: string;
@@ -21,7 +22,7 @@ const CourseField: React.FC<Course> = ({ courseName, PI, tutor, faculties }) => 
 	return <div className={ styles.card }>
 		<div className={ styles.header }>
 			<div className={ styles.title }>{ courseName }</div>
-			<Button>Manage</Button>
+			<Button><Link href={ "/courses/manage" }>Manage</Link></Button>
 		</div>
 		<div className={ styles.instructors }>
 			<div className={ styles.instructor }>

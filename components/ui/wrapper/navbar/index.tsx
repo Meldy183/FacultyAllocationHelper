@@ -31,7 +31,7 @@ const routes: Routes[] = [
 const NavBar: React.FunctionComponent = () => {
 	const pagePath = usePathname();
 
-	const isActiveTab = (path: string) => pagePath === path;
+	const isActiveTab = (path: string) => pagePath.includes(path);
 
 	return <div className={ styles.navbar }>
 		<ul className={ styles.ul }>

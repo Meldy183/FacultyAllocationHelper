@@ -32,6 +32,8 @@ const elementsInformation: elementType[] = [
 ]
 
 const Home: React.FC = () => {
+  console.log(process.env["NEXT_PUBLIC_BASE_API"]);
+
 	return <Wrapper>
 		<div className={ styles.mainScreen }>
 		<h1 className={ styles.title }>Welcome!</h1>
