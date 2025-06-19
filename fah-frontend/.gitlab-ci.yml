@@ -1,0 +1,19 @@
+  image: node:lts
+
+  stages:
+    - deploy
+
+  deploy:
+    stage: deploy
+    only:
+      - frontend
+    variables:
+      VERCEL_TOKEN: higOmT8YwcLw9ig36D0cE0Vs
+      VERCEL_ORG_ID: team_yvgFinMriL5lSV7jlxCi59Qr
+      VERCEL_PROJECT_ID: prj_RsmmGjmtM2L30LeUEVrzgWIuKPVc
+    before_script:
+      - npm install -g vercel
+      - npm install --force
+    script:
+      - npm run build
+      - vercel --prod --token "$VERCEL_TOKEN" --scope "$VERCEL_ORG_ID"
