@@ -1,0 +1,82 @@
+.menu {
+  background-image: url("/images/main-page/background.jpg");
+  min-width: 1200px;
+
+}
+
+.top {
+  padding: 30px 0;
+  position: relative;
+  .image {
+    position: absolute;
+    right: 30px;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    cursor: pointer;
+  }
+}
+
+.content {
+  background-color: #FFFFFF;
+  padding: 54px 0 74px 0;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  .title {
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 24px;
+    letter-spacing: 0.15px;
+    color: #333333;
+    width: 370px;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .fieldBlock {
+    margin-top: 20px;
+    width: 370px;
+    .fieldDescription {
+      //font-family: Noto Sans;
+      font-weight: 600;
+      font-size: 12px;
+      line-height: 18px;
+      color: #666666;
+    }
+    .input {
+      padding: 16px;
+      //font-family: Noto Sans;
+      font-weight: 400;
+      font-size: 16px;
+      line-height: 24px;
+      color: #666666;
+      border: 1px solid #40BA21;
+      background-color: #FFFFFF;
+      border-radius: 5px 8px;
+      margin-top: 8px;
+      width: 100%;
+    }
+  }
+
+  .button {
+    margin-top: 70px;
+    padding: 8.5px 16px;
+    //font-family: Noto Sans;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 24px;
+    width: 170px;
+  }
+}
+
+.select {
+  width: 370px;
+  padding: 16px;
+  //font-family: Noto Sans;
+  font-weight: 400;
+  color: #666666;
+  border: 1px solid #40BA21;
+  font-size: 16px;
+  line-height: 100% !important;
+  //letter-spacing: 0%;
+  margin-top: 40px;
+}
