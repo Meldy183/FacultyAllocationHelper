@@ -1,1 +1,1 @@
-export const API_PATH = process.env.NEXT_PUBLIC_BASE_API || "http://localhost:8081";
+export const API_PATH = process.env.NEXT_PUBLIC_BASE_API + "/api" || "http://localhost:8081/api";

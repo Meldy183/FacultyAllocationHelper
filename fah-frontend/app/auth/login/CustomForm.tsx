@@ -31,6 +31,7 @@ const CustomForm: React.FC = () => {
 		try {
 			const response = await login(formData);
 			router.push(dashboardRoute.routePath);
+			console.log(response);
 		} catch (e: Response) {
 			handleErrorForm<LoginInput>(e, form.setError);
 		}
