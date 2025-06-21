@@ -38,10 +38,10 @@ func main() {
 		AllowCredentials: true,          // Allow credentials
 	})
 	r := chi.NewRouter() // Example roles, adjust as needed
-	r.Post("/api/auth/login", handlers.Login)
-	r.Post("/api/auth/logout", handlers.Logout)
-	r.Post("/api/auth/register", handlers.Register)
-	r.Post("/api/auth/refresh", handlers.RefreshToken)
+	r.Post("/auth/login", handlers.Login)
+	r.Post("/auth/logout", handlers.Logout)
+	r.Post("/auth/register", handlers.Register)
+	r.Post("/auth/refresh", handlers.RefreshToken)
 	handler := c.Handler(r)
 	srv := &http.Server{
 		Addr:         config.HTTPserver.Host + ":" + strconv.Itoa(config.HTTPserver.Port),
