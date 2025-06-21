@@ -32,7 +32,7 @@ func main() {
 	authService := app.NewAuthService(domainService, jwtService, cookiesService, *config)
 	handlers := handlers.NewHandlers(authService)
 	c := cors.New(cors.Options{
-		AllowedOrigins:   []string{"http://localhost:3000"}, // Allow all origins
+		AllowedOrigins:   []string{"http://localhost:3000", "http://87.228.102.156"}, // Allow all origins
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowedHeaders:   []string{"*"}, // Allow all headers
 		AllowCredentials: true,          // Allow credentials
