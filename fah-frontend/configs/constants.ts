@@ -1,1 +1,1 @@
-export const API_PATH = process.env.NEXT_PUBLIC_BASE_API ;
+export const API_PATH = "87.228.102.156";
