@@ -37,7 +37,7 @@ services:
       - auth-server
     
     environment:
-      NEXT_PUBLIC_BASE_API: 87.228.102.156
+      NEXT_PUBLIC_BASE_API: http://87.228.102.156
     networks:
       - fah
  
