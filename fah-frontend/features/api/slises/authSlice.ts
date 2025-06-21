@@ -8,6 +8,7 @@ import type {
 import { API_PATH } from "@/configs/constants";
 
 export const authSlice = createApi({
+	reducerPath: "api/auth",
 	baseQuery: fetchBaseQuery(
 		{
 			baseUrl: `${ API_PATH }/auth`,
