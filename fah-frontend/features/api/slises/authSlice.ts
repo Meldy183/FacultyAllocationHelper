@@ -11,7 +11,8 @@ export const authSlice = createApi({
 	reducerPath: "api/auth",
 	baseQuery: fetchBaseQuery(
 		{
-			baseUrl: `${ API_PATH }/auth`,
+			// baseUrl: `${ API_PATH }/auth`,
+			baseUrl: `/auth`,
 			credentials: "include"
 		}),
 	endpoints: (builder) => ({
