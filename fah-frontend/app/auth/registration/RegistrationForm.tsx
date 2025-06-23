@@ -36,10 +36,9 @@ const RegistrationForm: React.FC = () => {
 				return;
 			}
 
-			const { data, error } = await register(formData).unwrap();
-			if (error) throw error;
+			await register(formData).unwrap();
 			router.push(dashboardRoute.routePath)
-		} catch (e: Response) {
+		} catch (e: any) {
 			handleErrorForm<RegisterInput>(e, form.setError);
 		}
 	}
@@ -50,28 +49,34 @@ const RegistrationForm: React.FC = () => {
 			<div className={ styles.fieldBlock }>
 				<FormField name={ "email" }
 				           render={ ({ field }) =>
-					           (
-											 <>
-												 <CustomField fieldName={ "email" } type={ "text" } title={ "E-mail" } field={ field }/>
-												 form.formState.errors.email && (
-												 <p className="text-red-500 text-sm mt-1">
-													 {form.formState.errors.email.message}
-												 </p>
-												 )}
-											 </>
-					           ) }
+					           (<>
+						           <CustomField
+							           fieldName={ "email" }
+							           type={ "text" }
+							           title={ "E-mail" }
+							           field={ field }
+							           error={form.formState.errors.email?.message}
+						           />
+						           {form.formState.errors.email && (
+							           <p className="text-red-500 text-sm mt-1">
+								           {form.formState.errors.email.message}
+							           </p>
+						           )}
+					           </>)}
 				/>
 				<FormField name={ "password" }
 				           render={ ({ field }) =>
 					           (
-											 <>
-												 <CustomField fieldName={ "password" } type={ "password" } title={ "password" } field={ field }/>
-												 {form.formState.errors.password && (
-													 <p className="text-red-500 text-sm mt-1">
-														 {form.formState.errors.password.message}
-													 </p>
-												 )}
-											 </>
+						           <>
+							           <CustomField
+								           error={form.formState.errors.password?.message}
+								           fieldName={ "password" } type={ "password" } title={ "password" } field={ field }/>
+							           {form.formState.errors.password && (
+								           <p className="text-red-500 text-sm mt-1">
+									           {form.formState.errors.password.message}
+								           </p>
+							           )}
+						           </>
 					           ) }
 				/>
 				<FormField name={ "passwordAgain" }
