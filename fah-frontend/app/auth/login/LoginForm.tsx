@@ -1,3 +1,4 @@
+"use client"
 import React from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
@@ -15,7 +16,7 @@ import { API_PATH } from "@/configs/constants";
 
 type LoginInput = z.infer<typeof authResolver>;
 
-const CustomForm: React.FC = () => {
+const LoginForm: React.FC = () => {
 	const router = useRouter();
 
 	console.log(process.env.NEXT_PUBLIC_BASE_API);
@@ -37,7 +38,7 @@ const CustomForm: React.FC = () => {
 			console.log(data, error);
 			if (error) throw error;
 			router.push(dashboardRoute.routePath);
-		} catch (e: Response) {
+		} catch (e: any) {
 			handleErrorForm<LoginInput>(e, form.setError);
 		}
 	}
@@ -65,4 +66,4 @@ const CustomForm: React.FC = () => {
 	)
 }
 
-export default CustomForm;
+export default LoginForm;

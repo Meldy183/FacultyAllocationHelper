@@ -36,7 +36,8 @@ const RegistrationForm: React.FC = () => {
 				return;
 			}
 
-			await register(formData).unwrap();
+			const { data, error } = await register(formData).unwrap();
+			if (error) throw error;
 			router.push(dashboardRoute.routePath)
 		} catch (e: any) {
 			handleErrorForm<RegisterInput>(e, form.setError);

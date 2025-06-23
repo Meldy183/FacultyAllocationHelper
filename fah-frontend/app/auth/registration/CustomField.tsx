@@ -9,9 +9,10 @@ interface fieldProps {
 	title: string
 	type?: string
 	customClassName?: string
+	error?: string
 }
 
-const CustomField: React.FC<fieldProps> = ({ field, fieldName, title, type = "text", customClassName = "" }) => {
+const CustomField: React.FC<fieldProps> = ({ field, fieldName, title, type = "text", customClassName = "", error }) => {
 	const autocompleteValue = type === "password" ? "current-password" : "off";
 
 	return (

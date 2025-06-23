@@ -1,1 +1,1 @@
-export const API_PATH = "/api";
+export const API_PATH = process.env.NEXT_PUBLIC_BASE_API + "/api" || "http://localhost:3000/api";

@@ -1,10 +1,9 @@
-"use client"
 import React from "react";
 import { Button } from "@/components/ui/button";
 import Wrapper from "@/components/ui/wrapper";
 import styles from "./styles.module.scss";
 import Link from "next/link";
-import CustomForm from "@/app/auth/login/CustomForm";
+import LoginForm from "@/app/auth/login/LoginForm";
 
 const AuthPage: React.FC = () => {
 	return <Wrapper hasNavBar={ false }>
@@ -14,7 +13,7 @@ const AuthPage: React.FC = () => {
 					<Link href={ "/start" }>go back</Link>
 				</Button>
 			</div>
-			<CustomForm />
+			<LoginForm />
 		</div>
 	</Wrapper>
 }
