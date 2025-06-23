@@ -33,9 +33,10 @@ const CustomForm: React.FC = () => {
 
 	const submitHandler: SubmitHandler<LoginInput> = async (formData) => {
 		try {
-			const response = await login(formData);
+			const { data, error } = await login(formData);
+			console.log(data, error);
+			if (error) throw error;
 			router.push(dashboardRoute.routePath);
-			console.log(response);
 		} catch (e: Response) {
 			handleErrorForm<LoginInput>(e, form.setError);
 		}
@@ -56,6 +57,9 @@ const CustomForm: React.FC = () => {
 					/>
 				</div>
 				<Button className={ styles.button }>Submit</Button>
+				{form.formState.errors.root && (
+					<p className="text-red-500 text-sm">{ form.formState.errors.root.message }</p>
+				)}
 			</form>
 		</Form>
 	)
