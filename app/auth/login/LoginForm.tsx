@@ -12,11 +12,15 @@ import { useLoginMutation } from "@/features/api/slises/authSlice";
 import { handleErrorForm } from "@/hooks/hadleErrorForm";
 import { useRouter } from "next/navigation";
 import { dashboardRoute } from "@/configs/routes";
+import { API_PATH } from "@/configs/constants";
 
 type LoginInput = z.infer<typeof authResolver>;
 
-const CustomForm: React.FC = () => {
+const LoginForm: React.FC = () => {
 	const router = useRouter();
+
+	console.log(process.env.NEXT_PUBLIC_BASE_API);
+	console.log(API_PATH);
 
 	const [login] = useLoginMutation();
 
@@ -62,4 +66,4 @@ const CustomForm: React.FC = () => {
 	)
 }
 
-export default CustomForm;
+export default LoginForm;

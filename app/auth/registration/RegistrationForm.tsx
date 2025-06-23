@@ -36,7 +36,8 @@ const RegistrationForm: React.FC = () => {
 				return;
 			}
 
-			await register(formData).unwrap();
+			const { data, error } = await register(formData).unwrap();
+			if (error) throw error;
 			router.push(dashboardRoute.routePath)
 		} catch (e: any) {
 			handleErrorForm<RegisterInput>(e, form.setError);
@@ -67,13 +68,16 @@ const RegistrationForm: React.FC = () => {
 				<FormField name={ "password" }
 				           render={ ({ field }) =>
 					           (
-											 <>{ "password" } title={ "password" } field={ field }
-												 {form.formState.errors.password && (
-													 <p className="text-red-500 text-sm mt-1">
-														 {form.formState.errors.password.message}
-													 </p>
-												 )}
-											 </>
+						           <>
+							           <CustomField
+								           error={form.formState.errors.password?.message}
+								           fieldName={ "password" } type={ "password" } title={ "password" } field={ field }/>
+							           {form.formState.errors.password && (
+								           <p className="text-red-500 text-sm mt-1">
+									           {form.formState.errors.password.message}
+								           </p>
+							           )}
+						           </>
 					           ) }
 				/>
 				<FormField name={ "passwordAgain" }
