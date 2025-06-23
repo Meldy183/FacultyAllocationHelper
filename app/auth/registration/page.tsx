@@ -1,11 +1,9 @@
-"use client"
 import React from "react";
 import { Button } from "@/components/ui/button";
 import Wrapper from "@/components/ui/wrapper";
 import RegistrationForm from "@/app/auth/registration/RegistrationForm";
 import Link from "next/link";
 import styles from "./styles.module.scss";
-
 
 const RegistrationPage: React.FC = () => {
 	return <Wrapper hasNavBar={ false }>

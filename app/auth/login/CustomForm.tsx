@@ -1,3 +1,4 @@
+"use client"
 import React from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
@@ -29,9 +30,11 @@ const CustomForm: React.FC = () => {
 
 	const submitHandler: SubmitHandler<LoginInput> = async (formData) => {
 		try {
-			const response = await login(formData);
+			const { data, error } = await login(formData);
+			console.log(data, error);
+			if (error) throw error;
 			router.push(dashboardRoute.routePath);
-		} catch (e: Response) {
+		} catch (e: any) {
 			handleErrorForm<LoginInput>(e, form.setError);
 		}
 	}
@@ -51,6 +54,9 @@ const CustomForm: React.FC = () => {
 					/>
 				</div>
 				<Button className={ styles.button }>Submit</Button>
+				{form.formState.errors.root && (
+					<p className="text-red-500 text-sm">{ form.formState.errors.root.message }</p>
+				)}
 			</form>
 		</Form>
 	)
