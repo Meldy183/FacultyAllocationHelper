@@ -8,6 +8,7 @@ import (
 
 	"gitlab.pg.innopolis.university/f.markin/fah/auth/internal/config"
 	"gitlab.pg.innopolis.university/f.markin/fah/auth/internal/infrastructure/database/postgres"
+	errs "gitlab.pg.innopolis.university/f.markin/fah/auth/shared/errors"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -21,15 +22,16 @@ func NewService(repo postgres.Repository) *Service {
 	}
 }
 func (s *Service) CreateUser(ctx context.Context, config config.Config, email string, password string, roleId int) (*postgres.User, error) {
-	log.Println("validing mail")
 	if !ValidateEmail(email) {
 		log.Println("ivalid")
-		return nil, errors.New("not inno mail")
+		return nil, errs.ErrInvalidMail
 	}
-	log.Println("validing pass")
 	if len(password) < 8 {
 		log.Println("ivalid")
-		return nil, errors.New("too small password")
+		return nil, errs.ErrPassTooShort
+	}
+	if len(password) > 31 {
+		return nil, errs.ErrPassTooLong
 	}
 	log.Println("hashing pass")
 	passhash, err := bcrypt.GenerateFromPassword([]byte(password), config.Sequrity.Bcrypt.Cost)
@@ -37,8 +39,12 @@ func (s *Service) CreateUser(ctx context.Context, config config.Config, email st
 		log.Println("failed to hashing pass")
 		return nil, err
 	}
+	user, _ := s.GetUserByEmail(ctx, email)
+	if user != nil {
+		return nil, errs.ErrUserExists
+	}
 	log.Println("creating user")
-	user := postgres.NewUser(email, roleId, passhash)
+	user = postgres.NewUser(email, roleId, passhash)
 	log.Println("creating user in db")
 	if err := s.repo.CreateUser(ctx, *user); err != nil {
 		log.Println("creating user in db failed")
@@ -65,10 +71,10 @@ func (s *Service) LoginUser(ctx context.Context, email string, password string) 
 		return nil, err
 	}
 	if user == nil {
-		return nil, errors.New("user not found")
+		return nil, errs.ErrWrongLogOrPass
 	}
 	if err := bcrypt.CompareHashAndPassword(user.PasswordHash, []byte(password)); err != nil {
-		return nil, bcrypt.ErrMismatchedHashAndPassword
+		return nil, errs.ErrWrongLogOrPass
 	}
 	return user, nil
 }

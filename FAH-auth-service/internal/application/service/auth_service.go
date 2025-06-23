@@ -2,12 +2,14 @@ package app
 
 import (
 	"context"
+	"errors"
 	"log"
 
 	"gitlab.pg.innopolis.university/f.markin/fah/auth/internal/config"
 	auth "gitlab.pg.innopolis.university/f.markin/fah/auth/internal/domain/auth/service"
 	"gitlab.pg.innopolis.university/f.markin/fah/auth/internal/infrastructure/cookies"
 	"gitlab.pg.innopolis.university/f.markin/fah/auth/internal/infrastructure/jwt"
+	errs "gitlab.pg.innopolis.university/f.markin/fah/auth/shared/errors"
 )
 
 type LoginResponse struct {
@@ -33,7 +35,15 @@ func (s *AuthService) Register(ctx context.Context, email string, password strin
 	user, err := s.DomainService.CreateUser(ctx, *s.Config, email, password, roleId)
 	if err != nil {
 		log.Println("Creating user failed")
-		return &LoginResponse{Message: "Fail"}, "", "", err
+		if errors.Is(err, errs.ErrInvalidMail) {
+			return &LoginResponse{Message: "Invalid mail"}, "", "", err
+		} else if errors.Is(err, errs.ErrPassTooLong) {
+			return &LoginResponse{Message: "Password is too long"}, "", "", err
+		} else if errors.Is(err, errs.ErrPassTooShort) {
+			return &LoginResponse{Message: "Password is too short"}, "", "", err
+		} else if errors.Is(err, errs.ErrUserExists) {
+			return &LoginResponse{Message: "User is already exist"}, "", "", err
+		}
 	}
 	log.Println("generating access token")
 	accessToken, err := s.JwtService.GenerateAccessToken(ctx, user.Email, user.RoleID, user.ID)
@@ -53,10 +63,12 @@ func (s *AuthService) Register(ctx context.Context, email string, password strin
 func (s *AuthService) Login(ctx context.Context, email string, password string) (*LoginResponse, string, string, error) {
 	user, err := s.DomainService.LoginUser(ctx, email, password)
 	if err != nil {
-		return &LoginResponse{Message: "Fail"}, "", "", err
+		if errors.Is(err, errs.ErrWrongLogOrPass) {
+			return &LoginResponse{Message: "wrong login or password"}, "", "", err
+		}
 	}
 	if user == nil {
-		return &LoginResponse{Message: "User not found"}, "", "", nil
+		return &LoginResponse{Message: "wrong login or password"}, "", "", errs.ErrWrongLogOrPass
 	}
 	accessToken, err := s.JwtService.GenerateAccessToken(ctx, user.Email, user.RoleID, user.ID)
 	if err != nil {

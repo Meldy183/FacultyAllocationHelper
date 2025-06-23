@@ -32,8 +32,18 @@ func (h *Handlers) Login(w http.ResponseWriter, r *http.Request) {
 	}
 	logresp, access, refresh, err := h.AuthService.Login(r.Context(), loginData.Email, loginData.Password)
 	if err != nil {
-		http.Error(w, "Failed to login", http.StatusInternalServerError)
-		return
+		w.Header().Add("Content-Type", "application/json")
+		w.WriteHeader(http.StatusInternalServerError)
+		jsonResp, err := json.Marshal(logresp)
+		if err != nil {
+			http.Error(w, "Failed to create JSON response", http.StatusInternalServerError)
+			return
+		}
+		_, err = w.Write(jsonResp)
+		if err != nil {
+			http.Error(w, "Failed to write response", http.StatusInternalServerError)
+			return
+		}
 	}
 	if err := h.AuthService.CookieService.SetAccessTokenCookie(w, access); err != nil {
 		log.Println("setting to cookie failed")
@@ -122,8 +132,18 @@ func (h *Handlers) Register(w http.ResponseWriter, r *http.Request) {
 	}
 	logresp, access, refresh, err := h.AuthService.Register(r.Context(), registerData.Email, registerData.Password, registerData.RoleID)
 	if err != nil {
-		http.Error(w, "Failed to register", http.StatusInternalServerError)
-		return
+		w.Header().Add("Content-Type", "application/json")
+		w.WriteHeader(http.StatusInternalServerError)
+		jsonResp, err := json.Marshal(logresp)
+		if err != nil {
+			http.Error(w, "Failed to create JSON response", http.StatusInternalServerError)
+			return
+		}
+		_, err = w.Write(jsonResp)
+		if err != nil {
+			http.Error(w, "Failed to write response", http.StatusInternalServerError)
+			return
+		}
 	}
 	if err := h.AuthService.CookieService.SetAccessTokenCookie(w, access); err != nil {
 		return
