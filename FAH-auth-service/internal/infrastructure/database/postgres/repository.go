@@ -78,7 +78,7 @@ func (r *Repository) GetUserByEmail(ctx context.Context, email string) (*User, e
 	err = conn.QueryRow(ctx, query, email).Scan(&User.ID, &User.PasswordHash, &User.RoleID)
 	if err != nil {
 		if err == pgx.ErrNoRows {
-			return &User, nil
+			return nil, err
 		}
 		return &User, err
 	}
