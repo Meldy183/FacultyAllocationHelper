@@ -44,6 +44,7 @@ func (h *Handlers) Login(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "Failed to write response", http.StatusInternalServerError)
 			return
 		}
+		return
 	}
 	if err := h.AuthService.CookieService.SetAccessTokenCookie(w, access); err != nil {
 		log.Println("setting to cookie failed")
@@ -144,6 +145,7 @@ func (h *Handlers) Register(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "Failed to write response", http.StatusInternalServerError)
 			return
 		}
+		return
 	}
 	if err := h.AuthService.CookieService.SetAccessTokenCookie(w, access); err != nil {
 		return
