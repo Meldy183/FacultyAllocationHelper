@@ -21,7 +21,8 @@ export const authSlice = createApi({
 				url: "/register",
 				method: "POST",
 				// добавить тело запроса
-				body: body
+				body: body,
+				role_id: 1
 			}),
 		}),
 		login: builder.mutation<LoginProcessType["response"], LoginProcessType["request"]>({
