@@ -2,16 +2,16 @@
 import React from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useRegisterMutation } from "@/features/api/slises/authSlice";
-import { Form, FormField } from "@/components/ui/form";
-import { Button } from "@/components/ui/button";
-import { registerResolver } from "@/types/resolvers/auth";
+import { Form, FormField } from "@/shared/ui/form";
+import { Button } from "@/shared/ui/button";
+import { registerResolver } from "@/shared/types/resolvers/auth";
 import CustomField from "@/app/auth/registration/CustomField";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import styles from "./styles.module.scss";
-import { handleErrorForm } from "@/hooks/hadleErrorForm";
+import { handleErrorForm } from "@/shared/hooks/hadleErrorForm";
 import { useRouter } from "next/navigation";
-import { dashboardRoute } from "@/configs/routes";
+import { dashboardRoute } from "@/shared/configs/routes";
 
 type RegisterInput = z.infer<typeof registerResolver>
 
@@ -36,7 +36,8 @@ const RegistrationForm: React.FC = () => {
 				return;
 			}
 
-			const { data, error } = await register(formData).unwrap();
+			// @ts-ignore
+			const { error } = await register(formData).unwrap();
 			if (error) throw error;
 			router.push(dashboardRoute.routePath)
 		} catch (e: any) {

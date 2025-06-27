@@ -1,9 +1,9 @@
 "use client";
 
 import React from "react";
-import { Button } from "@/components/ui/button";
-import Wrapper from "@/components/ui/wrapper";
-import SideBar from "@/components/ui/wrapper/sidebar";
+import { Button } from "@/shared/ui/button";
+import Wrapper from "@/shared/ui/wrapper";
+import SideBar from "@/shared/ui/wrapper/sidebar";
 import SideBarContent from "@/app/courses/SideBarContent";
 import styles from "./styles.module.scss";
 import Link from "next/link";

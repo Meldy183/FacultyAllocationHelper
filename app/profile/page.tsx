@@ -1,7 +1,7 @@
 import React from "react";
 import Image from "next/image";
-import { Button } from "@/components/ui/button";
-import Wrapper from "@/components/ui/wrapper";
+import { Button } from "@/shared/ui/button";
+import Wrapper from "@/shared/ui/wrapper";
 import crossSvg from "@/public/icons/svg/cross.svg";
 import styles from "./styles.module.scss";
 

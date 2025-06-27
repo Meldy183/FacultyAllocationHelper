@@ -1,9 +1,9 @@
 import React from "react";
-import Wrapper from "@/components/ui/wrapper";
+import Wrapper from "@/shared/ui/wrapper";
 import Image from "next/image";
 import FacultyIcon from "@/public/icons/faculty/faculty-member/faculty-member-icon.svg"
 import styles from "./styles.module.scss";
-import CourseField from "@/components/ui/CourseField";
+import CourseField from "@/shared/ui/CourseField";
 
 const faculty = {
 	name: "Name",

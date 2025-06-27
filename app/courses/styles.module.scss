@@ -1,3 +1,8 @@
+.wrapper {
+  overflow-y: scroll;
+  max-height: calc(100vh - 60px);
+}
+
 .container {
   background-color: #ffffff;
   min-width: 1200px;
@@ -46,4 +51,8 @@
       }
     }
   }
+}
+
+.leftMenu {
+  overflow-y: scroll;
 }

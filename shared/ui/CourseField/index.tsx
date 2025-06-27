@@ -1,8 +1,8 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/shared/ui/tooltip";
+import { Button } from "@/shared/ui/button";
 import { TooltipArrow } from "@radix-ui/react-tooltip";
 import styles from "./styles.module.scss";
 import userIcon from "@/public/icons/faculty/faculty-member/faculty-member-icon.svg"
@@ -54,7 +54,9 @@ const TAElement: React.FC<Faculty> = (faculty) => {
 		<>
 			<Tooltip>
 				<TooltipTrigger>
-					<div className={ styles.facultyBlock }><span>{ faculty.name[0] + ". " + faculty.surname }</span></div>
+					<div className={ styles.facultyBlock }>
+						<span className={ styles.menuTrigger }>{ faculty.name[0] + ". " + faculty.surname }</span>
+					</div>
 				</TooltipTrigger>
 				<TooltipContent side={ "right" } className={ styles.contextMenu }>
 					<TooltipArrow className={ `${ styles.arrow } fill-white` }  />

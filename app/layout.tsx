@@ -1,23 +1,23 @@
 import type { Metadata } from "next";
 import { CustomProvider } from "./providers";
-import Wrapper from "@/components/ui/wrapper";
-import { Geist, Geist_Mono, Montserrat } from "next/font/google";
+import Wrapper from "@/shared/ui/wrapper";
+// import { Geist, Geist_Mono, Montserrat } from "next/font/google";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
-const montserrat = Montserrat({
-  variable: "--font-montserrat",
-  subsets: ["latin"],
-})
+// const geistSans = Geist({
+//   variable: "--font-geist-sans",
+//   subsets: ["latin"],
+// });
+//
+// const geistMono = Geist_Mono({
+//   variable: "--font-geist-mono",
+//   subsets: ["latin"],
+// });
+//
+// const montserrat = Montserrat({
+//   variable: "--font-montserrat",
+//   subsets: ["latin"],
+// })
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -31,11 +31,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} ${montserrat.variable} antialiased`}>
+    {/*<body className={ `${ geistSans.variable } ${ geistMono.variable } ${ montserrat.variable } antialiased` }>*/}
+      <body className={ `antialiased` }>
         <CustomProvider>
           { children }
         </CustomProvider>
       </body>
     </html>
-  );
+);
 }
