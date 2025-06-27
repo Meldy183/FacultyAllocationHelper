@@ -1,7 +1,7 @@
 import React from "react";
-import Wrapper from "@/components/ui/wrapper";
+import Wrapper from "@/shared/ui/wrapper";
 import styles from "./styles.module.scss";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/shared/ui/button";
 import Link from "next/link";
 
 const CourseInformation: React.FC = () => {
