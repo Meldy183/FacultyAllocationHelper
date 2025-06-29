@@ -5,6 +5,7 @@
   min-width: 100%;
   background-color: #FAFAFA;
   display: flex;
+  align-items: center;
   justify-content: center;
   padding: 8px 0;
   z-index: 1;
@@ -28,3 +29,14 @@
     }
   }
 }
+
+.avatar {
+    position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 40px;
+  width: 40px;
+  object-fit: cover;
+  border-radius: 50%;
+  }
