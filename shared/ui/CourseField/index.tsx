@@ -17,6 +17,7 @@ import {
 import PersonDialogMenuContent from "@/shared/ui/CourseField/PersonDialogMenuContent";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import CourseDialogMenuContent from "@/shared/ui/CourseField/CourseDialogMenuContent";
+import ManageCourseDialogMenu from "@/shared/ui/CourseField/ManageCourseDialogMenu";
 
 interface Course {
 	courseName: string;
@@ -38,26 +39,36 @@ const CourseField: React.FC<Course> = ({ courseName, PI, tutor, faculties }) => 
 		<div className={ styles.header }>
 			<div className={ styles.information }>
 				<div className={ styles.courseName }>
-					<div className={ styles.name }>{ courseName }</div>
 					<Dialog>
 						<DialogTrigger className={ "cursor-pointer" }>
-							<div className={ styles.icon }>
+							<div className={ styles.name }>{ courseName }</div>
+						</DialogTrigger>
+						<DialogContent className={ styles.dialogMenu }>
+							<VisuallyHidden>
+								<DialogHeader>
+									<DialogTitle/>
+									<DialogDescription/>
+								</DialogHeader>
+							</VisuallyHidden>
+							<CourseDialogMenuContent/>
+						</DialogContent>
+					</Dialog>
+					<Dialog>
+						<DialogTrigger>
+							<div className={ `${ styles.icon } cursor-pointer` }>
 								<Image src={ settingsIcon } alt={ "settings" } className={ styles.icon }/>
 							</div>
 						</DialogTrigger>
-						<DialogContent className={styles.dialogMenu}>
+						<DialogContent className={ styles.dialogMenu }>
 							<VisuallyHidden>
 								<DialogHeader>
-									<DialogTitle />
-									<DialogDescription />
+									<DialogTitle/>
+									<DialogDescription/>
 								</DialogHeader>
 							</VisuallyHidden>
-							<CourseDialogMenuContent />
+							<ManageCourseDialogMenu />
 						</DialogContent>
 					</Dialog>
-					{/*<div className={ styles.icon }>*/}
-					{/*	<button onClick={() => window.location.href = '/courses/manage'}><Image src={ settingsIcon } alt={ "settings" } className={ styles.icon } /></button>*/}
-					{/*</div>*/}
 				</div>
 				<ul>
 					<li>Study year:</li>

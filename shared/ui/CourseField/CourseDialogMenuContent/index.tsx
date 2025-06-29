@@ -37,20 +37,6 @@ const CourseDialogMenuContent: React.FC = () => {
 				</AccordionItem>
 			</Accordion>
 
-			<Accordion type={ "single" } className={ styles.section } collapsible>
-				<AccordionItem value={ "item-2" }>
-					<AccordionTrigger className={ `${ styles.title } cursor-pointer` }>Course Information</AccordionTrigger>
-					<AccordionContent className={ styles.grid }>
-						<div>Responsible institute: Institute name</div>
-						<div>Program: program code</div>
-						<div>Track: track</div>
-						<div>Mode: mode</div>
-						<div>Form: form</div>
-						<div>Semester: semester</div>
-					</AccordionContent>
-				</AccordionItem>
-			</Accordion>
-
 			<div className={ styles.section }>
 				<h2 className={ styles.title }>УП</h2>
 				<div className={ styles.grid }>
