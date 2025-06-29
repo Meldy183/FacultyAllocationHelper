@@ -5,7 +5,7 @@ import userIcon from "@/public/icons/faculty/faculty-member/faculty-member-icon.
 import { Button } from "@/shared/ui/button";
 import Link from "next/link";
 
-const DialogMenuContent: React.FC = () => {
+const PersonDialogMenuContent: React.FC = () => {
 	return <div className={ styles.description }>
 		<div className={ styles.container }>
 			<div className={ styles.card }>
@@ -114,16 +114,11 @@ const DialogMenuContent: React.FC = () => {
 				</div>
 
 			</div>
-			{/* Teaching Courses */ }
 			<div className={ styles.card }>
 				<h2 className={ styles.title }>Teaching courses:</h2>
-
-				{/*<div className={ styles.field }><CourseField { ...courseMock } /></div>*/}
-				{/*<div className={ styles.field }><CourseField { ...courseMock } /></div>*/}
-				{/*<div className={ styles.field }><CourseField { ...courseMock } /></div>*/}
 			</div>
 		</div>
 	</div>
 }
 
-export default DialogMenuContent;
+export default PersonDialogMenuContent;

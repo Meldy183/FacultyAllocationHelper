@@ -10,12 +10,14 @@ import arrowRightIcon from "@/public/icons/svg/right-arrow.svg";
 
 import {
 	Dialog,
-	DialogContent,
+	DialogContent, DialogDescription, DialogHeader,
 	DialogTitle,
 	DialogTrigger,
 } from "@/shared/ui/dialog";
-import DialogMenuContent from "@/shared/ui/CourseField/DialogMenuContent";
+import PersonDialogMenuContent from "@/shared/ui/CourseField/PersonDialogMenuContent";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
+import CourseDialogMenuContent from "@/shared/ui/CourseField/CourseDialogMenuContent";
+import ManageCourseDialogMenu from "@/shared/ui/CourseField/ManageCourseDialogMenu";
 
 interface Course {
 	courseName: string;
@@ -37,10 +39,36 @@ const CourseField: React.FC<Course> = ({ courseName, PI, tutor, faculties }) => 
 		<div className={ styles.header }>
 			<div className={ styles.information }>
 				<div className={ styles.courseName }>
-					<div className={ styles.name }>{ courseName }</div>
-					<div className={ styles.icon }>
-						<button onClick={() => window.location.href = '/courses/manage'}><Image src={ settingsIcon } alt={ "settings" } className={ styles.icon } /></button>
-					</div>
+					<Dialog>
+						<DialogTrigger className={ "cursor-pointer" }>
+							<div className={ styles.name }>{ courseName }</div>
+						</DialogTrigger>
+						<DialogContent className={ styles.dialogMenu }>
+							<VisuallyHidden>
+								<DialogHeader>
+									<DialogTitle/>
+									<DialogDescription/>
+								</DialogHeader>
+							</VisuallyHidden>
+							<CourseDialogMenuContent/>
+						</DialogContent>
+					</Dialog>
+					<Dialog>
+						<DialogTrigger>
+							<div className={ `${ styles.icon } cursor-pointer` }>
+								<Image src={ settingsIcon } alt={ "settings" } className={ styles.icon }/>
+							</div>
+						</DialogTrigger>
+						<DialogContent className={ styles.dialogMenu }>
+							<VisuallyHidden>
+								<DialogHeader>
+									<DialogTitle/>
+									<DialogDescription/>
+								</DialogHeader>
+							</VisuallyHidden>
+							<ManageCourseDialogMenu />
+						</DialogContent>
+					</Dialog>
 				</div>
 				<ul>
 					<li>Study year:</li>
@@ -71,7 +99,6 @@ const CourseField: React.FC<Course> = ({ courseName, PI, tutor, faculties }) => 
 
 const TAElement: React.FC<Faculty> = (faculty) => {
 	const [openDialog, setOpenDialog] = useState(false);
-
 	return (
 		<TooltipProvider>
 			<Dialog open={openDialog} onOpenChange={setOpenDialog}>
@@ -142,7 +169,7 @@ const TAElement: React.FC<Faculty> = (faculty) => {
 							<h2>Меню</h2>
 						</div>
 					</VisuallyHidden>
-					<DialogMenuContent />
+					<PersonDialogMenuContent />
 				</DialogContent>
 			</Dialog>
 		</TooltipProvider>
