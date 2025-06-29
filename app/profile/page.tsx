@@ -5,11 +5,11 @@ import Wrapper from "@/shared/ui/wrapper";
 import crossSvg from "@/public/icons/svg/cross.svg";
 import styles from "./styles.module.scss";
 
-const RegistrationPage: React.FC = () => {
+const ProfilePage: React.FC = () => {
 	return <Wrapper>
 		<div className={ styles.menu }>
 			<div className={ styles.top }>
-				<Image className={ styles.image } src={ crossSvg } alt={ "" } />
+				<Image className={ styles.image } src={ crossSvg } alt={ "close page" } />
 			</div>
 			<div className={ styles.content }>
 				<div className={ styles.title }>Registration/Login</div>
@@ -27,4 +27,4 @@ const RegistrationPage: React.FC = () => {
 	</Wrapper>
 }
 
-export default RegistrationPage
+export default ProfilePage;
