@@ -1,12 +1,22 @@
-import React from "react";
+import React, { useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/shared/ui/tooltip";
-import { Button } from "@/shared/ui/button";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/shared/ui/tooltip";
 import { TooltipArrow } from "@radix-ui/react-tooltip";
 import settingsIcon from "@/public/icons/svg/settings.svg";
 import styles from "./styles.module.scss";
 import userIcon from "@/public/icons/faculty/faculty-member/faculty-member-icon.svg";
+import arrowRightIcon from "@/public/icons/svg/right-arrow.svg";
+
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogHeader,
+	DialogTitle,
+	DialogTrigger,
+} from "@/shared/ui/dialog";
+import DialogMenuContent from "@/shared/ui/CourseField/DialogMenuContent";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 
 interface Course {
 	courseName: string;
@@ -30,7 +40,7 @@ const CourseField: React.FC<Course> = ({ courseName, PI, tutor, faculties }) => 
 				<div className={ styles.courseName }>
 					<div className={ styles.name }>{ courseName }</div>
 					<div className={ styles.icon }>
-						<Image src={ settingsIcon } alt={ "settings" } className={ styles.icon } />
+						<Image src={ settingsIcon } alt={ "settings" } className={ styles.icon }/>
 					</div>
 				</div>
 				<ul>
@@ -54,60 +64,90 @@ const CourseField: React.FC<Course> = ({ courseName, PI, tutor, faculties }) => 
 		<div className={ styles.body }>
 			<div className={ styles.title }>Teaching assistants</div>
 			<div className={ styles.assistance }>
-				{ faculties.map((faculty, i) => <TAElement { ...faculty } key={ i } />) }
+				{ faculties.map((faculty, i) => <TAElement { ...faculty } key={ i }/>) }
 			</div>
 		</div>
 	</div>
 }
 
 const TAElement: React.FC<Faculty> = (faculty) => {
+	const [openDialog, setOpenDialog] = useState(false);
+
 	return (
-		<>
-			<Tooltip>
-				<TooltipTrigger>
-					<div className={ styles.facultyElement }>
-						<span className={ styles.menuTrigger }>{ faculty.name[0] + ". " + faculty.surname }</span>
-					</div>
-				</TooltipTrigger>
-				<TooltipContent side={ "right" } className={ styles.contextMenu }>
-					<TooltipArrow className={ `${ styles.arrow } fill-white` }  />
-					<div className={ styles.menu }>
-						<div className={ styles.header }>
-							<div className={ styles.head }>
-								<Image src={ userIcon } alt={ "user icon" } className={ styles.userImage } />
-								<div className={ styles.information }>
-									<div className={ styles.name }>Name Surname</div>
-									<div className={ styles.tg }>@alias</div>
-								</div>
-							</div>
-							<div className={ styles.email }>n.surname@innopolis.university</div>
-							<div className={ styles.workInformation }>
-								<div className={ styles.department }>
-									<div className={ styles.placeholder }>Department:</div>
-									<div className={ styles.value }>______________</div>
-								</div>
-								<div className={ styles.department }>
-									<div className={ styles.placeholder }>Position:</div>
-									<div className={ styles.value }>______________</div>
-								</div>
-								<div className={ styles.workload }>
-									<div className={ styles.number }>0.2</div>
-									<div className={ styles.text }>Workload</div>
-								</div>
-							</div>
+		<TooltipProvider>
+			<Dialog open={openDialog} onOpenChange={setOpenDialog}>
+				<Tooltip>
+					<TooltipTrigger asChild>
+						<div className={styles.facultyElement}>
+              <span className={styles.menuTrigger}>
+                {faculty.name[0] + ". " + faculty.surname}
+              </span>
 						</div>
-						<ul className={ styles.labList }>
-							<li className={ styles.lab }>AGLA I - 2 lab</li>
-							<li className={ styles.lab }>MA I - 3 labs</li>
-							<li className={ styles.lab }>AGLA I - 1 tut</li>
-							<li className={ styles.lab }>Smt else - 1 lab</li>
-							<li className={ styles.lab }>Smt else - 1 lab</li>
-						</ul>
-					</div>
-				</TooltipContent>
-			</Tooltip>
-		</>
-	)
-}
+					</TooltipTrigger>
+					<TooltipContent side="right" className={styles.contextMenu}>
+						<div className={styles.menu}>
+							<div className={styles.header}>
+								<div className={styles.head}>
+									<Image
+										src={userIcon}
+										alt="user icon"
+										className={styles.userImage}
+									/>
+									<div className={styles.information}>
+										<DialogTrigger className={ "cursor-pointer" } asChild>
+											<div
+												title="Go to profile"
+												className={styles.name}
+												onClick={() => setOpenDialog(true)}
+											>
+												<span>Name Surname</span>
+												<Image src={arrowRightIcon} alt="go to profile" />
+											</div>
+										</DialogTrigger>
+										<div className={styles.tg}>@alias</div>
+									</div>
+								</div>
+								<div className={styles.email}>n.surname@innopolis.university</div>
+								<div className={styles.workInformation}>
+									<div className={styles.department}>
+										<div className={styles.placeholder}>Department:</div>
+										<div className={styles.value}>______________</div>
+									</div>
+									<div className={styles.department}>
+										<div className={styles.placeholder}>Position:</div>
+										<div className={styles.value}>______________</div>
+									</div>
+									<div className={styles.workload}>
+										<div className={styles.number}>0.2</div>
+										<div className={styles.text}>Workload</div>
+									</div>
+								</div>
+							</div>
+							<ul className={styles.labList}>
+								<li className={styles.lab}>AGLA I - 2 lab</li>
+								<li className={styles.lab}>MA I - 3 labs</li>
+								<li className={styles.lab}>AGLA I - 1 tut</li>
+								<li className={styles.lab}>Smt else - 1 lab</li>
+								<li className={styles.lab}>Smt else - 1 lab</li>
+							</ul>
+						</div>
+					</TooltipContent>
+				</Tooltip>
+				<VisuallyHidden>
+					<DialogTitle></DialogTitle>
+					<DialogContent />
+				</VisuallyHidden>
+				<DialogContent className={styles.dialogMenu}>
+					<VisuallyHidden>
+						<div className={styles.header}>
+							<h2>Меню</h2>
+						</div>
+					</VisuallyHidden>
+					<DialogMenuContent />
+				</DialogContent>
+			</Dialog>
+		</TooltipProvider>
+	);
+};
 
 export default CourseField;
