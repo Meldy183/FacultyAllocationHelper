@@ -1,7 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import { StaticImport } from "next/dist/shared/lib/get-img-props";
-import Wrapper from "@/components/ui/wrapper";
+import Wrapper from "@/shared/ui/wrapper";
 import bookIcon from "@/public/icons/main-page/book.svg";
 import clockIcon from "@/public/icons/main-page/clock.svg";
 import userIcon from "@/public/icons/main-page/user.svg";

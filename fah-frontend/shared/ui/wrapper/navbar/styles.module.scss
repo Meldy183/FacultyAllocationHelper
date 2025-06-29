@@ -1,0 +1,42 @@
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  min-width: 100%;
+  background-color: #FAFAFA;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 0;
+  z-index: 1;
+  .ul {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 480px;
+
+    .li {
+      font-weight: 400;
+      font-size: 18px;
+      line-height: 24px;
+      letter-spacing: 0.15px;
+      color: #333333;
+      margin: 16px 20px;
+    }
+
+    .active {
+      border-bottom: 2px solid #333333;
+    }
+  }
+}
+
+.avatar {
+    position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 40px;
+  width: 40px;
+  object-fit: cover;
+  border-radius: 50%;
+  }

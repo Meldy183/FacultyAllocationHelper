@@ -2,8 +2,8 @@ import React from "react";
 import styles from "./styles.module.scss";
 import Image from "next/image";
 import crossSvg from "@/public/icons/svg/cross.svg";
-import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Button } from "@/shared/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select";
 import Link from "next/link";
 
 const AddTaPage: React.FC = () => {

@@ -139,3 +139,26 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+/* Стилизация всей полосы прокрутки */
+::-webkit-scrollbar {
+  width: 6px; /* Ширина вертикальной полосы прокрутки */
+  height: 12px; /* Высота горизонтальной полосы прокрутки */
+}
+
+/* Стилизация дорожки (фон полосы прокрутки) */
+::-webkit-scrollbar-track {
+  background: #f0f0f0; /* Цвет фона */
+  border-radius: 10px; /* Закругление углов */
+}
+
+/* Стилизация ползунка (движущаяся часть) */
+::-webkit-scrollbar-thumb {
+  background: #888; /* Цвет ползунка */
+  border-radius: 10px; /* Закругление углов */
+}
+
+/* Стилизация ползунка при наведении */
+::-webkit-scrollbar-thumb:hover {
+  background: #555; /* Цвет при наведении */
+}

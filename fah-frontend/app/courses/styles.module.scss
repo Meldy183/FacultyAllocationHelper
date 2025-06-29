@@ -1,3 +1,8 @@
+.wrapper {
+  overflow-y: scroll;
+  max-height: calc(100vh - 60px);
+}
+
 .container {
   background-color: #ffffff;
   min-width: 1200px;
@@ -5,11 +10,18 @@
   align-items: center;
   flex-direction: column;
   padding: 15px 0;
+
+  .courses {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    max-width: 750px;
+    gap: 10px;
+  }
 }
 
-.head {
+// .head {
 
-}
+// }
 
 .field {
   margin-bottom: 15px;
@@ -23,7 +35,8 @@
       align-items: center;
       padding: 13px;
       background-color: #EFEFEF;
-      border-radius: 8px;
+      border-radius: 30px;
+      width: 190px;
       margin-top: 5px;
       span {
         margin-right: 25px;
@@ -46,4 +59,8 @@
       }
     }
   }
+}
+
+.leftMenu {
+  overflow-y: scroll;
 }

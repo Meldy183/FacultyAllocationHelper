@@ -2,7 +2,7 @@ import React from "react";
 import styles from "./styles.module.scss";
 import Image from "next/image";
 import crossSvg from "@/public/icons/svg/cross.svg";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/shared/ui/button";
 
 const AddCoursePage: React.FC = () => {
 	return <>

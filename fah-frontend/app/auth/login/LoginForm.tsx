@@ -3,16 +3,16 @@ import React from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { authResolver } from "@/types/resolvers/auth";
-import { Form, FormField } from "@/components/ui/form";
+import { authResolver } from "@/shared/types/resolvers/auth";
+import { Form, FormField } from "@/shared/ui/form";
 import CustomField from "@/app/auth/login/CustomField";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/shared/ui/button";
 import styles from "./styles.module.scss";
 import { useLoginMutation } from "@/features/api/slises/authSlice";
-import { handleErrorForm } from "@/hooks/hadleErrorForm";
+import { handleErrorForm } from "@/shared/hooks/hadleErrorForm";
 import { useRouter } from "next/navigation";
-import { dashboardRoute } from "@/configs/routes";
-import { API_PATH } from "@/configs/constants";
+import { dashboardRoute } from "@/shared/configs/routes";
+import { API_PATH } from "@/shared/configs/constants";
 
 type LoginInput = z.infer<typeof authResolver>;
 

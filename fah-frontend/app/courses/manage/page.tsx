@@ -1,10 +1,10 @@
 import React from "react";
-import Wrapper from "@/components/ui/wrapper";
+import Wrapper from "@/shared/ui/wrapper";
 import crossIcon from "@/public/icons/svg/cross.svg";
 import styles from "./styles.module.scss";
 import Image from "next/image";
 import Link from "next/link";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select";
 
 const ManageCourse: React.FC = () => {
 	return <Wrapper>
