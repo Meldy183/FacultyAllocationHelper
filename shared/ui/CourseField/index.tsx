@@ -10,12 +10,13 @@ import arrowRightIcon from "@/public/icons/svg/right-arrow.svg";
 
 import {
 	Dialog,
-	DialogContent,
+	DialogContent, DialogDescription, DialogHeader,
 	DialogTitle,
 	DialogTrigger,
 } from "@/shared/ui/dialog";
-import DialogMenuContent from "@/shared/ui/CourseField/DialogMenuContent";
+import PersonDialogMenuContent from "@/shared/ui/CourseField/PersonDialogMenuContent";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
+import CourseDialogMenuContent from "@/shared/ui/CourseField/CourseDialogMenuContent";
 
 interface Course {
 	courseName: string;
@@ -38,9 +39,22 @@ const CourseField: React.FC<Course> = ({ courseName, PI, tutor, faculties }) => 
 			<div className={ styles.information }>
 				<div className={ styles.courseName }>
 					<div className={ styles.name }>{ courseName }</div>
-					<div className={ styles.icon }>
-						<Image src={ settingsIcon } alt={ "settings" } className={ styles.icon }/>
-					</div>
+					<Dialog>
+						<DialogTrigger>
+							<div className={ styles.icon }>
+								<Image src={ settingsIcon } alt={ "settings" } className={ styles.icon }/>
+							</div>
+						</DialogTrigger>
+						<DialogContent className={styles.dialogMenu}>
+							<VisuallyHidden>
+								<DialogHeader>
+									<DialogTitle />
+									<DialogDescription />
+								</DialogHeader>
+							</VisuallyHidden>
+							<CourseDialogMenuContent />
+						</DialogContent>
+					</Dialog>
 				</div>
 				<ul>
 					<li>Study year:</li>
@@ -71,7 +85,6 @@ const CourseField: React.FC<Course> = ({ courseName, PI, tutor, faculties }) => 
 
 const TAElement: React.FC<Faculty> = (faculty) => {
 	const [openDialog, setOpenDialog] = useState(false);
-
 	return (
 		<TooltipProvider>
 			<Dialog open={openDialog} onOpenChange={setOpenDialog}>
@@ -142,7 +155,7 @@ const TAElement: React.FC<Faculty> = (faculty) => {
 							<h2>Меню</h2>
 						</div>
 					</VisuallyHidden>
-					<DialogMenuContent />
+					<PersonDialogMenuContent />
 				</DialogContent>
 			</Dialog>
 		</TooltipProvider>
