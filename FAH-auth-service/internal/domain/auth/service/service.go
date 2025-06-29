@@ -41,6 +41,7 @@ func (s *Service) CreateUser(ctx context.Context, config config.Config, email st
 	}
 	user, _ := s.GetUserByEmail(ctx, email)
 	if user != nil {
+		log.Printf("user exiats")
 		return nil, errs.ErrUserExists
 	}
 	log.Println("creating user")

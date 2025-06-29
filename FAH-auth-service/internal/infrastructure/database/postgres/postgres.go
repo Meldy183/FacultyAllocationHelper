@@ -37,6 +37,7 @@ func New(context context.Context, cfg config.Database) (*pgxpool.Pool, error) {
 
 func InitTables(ctx context.Context, pool *pgxpool.Pool) error {
 	log.Println("are you alive?")
+	log.Printf("%s", pool.Config().ConnString())
 	conn, err := pool.Acquire(ctx)
 	if err != nil {
 		log.Printf("Failed to acquire connection: %v", err)
