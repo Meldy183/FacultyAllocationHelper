@@ -79,7 +79,7 @@ export default function ProfileDashboard() {
 				{/* Workload */}
 				<div className={styles.card}>
 					<div className={styles.sectionCardWhite}>
-						<h2 className={styles.title}>Workload</h2>
+						<h2 className={styles.name}>Workload</h2>
 						<div className={styles.workloadGrid}>
 							<table className={styles.table}>
 								<thead>
@@ -139,7 +139,7 @@ export default function ProfileDashboard() {
 				</div>
 				{/* Teaching Courses */}
 				<div className={styles.card}>
-					<h2 className={styles.title}>Teaching courses:</h2>
+					<h2 className={styles.name}>Teaching courses:</h2>
 
 					<div className={ styles.field }><CourseField { ...courseMock } /></div>
 					<div className={ styles.field }><CourseField { ...courseMock } /></div>
