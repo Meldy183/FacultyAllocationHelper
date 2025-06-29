@@ -1,133 +1,108 @@
+// ProfileDashboard.module.scss
 .container {
-  width: 1200px;
-  padding: 40px;
-  background-color: #FFFFFF;
+  min-height: 100vh;
+  background-color: #D5E2D2;
+  padding: 1.5rem;
+  font-size: 16;
+  color: #333;
+  gap: 10px;
+  display: grid;
+}
+
+.card {
+  width: 800px;
+  margin: 0 auto;
+  background: white;
+  border-radius: 1rem;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+  padding: 30px;
+  max-height: 550px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 100px;
+  padding-bottom: 15px;
+}
+
+.userInfo {
   display: flex;
   align-items: center;
+  gap: 1.5rem;
+}
+
+.avatar {
+  width: 98px;
+  height: auto;
+}
+
+.name {
+  font-size: 24px;
+  font-weight: 600;
+  padding-bottom: 10px;
+}
+
+.subName {
+    font-size: 20px;
+  color: #666;
+}
+
+.section {
+  background: #ECF8E9;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  margin-top: 0.5rem;
+}
+
+.row {
+  margin-bottom: 0.5rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.1rem;
+}
+
+.title {
+  font-weight: 600;
+  font-size: 16px;
+  margin-bottom: 0.5rem;
+}
+
+.workloadGrid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 1rem;
+}
+
+.table {
+  width: 100%;
+  text-align: center;
+  border-collapse: collapse;
+   thead {
+    background-color: #DBF2D5;
+    color: #666666; 
+    font-weight: 600;
+    }
+}
+
+.table th, .table td {
+  border: 1px solid #8CD67A;
+  padding: 0.25rem;
+}
+
+.metrics {
+  background: #ECF8E9;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  margin-top: 0.5rem;
+  display: flex;
   flex-direction: column;
-  overflow: hidden;
+  gap: 0.6rem;
 }
 
-.content {
-  width: 750px;
-  max-width: 750px;
-  overflow: hidden;
 
-  .header {
-    .informationContainer {
-      display: flex;
-      .icon {
-        margin-right: 40px;
-      }
 
-      .name {
-        width: auto;
-        flex-grow: 1;
-        .engName {
-          //font-family: Inter;
-          font-weight: 400;
-          font-size: 26px;
-          line-height: 24px;
-          letter-spacing: 0.15px;
-          color: #333333;
-        }
-
-        .rusName {
-          //font-family: Inter;
-          font-weight: 400;
-          font-size: 20px;
-          line-height: 24px;
-          letter-spacing: 0.15px;
-          color: #646464;
-          margin-top: 5px;
-        }
-        .contacts {
-          display: flex;
-          align-items: center;
-          margin-top: 5px;
-          .phoneNumber {
-            //font-family: Inter;
-            font-weight: 400;
-            font-size: 18px;
-            line-height: 24px;
-            letter-spacing: 0.15px;
-            color: #333333;
-            margin-right: 40px;
-          }
-          .telegram {
-            //font-family: Inter;
-            font-weight: 400;
-            font-size: 18px;
-            line-height: 24px;
-            letter-spacing: 0.15px;
-            color: #333333;
-          }
-        }
-      }
-      .email {
-        //font-family: Inter;
-        font-weight: 400;
-        font-size: 18px;
-        line-height: 24px;
-        letter-spacing: 0.15px;
-        color: #333333;
-      }
-    }
-    .workSection {
-      display: flex;
-      align-items: center;
-      .department {
-        //font-family: Inter;
-        font-weight: 400;
-        font-size: 18px;
-        line-height: 24px;
-        letter-spacing: 0.15px;
-        color: #333333;
-        margin-right: 50px;
-      }
-      .position {
-        //font-family: Inter;
-        font-weight: 400;
-        font-size: 18px;
-        line-height: 24px;
-        letter-spacing: 0.15px;
-        color: #333333;
-        margin-right: 50px;
-      }
-      .workload {
-        border: 1px solid #FF0000;
-        display: inline;
-        //font-family: Inter;
-        font-weight: 400;
-        font-size: 16px;
-        line-height: 24px;
-        letter-spacing: 0.15px;
-        color: #646464;
-      }
-    }
-  }
-
-  .courses {
-    .title {
-      //font-family: Inter;
-      font-weight: 400;
-      font-size: 18px;
-      line-height: 24px;
-      letter-spacing: 0.15px;
-      text-decoration: underline;
-      text-decoration-style: solid;
-      //text-decoration-offset: 0%;
-      //text-decoration-thickness: 0%;
-      text-decoration-skip-ink: auto;
-      color: #333333;
-      margin-bottom: 40px;
-      margin-top: 22px;
-    }
-
-    .courses {
-      .course {
-        margin-bottom: 15px;
-      }
-    }
-  }
-}
