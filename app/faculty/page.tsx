@@ -4,7 +4,7 @@ import React from "react";
 import { Button } from "@/shared/ui/button";
 import Wrapper from "@/shared/ui/wrapper";
 import SideBar from "@/shared/ui/wrapper/sidebar";
-import SideBarContent from "@/app/courses/SideBarContent";
+import SideBarContent from "@/app/faculty/SideBarContent";
 import styles from "./styles.module.scss";
 import Link from "next/link";
 

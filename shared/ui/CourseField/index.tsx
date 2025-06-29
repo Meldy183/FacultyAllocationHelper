@@ -39,6 +39,7 @@ const CourseField: React.FC<Course> = ({ courseName, PI, tutor, faculties }) => 
 			<div className={ styles.information }>
 				<div className={ styles.courseName }>
 					<div className={ styles.name }>{ courseName }</div>
+<<<<<<< HEAD
 					<Dialog>
 						<DialogTrigger>
 							<div className={ styles.icon }>
@@ -55,6 +56,11 @@ const CourseField: React.FC<Course> = ({ courseName, PI, tutor, faculties }) => 
 							<CourseDialogMenuContent />
 						</DialogContent>
 					</Dialog>
+=======
+					<div className={ styles.icon }>
+						<button onClick={() => window.location.href = '/courses/manage'}><Image src={ settingsIcon } alt={ "settings" } className={ styles.icon } /></button>
+					</div>
+>>>>>>> 259118155b8e247d736a7107dd03205a60072813
 				</div>
 				<ul>
 					<li>Study year:</li>
