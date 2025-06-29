@@ -141,9 +141,12 @@ export default function ProfileDashboard() {
 				<div className={styles.card}>
 					<h2 className={styles.name}>Teaching courses:</h2>
 
-					<div className={ styles.field }><CourseField { ...courseMock } /></div>
-					<div className={ styles.field }><CourseField { ...courseMock } /></div>
-					<div className={ styles.field }><CourseField { ...courseMock } /></div>
+					<div className={ styles.items }>
+						<div className={ styles.field }><CourseField { ...courseMock } /></div>
+						<div className={ styles.field }><CourseField { ...courseMock } /></div>
+						<div className={ styles.field }><CourseField { ...courseMock } /></div>
+						<div className={ styles.field }><CourseField { ...courseMock } /></div>
+					</div>
 				</div>
 			</div>
 		</Wrapper>
