@@ -10,6 +10,13 @@
   align-items: center;
   flex-direction: column;
   padding: 15px 0;
+
+  .courses {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    max-width: 750px;
+    gap: 10px;
+  }
 }
 
 .head {

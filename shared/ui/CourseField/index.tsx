@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/shared/ui/tooltip";
 import { Button } from "@/shared/ui/button";
 import { TooltipArrow } from "@radix-ui/react-tooltip";
+import settingsIcon from "@/public/icons/svg/settings.svg";
 import styles from "./styles.module.scss";
 import userIcon from "@/public/icons/faculty/faculty-member/faculty-member-icon.svg";
 
@@ -25,25 +26,35 @@ interface Faculty {
 const CourseField: React.FC<Course> = ({ courseName, PI, tutor, faculties }) => {
 	return <div className={ styles.card }>
 		<div className={ styles.header }>
-			<div className={ styles.title }>{ courseName }</div>
-			<Button><Link href={ "/courses/manage" }>Manage</Link></Button>
-		</div>
-		<div className={ styles.instructors }>
-			<div className={ styles.instructor }>
-				<div className={ styles.role }> PI</div>
-				<div className={ styles.name }> <span>{ PI.name[0] + ". " + PI.surname }</span> </div>
+			<div className={ styles.information }>
+				<div className={ styles.courseName }>
+					<div className={ styles.name }>{ courseName }</div>
+					<div className={ styles.icon }>
+						<Image src={ settingsIcon } alt={ "settings" } className={ styles.icon } />
+					</div>
+				</div>
+				<ul>
+					<li>Study year:</li>
+					<li>Semester:</li>
+					<li>Study program:</li>
+					<li>Institute:</li>
+				</ul>
 			</div>
-			<div className={ styles.instructor }>
-				<div className={ styles.role }> Tutor </div>
-				<div className={ styles.name }> <span>{ tutor?.name || "not assigned" }</span> </div>
+			<div className={ styles.instructors }>
+				<div className={ styles.instructor }>
+					<div className={ styles.title }>PI</div>
+					<TAElement { ...PI } />
+				</div>
+				<div className={ styles.instructor }>
+					<div className={ styles.title }>Tutor</div>
+					<TAElement { ...PI } />
+				</div>
 			</div>
 		</div>
-		<div className={ styles.faculties }>
-			<div className={ styles.title }>Faculty</div>
-			<div className={ styles.facultyMainBlock }>
-				{
-					faculties.map((faculty, i) => <TAElement { ...faculty } key={ i } />)
-				}
+		<div className={ styles.body }>
+			<div className={ styles.title }>Teaching assistants</div>
+			<div className={ styles.assistance }>
+				{ faculties.map((faculty, i) => <TAElement { ...faculty } key={ i } />) }
 			</div>
 		</div>
 	</div>
@@ -54,7 +65,7 @@ const TAElement: React.FC<Faculty> = (faculty) => {
 		<>
 			<Tooltip>
 				<TooltipTrigger>
-					<div className={ styles.facultyBlock }>
+					<div className={ styles.facultyElement }>
 						<span className={ styles.menuTrigger }>{ faculty.name[0] + ". " + faculty.surname }</span>
 					</div>
 				</TooltipTrigger>
