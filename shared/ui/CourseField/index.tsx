@@ -3,7 +3,6 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/shared/ui/tooltip";
-import { TooltipArrow } from "@radix-ui/react-tooltip";
 import settingsIcon from "@/public/icons/svg/settings.svg";
 import styles from "./styles.module.scss";
 import userIcon from "@/public/icons/faculty/faculty-member/faculty-member-icon.svg";
@@ -12,8 +11,6 @@ import arrowRightIcon from "@/public/icons/svg/right-arrow.svg";
 import {
 	Dialog,
 	DialogContent,
-	DialogDescription,
-	DialogHeader,
 	DialogTitle,
 	DialogTrigger,
 } from "@/shared/ui/dialog";
