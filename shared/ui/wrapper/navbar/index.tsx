@@ -3,6 +3,9 @@ import React from "react";
 import Link from "next/link";
 import styles from "./styles.module.scss";
 import { usePathname } from "next/navigation";
+import userIcon from "@/public/icons/faculty/faculty-member/faculty-member-icon.svg"
+import Image from "next/image";
+
 
 //переместить
 interface Routes {
@@ -22,6 +25,10 @@ const routes: Routes[] = [
 		name: "Faculty",
 		path: "/faculty"
 	},
+	// {
+	// 	name: "Logs",
+	// 	path: "/logs"
+	// }
 	{
 		name: "My profile",
 		path: "/profile"
@@ -33,7 +40,8 @@ const NavBar: React.FunctionComponent = () => {
 
 	const isActiveTab = (path: string) => pagePath.includes(path);
 
-	return <div className={ styles.navbar }>
+	return (
+	<div className={ styles.navbar }>
 		<ul className={ styles.ul }>
 			{
 				routes.map( ({ name, path }) => (
@@ -43,7 +51,11 @@ const NavBar: React.FunctionComponent = () => {
 				))
 			}
 		</ul>
+		<div>
+			<Image src={ userIcon } alt={ "user icon" } className={ styles.avatar } />
+		</div>
 	</div>
+	)
 }
 
 export default NavBar;

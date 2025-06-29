@@ -1,0 +1,107 @@
+// ProfileDashboard.module.scss
+.container {
+  min-height: 100vh;
+  background-color: #D5E2D2;
+  padding: 1.5rem;
+  font-size: 16;
+  color: #333;
+  gap: 10px;
+  display: grid;
+}
+
+.card {
+  width: 800px;
+  margin: 0 auto;
+  background: white;
+  border-radius: 1rem;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+  padding: 30px;
+  max-height: 550px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 100px;
+  padding-bottom: 15px;
+}
+
+.userInfo {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.avatar {
+  width: 98px;
+  height: auto;
+}
+
+.name {
+  font-size: 24;
+  font-weight: 600;
+}
+
+.subName {
+    font-size: 20;
+  color: #666;
+}
+
+.section {
+  background: #ECF8E9;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  margin-top: 0.5rem;
+}
+
+.row {
+  margin-bottom: 0.5rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.1rem;
+}
+
+.title {
+  font-weight: 600;
+  font-size: 16;
+  margin-bottom: 0.5rem;
+}
+
+.workloadGrid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 1rem;
+}
+
+.table {
+  width: 100%;
+  text-align: center;
+  border-collapse: collapse;
+   thead {
+    background-color: #DBF2D5;
+    color: #666666; 
+    font-weight: 600;
+    }
+}
+
+.table th, .table td {
+  border: 1px solid #8CD67A;
+  padding: 0.25rem;
+}
+
+.metrics {
+  background: #ECF8E9;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  margin-top: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+
+

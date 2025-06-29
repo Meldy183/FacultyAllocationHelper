@@ -5,7 +5,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/shared/ui/tooltip";
 import { Button } from "@/shared/ui/button";
 import { TooltipArrow } from "@radix-ui/react-tooltip";
 import styles from "./styles.module.scss";
-import userIcon from "@/public/icons/faculty/faculty-member/faculty-member-icon.svg"
+import userIcon from "@/public/icons/faculty/faculty-member/faculty-member-icon.svg";
 
 interface Course {
 	courseName: string;
