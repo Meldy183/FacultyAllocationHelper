@@ -24,7 +24,7 @@ const courseMock = {
 const CoursesPage: React.FC = () => {
 	return (
 		<Wrapper>
-			<SideBar hiddenText={ "filters" }>
+			<SideBar hiddenText={ "Filters" }>
 				<SideBarContent />
 			</SideBar>
 			<div className={ styles.container }>

@@ -39,7 +39,7 @@ const CourseField: React.FC<Course> = ({ courseName, PI, tutor, faculties }) => 
 				<div className={ styles.courseName }>
 					<div className={ styles.name }>{ courseName }</div>
 					<div className={ styles.icon }>
-						<Image src={ settingsIcon } alt={ "settings" } className={ styles.icon }/>
+						<button onClick={() => window.location.href = '/courses/manage'}><Image src={ settingsIcon } alt={ "settings" } className={ styles.icon } /></button>
 					</div>
 				</div>
 				<ul>
