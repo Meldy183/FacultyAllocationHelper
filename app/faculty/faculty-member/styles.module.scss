@@ -16,7 +16,12 @@
   border-radius: 1rem;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
   padding: 30px;
-  max-height: 550px;
+
+  .items {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
 }
 
 .header {
