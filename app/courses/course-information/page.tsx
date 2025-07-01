@@ -77,7 +77,6 @@ const CourseInformation: React.FC = () => {
 				 				<ul className={ styles.heading }>
 				 					<li>Name</li>
 				 					<li>E-mail</li>
-				 					<li>Workload</li>
 				 				</ul>
 				 				<ul className={ styles.list }>
 				 					<li><TeacherAssistance/></li>
@@ -106,11 +105,7 @@ const TeacherAssistance: React.FC = () => {
 					<div>@alias</div>
 				</div>
 				<div className={styles.emailTA}>n.surname@innopolis.university</div>
-				<div className={styles.workloadTA}>
-					<div>Lec = 0</div>
-					<div>Tut = 0</div>
-					<div>Lab = 0</div>
-				</div>
+				
 				
 			</li>
 		</ul>

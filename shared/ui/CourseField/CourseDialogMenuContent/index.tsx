@@ -52,31 +52,18 @@ const CourseDialogMenuContent: React.FC = () => {
 				<h2 className={ styles.name }>Instructors on this course</h2>
 				<h3 className={ styles.subName }>Primary instructor</h3>
 				<ul className={ styles.list }>
-					<li className={ styles.primatyTutorItem }>
-						<div className={ styles.nameAliasPrimaryTutor }>
-							<h2>Name Surname</h2>
-							<div>@alias</div>
-						</div>
-						<div className={ styles.taEmail }>n.surname@innopolis.university</div>
-					</li>
+					<TeacherAssistance/>
 				</ul>
 				<h3 className={ styles.subName }>Tutor instructor</h3>
 				<ul className={ styles.list }>
-					<li className={ styles.primatyTutorItem }>
-						<div className={ styles.nameAliasPrimaryTutor }>
-							<h2>Name Surname</h2>
-							<div>@alias</div>
-						</div>
-						<div className={ styles.taEmail }>n.surname@innopolis.university</div>
-					</li>
+					<TeacherAssistance/>
 				</ul>
 
 				<h3 className={ styles.subName }>Teaching assistants</h3>
-				<div className={ styles.assistance }>
+				{/* <div className={ styles.assistance }>
 					<ul className={ styles.heading }>
 						<li>Name</li>
 						<li>E-mail</li>
-						<li>Workload</li>
 					</ul>
 					<ul className={ styles.list }>
 						<li><TeacherAssistance/></li>
@@ -85,6 +72,24 @@ const CourseDialogMenuContent: React.FC = () => {
 						<li><TeacherAssistance/></li>
 						<li><TeacherAssistance/></li>
 					</ul>
+				</div> */}
+				<div className={ styles.assistance }>
+					<ul className={styles.list}>
+						<li className={styles.tableHeader}>
+							<div className={styles.colName}>Name, alias</div>
+							<div className={styles.colEmail}>Email</div>
+						</li>
+						<TeacherAssistance/>
+						<TeacherAssistance/>					
+						<TeacherAssistance/>
+						<TeacherAssistance/>
+						<TeacherAssistance/>					
+						<TeacherAssistance/>
+						<TeacherAssistance/>
+						<TeacherAssistance/>
+						<TeacherAssistance/>
+						<TeacherAssistance/>
+						</ul>
 				</div>
 
 			</div>
@@ -96,21 +101,13 @@ const CourseDialogMenuContent: React.FC = () => {
 
 const TeacherAssistance: React.FC = () => {
 	return <Link href={ "/faculty/faculty-member" }>
-		<ul className={ styles.list }>
-			<li className={styles.TaItem}>
-				<div className={styles.nameAliasTA}>
-					<h2>Name Surname</h2>
-					<div>@alias</div>
-				</div>
-				<div className={styles.emailTA}>n.surname@innopolis.university</div>
-				<div className={styles.workloadTA}>
-					<div>Lec = 0</div>
-					<div>Tut = 0</div>
-					<div>Lab = 0</div>
-				</div>
-
-			</li>
-		</ul>
+		<li className={styles.row}>
+			<div className={styles.colName}>
+			<h2>Name Surname</h2>
+			<div>@alias</div>
+			</div>
+			<div className={styles.colEmail}>n.surname@innopolis.university</div>
+		</li>
 	</Link>
 }
 

@@ -1,7 +1,7 @@
 .container {
   height: 80vh;
   overflow-x: hidden;
-  background-color: #D5E2D2;
+  // background-color: #D5E2D2;
   font-size: 16px;
   color: #333;
   gap: 10px;
@@ -78,84 +78,172 @@
   max-width: 780px;
 }
 
-.assistance {
-  border: 0.5px solid #eee;
-  border-radius: 0.75rem;
-  .title {
-    //font-family: Inter;
-    font-weight: 400;
-    font-size: 18px;
-    line-height: 24px;
-    letter-spacing: 0.15px;
-    color: #333333;
-    margin-bottom: 30px;
+
+
+.list {
+  background-color: #ffffff;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  border-radius: 15px;
+  font-family: Arial, sans-serif;
+  color: #666666;
+  border-collapse: separate;
+
+  .tableHeader,
+  .row {
+    display: flex;
+    text-align: center;
+    padding: 10px 0;
+    border-bottom: 0.5px solid #ccc;
+    border-radius: 0;
   }
 
-  .heading {
-    //font-family: Poppins;
-    background-color: #ECF8E9;
-    border-radius: 0.75rem;
-    height: 40px;
-    align-items: center;
-    font-weight: 500;
-    font-size: 14px;
-    // line-height: 100%;
-    letter-spacing: -1%;
-    color: #333333;
-    display: flex;
-    justify-content:  flex-start;
+  .tableHeader {
+    background-color: #DBF2D5;
+    font-weight: 600;
+    color: #666666;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+    border-bottom: 1px solid #ccc;
 
-    li {
-      transform: translateY(50%);
+    > div {
+      padding: 0 px;
+      text-align: left;
+    }
 
-      width: 300px;
-      text-align: center;
-      margin-bottom: 15px;
+    .colName {
+      padding: 0 20px;  // Override horizontal padding for header first col
     }
   }
 
-  .list {
-    width: 100%;
+  .row {
+    > div {
+      padding: px;
+      border-radius: 15px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      text-align: left;
+    }
+
+    .colName {
+      padding-left: 20px;  // Increased padding for first column in data rows
+    }
+
+    h2 {
+      margin: 0 0 4px 0;
+      font-weight: 600;
+      font-size: 1rem;
+      color: #666666;
+    }
+
+    div > div {
+      font-size: 0.9rem;
+      color: #999999;
+    }
+  }
+
+  .colName {
+    width: 225px;
+    flex-shrink: 0;
+  }
+
+  .colEmail {
+    width: 325px;
+    flex-shrink: 0;
+  }
+
+  .colInstitute,
+  .colPosition {
+    width: 100px;
+    flex-shrink: 0;
   }
 }
 
-.primatyTutorItem {
-  margin-top: 10px;
 
-  background-color: #ECF8E9;
-  border-radius: 0.75rem;
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  padding: 10px;
-  gap: 40px;
-  border-top: 1px solid #eee;
-  margin-bottom: 10px;
-  &:first-child {
-    border-top: none;
-  }
-  .nameAliasPrimaryTutor {
-    width: 300px;
-    margin-left: 10px;
-  }
-}
 
-.TaItem {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  padding: 0px;
-  gap: 40px;
-  border-top: 1px solid #333333;
-  margin-bottom: 10px;
-  &:first-child {
-    border-top: none;
-  }
-  .nameAliasTA {
-    width: 200px;
-    margin-left: 10px;
-  }
-  .emailTA {
-    width: 300px;
-  }
-}
+
+
+// .assistance {
+//   border: 0.5px solid #eee;
+//   border-radius: 0.75rem;
+//   .title {
+//     //font-family: Inter;
+//     font-weight: 400;
+//     font-size: 18px;
+//     line-height: 24px;
+//     letter-spacing: 0.15px;
+//     color: #333333;
+//     margin-bottom: 30px;
+//   }
+
+//   .heading {
+//     //font-family: Poppins;
+//     background-color: #ECF8E9;
+//     border-radius: 0.75rem;
+//     height: 40px;
+//     align-items: center;
+//     font-weight: 500;
+//     font-size: 14px;
+//     // line-height: 100%;
+//     letter-spacing: -1%;
+//     color: #333333;
+//     display: flex;
+//     justify-content:  flex-start;
+
+//     li {
+//       transform: translateY(50%);
+
+//       width: 300px;
+//       text-align: center;
+//       margin-bottom: 15px;
+//     }
+//   }
+
+//   .list {
+//     width: 100%;
+//   }
+// }
+
+// .primatyTutorItem {
+//   margin-top: 10px;
+
+//   background-color: #ECF8E9;
+//   border-radius: 0.75rem;
+//   display: flex;
+//   justify-content: flex-start;
+//   align-items: center;
+//   padding: 10px;
+//   gap: 40px;
+//   border-top: 1px solid #eee;
+//   margin-bottom: 10px;
+//   &:first-child {
+//     border-top: none;
+//   }
+//   .nameAliasPrimaryTutor {
+//     width: 300px;
+//     margin-left: 10px;
+//   }
+// }
+
+// .TaItem {
+//   display: flex;
+//   justify-content: flex-start;
+//   align-items: center;
+//   padding: 0px;
+//   gap: 40px;
+//   border-top: 1px solid #333333;
+//   margin-bottom: 10px;
+//   &:first-child {
+//     border-top: none;
+//   }
+//   .nameAliasTA {
+//     width: 200px;
+//     margin-left: 10px;
+//   }
+//   .emailTA {
+//     width: 300px;
+//   }
+// }

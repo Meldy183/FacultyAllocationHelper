@@ -11,58 +11,51 @@ import Link from "next/link";
 const AssistantsPage: React.FC = () => {
 	return <Wrapper>
 		<SideBar hiddenText={ "Filters" }><SideBarContent/></SideBar>
-		<div className={ styles.container }>
+		<div className={ styles.headerContainer }>
+			<div className={styles.name}>Faculty list</div>
 			<Button className={ styles.button }><Link href={ "faculty/add-faculty" }>Add a new	faculty member</Link></Button>
-			{/* <div className={ styles.head }>
-				<ul>
-					<li>Name</li>
-					<li>E-mail</li>
-					<li>Department</li>
-					<li>Phone number</li>
-					<li>Workload</li>
-				</ul>
-				<div className={ styles.courses }>
-					{ new Array(8).fill(0).map((_, i) => <Track key={ i }/>) }
-				</div>
-			</div> */}
+			
+			
+		</div>
+
 			<div className={ styles.assistance }>
-					<ul className={ styles.heading }>
-						<li className={styles.nameAliasTA}>Name</li>
-						<li className={styles.emailTA}>E-mail</li>
-						<li className={styles.instituteTA}>Institute</li>
-						<li className={styles.instituteTA}>Position</li>
-					</ul>
-					<ul className={ styles.list }>
-						<li><TeacherAssistance/></li>													 					<li><TeacherAssistance/></li>
-						<li><TeacherAssistance/></li>
-						<li><TeacherAssistance/></li>
-						<li><TeacherAssistance/></li>
-						<li><TeacherAssistance/></li>													 					<li><TeacherAssistance/></li>
-						<li><TeacherAssistance/></li>
-
-
+				<ul className={styles.list}>
+					<li className={styles.header}>
+						<div className={styles.colName}>Name, alias</div>
+						<div className={styles.colEmail}>Email</div>
+						<div className={styles.colInstitute}>Institute</div>
+						<div className={styles.colPosition}>Position</div>
+					</li>
+					<TeacherAssistance/>
+					<TeacherAssistance/>					
+					<TeacherAssistance/>
+					<TeacherAssistance/>
+					<TeacherAssistance/>					
+					<TeacherAssistance/>
+					<TeacherAssistance/>
+					<TeacherAssistance/>
+					<TeacherAssistance/>
+					<TeacherAssistance/>
 					</ul>
 			</div>
-		</div>
 	</Wrapper>
 }
 
 
 const TeacherAssistance: React.FC = () => {
 	return <Link href={ "/faculty/faculty-member" }>
-		<ul className={ styles.list }>
-			<li className={styles.TaItem}>
-				<div className={styles.nameAliasTA}>
-					<h2>Name Surname</h2>
-					<div>@alias</div>
-				</div>
-				<div className={styles.emailTA}>n.surname@innopolis.university</div>
-				<div className={styles.instituteTA}>institute</div>
-				<div className={styles.instituteTA}>position</div>
-			</li>
-		</ul>
+		<li className={styles.row}>
+			<div className={styles.colName}>
+			<h2>Name Surname</h2>
+			<div>@alias</div>
+			</div>
+			<div className={styles.colEmail}>n.surname@innopolis.university</div>
+			<div className={styles.colInstitute}>Institute</div>
+			<div className={styles.colPosition}>Position</div>
+		</li>
 	</Link>
 }
+
 
 
 // const Track: React.FC = () => {

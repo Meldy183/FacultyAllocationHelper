@@ -1,49 +1,37 @@
-.container {
-  background-color: #ffffff;
-  min-width: 1200px;
-  padding: 30px 65px 5px 5px;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-}
 // .container {
-//   min-height: 100vh;
-//   background-color: #D5E2D2;
-//   padding: 1.5rem;
-//   font-size: 16;
-//   color: #333;
-//   gap: 10px;
-//   display: grid;
+//   // background-color: #ffffff;
+  
+//   // align-items: flex-end;
+//   // gap: 10px;
 // }
 
+// .headerContainer {
+//   align-self: center;
+//   max-width: 750px;
+//   display: flex;
+//   flex-direction: row;
+//   align-items: flex-end;
+// }
+.headerContainer {
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  width: 750px;
+  background-color:#ffffff;
+  border-radius: 15px;
+  display: flex;
+  justify-content: space-between;  // pushes text left and button right
+  align-items: center;             // vertically center text and button
+  // padding: 10px 0;                 // some vertical spacing (optional)
+}
 
-.head {
-  ul {
-    display: flex;
-    align-items: center;
-    justify-content: space-around;
-    padding: 29px 0 14px 0;
 
-    li {
-      //font-family: Poppins;
-      font-weight: 500;
-      font-size: 14px;
-      line-height: 100%;
-      letter-spacing: -1%;
-      color: #B5B7C0;
-      width: 200px;
-      text-align: center;
-    }
-
-    .button {
-      color: #FFFFFF;
-      font-size: 16px;
-      line-height: 24px;
-      text-align: center;
-      padding: 8.5px 16px;
-      background-color: #40BA2199;
-    }
-  }
+.name {
+  font-size: 24px;
+  font-weight: 600;
 }
 
 .courses {
@@ -110,6 +98,88 @@
   }
 }
 
+.list {
+  background-color: #ffffff;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  border-radius: 15px;
+  font-family: Arial, sans-serif;
+  color: #666666;
+  border-collapse: separate;
+
+  .header,
+  .row {
+    display: flex;
+    text-align: center;
+    padding: 10px 0;
+    border-bottom: 0.5px solid #ccc;
+    border-radius: 0;
+  }
+
+  .header {
+    background-color: #DBF2D5;
+    font-weight: 600;
+    color: #666666;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+    border-bottom: 1px solid #ccc;
+
+    > div {
+      padding: 0 px;
+      text-align: left;
+    }
+
+    .colName {
+      padding: 0 20px;  // Override horizontal padding for header first col
+    }
+  }
+
+  .row {
+    > div {
+      padding: px;
+      border-radius: 15px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      text-align: left;
+    }
+
+    .colName {
+      padding-left: 20px;  // Increased padding for first column in data rows
+    }
+
+    h2 {
+      margin: 0 0 4px 0;
+      font-weight: 600;
+      font-size: 1rem;
+      color: #666666;
+    }
+
+    div > div {
+      font-size: 0.9rem;
+      color: #999999;
+    }
+  }
+
+  .colName {
+    width: 225px;
+    flex-shrink: 0;
+  }
+
+  .colEmail {
+    width: 325px;
+    flex-shrink: 0;
+  }
+
+  .colInstitute,
+  .colPosition {
+    width: 100px;
+    flex-shrink: 0;
+  }
+}
+
 
 
 
@@ -167,7 +237,6 @@
 
 .primatyTutorItem {
   margin-top: 10px;
-
   background-color: #ECF8E9;
   border-radius: 0.75rem;
   display: flex;
