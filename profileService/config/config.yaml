@@ -11,4 +11,7 @@ database:
   name: "postgres"
   user: "user"
   password: ${DB_PASSWORD}
-  ssl_mode: "require"
+  ssl_mode: "disable"
+  max_open_connections: 1000
+  max_idle_connections: 100
+  connection_max_lifetime: 300s

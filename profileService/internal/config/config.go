@@ -21,11 +21,16 @@ type Server struct {
 }
 
 type Database struct {
-	Host     string `yaml:"host" env:"DB_HOST"`
-	Port     string `yaml:"port"`
-	User     string `yaml:"user"`
-	Password string `yaml:"password" env:"DB_PASSWORD"`
-	Name     string `yaml:"name"`
+	Host               string        `yaml:"host" env:"DB_HOST"`
+	Port               string        `yaml:"port"`
+	User               string        `yaml:"user"`
+	Password           string        `yaml:"password" env:"DB_PASSWORD"`
+	DatabaseName       string        `yaml:"name"`
+	SSLMode            string        `yaml:"ssl_mode"`
+	MaxIdleConnections int           `yaml:"max_idle_connections"`
+	MaxOpenConnections int           `yaml:"max_open_connections"`
+	ConnMaxLifetime    time.Duration `yaml:"connection_max_lifetime"`
+	ConnTimeout        time.Duration `yaml:"connection_timeout"`
 }
 
 func MustLoadConfig() *Config {
