@@ -19,7 +19,7 @@ const SideBarContent: React.FC = () => {
 					</label>
 				</form>
 				<div className={ styles.menu }>
-					<Accordion type="multiple" collapsible>
+					<Accordion type="multiple">
 						<AccordionItem value="item-1">
 							<AccordionTrigger className={ styles.button }>Year of study</AccordionTrigger>
 							<AccordionContent>
