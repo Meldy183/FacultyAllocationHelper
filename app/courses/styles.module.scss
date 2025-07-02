@@ -5,26 +5,19 @@
 
 .container {
   background-color: #ffffff;
-  min-width: 1200px;
+  width: 750px;
   display: flex;
   align-items: center;
   flex-direction: column;
   padding: 15px 0;
+  border-radius: 15px;
 
   .courses {
     display: grid;
     grid-template-columns: 1fr 1fr;
     max-width: 750px;
-    gap: 10px;
+    gap: 20px;
   }
-}
-
-// .head {
-
-// }
-
-.field {
-  margin-bottom: 15px;
 }
 
 .sideBar {
