@@ -12,7 +12,7 @@ import (
 )
 
 func main() {
-	logger, loggerErr := zap.NewProduction()
+	logger, loggerErr := initLogger()
 	if loggerErr != nil {
 		panic(loggerErr)
 	}
@@ -28,4 +28,14 @@ func main() {
 	}
 	fmt.Println("connected to database")
 	defer pool.Close()
+}
+
+func initLogger() (*zap.Logger, error) {
+	cfg := zap.NewProductionConfig()
+	cfg.OutputPaths = []string{"stdout"} // redirect logs to stdout
+	logger, err := cfg.Build()
+	if err != nil {
+		return nil, err
+	}
+	return logger, nil
 }
