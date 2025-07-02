@@ -54,7 +54,7 @@ const LoginForm: React.FC = () => {
 					/>
 					<FormField name={ "password" }
 					           render={ ({ field }) =>
-						           <CustomField fieldName={ "password" } type={ "password" } title={ "password" } field={ field }/> }
+						           <CustomField fieldName={ "password" } type={ "password" } title={ "Password" } field={ field }/> }
 					/>
 				</div>
 				<Button className={ styles.button }>Submit</Button>
