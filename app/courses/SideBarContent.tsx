@@ -19,7 +19,7 @@ const SideBarContent: React.FC = () => {
 					</label>
 				</form>
 				<div className={ styles.menu }>
-					<Accordion type="single" collapsible>
+					<Accordion type="multiple" collapsible>
 						<AccordionItem value="item-1">
 							<AccordionTrigger className={ styles.button }>Year of study</AccordionTrigger>
 							<AccordionContent>
@@ -47,10 +47,7 @@ const SideBarContent: React.FC = () => {
 								</form>
 							</AccordionContent>
 						</AccordionItem>
-					</Accordion>
-
-					<Accordion type="single" collapsible>
-						<AccordionItem value="item-1">
+						<AccordionItem value="item-2">
 							<AccordionTrigger className={ styles.button }>Semester</AccordionTrigger>
 							<AccordionContent>
 								<form action="2">
@@ -70,10 +67,7 @@ const SideBarContent: React.FC = () => {
 								</form>
 							</AccordionContent>
 						</AccordionItem>
-					</Accordion>
-
-					<Accordion type="single" collapsible>
-						<AccordionItem value="item-1">
+						<AccordionItem value="item-3">
 							<AccordionTrigger className={ styles.button }>Study program</AccordionTrigger>
 							<AccordionContent>
 								<form action="3">
@@ -120,10 +114,7 @@ const SideBarContent: React.FC = () => {
 								</form>
 							</AccordionContent>
 						</AccordionItem>
-					</Accordion>
-
-					<Accordion type="single" collapsible>
-						<AccordionItem value="item-1">
+						<AccordionItem value="item-4">
 							<AccordionTrigger className={ styles.button }>Institute</AccordionTrigger>
 							<AccordionContent>
 								<form action="4">
@@ -163,7 +154,7 @@ const SideBarContent: React.FC = () => {
 							</AccordionContent>
 						</AccordionItem>
 					</Accordion>
-				</div>				
+				</div>
 			</div>
 		</>
 	)
