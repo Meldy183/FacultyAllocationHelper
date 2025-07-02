@@ -41,20 +41,23 @@ const NavBar: React.FunctionComponent = () => {
 	const isActiveTab = (path: string) => pagePath.includes(path);
 
 	return (
-	<div className={ styles.navbar }>
-		<ul className={ styles.ul }>
-			{
-				routes.map( ({ name, path }) => (
-					<li key={ name } className={ `${ styles.li } ${ isActiveTab(path) && styles.active }` }>
-						<Link href={ path }>{ name }</Link>
-					</li>
-				))
-			}
-		</ul>
-		<div>
-			<Image src={ userIcon } alt={ "user icon" } className={ styles.avatar } />
+		<div className={styles.container}>
+			<div className={styles.navbar}>
+				<ul className={styles.ul}>
+					{
+					routes.map(({ name, path }) => (
+						<li key={name} className={`${styles.li} ${isActiveTab(path) && styles.active}`}>
+						<Link href={path}>{name}</Link>
+						</li>
+					))
+					}
+				</ul>
+			</div>
+			<div className={styles.profileWrapper}>
+					<span className={styles.profileName}>Name Surname</span>
+					<Image src={userIcon} alt={"user icon"} className={styles.avatar} />
+			</div>
 		</div>
-	</div>
 	)
 }
 

@@ -8,27 +8,25 @@ import SideBarContent from "@/app/faculty/SideBarContent";
 import styles from "./styles.module.scss";
 import Link from "next/link";
 
-const AssistantsPage: React.FC = () => {
+const LogsPage: React.FC = () => {
 	return <Wrapper>
-			<div className={ styles.assistance }>
-				<ul className={styles.list}>
-					<li className={styles.header}>
-						<div className={styles.colName}>Name, alias</div>
-						<div className={styles.colInstitute}>Date, time</div>
-						<div className={styles.colEmail}>Action</div>
-					</li>
-					<LogRecord/>
-					<LogRecord/>					
-					<LogRecord/>
-					<LogRecord/>
-					<LogRecord/>					
-					<LogRecord/>
-					<LogRecord/>
-					<LogRecord/>
-					<LogRecord/>
-					<LogRecord/>
-					</ul>
-			</div>
+        <ul className={styles.list}>
+            <li className={styles.header}>
+                <div className={styles.colName}>Name, alias</div>
+                <div className={styles.colInstitute}>Date, time</div>
+                <div className={styles.colEmail}>Action</div>
+            </li>
+            <LogRecord/>
+            <LogRecord/>					
+            <LogRecord/>
+            <LogRecord/>
+            <LogRecord/>					
+            <LogRecord/>
+            <LogRecord/>
+            <LogRecord/>
+            <LogRecord/>
+            <LogRecord/>
+        </ul>
 	</Wrapper>
 }
 
@@ -50,4 +48,4 @@ const LogRecord: React.FC = () => {
 }
 
 
-export default AssistantsPage;
+export default LogsPage;
