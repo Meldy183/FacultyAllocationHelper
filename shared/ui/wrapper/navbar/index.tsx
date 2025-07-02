@@ -41,7 +41,7 @@ const NavBar: React.FunctionComponent = () => {
 	const isActiveTab = (path: string) => pagePath.includes(path);
 
 	return (
-		<div className={styles.container}>
+		<div className={ styles.container }>
 			<div className={styles.navbar}>
 				<ul className={styles.ul}>
 					{
@@ -52,10 +52,10 @@ const NavBar: React.FunctionComponent = () => {
 					))
 					}
 				</ul>
-			</div>
-			<div className={styles.profileWrapper}>
+				<div className={ styles.profileWrapper }>
 					<span className={styles.profileName}>Name Surname</span>
 					<Image src={userIcon} alt={"user icon"} className={styles.avatar} />
+				</div>
 			</div>
 		</div>
 	)
