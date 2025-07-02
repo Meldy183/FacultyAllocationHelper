@@ -5,23 +5,19 @@ import (
 	"fmt"
 	"github.com/joho/godotenv"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/config"
+	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/storage"
 	"go.uber.org/zap"
 	"log"
 )
 
-const (
-	local = "local"
-	prod  = "prod"
-	dev   = "dev"
-)
-
 func main() {
-	logger, _ := zap.NewProduction()
+	logger, loggerErr := zap.NewProduction()
+	if loggerErr != nil {
+		panic(loggerErr)
+	}
 	defer logger.Sync()
-	sugar := logger.Sugar()
-	sugar.Infow("starting server")
-	ctx := context.Background()
+	ctx := logctx.WithLogger(context.Background(), logger)
 	if err := godotenv.Load(); err != nil {
 		log.Fatalf("%s", err)
 	}
