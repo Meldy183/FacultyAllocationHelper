@@ -25,14 +25,14 @@ const routes: Routes[] = [
 		name: "Faculty",
 		path: "/faculty"
 	},
-	// {
-	// 	name: "Logs",
-	// 	path: "/logs"
-	// }
 	{
-		name: "My profile",
-		path: "/profile"
+		name: "Logs",
+		path: "/logs"
 	}
+	// {
+	// 	name: "My profile",
+	// 	path: "/profile"
+	// }
 ]
 
 const NavBar: React.FunctionComponent = () => {
