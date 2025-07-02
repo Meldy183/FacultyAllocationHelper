@@ -4,11 +4,6 @@ import React from "react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/shared/ui/accordion";
 
 const SideBarContent: React.FC = () => {
-	React.useEffect(() => {
-		console.log("start")
-		return () => console.log("finish")
-	}, [])
-
 	return (
 		<>
 			<div className={ styles.sideBar }>
