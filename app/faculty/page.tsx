@@ -14,8 +14,6 @@ const AssistantsPage: React.FC = () => {
 		<div className={ styles.headerContainer }>
 			<div className={styles.name}>Faculty list</div>
 			<Button className={ styles.button }><Link href={ "faculty/add-faculty" }>Add a new	faculty member</Link></Button>
-			
-			
 		</div>
 
 			<div className={ styles.assistance }>

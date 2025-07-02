@@ -66,6 +66,10 @@
 
 .sideBar {
   padding: 18px;
+  .accordionItem {
+    border: none;
+  }
+
   .menu {
     .button {
       display: flex;

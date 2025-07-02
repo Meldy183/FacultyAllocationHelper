@@ -23,6 +23,10 @@
 .sideBar {
   padding: 18px;
   .menu {
+    .accordionItem {
+      border: none;
+    }
+
     .button {
       display: flex;
       align-items: center;
