@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { CustomProvider } from "./providers";
-import Wrapper from "@/shared/ui/wrapper";
 // import { Geist, Geist_Mono, Montserrat } from "next/font/google";
 import "./globals.css";
 
@@ -22,6 +21,9 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Faculty Allocation Helper",
   description: "Faculty Allocation Helper",
+  icons: {
+    icon: "/icons/favicon.ico"
+  }
 };
 
 export default function RootLayout({
