@@ -14,15 +14,7 @@ const CourseDialogMenuContent: React.FC = () => {
 						<p className={ styles.subName }>Official name / Официальное название курса</p>
 					</div>
 				</div>
-				{/* <Button><Link href={ "/" }>Edit profile</Link></Button> */ }
-
 			</div>
-
-			{/* <div className={styles.section}>
-						<div className={styles.row}><strong>Position:</strong> Professor</div>
-						<div className={styles.row}><strong>Institute:</strong> Институт разработки ПО и программной инженерии</div>
-					</div> */ }
-
 			<Accordion className={ styles.section } type="single" collapsible>
 				<AccordionItem value="item-1">
 					<AccordionTrigger className={ `${ styles.title } cursor-pointer` }>Course Information</AccordionTrigger>
@@ -60,19 +52,6 @@ const CourseDialogMenuContent: React.FC = () => {
 				</ul>
 
 				<h3 className={ styles.subName }>Teaching assistants</h3>
-				{/* <div className={ styles.assistance }>
-					<ul className={ styles.heading }>
-						<li>Name</li>
-						<li>E-mail</li>
-					</ul>
-					<ul className={ styles.list }>
-						<li><TeacherAssistance/></li>
-						<li><TeacherAssistance/></li>
-						<li><TeacherAssistance/></li>
-						<li><TeacherAssistance/></li>
-						<li><TeacherAssistance/></li>
-					</ul>
-				</div> */}
 				<div className={ styles.assistance }>
 					<ul className={styles.list}>
 						<li className={styles.tableHeader}>
@@ -100,7 +79,7 @@ const CourseDialogMenuContent: React.FC = () => {
 }
 
 const TeacherAssistance: React.FC = () => {
-	return <Link href={ "/faculty/[id]" }>
+	return <Link href={ "/faculty/0" }>
 		<li className={styles.row}>
 			<div className={styles.colName}>
 			<h2>Name Surname</h2>

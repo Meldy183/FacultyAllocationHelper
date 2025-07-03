@@ -9,10 +9,15 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Input } from "@/shared/ui/input";
 
 const AssignNewMember: React.FC = () => {
-	const [createMember, setCreateMember] = useState<boolean>(false);
+	const [creatingMember, setCreatingMember] = useState<boolean>(false);
+	const [allocatingMember, setAllocatingMember] = useState<boolean>(false);
 
 	const handleCreateMember = () => {
-		setCreateMember(true);
+		setCreatingMember(true);
+	}
+
+	const handleAllocateMember = () => {
+		setAllocatingMember(true);
 	}
 
 	return <Dialog>
@@ -28,11 +33,15 @@ const AssignNewMember: React.FC = () => {
 			<motion.div
 				layout
 				transition={{ type: "spring", stiffness: 300, damping: 30 }}
-				className={ styles.menu }><AllocateMember handleCreateMember={ handleCreateMember } />
+				className={ styles.menu }>
+				<AllocateMember
+					handleCreateMember={ handleCreateMember }
+					handleAllocateMember={ handleAllocateMember }
+				/>
 			</motion.div>
 			<AnimatePresence>
 				{
-					createMember &&
+					creatingMember &&
 					<motion.div
               key="right"
               initial={{ opacity: 0, x: 50 }}
@@ -40,8 +49,23 @@ const AssignNewMember: React.FC = () => {
               exit={{ opacity: 0, x: 50 }}
               transition={{ duration: 0.3 }}
               layout
-							className={ styles.menu }>
-								<CreateNewMember/>
+							className={ styles.menu }
+					>
+							<CreateNewMember/>
+					</motion.div>
+				}
+				{
+					allocatingMember &&
+					<motion.div
+              key="right"
+              initial={{ opacity: 0, x: 50 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 50 }}
+              transition={{ duration: 0.3 }}
+              layout
+              className={ styles.menu }
+					>
+							<AllocateExistingMember />
 					</motion.div>
 				}
 			</AnimatePresence>
@@ -51,14 +75,16 @@ const AssignNewMember: React.FC = () => {
 
 interface Props {
 	handleCreateMember: () => void
+	handleAllocateMember: () => void
 }
 
-const AllocateMember: React.FC<Props> = ({ handleCreateMember }) => {
+const AllocateMember: React.FC<Props> = ({ handleCreateMember, handleAllocateMember }) => {
 	const [selectValue, setSelectValue] = useState<string>("Not assigned");
 
 	const handleChange = (value: string) => {
 		setSelectValue(value);
 		if (value === "Create new faculty member") handleCreateMember();
+		if (value === "Allocate existing members") handleAllocateMember();
 	}
 
 	return <div className={ styles.allocateMember }>
@@ -71,12 +97,47 @@ const AllocateMember: React.FC<Props> = ({ handleCreateMember }) => {
 				<SelectItem value="Not assigned">Not assigned</SelectItem>
 				<SelectItem value="Not needed">not needed</SelectItem>
 				<SelectItem value="Create new faculty member">Create new faculty member</SelectItem>
+				<SelectItem value="Allocate existing members">Allocate existing members</SelectItem>
 			</SelectContent>
 		</Select>
 	</div>
 }
 
 const CreateNewMember: React.FC = () => {
+	return <div className={ styles.createNewMember }>
+		<div className={ styles.memberField }>
+			<div className={ styles.title }>Name</div>
+			<Input placeholder={ "Enter the member’s name" }/>
+		</div>
+		<div className={ styles.memberField }>
+			<div className={ styles.title }>E-mail</div>
+			<Input placeholder={ "Enter member’s email" }/>
+		</div>
+		<div className={ styles.memberField }>
+			<div className={ styles.title }>Alias</div>
+			<Input placeholder={ "Enter the member’s alias" }/>
+		</div>
+		<div className={ styles.memberField }>
+			<div className={ styles.title }>Institute</div>
+			<Input placeholder={ "Enter the member’s institute" }/>
+		</div>
+		<div className={ styles.memberField }>
+			<div className={ styles.title }>Position</div>
+			<Select>
+				<SelectTrigger>
+					<SelectValue placeholder={ "Enter the member’s position" } />
+				</SelectTrigger>
+				<SelectContent>
+					<SelectItem value="TA">TA</SelectItem>
+					<SelectItem value="PI">PI</SelectItem>
+					<SelectItem value="TI">TI</SelectItem>
+				</SelectContent>
+			</Select>
+		</div>
+	</div>
+}
+
+const AllocateExistingMember: React.FC = () => {
 	return <div className={ styles.createNewMember }>
 		<div className={ styles.memberField }>
 			<div className={ styles.title }>Name</div>
