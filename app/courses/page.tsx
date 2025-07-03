@@ -7,6 +7,7 @@ import SideBarContent from "@/app/courses/SideBarContent";
 import styles from "./styles.module.scss";
 import { Button } from "@/shared/ui/button";
 import Link from "next/link";
+import AddCourseMenu from "@/app/courses/addCourseMenu";
 
 // import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/shared/ui/sheet";
 
@@ -32,7 +33,7 @@ const CoursesPage: React.FC = () => {
 			</SideBar>
 			<div className={ styles.headerContainer }>
 				<div className={styles.name}>Courses</div>
-				<Button className={ styles.button }><Link href={ "faculty/add-faculty" }>Add a new course</Link></Button>
+				<AddCourseMenu><Button className={ styles.button }>Add a new course</Button></AddCourseMenu>
 			</div>
 			<div className={ styles.container }>
 				<div className={ styles.courses }>
