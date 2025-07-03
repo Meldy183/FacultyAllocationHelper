@@ -38,6 +38,7 @@ const (
 	ModeMixed  Mode = "mixed"
 	ModeRemote Mode = "remote"
 )
+
 const (
 	PositionTA         Position = "TA"
 	PositionIntern     Position = "TA Intern"
@@ -50,8 +51,9 @@ const (
 
 func NewUserProfile(
 	id int64,
-	userID, string, engName, russianName, alias, employmentType string,
+	userID string,
 	position Position,
+	engName, russianName, alias, employmentType string,
 	degree bool,
 	mode Mode,
 	startDate, endDate *time.Time,
