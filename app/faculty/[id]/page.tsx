@@ -1,12 +1,13 @@
+"use client";
+
 import React from "react";
 import CourseField from "@/shared/ui/CourseField";
 import Image from "next/image";
 import styles from "./styles.module.scss";
 import userIcon from "@/public/icons/faculty/faculty-member/faculty-member-icon.svg"
-import { Button } from "@/shared/ui/button";
-import Link from "next/link";
 import Wrapper from "@/shared/ui/wrapper";
-
+import { useGetUserQuery } from "@/features/api/slises/courses/members";
+import { useParams } from "next/navigation";
 
 const faculty = {
 	name: "Name",
@@ -23,17 +24,28 @@ const courseMock = {
 }
 
 export default function ProfileDashboard() {
+	const params = useParams();
+
+	const id = params.id as string;
+
+	const { data, error, isLoading } = useGetUserQuery({ id });
+
+	if (error) return <>smth went wrong (error)</>
+
+	if (isLoading) return <>wating</>
+
+	if (!data) return <>smth went wrong (no data)</>;
+
 	return (
 		<Wrapper>
 			<div className={styles.container}>
 				<div className={styles.card}>
-					{/* Header */}
 					<div className={styles.header}>
 						<div className={styles.userInfo}>
 							<Image src={ userIcon } alt={ "user icon" } className={ styles.avatar } />
 							<div>
-								<h1 className={styles.name}>Name Surname</h1>
-								<p className={styles.subName}>Фамилия Имя Отчество</p>
+								<h1 className={styles.name}>{ data.nameEng }</h1>
+								<p className={styles.subName}>{ data.nameRu }</p>
 							</div>
 						</div>
 
@@ -41,18 +53,19 @@ export default function ProfileDashboard() {
 
 					{/* Profile Info */}
 					<div className={styles.section}>
-						<div className={styles.row}><strong>Position:</strong> Professor</div>
-						<div className={styles.row}><strong>Institute:</strong> Институт разработки ПО и программной инженерии</div>
+						<div className={styles.row}><strong>Position:</strong> { data.position }</div>
+						<div className={styles.row}><strong>Institute:</strong> { data.institute }</div>
 					</div>
 
 					<div className={styles.section}>
 						<h2 className={styles.title}>Personal Information</h2>
 						<div className={styles.grid}>
-							<div>Email: n.surname@innopolis.university</div>
-							<div>Telegram alias: @alias</div>
-							<div>Student? StudentType</div>
-							<div>Responsible from FSRO: Employee</div>
-							<div>Degree: With/Without</div>
+							<div>Email: { data.email }</div>
+							<div>Telegram alias: { data.alias }</div>
+							<div>Student? { data.studentType }</div>
+							<div>Responsible from FSRO: { data.FSRO }</div>
+							<div>Degree: { data.degree }</div>
+							{/*больше не реализовывал*/}
 							<div>Languages: Eng/Ru/Eng, Ru</div>
 						</div>
 					</div>

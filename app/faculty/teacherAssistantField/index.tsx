@@ -1,17 +1,18 @@
 import React from "react";
 import Link from "next/link";
+import { UserDataInterface } from "@/shared/types/apiTypes/members";
 import styles from "../styles.module.scss";
 
-const TeacherAssistance: React.FC = () => {
-  return <Link href={ "/faculty/faculty-member" }>
+const TeacherAssistance: React.FC<UserDataInterface> = (props) => {
+  return <Link href={ `/faculty/${ props.id }` }>
     <li className={styles.row}>
       <div className={styles.colName}>
-        <h2>Name Surname</h2>
-        <div>@alias</div>
+        <h2>{ props.nameEng }</h2>
+        <div>{ props.alias }</div>
       </div>
-      <div className={styles.colEmail}>n.surname@innopolis.university</div>
-      <div className={styles.colInstitute}>Institute</div>
-      <div className={styles.colPosition}>Position</div>
+      <div className={styles.colEmail}>{ props.email }</div>
+      <div className={styles.colInstitute}>{ props.institute }</div>
+      <div className={styles.colPosition}>{ props.position }</div>
     </li>
   </Link>
 }

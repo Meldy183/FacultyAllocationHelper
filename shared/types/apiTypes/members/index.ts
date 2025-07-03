@@ -32,7 +32,8 @@ interface Course {
   id: string;
 }
 
-interface UserDataInterface {
+export interface UserDataInterface {
+  id: string;
   nameEng: string;
   nameRu: string;
   alias: string;
@@ -64,6 +65,6 @@ export type GetMemberProcessType = {
 export type GetUsersByFiltersType = {
   requestBody: GroupFilterInterface[],
   responseBody: {
-    data: GetMemberProcessType[]
+    data: UserDataInterface[]
   },
 }

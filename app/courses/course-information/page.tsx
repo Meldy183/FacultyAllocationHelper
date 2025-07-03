@@ -97,7 +97,7 @@ const CourseInformation: React.FC = () => {
 }
 
 const TeacherAssistance: React.FC = () => {
-	return <Link href={ "/faculty/faculty-member" }>
+	return <Link href={ "/faculty/[id]" }>
 		<ul className={ styles.list }>
 			<li className={styles.TaItem}>
 				<div className={styles.nameAliasTA}>

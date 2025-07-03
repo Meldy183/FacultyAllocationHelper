@@ -20,7 +20,7 @@ const contentVariants = {
 };
 
 export default function SideBar({ children, hiddenText }: Props) {
-	const [isCollapsed, setIsCollapsed] = React.useState(false);
+	const [isCollapsed, setIsCollapsed] = React.useState(true);
 	const toggle = () => setIsCollapsed((prev) => !prev);
 
 	return (

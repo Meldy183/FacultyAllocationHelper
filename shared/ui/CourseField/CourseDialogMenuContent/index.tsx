@@ -100,7 +100,7 @@ const CourseDialogMenuContent: React.FC = () => {
 }
 
 const TeacherAssistance: React.FC = () => {
-	return <Link href={ "/faculty/faculty-member" }>
+	return <Link href={ "/faculty/[id]" }>
 		<li className={styles.row}>
 			<div className={styles.colName}>
 			<h2>Name Surname</h2>

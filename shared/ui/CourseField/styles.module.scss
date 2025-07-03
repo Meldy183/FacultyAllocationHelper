@@ -81,6 +81,19 @@
       grid-template-columns: 1fr 1fr 1fr;
       column-gap: 10px;
       row-gap: 10px;
+
+      .addNewMember {
+        border: 2px solid #FFFB00;
+        border-radius: 2px;
+        padding: 5px 10px;
+        background-color: #FFFFFF;
+        font-weight: 500;
+        font-size: 14px;
+        line-height: 100%;
+        letter-spacing: -1%;
+        color: #292D32;
+        cursor: pointer;
+      }
     }
   }
 }

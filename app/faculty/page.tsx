@@ -13,19 +13,7 @@ import { useGetMembersByParamQuery } from "@/features/api/slises/courses/members
 const AssistantsPage: React.FC = () => {
 	const { data, error, isLoading } = useGetMembersByParamQuery([]);
 
-	console.log("render")
-
-	React.useEffect(() => {
-		console.log("its works")
-	}, [])
-
-	React.useEffect(() => {
-		console.log(data);
-	}, [data])
-
-	React.useEffect(() => {
-		console.log(data, error, isLoading);
-	}, [data, error, isLoading])
+	if (error) return <>smth went wrong</>
 
 	return <Wrapper>
 		<SideBar hiddenText={ "Filters" }><SideBarContent/></SideBar>
@@ -42,7 +30,7 @@ const AssistantsPage: React.FC = () => {
 						<div className={styles.colPosition}>Position</div>
 					</li>
 					{
-						new Array(15).fill(0).map((_, i) => <TeacherAssistance key={ i } />)
+						data?.data.map((item, i) => <TeacherAssistance {...item} key={ i } />)
 					}
 					</ul>
 			</div>

@@ -13,7 +13,6 @@ export const memberSlice = createApi({
       query: ({ id }) => ({
         url: `getUser/${ id }`,
         method: "GET",
-        body: {}
       })
     }),
     //подумать, что за тип запроса
@@ -21,7 +20,6 @@ export const memberSlice = createApi({
       query: () => ({
         url: `getUser`,
         method: "GET",
-        // body: body
       })
     })
   })
