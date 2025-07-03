@@ -139,35 +139,36 @@ const CreateNewMember: React.FC = () => {
 
 const AllocateExistingMember: React.FC = () => {
 	return <div className={ styles.createNewMember }>
-		<div className={ styles.memberField }>
-			<div className={ styles.title }>Name</div>
-			<Input placeholder={ "Enter the member’s name" }/>
-		</div>
-		<div className={ styles.memberField }>
-			<div className={ styles.title }>E-mail</div>
-			<Input placeholder={ "Enter member’s email" }/>
-		</div>
-		<div className={ styles.memberField }>
-			<div className={ styles.title }>Alias</div>
-			<Input placeholder={ "Enter the member’s alias" }/>
-		</div>
-		<div className={ styles.memberField }>
-			<div className={ styles.title }>Institute</div>
-			<Input placeholder={ "Enter the member’s institute" }/>
-		</div>
-		<div className={ styles.memberField }>
-			<div className={ styles.title }>Position</div>
-			<Select>
-				<SelectTrigger>
-					<SelectValue placeholder={ "Enter the member’s position" } />
-				</SelectTrigger>
-				<SelectContent>
-					<SelectItem value="TA">TA</SelectItem>
-					<SelectItem value="PI">PI</SelectItem>
-					<SelectItem value="TI">TI</SelectItem>
-				</SelectContent>
-			</Select>
-		</div>
+		Вот тут надо будет сверстать поиск TA (добавить верстку фильтров и поисковую строку)
+		{/*<div className={ styles.memberField }>*/}
+		{/*	<div className={ styles.title }>Name</div>*/}
+		{/*	<Input placeholder={ "Enter the member’s name" }/>*/}
+		{/*</div>*/}
+		{/*<div className={ styles.memberField }>*/}
+		{/*	<div className={ styles.title }>E-mail</div>*/}
+		{/*	<Input placeholder={ "Enter member’s email" }/>*/}
+		{/*</div>*/}
+		{/*<div className={ styles.memberField }>*/}
+		{/*	<div className={ styles.title }>Alias</div>*/}
+		{/*	<Input placeholder={ "Enter the member’s alias" }/>*/}
+		{/*</div>*/}
+		{/*<div className={ styles.memberField }>*/}
+		{/*	<div className={ styles.title }>Institute</div>*/}
+		{/*	<Input placeholder={ "Enter the member’s institute" }/>*/}
+		{/*</div>*/}
+		{/*<div className={ styles.memberField }>*/}
+		{/*	<div className={ styles.title }>Position</div>*/}
+		{/*	<Select>*/}
+		{/*		<SelectTrigger>*/}
+		{/*			<SelectValue placeholder={ "Enter the member’s position" } />*/}
+		{/*		</SelectTrigger>*/}
+		{/*		<SelectContent>*/}
+		{/*			<SelectItem value="TA">TA</SelectItem>*/}
+		{/*			<SelectItem value="PI">PI</SelectItem>*/}
+		{/*			<SelectItem value="TI">TI</SelectItem>*/}
+		{/*		</SelectContent>*/}
+		{/*	</Select>*/}
+		{/*</div>*/}
 	</div>
 }
 
