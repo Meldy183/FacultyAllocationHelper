@@ -6,7 +6,8 @@ import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { AnimatePresence, motion } from "framer-motion";
 import styles from "./styles.module.scss";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select";
-import { Input } from "@/shared/ui/input";
+import CreateNewMemberMenu from "@/app/courses/addCourseMenu/CreateNewMemberMenu";
+import AllocateExistingMember from "@/app/courses/addCourseMenu/AllocateExistingMemberMenu";
 
 const AssignNewMember: React.FC = () => {
 	const [creatingMember, setCreatingMember] = useState<boolean>(false);
@@ -14,10 +15,16 @@ const AssignNewMember: React.FC = () => {
 
 	const handleCreateMember = () => {
 		setCreatingMember(true);
+		setAllocatingMember(false);
+	}
+
+	const handleFoldCreateMember = () => {
+		setCreatingMember(false);
 	}
 
 	const handleAllocateMember = () => {
 		setAllocatingMember(true);
+		setCreatingMember(false);
 	}
 
 	return <Dialog>
@@ -51,7 +58,7 @@ const AssignNewMember: React.FC = () => {
               layout
 							className={ styles.menu }
 					>
-							<CreateNewMember/>
+							<CreateNewMemberMenu position={ "position-name" } handleFoldMenu={ handleFoldCreateMember } />
 					</motion.div>
 				}
 				{
@@ -90,85 +97,16 @@ const AllocateMember: React.FC<Props> = ({ handleCreateMember, handleAllocateMem
 	return <div className={ styles.allocateMember }>
 		<div>primary instructor</div>
 		<Select value={ selectValue } onValueChange={ handleChange }>
-			<SelectTrigger>
+			<SelectTrigger className={ styles.selectValue }>
 				<SelectValue placeholder={ "Not assigned" } />
 			</SelectTrigger>
 			<SelectContent>
-				<SelectItem value="Not assigned">Not assigned</SelectItem>
-				<SelectItem value="Not needed">not needed</SelectItem>
-				<SelectItem value="Create new faculty member">Create new faculty member</SelectItem>
-				<SelectItem value="Allocate existing members">Allocate existing members</SelectItem>
+				<SelectItem className={ "text-[#666666] p-4 bg-white hover:bg-[#ECF9E9] transition-colors duration-200" } value="Not assigned">Not assigned</SelectItem>
+				<SelectItem className={ "text-[#666666] p-4 bg-white hover:bg-[#ECF9E9] transition-colors duration-200" } value="Not needed">not needed</SelectItem>
+				<SelectItem className={ "text-[#666666] p-4 bg-white hover:bg-[#ECF9E9] transition-colors duration-200" } value="Create new faculty member">Create new faculty member</SelectItem>
+				<SelectItem className={ "text-[#666666] p-4 bg-white hover:bg-[#ECF9E9] transition-colors duration-200" } value="Allocate existing members">Allocate existing members</SelectItem>
 			</SelectContent>
 		</Select>
-	</div>
-}
-
-const CreateNewMember: React.FC = () => {
-	return <div className={ styles.createNewMember }>
-		<div className={ styles.memberField }>
-			<div className={ styles.title }>Name</div>
-			<Input placeholder={ "Enter the member’s name" }/>
-		</div>
-		<div className={ styles.memberField }>
-			<div className={ styles.title }>E-mail</div>
-			<Input placeholder={ "Enter member’s email" }/>
-		</div>
-		<div className={ styles.memberField }>
-			<div className={ styles.title }>Alias</div>
-			<Input placeholder={ "Enter the member’s alias" }/>
-		</div>
-		<div className={ styles.memberField }>
-			<div className={ styles.title }>Institute</div>
-			<Input placeholder={ "Enter the member’s institute" }/>
-		</div>
-		<div className={ styles.memberField }>
-			<div className={ styles.title }>Position</div>
-			<Select>
-				<SelectTrigger>
-					<SelectValue placeholder={ "Enter the member’s position" } />
-				</SelectTrigger>
-				<SelectContent>
-					<SelectItem value="TA">TA</SelectItem>
-					<SelectItem value="PI">PI</SelectItem>
-					<SelectItem value="TI">TI</SelectItem>
-				</SelectContent>
-			</Select>
-		</div>
-	</div>
-}
-
-const AllocateExistingMember: React.FC = () => {
-	return <div className={ styles.createNewMember }>
-		Вот тут надо будет сверстать поиск TA (добавить верстку фильтров и поисковую строку)
-		{/*<div className={ styles.memberField }>*/}
-		{/*	<div className={ styles.title }>Name</div>*/}
-		{/*	<Input placeholder={ "Enter the member’s name" }/>*/}
-		{/*</div>*/}
-		{/*<div className={ styles.memberField }>*/}
-		{/*	<div className={ styles.title }>E-mail</div>*/}
-		{/*	<Input placeholder={ "Enter member’s email" }/>*/}
-		{/*</div>*/}
-		{/*<div className={ styles.memberField }>*/}
-		{/*	<div className={ styles.title }>Alias</div>*/}
-		{/*	<Input placeholder={ "Enter the member’s alias" }/>*/}
-		{/*</div>*/}
-		{/*<div className={ styles.memberField }>*/}
-		{/*	<div className={ styles.title }>Institute</div>*/}
-		{/*	<Input placeholder={ "Enter the member’s institute" }/>*/}
-		{/*</div>*/}
-		{/*<div className={ styles.memberField }>*/}
-		{/*	<div className={ styles.title }>Position</div>*/}
-		{/*	<Select>*/}
-		{/*		<SelectTrigger>*/}
-		{/*			<SelectValue placeholder={ "Enter the member’s position" } />*/}
-		{/*		</SelectTrigger>*/}
-		{/*		<SelectContent>*/}
-		{/*			<SelectItem value="TA">TA</SelectItem>*/}
-		{/*			<SelectItem value="PI">PI</SelectItem>*/}
-		{/*			<SelectItem value="TI">TI</SelectItem>*/}
-		{/*		</SelectContent>*/}
-		{/*	</Select>*/}
-		{/*</div>*/}
 	</div>
 }
 

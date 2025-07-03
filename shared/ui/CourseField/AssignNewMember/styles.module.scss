@@ -19,18 +19,73 @@
   width: auto;
 
   .menu{
-    height: calc(100vh - 40px);
+    height: calc(80vh - 40px);
     overflow-y: scroll;
     width: 400px;
+    padding: 10px;
+
+    .selectValue {
+      padding: 16px;
+      border-radius: 8px;
+      height: 56px;
+      width: 100%;
+      color: #666666;
+      border: 2px solid #40BA2180;
+    }
   }
+
+  .memberField {
+    margin-top: 20px;
+    width: 370px;
+    .foldBtn {
+      width: 100%;
+      background-color: #FFFFFF;
+      color: #666666;
+      border: 2px solid #40BA21;
+    }
+
+    .foldBtn:hover {
+      background-color: #efefef;
+    }
+
+    .submitBtn {
+      width: 100%;
+    }
+
+    .fieldDescription {
+      //font-family: Noto Sans;
+      font-weight: 600;
+      font-size: 12px;
+      line-height: 18px;
+      color: #666666;
+    }
+    input {
+      padding: 16px;
+      height: 56px;
+      //font-family: Noto Sans;
+      font-weight: 400;
+      font-size: 16px;
+      line-height: 24px;
+      color: #666666;
+      border: 1px solid #40BA21;
+      background-color: #FFFFFF;
+      border-radius: 5px 8px;
+      margin-top: 8px;
+      width: 100%;
+    }
+  }
+
 }
 
 
 .allocateMember {
-
 }
 
 .createNewMember {
+  .title {
+    font-size: 24px;
+  }
+
   .memberField {
     .title {}
     .input {}
