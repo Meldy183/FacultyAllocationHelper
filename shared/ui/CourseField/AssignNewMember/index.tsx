@@ -5,6 +5,8 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { AnimatePresence, motion } from "framer-motion";
 import styles from "./styles.module.scss";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select";
+import { Input } from "@/shared/ui/input";
 
 const AssignNewMember: React.FC = () => {
 	const [createMember, setCreateMember] = useState<boolean>(false);
@@ -52,13 +54,60 @@ interface Props {
 }
 
 const AllocateMember: React.FC<Props> = ({ handleCreateMember }) => {
+	const [selectValue, setSelectValue] = useState<string>("Not assigned");
+
+	const handleChange = (value: string) => {
+		setSelectValue(value);
+		if (value === "Create new faculty member") handleCreateMember();
+	}
+
 	return <div className={ styles.allocateMember }>
-		<button onClick={ () => handleCreateMember() }>click</button>
+		<div>primary instructor</div>
+		<Select value={ selectValue } onValueChange={ handleChange }>
+			<SelectTrigger>
+				<SelectValue placeholder={ "Not assigned" } />
+			</SelectTrigger>
+			<SelectContent>
+				<SelectItem value="Not assigned">Not assigned</SelectItem>
+				<SelectItem value="Not needed">not needed</SelectItem>
+				<SelectItem value="Create new faculty member">Create new faculty member</SelectItem>
+			</SelectContent>
+		</Select>
 	</div>
 }
 
 const CreateNewMember: React.FC = () => {
-	return <div className={ styles.createNewMember }></div>
+	return <div className={ styles.createNewMember }>
+		<div className={ styles.memberField }>
+			<div className={ styles.title }>Name</div>
+			<Input placeholder={ "Enter the member’s name" }/>
+		</div>
+		<div className={ styles.memberField }>
+			<div className={ styles.title }>E-mail</div>
+			<Input placeholder={ "Enter member’s email" }/>
+		</div>
+		<div className={ styles.memberField }>
+			<div className={ styles.title }>Alias</div>
+			<Input placeholder={ "Enter the member’s alias" }/>
+		</div>
+		<div className={ styles.memberField }>
+			<div className={ styles.title }>Institute</div>
+			<Input placeholder={ "Enter the member’s institute" }/>
+		</div>
+		<div className={ styles.memberField }>
+			<div className={ styles.title }>Position</div>
+			<Select>
+				<SelectTrigger>
+					<SelectValue placeholder={ "Enter the member’s position" } />
+				</SelectTrigger>
+				<SelectContent>
+					<SelectItem value="TA">TA</SelectItem>
+					<SelectItem value="PI">PI</SelectItem>
+					<SelectItem value="TI">TI</SelectItem>
+				</SelectContent>
+			</Select>
+		</div>
+	</div>
 }
 
 export default AssignNewMember;
