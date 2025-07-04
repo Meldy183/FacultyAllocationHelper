@@ -6,8 +6,8 @@ import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { AnimatePresence, motion } from "framer-motion";
 import styles from "./styles.module.scss";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select";
-import CreateNewMemberMenu from "@/app/courses/addCourseMenu/CreateNewMemberMenu";
-import AllocateExistingMember from "@/app/courses/addCourseMenu/AllocateExistingMemberMenu";
+import CreateNewMemberMenu from "@/features/ui/course/ui/addCourseMenu/CreateNewMemberMenu";
+import AllocateExistingMember from "@/features/ui/course/ui/addCourseMenu/AllocateExistingMemberMenu";
 import { Button } from "@/shared/ui/button";
 
 const AssignNewMember: React.FC = () => {

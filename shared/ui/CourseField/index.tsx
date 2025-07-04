@@ -12,10 +12,10 @@ import {
 	DialogTrigger,
 } from "@/shared/ui/dialog";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
-import CourseDialogMenuContent from "@/shared/ui/CourseField/CourseDialogMenuContent";
-import ManageCourseDialogMenu from "@/shared/ui/CourseField/ManageCourseDialogMenu";
-import TAElement from "@/shared/ui/CourseField/TAElement";
-import AssignNewMember from "@/shared/ui/CourseField/AssignNewMember";
+import CourseDialogMenuContent from "@/entities/course/ui/CourseDialogMenuContent";
+import ManageCourseDialogMenu from "@/entities/course/ui/ManageCourseDialogMenu";
+import TAElement from "@/features/ui/course/ui/FacultyMemberBlock";
+import AssignNewMember from "@/features/ui/course/ui/AssignNewMember";
 
 interface Course {
 	courseName: string;

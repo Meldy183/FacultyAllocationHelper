@@ -6,7 +6,6 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 const CourseDialogMenuContent: React.FC = () => {
 	return <div className={ styles.container }>
 		<div className={ styles.card }>
-			{/* Header */ }
 			<div className={ styles.header }>
 				<div className={ styles.userInfo }>
 					<div>
@@ -28,7 +27,6 @@ const CourseDialogMenuContent: React.FC = () => {
 					</AccordionContent>
 				</AccordionItem>
 			</Accordion>
-
 			<div className={ styles.section }>
 				<h2 className={ styles.title }>УП</h2>
 				<div className={ styles.grid }>
@@ -37,8 +35,6 @@ const CourseDialogMenuContent: React.FC = () => {
 				</div>
 			</div>
 		</div>
-
-		{/* Instructors */ }
 		<div className={ styles.card }>
 			<div className={ styles.sectionCardWhite }>
 				<h2 className={ styles.name }>Instructors on this course</h2>
@@ -70,11 +66,8 @@ const CourseDialogMenuContent: React.FC = () => {
 						<TeacherAssistance/>
 						</ul>
 				</div>
-
 			</div>
 		</div>
-
-
 	</div>
 }
 

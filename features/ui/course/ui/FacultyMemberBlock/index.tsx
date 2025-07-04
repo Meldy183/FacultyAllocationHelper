@@ -6,7 +6,7 @@ import Image from "next/image";
 import userIcon from "@/public/icons/faculty/faculty-member/faculty-member-icon.svg";
 import arrowRightIcon from "@/public/icons/svg/right-arrow.svg";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
-import PersonDialogMenuContent from "@/shared/ui/CourseField/PersonDialogMenuContent";
+import PersonDialogMenuContent from "../../../../../entities/faculty/PersonDialogMenuContent";
 
 interface Faculty {
 	name: string;

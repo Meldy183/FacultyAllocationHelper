@@ -1,7 +1,5 @@
 import React from "react";
 import styles from "./styles.module.scss";
-import Image from "next/image";
-import crossSvg from "@/public/icons/svg/cross.svg";
 import { Button } from "@/shared/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/shared/ui/dialog";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";

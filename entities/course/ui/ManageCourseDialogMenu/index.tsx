@@ -1,8 +1,5 @@
 import React from "react";
 import styles from "./styles.module.scss";
-import Link from "next/link";
-import Image from "next/image";
-import crossIcon from "@/public/icons/svg/cross.svg";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select";
 
 const ManageCourseDialogMenu: React.FC = () => {
