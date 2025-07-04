@@ -18,17 +18,17 @@
   max-width: none;
   width: auto;
   background-color: #FFFFFF;
-  
+
   .menu{
     height: calc(80vh - 40px);
     overflow-y: scroll;
     width: 400px;
-    padding: 20px;
+    // padding: 20px;
 
     .selectValue {
       padding: 16px;
       border-radius: 15px;
-      height: 56px;
+      height: 50px;
       width: 100%;
       color: #666666;
       border: 2px solid #40BA2180;
@@ -37,7 +37,7 @@
 
   .memberField {
     margin-top: 20px;
-    width: 370px;
+    width: 350px;
     .foldBtn {
       width: 100%;
       background-color: #FFFFFF;
@@ -46,12 +46,15 @@
     }
 
     .foldBtn:hover {
-      background-color: #efefef;
+      background-color: #DBF2D5;
     }
 
-    .submitBtn {
-      width: 100%;
-    }
+      .submitBtn {
+      position: sticky;
+      bottom: 20px;
+      margin-top: 20px;
+      width: 350px;
+  }
 
     .fieldDescription {
       //font-family: Noto Sans;
@@ -80,17 +83,81 @@
 
 }
 
+.commonContainer {
+  width: 350px;
+  margin: 20px;
+}
 
-.allocateMember {
+.head {
+  position: sticky;
+  top: 0;
+  background-color: #FFFFFF;
+  border-bottom: 2px solid #40BA21;
+  display: flex;
+  justify-self: center;
+  justify-content: center;
+  .title {
+    padding: 10px;
+    font-size: 20px;
+    font-weight: 400;
+  }
+}
+
+.allocation {
+  .allocateMember {
+    display: table;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 350px;
+
+    .allocationContainer {
+      display: table-cell;
+      vertical-align: middle;
+      width: 100%;
+      padding-left: 20px;
+
+      .innerContainer {
+        // display: flex;
+        justify-content: center;
+
+        width: 350px;
+      }
+    }
+
+    
+
+    .fieldDescription {
+      //font-family: Noto Sans;
+      font-weight: 600;
+      font-size: 16px;
+      line-height: 18px;
+      padding-bottom: 10px;
+      color: #666666;
+    }
+  }
+  .submitBtn {
+      position: absolute;
+      bottom: 20px;
+      margin-top: 20px;
+      width: 350px;
+  }
 }
 
 .createNewMember {
-  .title {
-    font-size: 24px;
-  }
+  width: 100%;
+  margin-bottom: 20px;
+  
 
-  .memberField {
+
+    .memberField {
+    width: 350px;
+
     .title {}
     .input {}
   }
+
+
+  
 }

@@ -11,7 +11,11 @@ interface IProps {
 
 const CreateNewMemberMenu: React.FC<IProps> = ({ position, handleFoldMenu }) => {
 	return <div className={ styles.createNewMember }>
-		<div className={ styles.title }>Create new member and allocate them in course on position: { position }</div>
+		<div className={styles.head}>
+			<div className={ styles.title }>Create new member and allocate them in course on position: { position }</div>
+		</div>
+		<div className={styles.commonContainer}> 
+
 		<div className={ styles.memberField }>
 			<div className={ styles.fieldDescription }>Name</div>
 			<Input placeholder={ "Enter the member’s name" }/>
@@ -45,7 +49,8 @@ const CreateNewMemberMenu: React.FC<IProps> = ({ position, handleFoldMenu }) => 
 			<Button onClick={ () => handleFoldMenu() } className={ styles.foldBtn }>Fold menu</Button>
 		</div>
 		<div className={ styles.memberField }>
-			<Button onClick={ () => handleFoldMenu() } className={ styles.submitBtn }>Submit person</Button>
+			<Button onClick={ () => handleFoldMenu() } className={ styles.submitBtn }>Confirm</Button>
+		</div>
 		</div>
 	</div>
 }
