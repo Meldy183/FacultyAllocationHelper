@@ -18,6 +18,7 @@ var (
 type UserProfile struct {
 	ProfileID      int64
 	UserID         string
+	Email          string
 	Position       Position
 	EnglishName    string
 	RussianName    string

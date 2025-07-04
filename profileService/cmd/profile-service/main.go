@@ -6,9 +6,8 @@ import (
 	"github.com/joho/godotenv"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/config"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
-	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/storage"
+	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/storage/db"
 	"go.uber.org/zap"
-	"log"
 )
 
 func main() {
@@ -19,14 +18,14 @@ func main() {
 	defer logger.Sync()
 	ctx := logctx.WithLogger(context.Background(), logger)
 	if err := godotenv.Load(); err != nil {
-		log.Fatalf("%s", err)
+		logger.Fatal("Error loading .env file", zap.Error(err))
 	}
 	cfg := config.MustLoadConfig()
-	pool, err := storage.NewPostgresPool(ctx, cfg.Database)
+	pool, err := db.NewPostgresPool(ctx, cfg.Database)
 	if err != nil {
-		log.Fatal("failed to connect to database")
+		logger.Fatal("Error connecting to database", zap.Error(err))
 	}
-	fmt.Println("connected to database")
+	logger.Info(fmt.Sprintf("Connected to database %v", cfg.Database))
 	defer pool.Close()
 }
 
