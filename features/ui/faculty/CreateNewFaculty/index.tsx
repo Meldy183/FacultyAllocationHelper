@@ -1,8 +1,6 @@
 import React from "react";
 import styles from "./styles.module.scss";
 import Link from "next/link";
-import Image from "next/image";
-import crossSvg from "@/public/icons/svg/cross.svg";
 import { Button } from "@/shared/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/shared/ui/dialog";

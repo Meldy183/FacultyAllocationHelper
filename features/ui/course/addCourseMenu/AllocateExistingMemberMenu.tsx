@@ -1,5 +1,5 @@
 import React from "react";
-import styles from "@/features/ui/course/ui/AssignNewMember/styles.module.scss";
+import styles from "@/features/ui/course/AssignNewMember/styles.module.scss";
 import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input"
 

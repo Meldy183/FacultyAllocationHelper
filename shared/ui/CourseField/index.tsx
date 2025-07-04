@@ -14,8 +14,8 @@ import {
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import CourseDialogMenuContent from "@/entities/course/ui/CourseDialogMenuContent";
 import ManageCourseDialogMenu from "@/entities/course/ui/ManageCourseDialogMenu";
-import TAElement from "@/features/ui/course/ui/FacultyMemberBlock";
-import AssignNewMember from "@/features/ui/course/ui/AssignNewMember";
+import TAElement from "../../../features/ui/course/FacultyMemberBlock";
+import AssignNewMember from "../../../features/ui/course/AssignNewMember";
 
 interface Course {
 	courseName: string;
