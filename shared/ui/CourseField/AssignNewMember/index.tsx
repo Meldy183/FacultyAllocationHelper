@@ -58,7 +58,7 @@ const AssignNewMember: React.FC = () => {
               layout
 							className={ styles.menu }
 					>
-							<CreateNewMemberMenu position={ "position-name" } handleFoldMenu={ handleFoldCreateMember } />
+							<CreateNewMemberMenu position={ "Position-name" } handleFoldMenu={ handleFoldCreateMember } />
 					</motion.div>
 				}
 				{
@@ -95,14 +95,14 @@ const AllocateMember: React.FC<Props> = ({ handleCreateMember, handleAllocateMem
 	}
 
 	return <div className={ styles.allocateMember }>
-		<div>primary instructor</div>
+		<div>Primary instructor</div>
 		<Select value={ selectValue } onValueChange={ handleChange }>
 			<SelectTrigger className={ styles.selectValue }>
 				<SelectValue placeholder={ "Not assigned" } />
 			</SelectTrigger>
 			<SelectContent>
 				<SelectItem className={ "text-[#666666] p-4 bg-white hover:bg-[#ECF9E9] transition-colors duration-200" } value="Not assigned">Not assigned</SelectItem>
-				<SelectItem className={ "text-[#666666] p-4 bg-white hover:bg-[#ECF9E9] transition-colors duration-200" } value="Not needed">not needed</SelectItem>
+				<SelectItem className={ "text-[#666666] p-4 bg-white hover:bg-[#ECF9E9] transition-colors duration-200" } value="Not needed">Not needed</SelectItem>
 				<SelectItem className={ "text-[#666666] p-4 bg-white hover:bg-[#ECF9E9] transition-colors duration-200" } value="Create new faculty member">Create new faculty member</SelectItem>
 				<SelectItem className={ "text-[#666666] p-4 bg-white hover:bg-[#ECF9E9] transition-colors duration-200" } value="Allocate existing members">Allocate existing members</SelectItem>
 			</SelectContent>
