@@ -5,7 +5,7 @@ import { useRegisterMutation } from "@/features/api/slises/authSlice";
 import { Form, FormField } from "@/shared/ui/form";
 import { Button } from "@/shared/ui/button";
 import { registerResolver } from "@/shared/types/resolvers/auth";
-import CustomField from "@/app/auth/registration/CustomField";
+import CustomField from "@/shared/ui/CustomField";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import styles from "./styles.module.scss";
@@ -71,7 +71,7 @@ const RegistrationForm: React.FC = () => {
 					           (
 						           <>
 							           <CustomField
-								           error={form.formState.errors.password?.message}
+								           error={ form.formState.errors.password?.message }
 								           fieldName={ "password" } type={ "password" } title={ "password" } field={ field }/>
 							           {form.formState.errors.password && (
 								           <p className="text-red-500 text-sm mt-1">

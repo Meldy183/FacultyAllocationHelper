@@ -1,39 +1,41 @@
 import { GroupFilterInterface } from "@/shared/types/apiTypes/filters";
 
-interface WorkloadStatsUniteStatClasses {
+type Language = {
+  language: string;
+};
+
+type Course = {
+  id: string;
+};
+
+type WorkloadStatsClasses = {
   lec: number;
   tut: number;
   lab: number;
   elec: number;
   rate: number;
-}
+};
 
-interface WorkloadStatsUniteStat {
+type WorkloadStatsUniteStat = {
   id: string;
-  classes: WorkloadStatsUniteStatClasses;
-}
+  classes: WorkloadStatsClasses;
+};
 
-interface WorkloadStats {
+type WorkloadStatsTotal = {
+  totalLec: number;
+  totalTut: number;
+  totalLab: number;
+  totalElec: number;
+  totalRate: number;
+};
+
+type WorkloadStats = {
   uniteStat: WorkloadStatsUniteStat[];
-  total: {
-    totalLec: number;
-    totalTut: number;
-    totalLab: number;
-    totalElec: number;
-    totalRate: number;
-  };
-}
-
-interface Language {
-  language: string;
-}
-
-interface Course {
-  id: string;
-}
+  total: WorkloadStatsTotal;
+};
 
 export interface UserDataInterface {
-  id: string;
+  profile_id: number;
   nameEng: string;
   nameRu: string;
   alias: string;
@@ -53,16 +55,16 @@ export interface UserDataInterface {
   frontalHours: number;
   extraActivities: number;
   workloadStats: WorkloadStats;
-}
+};
 
 export type GetMemberProcessType = {
-  requestBody: {
+  requestQuery: {
     id: string;
   },
   responseBody: UserDataInterface,
 }
 
-export type GetUsersByFiltersType = {
+export type GetAllUsers = {
   requestBody: GroupFilterInterface[],
   responseBody: {
     data: UserDataInterface[]

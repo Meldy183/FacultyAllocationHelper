@@ -7,7 +7,6 @@ import { Input } from "@/shared/ui/input"
 export default function SearchBar() {
   return (
 	<div className={styles.allocateExisting}>
-
 		<div className={styles.head}>
 			<div className={ styles.title }>Existing faculty</div>
 		</div>

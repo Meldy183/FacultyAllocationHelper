@@ -6,7 +6,7 @@ import CourseField from "@/shared/ui/CourseField";
 import SideBarContent from "@/app/courses/SideBarContent";
 import styles from "./styles.module.scss";
 import { Button } from "@/shared/ui/button";
-import AddCourseMenu from "../../features/ui/course/addCourseMenu";
+import AddCourseMenu from "../../features/ui/course/CreateCourseMenu";
 
 const faculty = {
 	name: "Name",

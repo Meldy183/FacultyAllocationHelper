@@ -5,22 +5,18 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { authResolver } from "@/shared/types/resolvers/auth";
 import { Form, FormField } from "@/shared/ui/form";
-import CustomField from "@/app/auth/login/CustomField";
+import CustomField from "@/shared/ui/CustomField";
 import { Button } from "@/shared/ui/button";
 import styles from "./styles.module.scss";
 import { useLoginMutation } from "@/features/api/slises/authSlice";
 import { handleErrorForm } from "@/shared/hooks/hadleErrorForm";
 import { useRouter } from "next/navigation";
 import { dashboardRoute } from "@/shared/configs/routes";
-import { API_PATH } from "@/shared/configs/constants";
 
 type LoginInput = z.infer<typeof authResolver>;
 
 const LoginForm: React.FC = () => {
 	const router = useRouter();
-
-	console.log(process.env.NEXT_PUBLIC_BASE_API);
-	console.log(API_PATH);
 
 	const [login] = useLoginMutation();
 
