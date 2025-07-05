@@ -39,7 +39,7 @@ func main() {
 	})
 	r := chi.NewRouter()
 	r.Use(middleware.LoggerMiddleware(l))
-	r.Post("/parsing/parse", handlers.Parse)
+	r.Post("/parse", handlers.Parse)
 	handler := c.Handler(r)
 	srv := &http.Server{
 		Addr:         config.HTTPserver.Host + ":" + strconv.Itoa(config.HTTPserver.Port),
