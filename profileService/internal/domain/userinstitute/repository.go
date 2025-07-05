@@ -1,8 +1,11 @@
 package userinstitute
 
-import "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/institute"
+import (
+	"context"
+	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/institute"
+)
 
 type Repository interface {
-	GetUserInstituteByID(ProfileID int64) (institute.Institute, error)
-	AddUserInstitute(ProfileID int64, InstituteID int64, isReps bool) error
+	GetUserInstituteByID(ctx context.Context, profileID int64) (*institute.Institute, error)
+	AddUserInstitute(ctx context.Context, userInstitute *UserInstitute) error
 }

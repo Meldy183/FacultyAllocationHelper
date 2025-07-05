@@ -1,7 +1,7 @@
 package userinstitute
 
 type UserInstitute struct {
-	ID               int
+	UserInstituteID  int
 	IsRepresentative bool
 	InstituteID      int
 	ProfileID        int

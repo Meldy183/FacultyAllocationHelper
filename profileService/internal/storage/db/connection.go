@@ -132,7 +132,7 @@ func InitSchema(ctx context.Context, pool *pgxpool.Pool) error {
 		log.Error("Error creating user_institute_table", zap.Error(err))
 		return err
 	}
-	log.Info("created user_institute_table")
+	log.Info("created course_table")
 	query = `CREATE TABLE IF NOT EXISTS user_course (
 		user_course_id SERIAL PRIMARY KEY,
 		profile_id INT NOT NULL,

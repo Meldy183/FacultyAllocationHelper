@@ -1,6 +1,8 @@
 package institute
 
+import "context"
+
 type Repository interface {
-	GetById(instituteID int64) (*Institute, error)
-	GetAll() ([]*Institute, error)
+	GetByID(ctx context.Context, instituteID int64) (*Institute, error)
+	GetAll(ctx context.Context) ([]*Institute, error)
 }
