@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import styles from "./styles.module.scss";
 import { Button } from "@/shared/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select";
@@ -10,33 +10,42 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { CreateMemberResolver } from "@/shared/types/resolvers/createMember";
 import CustomField from "@/shared/ui/CustomField";
+import { useCreateUserMutation } from "@/features/api/slises/courses/members";
+import { handleErrorForm } from "@/shared/hooks/hadleErrorForm";
 
-// Derive form types from Zod schema
 type FormInputType = z.infer<typeof CreateMemberResolver>;
 
 const CreateFacultyMenu: React.FC = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [createUser] = useCreateUserMutation();
+
   const form = useForm<FormInputType>({
     resolver: zodResolver(CreateMemberResolver),
     defaultValues: {
-      name: "",
+      nameEng: "",
       email: "",
       alias: "",
-      department: "",
-      memberPosition: "",
+      institute: "",
+      position: "",
     },
   });
 
-  const submitHandler = (data: any) => {
-    console.log("Submitted:", data);
-    // TODO: handle API call and close dialog
+  const submitHandler = async (formData: FormInputType) => {
+    try {
+       const { data, error } = await createUser(formData);
+      console.log(data, error);
+       if (error) throw error;
+       setIsOpen(false);
+    } catch (e) {
+      handleErrorForm<FormInputType>(e, form.setError);
+    }
   };
 
   return (
-    <Dialog>
+    <Dialog open={ isOpen } onOpenChange={ setIsOpen }>
       <DialogTrigger asChild>
         <Button className={styles.button}>Add a new faculty member</Button>
       </DialogTrigger>
-
       <DialogContent className={styles.dialogContent}>
         <VisuallyHidden>
           <DialogHeader>
@@ -44,16 +53,13 @@ const CreateFacultyMenu: React.FC = () => {
             <DialogDescription>Fill out the form to add a new faculty member</DialogDescription>
           </DialogHeader>
         </VisuallyHidden>
-
         <Form {...form}>
           <form onSubmit={form.handleSubmit(submitHandler)} className={styles.menu}>
             <div className={styles.content}>
               <div className={styles.title}>Add a Faculty Member</div>
-
-              {/* Name */}
               <FormField
                 control={form.control}
-                name="name"
+                name="nameEng"
                 render={({ field, fieldState }) => (
                   <div className={styles.fieldBlock}>
                     <CustomField
@@ -66,8 +72,6 @@ const CreateFacultyMenu: React.FC = () => {
                   </div>
                 )}
               />
-
-              {/* E-mail */}
               <FormField
                 control={form.control}
                 name="email"
@@ -84,8 +88,6 @@ const CreateFacultyMenu: React.FC = () => {
                   </div>
                 )}
               />
-
-              {/* Alias */}
               <FormField
                 control={form.control}
                 name="alias"
@@ -101,11 +103,9 @@ const CreateFacultyMenu: React.FC = () => {
                   </div>
                 )}
               />
-
-              {/* Department */}
               <FormField
                 control={form.control}
-                name="department"
+                name="institute"
                 render={({ field, fieldState }) => (
                   <div className={styles.fieldBlock}>
                     <CustomField
@@ -118,11 +118,9 @@ const CreateFacultyMenu: React.FC = () => {
                   </div>
                 )}
               />
-
-              {/* Position Select */}
               <FormField
                 control={form.control}
-                name="memberPosition"
+                name="position"
                 render={({ field, fieldState }) => (
                   <div className={styles.fieldBlock}>
                     <div className={styles.fieldDescription}>Position</div>
@@ -145,7 +143,6 @@ const CreateFacultyMenu: React.FC = () => {
                   </div>
                 )}
               />
-
               <Button type="submit" className={styles.button}>Submit</Button>
             </div>
           </form>

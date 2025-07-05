@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { API_PATH } from "@/shared/configs/constants";
-import { GetMemberProcessType, GetAllUsers } from "@/shared/types/apiTypes/members";
+import { GetMemberProcessType, GetAllUsers, CreateMember } from "@/shared/types/apiTypes/members";
 
 export const memberSlice = createApi({
   reducerPath: "api/members",
@@ -18,11 +18,18 @@ export const memberSlice = createApi({
     //подумать, что за тип запроса
     getMembersByParam: builder.query<GetAllUsers["responseBody"], GetAllUsers["requestBody"]>({
       query: () => ({
-        url: `getUser`,
+        url: `getAllUsers`,
         method: "GET",
+      })
+    }),
+    createUser: builder.mutation<CreateMember["responseBody"], CreateMember["requestBody"]>({
+      query: (body) => ({
+        url: "addUser",
+        method: "POST",
+        body: body
       })
     })
   })
 });
 
-export const { useGetUserQuery, useGetMembersByParamQuery } = memberSlice;
+export const { useGetUserQuery, useGetMembersByParamQuery, useCreateUserMutation } = memberSlice;

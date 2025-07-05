@@ -70,3 +70,16 @@ export type GetAllUsers = {
     data: UserDataInterface[]
   },
 }
+
+export type CreateMember = {
+  requestBody: {
+    nameEng: string,
+    email: string,
+    alias: string,
+    institute: string,
+    position: string,
+  },
+  responseBody: {
+    message: string
+  }
+}
