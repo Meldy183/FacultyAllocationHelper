@@ -1,0 +1,210 @@
+.addNewMember {
+  border: 2px solid #FFFB00;
+  border-radius: 2px;
+  padding: 5px 10px;
+  background-color: #FFFFFF;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 100%;
+  letter-spacing: -1%;
+  color: #292D32;
+  cursor: pointer;
+}
+
+.dialogContent {
+  padding: 2px;
+  display: flex;
+  align-items: center;
+  max-width: none;
+  width: auto;
+  background-color: #FFFFFF;
+
+  .menu{
+    height: calc(80vh - 40px);
+    overflow-y: scroll;
+    width: 400px;
+    // padding: 20px;
+
+    .selectValue {
+      padding: 16px;
+      border-radius: 15px;
+      height: 50px;
+      width: 100%;
+      color: #666666;
+      border: 2px solid #40BA2180;
+    }
+  }
+
+  .memberField {
+    margin-top: 20px;
+    width: 350px;
+    .foldBtn {
+      width: 100%;
+      background-color: #FFFFFF;
+      color: #666666;
+      border: 2px solid #40BA21;
+    }
+
+    .foldBtn:hover {
+      background-color: #DBF2D5;
+    }
+
+      .submitBtn {
+      position: sticky;
+      bottom: 20px;
+      margin-top: 20px;
+      width: 350px;
+  }
+
+    .fieldDescription {
+      //font-family: Noto Sans;
+      font-weight: 600;
+      font-size: 16px;
+      line-height: 18px;
+      color: #666666;
+    }
+    input {
+      padding: 16px;
+      height: 56px;
+      //font-family: Noto Sans;
+      font-weight: 400;
+      font-size: 16px;
+      line-height: 24px;
+      color: #666666;
+      border: 1px solid #40BA21;
+      background-color: #FFFFFF;
+      // border-radius: 5px 8px;
+      border-radius: 15px;
+
+      margin-top: 8px;
+      width: 100%;
+    }
+  }
+
+}
+
+.commonContainer {
+  width: 350px;
+  margin: 20px;
+}
+
+.head {
+  position: sticky;
+  top: 0;
+  background-color: #FFFFFF;
+  border-bottom: 2px solid #40BA21;
+  display: flex;
+  justify-self: center;
+  justify-content: center;
+  .title {
+    padding: 10px;
+    font-size: 20px;
+    font-weight: 400;
+  }
+}
+
+.allocation {
+  .allocateMember {
+    display: table;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 350px;
+
+    .allocationContainer {
+      display: table-cell;
+      vertical-align: middle;
+      width: 100%;
+      padding-left: 20px;
+
+      .innerContainer {
+        // display: flex;
+        justify-content: center;
+
+        width: 350px;
+      }
+    }
+
+    .fieldDescription {
+      //font-family: Noto Sans;
+      font-weight: 600;
+      font-size: 16px;
+      line-height: 18px;
+      padding-bottom: 10px;
+      color: #666666;
+    }
+  }
+  .submitBtn {
+      position: absolute;
+      bottom: 20px;
+      margin-top: 20px;
+      width: 350px;
+  }
+}
+
+.createNewMember {
+  width: 100%;
+  margin-bottom: 20px;
+  
+
+
+    .memberField {
+    width: 350px;
+
+    .title {}
+    .input {}
+  }
+
+
+  
+}
+
+
+.allocateExisting {
+  .searchBarContainer {
+    width: 350px;
+    margin: 20px;
+    display: flex;
+    align-items: center;
+  }
+  .searchBar {
+      padding: 16px;
+      height: 40px;
+      font-weight: 400;
+      font-size: 16px;
+      line-height: 24px;
+      width: 260px;
+      color: #666666;
+      border: 1px solid #40BA21;
+      border-radius: 15px;
+      background-color: #FFFFFF;
+      margin-right: 10px;
+  }
+
+  .searchButton {
+    padding-top: 8px;
+    height: 40px;
+    width: 80px;
+    padding-bottom: 8px;
+    padding-left: 12px;
+    padding-right: 12px;
+    border-radius: 15px;
+  }
+  .membersContainer {
+    padding: 20px;
+    display: flex;
+    li {
+      height: 40px;
+      margin-bottom: 20px;
+    }
+    .column1 {
+      width: 270px;
+    }
+    .column2 {
+      width: 80px;
+    }
+  }
+
+
+}

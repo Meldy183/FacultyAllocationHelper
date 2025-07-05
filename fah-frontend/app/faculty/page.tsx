@@ -1,80 +1,95 @@
 "use client";
 
 import React from "react";
-import { Button } from "@/shared/ui/button";
 import Wrapper from "@/shared/ui/wrapper";
 import SideBar from "@/shared/ui/wrapper/sidebar";
 import SideBarContent from "@/app/faculty/SideBarContent";
 import styles from "./styles.module.scss";
-import Link from "next/link";
+import TeacherAssistance from "@/app/faculty/teacherAssistantField";
+import { useGetMembersByParamQuery } from "@/features/api/slises/courses/members";
+import CreateFacultyMenu from "../../features/ui/faculty/CreateNewFaculty";
+
+const user = {
+	"nameEng": "Fyodor Markin",
+	"nameRu": "Маркин Фёдор Сергеевич",
+	"alias": "@meld_i",
+	"email": "f.markin@innopolis.university",
+	"position": "Intern TA",
+	"institute": "Институт разработки ПО и программной инженерии",
+	"workload": 0.7,
+	"studentType": "MS1",
+	"degree": true,
+	"FSRO": "employnment",
+	"languages": [
+		{
+			"language": "Russian"
+		}
+	],
+	"courses": [
+		{
+			"id": "courseInstance_id"
+		}
+	],
+	"employnmentType": "Combination of positions",
+	"hiringStatus": "??",
+	"mode": "remote",
+	"maxLoad": 40,
+	"frontalHours": 40,
+	"extraActivities": 1.5,
+	"workloadStats": {
+		"uniteStat": [
+			{
+				"id": "T1",
+				"classes": {
+					"lec": 1,
+					"tut": 2,
+					"lab": 3,
+					"elec": 4,
+					"rate": 5
+				}
+			}
+		],
+		"total": {
+			"totalLec": 1,
+			"totalTut": 2,
+			"totalLab": 3,
+			"totalElec": 12,
+			"totalRate": 12
+		}
+	}
+}
+
+const data = {
+	data: new Array(10).fill(user).map((user, index) => ({...user, id: index}))
+}
 
 const AssistantsPage: React.FC = () => {
+	// const { data, error, isLoading } = useGetMembersByParamQuery([]);
+
+	// if (error) return <>smth went wrong</>
+
+
+
 	return <Wrapper>
 		<SideBar hiddenText={ "Filters" }><SideBarContent/></SideBar>
-		<div className={ styles.container }>
-			<Button className={ styles.button }><Link href={ "faculty/add-faculty" }>Add a new	faculty member</Link></Button>
-			{/* <div className={ styles.head }>
-				<ul>
-					<li>Name</li>
-					<li>E-mail</li>
-					<li>Department</li>
-					<li>Phone number</li>
-					<li>Workload</li>
-				</ul>
-				<div className={ styles.courses }>
-					{ new Array(8).fill(0).map((_, i) => <Track key={ i }/>) }
-				</div>
-			</div> */}
-			<div className={ styles.assistance }>
-					<ul className={ styles.heading }>
-						<li className={styles.nameAliasTA}>Name</li>
-						<li className={styles.emailTA}>E-mail</li>
-						<li className={styles.instituteTA}>Institute</li>
-						<li className={styles.instituteTA}>Position</li>
-					</ul>
-					<ul className={ styles.list }>
-						<li><TeacherAssistance/></li>													 					<li><TeacherAssistance/></li>
-						<li><TeacherAssistance/></li>
-						<li><TeacherAssistance/></li>
-						<li><TeacherAssistance/></li>
-						<li><TeacherAssistance/></li>													 					<li><TeacherAssistance/></li>
-						<li><TeacherAssistance/></li>
-
-
+		<div className={ styles.headerContainer }>
+			<div className={styles.name}>Faculty list</div>
+			<CreateFacultyMenu />
+		</div>
+		<div className={ styles.assistance }>
+				<ul className={styles.list}>
+					<li className={styles.header}>
+						<div className={styles.colName}>Name, alias</div>
+						<div className={styles.colEmail}>Email</div>
+						<div className={styles.colInstitute}>Institute</div>
+						<div className={styles.colPosition}>Position</div>
+					</li>
+					{
+						data?.data.map((item, i) => <TeacherAssistance {...item} key={ i } />)
+					}
 					</ul>
 			</div>
-		</div>
 	</Wrapper>
 }
-
-
-const TeacherAssistance: React.FC = () => {
-	return <Link href={ "/faculty/faculty-member" }>
-		<ul className={ styles.list }>
-			<li className={styles.TaItem}>
-				<div className={styles.nameAliasTA}>
-					<h2>Name Surname</h2>
-					<div>@alias</div>
-				</div>
-				<div className={styles.emailTA}>n.surname@innopolis.university</div>
-				<div className={styles.instituteTA}>institute</div>
-				<div className={styles.instituteTA}>position</div>
-			</li>
-		</ul>
-	</Link>
-}
-
-
-// const Track: React.FC = () => {
-// 	return <Link href={ "faculty/faculty-member" }>
-// 		<div className={ styles.course }>
-// 			<div className={ styles.element }>Teaching assistant 1</div>
-// 			<div className={ styles.element }>t.assistant@innopolis.university</div>
-// 			<div className={ styles.element }>Robotics</div>
-// 			<div className={ styles.element }>8 (914)-888-15-36</div>
-// 			<div className={ styles.element }>0.25</div>
-// 		</div>
-// 	</Link>
-// }
 
 export default AssistantsPage;

@@ -1,10 +1,9 @@
 .card {
   display: inline-block;
   max-width: 345px;
-  border: 1px solid #40BA21;
+  border: 2px solid #40BA21;
   border-radius: 8px;
   background-color: #F5FBF4;
-
   .header {
     display: flex;
     justify-content: space-between;
@@ -18,12 +17,13 @@
         .name {
           //font-family: Poppins;
           font-weight: 500;
-          font-size: 14px;
+          font-size: 16px;
           line-height: 100%;
           letter-spacing: -1%;
           color: #292D32;
           display: inline-block;
           margin-right: 9px;
+          margin-bottom: 10px;
         }
 
         .icon {
@@ -48,10 +48,11 @@
       }
     }
     .instructors {
-      padding: 5px 15px;
+      padding: 0px 10px 10px 10px;
       border-left: 1px solid #40BA21;
       .instructor {
-        margin-bottom: 10px;
+        margin-top: 10px;
+
         .title {
           //font-family: Poppins;
           font-weight: 500;
@@ -66,7 +67,7 @@
   }
 
   .body {
-    padding: 10px;
+    padding: 12px;
     .title {
       //font-family: Poppins;
       font-weight: 500;
@@ -81,6 +82,19 @@
       grid-template-columns: 1fr 1fr 1fr;
       column-gap: 10px;
       row-gap: 10px;
+
+      .addNewMember {
+        border: 2px solid #FFFB00;
+        border-radius: 2px;
+        padding: 5px 10px;
+        background-color: #FFFFFF;
+        font-weight: 500;
+        font-size: 14px;
+        line-height: 100%;
+        letter-spacing: -1%;
+        color: #292D32;
+        cursor: pointer;
+      }
     }
   }
 }
@@ -282,8 +296,8 @@
           line-height: 12px;
           letter-spacing: 0.15px;
 
-          .placeholder {}
-          .value {}
+          // .placeholder {}
+          // .value {}
         }
 
         .workload {

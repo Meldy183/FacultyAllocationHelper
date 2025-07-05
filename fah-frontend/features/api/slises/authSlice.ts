@@ -9,11 +9,10 @@ import { API_PATH } from "@/shared/configs/constants";
 
 export const authSlice = createApi({
 	reducerPath: "api/auth",
-	baseQuery: fetchBaseQuery(
-		{
-			baseUrl: `${ API_PATH }/auth`,
-			credentials: "include"
-		}),
+	baseQuery: fetchBaseQuery({
+		baseUrl: `${ API_PATH }/auth`,
+		credentials: "include"
+	}),
 	endpoints: (builder) => ({
 		//позже типизировать как builder.query<типы>
 		register: builder.mutation<RegisterProcessType["response"], RegisterProcessType["request"]>({

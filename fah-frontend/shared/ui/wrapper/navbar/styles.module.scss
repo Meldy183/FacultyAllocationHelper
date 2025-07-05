@@ -7,13 +7,15 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 8px 0;
+  padding: 8px 20px;
   z-index: 1;
+
   .ul {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
     max-width: 480px;
+    // width: 80%;
 
     .li {
       font-weight: 400;
@@ -30,13 +32,32 @@
   }
 }
 
-.avatar {
-    position: absolute;
-  right: 20px;
+.profileWrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  position: absolute;
   top: 50%;
+  right: 0;
   transform: translateY(-50%);
+}
+
+.profileName {
+  font-size: 16px;
+  color: #333333;
+  font-weight: 500;
+}
+
+.avatar {
   height: 40px;
   width: 40px;
   object-fit: cover;
   border-radius: 50%;
-  }
+  margin-right: 20px;
+}
+
+.container{
+  justify-content: space-between;
+  display: flex;
+  align-items: center;
+}

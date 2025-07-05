@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
-import { motion } from "framer-motion"; // Removed AnimatePresence since we won't unmount
+import { motion, AnimatePresence } from "framer-motion";
+import clsx from "clsx";
 import styles from "./styles.module.scss";
 
 interface Props {
@@ -18,48 +19,61 @@ const contentVariants = {
 	hidden: { opacity: 0, x: -20 },
 };
 
-const SideBar: React.FC<Props> = ({ children, hiddenText }) => {
-	const [visible, setVisible] = React.useState(false);
+export default function SideBar({ children, hiddenText }: Props) {
+	const [isCollapsed, setIsCollapsed] = React.useState(true);
+	const toggle = () => setIsCollapsed((prev) => !prev);
 
 	return (
 		<motion.div
 			className={styles.sideBar}
 			variants={sidebarVariants}
-			animate={visible ? "closed" : "open"}
+			animate={isCollapsed ? "closed" : "open"}
 			transition={{ duration: 0.3 }}
 		>
-			<div className={styles.header}>
-				<div
-					onClick={() => setVisible(!visible)}
-					className={`${styles.toggleButton} ${visible ? styles.closed : styles.open}`}
+			<div className={`${ styles.header } ${ isCollapsed ? "" : styles.open }`}>
+				<button
+					className={clsx(styles.toggleButton, {
+						[styles.closed]: isCollapsed,
+						[styles.open]: !isCollapsed,
+					})}
+					onClick={toggle}
+					aria-label={isCollapsed ? "Open sidebar" : "Close sidebar"}
 				>
-					<p></p>
-					<p></p>
-					<p></p>
-				</div>
+					<span />
+					<span />
+					<span />
+				</button>
 			</div>
-			<div className={ `${ styles.contentWrapper } ${ visible ? styles.active : "" }` }>
-				<motion.div
-					className={ `${ styles.hiddenText } ${ visible ? styles.active : "" }` }
-					variants={contentVariants}
-					initial="hidden"
-					animate={visible ? "visible" : "hidden"}
-					transition={{ duration: 0.2 }}
-				>
-					{hiddenText}
-				</motion.div>
-				<motion.div
-					className={ `${ styles.content }` }
-					variants={contentVariants}
-					initial="visible"
-					animate={visible ? "hidden" : "visible"}
-					transition={{ duration: 0.2 }}
-				>
-					{children}
-				</motion.div>
+
+			<div className={styles.contentWrapper}>
+				<AnimatePresence initial={false} mode="wait">
+					{!isCollapsed ? (
+						<motion.div
+							key="content"
+							className={styles.content}
+							variants={contentVariants}
+							initial="hidden"
+							animate="visible"
+							exit="hidden"
+							transition={{ duration: 0.2 }}
+						>
+							{children}
+						</motion.div>
+					) : (
+						<motion.div
+							key="hiddenText"
+							className={styles.hiddenText}
+							variants={contentVariants}
+							initial="hidden"
+							animate="visible"
+							exit="hidden"
+							transition={{ duration: 0.2 }}
+						>
+							<span>{ hiddenText }</span>
+						</motion.div>
+					)}
+				</AnimatePresence>
 			</div>
 		</motion.div>
 	);
-};
-
-export default SideBar;
+}

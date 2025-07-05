@@ -10,7 +10,7 @@
 }
 
 .card {
-  width: 800px;
+  width: 750px;
   margin: 0 auto;
   background: white;
   border-radius: 1rem;
@@ -20,9 +20,11 @@
   .items {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 10px;
+    max-width: 750px;
+    gap: 20px;
   }
 }
+
 
 .header {
   display: flex;
