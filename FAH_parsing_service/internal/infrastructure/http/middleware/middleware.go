@@ -30,6 +30,7 @@ func LoggerMiddleware(baseLogger *logger.Logger) func(http.Handler) http.Handler
 			// Log request start
 			baseLogger.Info(ctx, "HTTP request started",
 				zap.String("method", r.Method),
+				zap.String("Host", r.Host),
 				zap.String("path", r.URL.Path),
 				zap.String("remote_addr", r.RemoteAddr),
 				zap.String("user_agent", r.UserAgent()),
@@ -44,6 +45,7 @@ func LoggerMiddleware(baseLogger *logger.Logger) func(http.Handler) http.Handler
 			// Log request completion
 			baseLogger.Info(ctx, "HTTP request completed",
 				zap.String("method", r.Method),
+				zap.String("Host", r.Host),
 				zap.String("path", r.URL.Path),
 				zap.Int("status_code", wrapped.statusCode),
 				zap.Duration("duration", time.Since(start)),
