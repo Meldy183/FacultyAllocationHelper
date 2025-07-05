@@ -48,10 +48,10 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8082:8082"
-    networks:
-      - fah
     depends_on:
       - auth-server
+    networks:
+      - fah
   auth-db:
     container_name: auth_db
     image: postgres:latest
