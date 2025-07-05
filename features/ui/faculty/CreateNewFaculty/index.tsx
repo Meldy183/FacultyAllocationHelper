@@ -33,8 +33,8 @@ const CreateFacultyMenu: React.FC = () => {
   const submitHandler = async (formData: FormInputType) => {
     try {
        const { data, error } = await createUser(formData);
-      console.log(data, error);
        if (error) throw error;
+       console.log(data)
        setIsOpen(false);
     } catch (e) {
       handleErrorForm<FormInputType>(e, form.setError);
@@ -143,6 +143,9 @@ const CreateFacultyMenu: React.FC = () => {
                   </div>
                 )}
               />
+              {form.formState.errors.root && (
+                <p className="text-red-500 text-sm">{ form.formState.errors.root.message }</p>
+              )}
               <Button type="submit" className={styles.button}>Submit</Button>
             </div>
           </form>
