@@ -50,6 +50,8 @@ services:
       - "8082:8082"
     networks:
       - fah
+    depends_on:
+      - auth-server
   auth-db:
     container_name: auth_db
     image: postgres:latest
