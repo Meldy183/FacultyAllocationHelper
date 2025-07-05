@@ -41,7 +41,14 @@ services:
       - .env
     networks:
       - fah
- 
+  parsing_service:
+    build:
+      context: ./FAH_parsing_service
+      dockerfile: Dockerfile
+    ports:
+      - "8082:8082"
+    networks:
+      - fah
   auth-db:
     container_name: auth_db
     image: postgres:latest
