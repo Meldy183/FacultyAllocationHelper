@@ -1,6 +1,8 @@
 package lab
 
+import "context"
+
 type Repository interface {
-	GetAll() ([]*Lab, error)
-	GetLabsByInstituteID(InstituteID int64) ([]*Lab, error)
+	GetAllLabs(ctx context.Context) ([]*Lab, error)
+	GetLabsByInstituteID(ctx context.Context, instituteID int64) ([]*Lab, error)
 }

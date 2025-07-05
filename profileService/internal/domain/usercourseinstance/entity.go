@@ -1,7 +1,7 @@
 package usercourseinstance
 
 type UserCourseInstance struct {
-	UserCourse       int
+	UserCourseID     int
 	ProfileID        int
 	CourseInstanceID int
 }

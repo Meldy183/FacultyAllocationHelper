@@ -74,7 +74,7 @@ func InitSchema(ctx context.Context, pool *pgxpool.Pool) error {
 	}
 	log.Info("created user_table")
 	query = `CREATE TABLE IF NOT EXISTS language (
-    	language_code VARCHAR(20) PRIMARY KEY,
+    	code VARCHAR(20) PRIMARY KEY,
     	language_name VARCHAR(255) UNIQUE NOT NULL
 	)`
 	_, err = conn.Exec(ctx, query)
@@ -133,12 +133,11 @@ func InitSchema(ctx context.Context, pool *pgxpool.Pool) error {
 		return err
 	}
 	log.Info("created course_table")
-	query = `CREATE TABLE IF NOT EXISTS user_course (
+	query = `CREATE TABLE IF NOT EXISTS user_course_instance (
 		user_course_id SERIAL PRIMARY KEY,
 		profile_id INT NOT NULL,
 		instance_id INT NOT NULL,
 		FOREIGN KEY (profile_id) REFERENCES user_profile(profile_id),
-		FOREIGN KEY (instance_id) REFERENCES course_instance(instance_id)
 	)`
 	_, err = conn.Exec(ctx, query)
 	if err != nil {

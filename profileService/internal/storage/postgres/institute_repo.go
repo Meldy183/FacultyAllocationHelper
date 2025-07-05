@@ -46,6 +46,7 @@ func (r *InstituteRepo) GetAll(ctx context.Context) ([]*institute.Institute, err
 		r.logger.Error("Error getting all institutes", zap.Error(err))
 		return nil, fmt.Errorf("error getting all institutes: %w", err)
 	}
+	defer rows.Close()
 	var institutes []*institute.Institute
 	for rows.Next() {
 		var iterThroughInstitutes institute.Institute

@@ -37,21 +37,22 @@ func (r *UserLanguageRepo) Add(ctx context.Context, userLanguage *userlanguage.U
 
 func (r *UserLanguageRepo) GetUserLanguages(ctx context.Context, profileID int64) ([]*language.Language, error) {
 	r.logger.Info("Getting user-languages from database with ID", zap.Int64("ProfileID", profileID))
-	row, err := r.pool.Query(ctx, queryGetUserLanguages, profileID)
+	rows, err := r.pool.Query(ctx, queryGetUserLanguages, profileID)
 	var userLanguages []*language.Language
 	if err != nil {
 		r.logger.Error("Error getting user-languages", zap.Error(err))
 		return nil, fmt.Errorf("getting user-languages from database with ID: %w", err)
 	}
-	for row.Next() {
+	defer rows.Close()
+	for rows.Next() {
 		var languageCode string
-		if err := row.Scan(&languageCode); err != nil {
+		if err := rows.Scan(&languageCode); err != nil {
 			r.logger.Error("Error getting user-languages", zap.Error(err))
 			return nil, fmt.Errorf("getting user-languages from database with ID: %w", err)
 		}
 		userLanguages = append(userLanguages, &language.Language{})
 	}
-	if err := row.Err(); err != nil {
+	if err := rows.Err(); err != nil {
 		r.logger.Error("Error iterating rows", zap.Error(err))
 		return nil, fmt.Errorf("getting user-languages from database with ID: %w", err)
 	}

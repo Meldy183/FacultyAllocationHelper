@@ -1,6 +1,8 @@
 package language
 
+import "context"
+
 type Repository interface {
-	GetAll() ([]*Language, error)
-	GetByCode(code string) (*Language, error)
+	GetAll(ctx context.Context) ([]*Language, error)
+	GetByCode(ctx context.Context, code string) (*Language, error)
 }

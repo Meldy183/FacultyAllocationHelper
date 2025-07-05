@@ -1,6 +1,8 @@
 package usercourseinstance
 
+import "context"
+
 type Repository interface {
-	GetByProfileID(ProfileID int64) ([]int64, error)
-	AddCourseInstance(ProfileID int64, instance int64) error
+	GetInstancesByProfileID(ctx context.Context, profileID int64) ([]int64, error)
+	AddCourseInstance(ctx context.Context, profileID int64, instanceID int64) error
 }
