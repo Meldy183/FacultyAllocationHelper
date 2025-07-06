@@ -49,6 +49,7 @@ func (r *UserCourseInstanceRepo) GetInstancesByProfileID(ctx context.Context, pr
 	r.logger.Info("GetInstancesByProfileID Success", zap.Int64("profileID", profileID))
 	return instances, nil
 }
+
 func (r *UserCourseInstanceRepo) AddCourseInstance(ctx context.Context, userCourseInstance *usercourseinstance.UserCourseInstance) error {
 	r.logger.Info("AddCourseInstance", zap.Int("profileID", userCourseInstance.ProfileID))
 	_, err := r.pool.Exec(ctx, queryAddCourseInstance, userCourseInstance.ProfileID, userCourseInstance.CourseInstanceID)
