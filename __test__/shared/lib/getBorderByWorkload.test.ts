@@ -3,6 +3,11 @@ require("@testing-library/jest-dom");
 import { getBorderColorByWorkload } from "@/shared/lib/getBorderColorByWorkload";
 
 describe("getBorderByWorkload", () => {
+	it("returns red for overload faculty", () => {
+		expect(getBorderColorByWorkload(1.01)).toBe("#FF0000");
+		expect(getBorderColorByWorkload(1.15)).toBe("#FF0000");
+	})
+
 	it("returns red for workload > 0.8", () => {
 		expect(getBorderColorByWorkload(0.81)).toBe("#FF0000");
 		expect(getBorderColorByWorkload(1)).toBe("#FF0000");
