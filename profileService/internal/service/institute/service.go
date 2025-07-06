@@ -7,6 +7,8 @@ import (
 	"go.uber.org/zap"
 )
 
+var _ institute.Repository = (*Service)(nil)
+
 type Service struct {
 	repo   institute.Repository
 	logger *zap.Logger
