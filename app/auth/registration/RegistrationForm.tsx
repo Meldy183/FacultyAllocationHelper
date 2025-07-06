@@ -36,11 +36,10 @@ const RegistrationForm: React.FC = () => {
 				return;
 			}
 
-			// @ts-ignore
-			const { error } = await register(formData).unwrap();
+			const { error } = await register(formData);
 			if (error) throw error;
 			router.push(dashboardRoute.routePath)
-		} catch (e: any) {
+		} catch (e) {
 			handleErrorForm<RegisterInput>(e, form.setError);
 		}
 	}

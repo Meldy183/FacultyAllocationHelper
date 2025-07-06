@@ -34,7 +34,7 @@ const LoginForm: React.FC = () => {
 			console.log(data, error);
 			if (error) throw error;
 			router.push(dashboardRoute.routePath);
-		} catch (e: any) {
+		} catch (e) {
 			handleErrorForm<LoginInput>(e, form.setError);
 		}
 	}

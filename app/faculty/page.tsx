@@ -6,7 +6,6 @@ import SideBar from "@/shared/ui/wrapper/sidebar";
 import SideBarContent from "@/app/faculty/SideBarContent";
 import styles from "./styles.module.scss";
 import TeacherAssistance from "@/app/faculty/teacherAssistantField";
-import { useGetMembersByParamQuery } from "@/features/api/slises/courses/members";
 import CreateFacultyMenu from "../../features/ui/faculty/CreateNewFaculty";
 
 const user = {

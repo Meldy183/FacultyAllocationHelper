@@ -1,6 +1,4 @@
 "use client"
-import Image from "next/image";
-import arrowSvg from "@/public/icons/svg/arrow.svg";
 import styles from "./styles.module.scss";
 import React from "react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/shared/ui/accordion";

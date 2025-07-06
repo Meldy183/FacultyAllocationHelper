@@ -6,8 +6,6 @@ import Image from "next/image";
 import styles from "./styles.module.scss";
 import userIcon from "@/public/icons/faculty/faculty-member/faculty-member-icon.svg"
 import Wrapper from "@/shared/ui/wrapper";
-import { useGetUserQuery } from "@/features/api/slises/courses/members";
-import { useParams } from "next/navigation";
 
 const faculty = {
 	name: "Name",
@@ -74,9 +72,9 @@ const user = {
 }
 
 export default function ProfileDashboard() {
-	const params = useParams();
+	// const params = useParams();
 
-	const id = params.id as string;
+	// const id = params.id as string;
 
 	// const { data, error, isLoading } = useGetUserQuery({ id });
 	//
