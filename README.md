@@ -13,7 +13,7 @@ To test and touch it you should register or sign in.
 
 ### Static view
 
-- UML Component Diagram: ![Static View Diagram](docs/architecture/static-view/your-diagram.png)
+- UML Component Diagram: ![Static View Diagram](docs/architecture/static-view/ComponentUML.png)
 - [PlantUML source](docs/architecture/static-view/StaticView.puml)
 
 The architecture is based on microservices. Each of them uses its own database. Communication between the services is implemented via HTTP calls. This approach simplifies testing and replacing separate components while making changes.
