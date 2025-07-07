@@ -30,7 +30,7 @@ This diagram shows interactions between different user types and services in our
 
 ### Kanban board
 
-Link to our Jira board: [https://facultyhelper.atlassian.net/jira/software/projects/SCRUM/boards/1]
+Link to our Kanban screenshot (updated daily): [https://drive.google.com/file/d/1Oo3Lh--Dajjf32G4280qaKicAVV2Ycqy/view?usp=share_link]
 
 - **To do** - [The task is assigned to somebody]
 - **In progress** - [The work on a task is started]
