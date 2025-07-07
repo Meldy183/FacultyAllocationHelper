@@ -2,92 +2,97 @@
 
 
 
-## Getting started
-
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
-
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
-
-## Add your files
-
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/topics/git/add_files/#add-files-to-a-git-repository) or push an existing Git repository with the following command:
-
-```
-cd existing_repo
-git remote add origin https://gitlab.pg.innopolis.university/f.markin/fah.git
-git branch -M main
-git push -uf origin main
-```
-
-## Integrate with your tools
-
-- [ ] [Set up project integrations](https://gitlab.pg.innopolis.university/f.markin/fah/-/settings/integrations)
-
-## Collaborate with your team
-
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/user/project/merge_requests/auto_merge/)
-
-## Test and Deploy
-
-Use the built-in continuous integration in GitLab.
-
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
-
-***
-
-# Editing this README
-
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
-
-## Suggestions for a good README
-
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
-
-## Name
-Choose a self-explaining name for your project.
-
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
-
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
-
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
-
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
-
 ## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+To test and touch it you should register or sign in.
+1) To sign up use innopolis mail, e.g. m.pezer@innopolis.university
+2) The password should be 9 or more symbols - Not necessarily the same as in your innopolis account
+3) If you are already signed up in OUR web application - use existing mail and pass - it is checked by the system of authentication
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+## Architecture
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
+### Static view
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
+- UML Component Diagram: ![Static View Diagram](docs/architecture/static-view/your-diagram.png)
+- [PlantUML source](docs/architecture/static-view/StaticView.puml)
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
+The architecture is based on microservices. Each of them uses its own database. Communication between the services is implemented via HTTP calls. This approach simplifies testing and replacing separate components while making changes.
 
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
+### Dynamic view
 
-## License
-For open source projects, say how it is licensed.
+- UML Sequence Diagram: ![Dynamic View Diagram](docs/architecture/dynamic-view/UserCaseDiagram.jpeg)
 
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+This diagram shows interactions between different user types and services in our system
+
+### Deployment view
+
+## Development
+
+### Kanban board
+
+Link to our Jira board: [https://facultyhelper.atlassian.net/jira/software/projects/SCRUM/boards/1]
+
+- **To do** - [The task is assigned to somebody]
+- **In progress** - [The work on a task is started]
+- **Done** - [The task is completed]
+
+### Git workflow
+
+The chosen workflow is gitflow
+
+- The issues are marked by the followwing lables: [frontend, backend, UX/UI, devops]
+- Any issue can be assigned by any member at any moment
+- The branches are created and named after each microservice, like authorization, parsing or profile service. There are also separate branches for frontend and backend generally
+- Commits are made in free form by any member
+-  Pull requests can be created by any member for the purposes of requesting changing the functionality
+- Any member's code can be reviewed by another one
+- Any member can merge pull requests for other members
+- The issues are resolved by their assignees
+
+#### Gitgraph diagram
+
+[gitgrapgh](docs/development/git-workflow/gitgraph.png)
+
+### Secrets management
+
+So far, the secrets are transmitted manually when configuring the server. They are not stored in the repository and the main branch is protected.
+
+### Automated testing
+
+For unit testing, Jest was chosen as the main tool. It is widely
+used for testing React applications, and Next.js which is based on React is well com-
+patible with it. An extension for Jest was used for proper work with Next.js.
+
+Beyond the standard testing package in Go, Ginkgo, GoConvey and Testify were con-
+sidered. However, the Go standard package was chosen as the only one because it is
+lightweight, fast, and tightly integrated with the Go toolchain (go test).
+
+[The integration tests in the repo](FAH-auth-service/tests/integration)
+[The unit tests in the repo](fah-frontend/__test__)
+
+### Continious integration
+
+[The CI workflow file](fah-frontend/.gitlab-ci.yml)
+[Link to where all CI workflow runs can be seen](https://gitlab.pg.innopolis.university/f.markin/fah/-/pipelines)
+ESlint is included as a static analyzer but not launched
+
+## Quality
+
+The quality characteristics are discussed with the customer
+
+### Reliability
+
+#### Recoverability
+
+It is important to save the data somewhere so that it doesn't disappear in case of any error
+### Flexibility
+
+#### Adaptability
+
+The product should be able to launch in any invironment.
+
+### Performance efficiency
+
+#### Capacity
+
+Our product should have a limit to which the working process meets the requirements
