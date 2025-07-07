@@ -29,8 +29,10 @@ func (r *UserInstituteRepo) GetUserInstituteByID(ctx context.Context, profileID 
 	r.logger.Info("GetUserInstituteByIDStart", zap.Int64("profileID", profileID))
 	row := r.pool.QueryRow(ctx, queryGetUserInstituteByID, profileID)
 	var instituteById institute.Institute
-	err := row.Scan(&instituteById.InstituteID,
-		&instituteById.Name)
+	err := row.Scan(
+		&instituteById.InstituteID,
+		&instituteById.Name,
+	)
 	if err != nil {
 		r.logger.Error("GetUserInstituteByID", zap.Int64("profileID", profileID), zap.Error(err))
 		return nil, fmt.Errorf("GetUserInstituteByID: %w", err)
