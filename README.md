@@ -47,9 +47,9 @@ Simple containerization allows to quickly deploy or scale the frontend and backe
 
 Link to our Kanban screenshot (updated daily): [https://drive.google.com/file/d/1Oo3Lh--Dajjf32G4280qaKicAVV2Ycqy/view?usp=share_link]
 
-- **To do** - [The task is assigned to somebody]
-- **In progress** - [The work on a task is started]
-- **Done** - [The task is completed]
+- **To do** - [The task is assigned to a team member]
+- **In progress** - [The work on a task is in progress]
+- **Done** - [The result is accessible to the customer]
 
 ### Git workflow
 
@@ -70,7 +70,7 @@ The chosen workflow is gitflow
 
 ### Secrets management
 
-So far, the secrets are transmitted manually when configuring the server. They are not stored in the repository and the main branch is protected.
+So far, the secrets are transmitted manually when configuring the server. They are not stored in the repository.
 
 ### Automated testing
 
@@ -100,6 +100,7 @@ The quality characteristics are discussed with the customer
 #### Recoverability
 
 It is important to save the data somewhere so that it doesn't disappear in case of any error
+
 ### Flexibility
 
 #### Adaptability
