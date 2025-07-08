@@ -3,36 +3,17 @@ package "Client" {
   [Web App]
 }
 
-package "Gateway" {
-  [API Gateway]
-}
-
 package "Backend" {
-  [Auth Service]
-  [Profile Service]
-  [Academic Service]
-  [Audit Service]
+  [Monolith Service]
 }
 
-database "Auth DB" as DB1
-database "Profile DB" as DB2
-database "Academic DB" as DB3
-database "Audit DB" as DB4
+database "PostgreSQL DB" as DB
 
-[Web App] --> [API Gateway] : HTTP(S) requests
-[API Gateway] --> [Auth Service]
-[API Gateway] --> [Profile Service]
-[API Gateway] --> [Academic Service]
-[API Gateway] --> [Audit Service]
+rectangle "External Systems" {
+  [SSO Provider]
+}
 
-[Auth Service] --> DB1
-[Profile Service] --> DB2
-[Academic Service] --> DB3
-[Audit Service] --> DB4
-
-[Auth Service] --> [Audit Service] : Logs actions
-[Profile Service] --> [Audit Service]
-[Academic Service] --> [Audit Service]
-
-[Academic Service] --> [Profile Service] : Uses profile info
+[Web App] --> [Monolith Service] : HTTP(S) requests
+[Monolith Service] --> DB             : SQL
+[Monolith Service] --> [SSO Provider] : OAuth2 / SAML
 @enduml
