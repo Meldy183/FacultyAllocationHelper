@@ -1,0 +1,262 @@
+.facultyElement {
+  border: 2px solid #FFFB00;
+  border-radius: 2px;
+  padding: 5px 10px;
+  background-color: #FFFFFF;
+  //font-family: Poppins;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 100%;
+  letter-spacing: -1%;
+  color: #292D32;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  .buttons {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-right: 5px;
+
+    img {
+      height: 12px;
+      width: 12px;
+      cursor: pointer;
+    }
+  }
+
+  .menuTrigger {
+    text-align: left !important;
+    //text-wrap: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+}
+
+.dialogMenu {
+  min-width: 800px;
+  padding: 0;
+  overflow: hidden;
+
+  .description {
+    height: 80vh;
+    overflow-y: scroll;
+    background: transparent;
+  }
+
+  .header {
+    height: 100%;
+  }
+
+  .container {
+    min-height: 100vh;
+    background-color: #D5E2D2;
+    padding: 1.5rem;
+    font-size: 16px;
+    color: #333;
+    gap: 10px;
+    display: grid;
+
+    .card {
+      min-width: 730px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 1rem;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+      padding: 30px;
+      //max-height: 550px;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 100px;
+      padding-bottom: 15px;
+    }
+
+    .userInfo {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .avatar {
+      width: 98px;
+      height: auto;
+    }
+
+    .name {
+      font-size: 24px;
+      font-weight: 600;
+    }
+
+    .subName {
+      font-size: 20px;
+      color: #666;
+    }
+
+    .section {
+      background: #ECF8E9;
+      border-radius: 0.75rem;
+      padding: 1rem;
+      margin-top: 0.5rem;
+    }
+
+    .row {
+      margin-bottom: 0.5rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.1rem;
+    }
+
+    .title {
+      font-weight: 600;
+      font-size: 16px;
+      margin-bottom: 0.5rem;
+    }
+
+    .workloadGrid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 1rem;
+    }
+
+    .table {
+      width: 100%;
+      text-align: center;
+      border-collapse: collapse;
+      thead {
+        background-color: #DBF2D5;
+        color: #666666;
+        font-weight: 600;
+      }
+    }
+
+    .table th, .table td {
+      border: 1px solid #8CD67A;
+      padding: 0.25rem;
+    }
+
+    .metrics {
+      background: #ECF8E9;
+      border-radius: 0.75rem;
+      padding: 1rem;
+      margin-top: 0.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+  }
+}
+
+.contextMenu {
+  background-color: #FFFFFF;
+  color: #333333;
+
+  .menu {
+    .header {
+      padding: 9px 12px;
+      border-bottom: 1px solid #858585;
+
+      .head {
+        display: flex;
+        align-items: center;
+        margin-bottom: 8px;
+
+        .userImage {
+          height: 40px;
+          width: 40px;
+          margin-right: 8px;
+        }
+
+        .information {
+          .name {
+            //font-family: Inter;
+            font-weight: 500;
+            font-size: 14px;
+            line-height: 24px;
+            letter-spacing: 0.15px;
+            display: flex;
+            align-items: center;
+          }
+          .tg {
+            //font-family: Inter;
+            font-weight: 400;
+            font-size: 12px;
+            line-height: 14px;
+            letter-spacing: 0.15px;
+          }
+        }
+      }
+
+      .email {
+        //font-family: Inter;
+        font-weight: 400;
+        font-size: 10px;
+        line-height: 12px;
+        letter-spacing: 0.15px;
+        color: #5B5B5B;
+        margin-bottom: 5px;
+      }
+
+      .workInformation {
+        display: flex;
+        align-items: flex-start;
+
+        .department {
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+          margin-right: 5px;
+          font-weight: 400;
+          font-size: 10px;
+          line-height: 12px;
+          letter-spacing: 0.15px;
+
+          // .placeholder {}
+          // .value {}
+        }
+
+        .workload {
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+          margin-right: 5px;
+          font-weight: 400;
+          font-size: 10px;
+          line-height: 12px;
+          letter-spacing: 0.15px;
+
+          .number {
+            padding: 5px 8px;
+            border: 1px solid #FF0000;
+          }
+          .text {
+            font-weight: 400;
+            font-size: 8px;
+            line-height: 8px;
+            letter-spacing: 0.1px;
+            color: #000000;
+          }
+        }
+      }
+    }
+    .labList {
+      padding: 10px 0;
+      .lab {
+        //font-family: Inter;
+        font-weight: 400;
+        font-size: 12px;
+        line-height: 5px;
+        letter-spacing: 0.15px;
+        padding: 5.5px 0;
+        color: #000000;
+      }
+    }
+  }
+}

@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/shared/ui/tooltip";
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/shared/ui/dialog";
-import styles from "@/shared/ui/CourseField/styles.module.scss";
 import Image from "next/image";
-import userIcon from "@/public/icons/faculty/faculty-member/faculty-member-icon.svg";
-import arrowRightIcon from "@/public/icons/svg/right-arrow.svg";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import PersonDialogMenuContent from "@/entities/faculty/PersonDialogMenuContent";
+import arrowRightIcon from "@/public/icons/svg/right-arrow.svg";
+import checkMarkIcon from "@/public/icons/svg/check-mark.svg";
+import crossIcon from "@/public/icons/svg/cross.svg";
+import userIcon from "@/public/icons/faculty/faculty-member/faculty-member-icon.svg";
+import styles from "./styles.module.scss";
 
 interface Faculty {
 	name: string;
@@ -22,14 +24,20 @@ const TAElement: React.FC<Faculty> = (faculty) => {
 		<TooltipProvider>
 			<Dialog open={openDialog} onOpenChange={setOpenDialog}>
 				<Tooltip>
-					<TooltipTrigger asChild>
+					<div>
 						<div className={styles.facultyElement}>
-              <span className={styles.menuTrigger}>
-                {faculty.name[0] + ". " + faculty.surname}
+							<div className={ styles.buttons }>
+								<Image src={ checkMarkIcon } alt={ "approve" } />
+								<Image src={ crossIcon } alt={ "dis-approve" } />
+							</div>
+							<TooltipTrigger>
+	              <span className={ styles.menuTrigger }>
+                { faculty.name[0] + ". " + faculty.surname }
               </span>
+							</TooltipTrigger>
 						</div>
-					</TooltipTrigger>
-					<TooltipContent side="right" className={styles.contextMenu}>
+					</div>
+					<TooltipContent side="right" className={ styles.contextMenu }>
 						<div className={styles.menu}>
 							<div className={styles.header}>
 								<div className={styles.head}>
