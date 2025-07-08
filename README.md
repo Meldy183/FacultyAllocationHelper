@@ -20,7 +20,7 @@ The architecture is based on microservices. Each of them uses its own database. 
 
 ### Dynamic view
 
-- UML Sequence Diagram: ![Dynamic View Diagram](docs/architecture/dynamic-view/UserCaseDiagram.jpeg)
+- UML Sequence Diagram: ![Dynamic View Diagram](docs/architecture/dynamic-view/DynamicView_SequenceDiagram.png)
 
 This diagram shows interactions between different user types and services in our system
 
