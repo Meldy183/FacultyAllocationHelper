@@ -26,15 +26,20 @@ If the user icon on the right of the navigation bar depicts the user profile, wh
 - UML Component Diagram: ![Static View Diagram](docs/architecture/static-view/ComponentUML.png)
 - [PlantUML source](docs/architecture/static-view/StaticView.puml)
 
-The architecture is based on microservices. Each of them uses its own database. Communication between the services is implemented via HTTP calls. This approach simplifies testing and replacing separate components while making changes.
+Our system uses a monolith backend, separate frontend and an outer SSO. The database is accessed by backend. Communication between the services is implemented via HTTP calls. This approach simplifies the code navigation and decreases logic duplication.
 
 ### Dynamic view
 
 - UML Sequence Diagram: ![Dynamic View Diagram](docs/architecture/dynamic-view/DynamicView_SequenceDiagram.png)
 
-This diagram shows interactions between different user types and services in our system
+This diagram shows interactions between different user types and services in our system.
 
 ### Deployment view
+
+- UML Deployment Diagram: ![Deployment View Diagram](docs/architecture/deployment-view/DeploymentUML.png)
+- [PlantUML source](docs/architecture/deployment-view/DeploymentUML.puml)
+
+Simple containerization allows to quickly deploy or scale the frontend and backend on the same server. Using a single database simplifies data backup and migration.
 
 ## Development
 
