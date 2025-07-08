@@ -60,7 +60,7 @@ The chosen workflow is gitflow
 - The branches are created and named after each microservice, like authorization, parsing or profile service. There are also separate branches for frontend and backend generally
 - Commits are made in free form by any member
 -  Pull requests can be created by any member for the purposes of requesting changing the functionality
-- Any member's code can be reviewed by another one
+- Any member's code can be reviewed by another member
 - Any member can merge pull requests for other members
 - The issues are resolved by their assignees
 
@@ -93,7 +93,9 @@ ESlint is included as a static analyzer but not launched
 
 ## Quality
 
-The quality characteristics are discussed with the customer
+The quality characteristics are discussed with the customer.
+
+
 
 ### Reliability
 
