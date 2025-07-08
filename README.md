@@ -4,10 +4,20 @@
 
 ## Usage
 
-To test and touch it you should register or sign in.
+To test the application, you should register or sign in.
 1) To sign up use innopolis mail, e.g. m.pezer@innopolis.university
 2) The password should be 9 or more symbols - Not necessarily the same as in your innopolis account
 3) If you are already signed up in OUR web application - use existing mail and pass - it is checked by the system of authentication
+
+Once you register or sign in, you appear at the home page of the website. Use the header navigation bar for switching to other pages.
+
+If you click on the "Courses" section, a course list appears. You can click on the side menu to see course filtering options. You can add a new course or interact with the course cards. First of all, the course names are clickable and will lead toy to the course profile. Secondly, under "Teaching assistants" section of the course card, you can find the "Assign new" button and interact with the pop-up menu to assign either a new or an existing faculty member to a specific teaching position.
+
+If you click on the "Facuty" section of the navigation bar, a faculty list appears. Here you can also open the side-menu for filtering options. You can all a new faculty member or see the existing faculty. If you click on the name of the employee, a pop-up window with their profile will appear.
+
+If you click on the "Logs" section, the action log list will appear. 
+
+If the user icon on the right of the navigation bar depicts the user profile, which is work in progress for now.
 
 ## Architecture
 
