@@ -5,9 +5,8 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import CreateNewFacultyForm from "@/entities/faculty/CreateFacultyForm/ui";
 
-
 const CreateFacultyMenu: React.FC = () => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const onSubmit = () => {
     setIsOpen(false);

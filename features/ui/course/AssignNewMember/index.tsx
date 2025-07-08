@@ -4,29 +4,25 @@ import React, { useState } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/shared/ui/dialog";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { AnimatePresence, motion } from "framer-motion";
-import CreateNewMemberMenu from "./CreateNewMemberMenu";
-import AllocateExistingMember from "./AllocateExistingMemberMenu";
+import AllocateExistingMember from "./AllocateMemberMenu";
 import styles from "./styles.module.scss";
 import CourseComposition from "./CourseComposition";
 
+const positions = [
+	"Primary instructor",
+	"Tutor instructor",
+	"Teacher assistant"
+]
+
 const AssignNewMember: React.FC = () => {
-	const [creatingMember, setCreatingMember] = useState<boolean>(false);
-	const [allocatingMember, setAllocatingMember] = useState<boolean>(false);
+	const [changNow, setChangNow] = useState<string>("");
 
-	const [] = useState<string>();
-
-	const handleCreateMember = () => {
-		setCreatingMember(true);
-		setAllocatingMember(false);
+	const handleChangedFaculty = (member: string) => {
+		setChangNow(member);
 	}
 
-	const handleFoldCreateMember = () => {
-		setCreatingMember(false);
-	}
-
-	const handleAllocateMember = () => {
-		setAllocatingMember(true);
-		setCreatingMember(false);
+	const foldMenu = () => {
+		setChangNow("");
 	}
 
 	return <Dialog>
@@ -44,38 +40,29 @@ const AssignNewMember: React.FC = () => {
 				transition={{ type: "spring", stiffness: 300, damping: 30 }}
 				className={ styles.menu }>
 				<CourseComposition
-					handleCreateMember={ handleCreateMember }
-					handleAllocateMember={ handleAllocateMember }
+					handleAllocateMember={ handleChangedFaculty }
+					faculties={ positions }
 				/>
 			</motion.div>
 			<AnimatePresence>
 				{
-					creatingMember &&
-					<motion.div
-              key="right"
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 50 }}
-              transition={{ duration: 0.3 }}
-              layout
-							className={ styles.menu }
-					>
-							<CreateNewMemberMenu position={ "Position-name" } handleFoldMenu={ handleFoldCreateMember } />
-					</motion.div>
-				}
-				{
-					allocatingMember &&
-					<motion.div
-              key="right"
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 50 }}
-              transition={{ duration: 0.3 }}
-              layout
-              className={ styles.menu }
-					>
-							<AllocateExistingMember />
-					</motion.div>
+					positions.map((position) => (
+						changNow == position &&
+            <motion.div
+                key="right"
+                initial={ { opacity: 0, x: 50 } }
+                animate={ { opacity: 1, x: 0 } }
+                exit={ { opacity: 0, x: 50 } }
+                transition={ { duration: 0.3 } }
+                layout
+                className={ styles.menu }
+            >
+			          <AllocateExistingMember
+					          foldMenu={ foldMenu }
+					          position={ position }
+			          />
+            </motion.div>
+					))
 				}
 			</AnimatePresence>
 		</DialogContent>
