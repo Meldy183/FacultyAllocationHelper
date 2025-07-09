@@ -77,7 +77,9 @@ So far, the secrets are transmitted manually when configuring the server. They a
 ### Continious integration
 
 [The CI workflow file](fah-frontend/.gitlab-ci.yml)
+
 [Link to where all CI workflow runs can be seen](https://gitlab.pg.innopolis.university/f.markin/fah/-/pipelines)
+
 ESlint is included as a static analyzer but not launched
 
 ## Quality assurance
@@ -101,4 +103,5 @@ sidered. However, the Go standard package was chosen as the only one because it 
 lightweight, fast, and tightly integrated with the Go toolchain (go test).
 
 [The integration tests in the repo](FAH-auth-service/tests/integration)
+
 [The unit tests in the repo](fah-frontend/__test__)
