@@ -64,6 +64,12 @@ The chosen workflow is gitflow
 - Any member can merge pull requests for other members
 - The issues are resolved by their assignees
 
+#### Issue templates
+
+[Bug report](issue_templates/Bug_Report.md)
+[Technical Task](issue_templates/Technical_Task.md)
+[User Story](issue_templates/User_Story.md)
+
 #### Gitgraph diagram
 
 [gitgrapgh](docs/development/git-workflow/gitgraph.png)
