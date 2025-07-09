@@ -72,6 +72,24 @@ The chosen workflow is gitflow
 
 So far, the secrets are transmitted manually when configuring the server. They are not stored in the repository.
 
+## Build and deployment
+
+### Continious integration
+
+[The CI workflow file](fah-frontend/.gitlab-ci.yml)
+[Link to where all CI workflow runs can be seen](https://gitlab.pg.innopolis.university/f.markin/fah/-/pipelines)
+ESlint is included as a static analyzer but not launched
+
+## Quality assurance
+
+### User acceptance tests
+
+[The user acceptance tests](docs/quality-assurance/user-acceptance-tests.md)
+
+### Quality attribute scenarios
+
+[The quality attribute scenarios](docs/quality-assurance/quality-attribute-scenarios.md)
+
 ### Automated testing
 
 For unit testing, Jest was chosen as the main tool. It is widely
@@ -84,33 +102,3 @@ lightweight, fast, and tightly integrated with the Go toolchain (go test).
 
 [The integration tests in the repo](FAH-auth-service/tests/integration)
 [The unit tests in the repo](fah-frontend/__test__)
-
-### Continious integration
-
-[The CI workflow file](fah-frontend/.gitlab-ci.yml)
-[Link to where all CI workflow runs can be seen](https://gitlab.pg.innopolis.university/f.markin/fah/-/pipelines)
-ESlint is included as a static analyzer but not launched
-
-## Quality
-
-The quality characteristics are discussed with the customer.
-
-
-
-### Reliability
-
-#### Recoverability
-
-It is important to save the data somewhere so that it doesn't disappear in case of any error
-
-### Flexibility
-
-#### Adaptability
-
-The product should be able to launch in any invironment.
-
-### Performance efficiency
-
-#### Capacity
-
-Our product should have a limit to which the working process meets the requirements
