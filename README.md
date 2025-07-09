@@ -45,7 +45,7 @@ Simple containerization allows to quickly deploy or scale the frontend and backe
 
 ### Kanban board
 
-Link to our Kanban screenshot (updated daily): [https://drive.google.com/file/d/1Oo3Lh--Dajjf32G4280qaKicAVV2Ycqy/view?usp=share_link]
+Link to our Kanban screenshot (updated daily): https://drive.google.com/file/d/1Oo3Lh--Dajjf32G4280qaKicAVV2Ycqy/view?usp=share_link
 
 - **To do** - [The task is assigned to a team member]
 - **In progress** - [The work on a task is in progress]
