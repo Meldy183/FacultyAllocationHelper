@@ -47,15 +47,15 @@ Simple containerization allows to quickly deploy or scale the frontend and backe
 
 Link to our Kanban screenshot (updated daily): https://drive.google.com/file/d/1Oo3Lh--Dajjf32G4280qaKicAVV2Ycqy/view?usp=share_link
 
-- **To do** - [The task is assigned to a team member]
-- **In progress** - [The work on a task is in progress]
-- **Done** - [The result is accessible to the customer]
+- **To do** - The task is assigned to a team member
+- **In progress** - The work on a task is in progress
+- **Done** - The result is accessible to the customer
 
 ### Git workflow
 
 The chosen workflow is gitflow
 
-- The issues are marked by the followwing lables: [frontend, backend, UX/UI, devops]
+- The issues are marked by the followwing lables: frontend, backend, UX/UI, devops
 - Any issue can be assigned by any member at any moment
 - The branches are created and named after each microservice, like authorization, parsing or profile service. There are also separate branches for frontend and backend generally
 - Commits are made in free form by any member
