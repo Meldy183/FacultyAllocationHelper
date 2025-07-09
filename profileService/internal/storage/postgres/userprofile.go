@@ -36,10 +36,10 @@ const (
 
 	queryInsertUserProfile = `
 		INSERT INTO user_profile (
-			profile_id, user_id, email, position, english_name, russian_name, alias,
-			employment_type, degree, mode, start_date, end_date, maxload
+			email, position, english_name, alias
 		)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
+		VALUES ($1, $2, $3, $4)
+		RETURNING profile_id
 	`
 
 	queryUpdateUserProfile = `
@@ -102,20 +102,13 @@ func (r *UserProfileRepo) GetByProfileID(ctx context.Context, profileID int64) (
 }
 
 func (r *UserProfileRepo) Create(ctx context.Context, userProfile *userprofile.UserProfile) error {
-	r.logger.Info("Creating user profile", zap.Int64("profileId", userProfile.ProfileID))
-	_, err := r.pool.Exec(ctx, queryInsertUserProfile, userProfile.ProfileID,
-		userProfile.UserID,
+	err := r.pool.QueryRow(ctx, queryInsertUserProfile,
 		userProfile.Email,
 		userProfile.Position,
 		userProfile.EnglishName,
-		userProfile.RussianName,
 		userProfile.Alias,
-		userProfile.EmploymentType,
-		userProfile.Degree,
-		userProfile.Mode,
-		userProfile.StartDate,
-		userProfile.EndDate,
-		userProfile.MaxLoad)
+	).Scan(&userProfile.ProfileID)
+	r.logger.Info("Creating user profile", zap.Int64("profileId", userProfile.ProfileID))
 	if err != nil {
 		r.logger.Error("Error creating user profile", zap.Error(err))
 		return fmt.Errorf("CreateUserProfile failed: %w", err)
