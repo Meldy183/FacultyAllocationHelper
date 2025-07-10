@@ -107,6 +107,9 @@ func (h *Handler) AddProfile(w http.ResponseWriter, r *http.Request) {
 
 }
 
+func (h *Handler) GetProfile(w http.ResponseWriter, r *http.Request) {
+	var
+}
 func writeError(w http.ResponseWriter, status int, message string) {
 	writeJSON(w, status, map[string]string{"error": message})
 }
