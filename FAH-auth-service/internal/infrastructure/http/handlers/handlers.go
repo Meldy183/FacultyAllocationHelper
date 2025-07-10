@@ -156,6 +156,7 @@ func (h *Handlers) Register(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 	jsonResp, err := json.Marshal(logresp)
 	if err != nil {
+
 		http.Error(w, "Failed to create JSON response", http.StatusInternalServerError)
 		return
 	}
