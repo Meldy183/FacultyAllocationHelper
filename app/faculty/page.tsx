@@ -7,7 +7,7 @@ import SideBarContent from "@/app/faculty/SideBarContent";
 import styles from "./styles.module.scss";
 import TeacherAssistance from "@/app/faculty/teacherAssistantField";
 import CreateFacultyMenu from "../../features/ui/faculty/CreateNewFaculty";
-import { useGetMembersByParamQuery } from "@/features/api/slises/courses/members";
+import { useGetMembersByParamQuery } from "@/features/api/slises/profile";
 
 const AssistantsPage: React.FC = () => {
 	const { data, error, isLoading } = useGetMembersByParamQuery([]);

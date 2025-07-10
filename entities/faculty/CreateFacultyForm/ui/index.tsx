@@ -9,7 +9,7 @@ import styles from "@/features/ui/faculty/CreateNewFaculty/styles.module.scss";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CreateMemberResolver } from "@/shared/types/resolvers/createMember";
 import { z } from "zod";
-import { useCreateUserMutation } from "@/features/api/slises/courses/members";
+import { useCreateUserMutation } from "@/features/api/slises/profile";
 
 type FormInputType = z.infer<typeof CreateMemberResolver>;
 

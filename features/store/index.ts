@@ -1,7 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 import counterReducer from "./slices/test";
 import { authSlice } from "@/features/api/slises/authSlice";
-import { memberSlice } from "@/features/api/slises/courses/members";
+import { memberSlice } from "@/features/api/slises/profile";
 
 const makeStore = () => configureStore({
 	reducer: {

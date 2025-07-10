@@ -5,14 +5,9 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { AnimatePresence, motion } from "framer-motion";
 import AllocateExistingMember from "./AllocateMemberMenu";
-import styles from "./styles.module.scss";
 import CourseComposition from "./CourseComposition";
-
-const positions = [
-	"Primary instructor",
-	"Tutor instructor",
-	"Teacher assistant"
-]
+import { facultyPositions } from "@/shared/configs/constants";
+import styles from "./styles.module.scss";
 
 const AssignNewMember: React.FC = () => {
 	const [changNow, setChangNow] = useState<string>("");
@@ -26,8 +21,8 @@ const AssignNewMember: React.FC = () => {
 	}
 
 	return <Dialog>
-		<DialogTrigger>
-			<div className={ styles.addNewMember }>Assign new</div>
+		<DialogTrigger asChild>
+			<button className={ styles.addNewMember }>Assign new</button>
 		</DialogTrigger>
 		<DialogContent className={ styles.dialogContent }>
 			<VisuallyHidden>
@@ -41,12 +36,12 @@ const AssignNewMember: React.FC = () => {
 				className={ styles.menu }>
 				<CourseComposition
 					handleAllocateMember={ handleChangedFaculty }
-					faculties={ positions }
+					faculties={ facultyPositions }
 				/>
 			</motion.div>
 			<AnimatePresence>
 				{
-					positions.map((position) => (
+					facultyPositions.map((position) => (
 						changNow == position &&
             <motion.div
                 key="right"
