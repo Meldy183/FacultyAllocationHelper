@@ -21,16 +21,16 @@ type GetProfileResponse struct {
 	Workload       float64       `json:"workload"`
 	StudentType    string        `json:"studentType"`
 	Degree         bool          `json:"degree"`
-	Fsro           string        `json:"FSRO"`
+	Fsro           string        `json:"FSRO,omitempty"`
 	Languages      []Lang        `json:"languages"`
 	Courses        []Course      `json:"courses"`
 	EmploymentType string        `json:"employmentType"`
-	HiringStatus   string        `json:"hiringStatus"`
+	HiringStatus   string        `json:"hiringStatus,omitempty"`
 	Mode           string        `json:"mode"`
 	MaxLoad        int           `json:"maxLoad"`
-	FrontalHours   int           `json:"frontalHours"`
-	ExtraActivity  float64       `json:"extraActivity"`
-	WorkloadStats  WorkloadStats `json:"workloadStats"`
+	FrontalHours   int           `json:"frontalHours,omitempty"`
+	ExtraActivity  float64       `json:"extraActivity,omitempty"`
+	WorkloadStats  WorkloadStats `json:"workloadStats,omitempty"`
 }
 
 type Lang struct {

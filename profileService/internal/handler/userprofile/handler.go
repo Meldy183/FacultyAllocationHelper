@@ -155,12 +155,6 @@ func (h *Handler) GetProfile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	languages, err := h.serviceLang.GetUserLanguages(ctx, profileID)
-	var langEntries []Lang
-	for _, l := range languages {
-		langEntries = append(langEntries, Lang{
-			Language: l.LanguageName,
-		})
-	}
 	if err != nil {
 		h.logger.Error("error getting languages",
 			zap.String("layer", logGetProfile),
@@ -169,6 +163,12 @@ func (h *Handler) GetProfile(w http.ResponseWriter, r *http.Request) {
 		)
 		writeError(w, http.StatusInternalServerError, "error getting languages")
 		return
+	}
+	var langEntries []Lang
+	for _, l := range languages {
+		langEntries = append(langEntries, Lang{
+			Language: l.LanguageName,
+		})
 	}
 	coursesID, err := h.serviceCourse.GetInstancesByProfileID(ctx, profileID)
 	if err != nil {
@@ -198,16 +198,11 @@ func (h *Handler) GetProfile(w http.ResponseWriter, r *http.Request) {
 		Workload:       profile.Workload,
 		StudentType:    profile.StudentType,
 		Degree:         profile.Degree,
-		Fsro:           "In progress",
 		Languages:      langEntries,
 		Courses:        courseEntries,
 		EmploymentType: profile.EmploymentType,
-		HiringStatus:   "In progress",
 		Mode:           string(profile.Mode),
 		MaxLoad:        profile.MaxLoad,
-		FrontalHours:   -1488,
-		ExtraActivity:  -1488,
-		WorkloadStats:  WorkloadStats{},
 	}
 	h.logger.Info("Successfully fetched profile",
 		zap.String("layer", logGetProfile),
