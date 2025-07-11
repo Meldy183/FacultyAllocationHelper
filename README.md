@@ -52,6 +52,8 @@ To use the application, you should register or sign in.
 
 ---
 
+
+
 ## Architecture
 
 ### Static view
