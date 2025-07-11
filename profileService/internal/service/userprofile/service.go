@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/userprofile"
 	"go.uber.org/zap"
+	"strings"
 )
 
 var _ userprofile.Repository = (*Service)(nil)
@@ -27,6 +28,14 @@ const (
 )
 
 func (s *Service) Create(ctx context.Context, profile *userprofile.UserProfile) error {
+	if !isAliasValid(profile) {
+		s.logger.Error(
+			"Invalid Alias",
+			zap.String("layer", logLayer),
+			zap.String("function", logCreate),
+		)
+		return fmt.Errorf("invalid alias: %v", profile.Alias)
+	}
 	err := s.repo.Create(ctx, profile)
 	if err != nil {
 		s.logger.Error("error creating userprofile",
@@ -51,12 +60,21 @@ func (s *Service) GetByProfileID(ctx context.Context, profileID int64) (*userpro
 			zap.Error(err))
 		return nil, fmt.Errorf("error getting userprofile %w", err)
 	}
+	if !isAliasValid(profile) {
+		s.logger.Error(
+			"Invalid Alias",
+			zap.String("layer", logLayer),
+			zap.String("function", logCreate),
+		)
+		return nil, fmt.Errorf("invalid alias: %v", profile.Alias)
+	}
 	s.logger.Info("user profile found",
 		zap.String("layer", logLayer),
 		zap.String("function", logGetByProfileID),
 		zap.Int64("profileID", profileID),
 		zap.Any("profile", profile),
 	)
+
 	return profile, nil
 }
 func (s *Service) GetByUserID(ctx context.Context, userID string) (*userprofile.UserProfile, error) {
@@ -68,6 +86,14 @@ func (s *Service) GetByUserID(ctx context.Context, userID string) (*userprofile.
 			zap.String("userID", userID),
 			zap.Error(err))
 		return nil, fmt.Errorf("error getting userprofile %w", err)
+	}
+	if !isAliasValid(profile) {
+		s.logger.Error(
+			"Invalid Alias",
+			zap.String("layer", logLayer),
+			zap.String("function", logCreate),
+		)
+		return nil, fmt.Errorf("invalid alias: %v", profile.Alias)
 	}
 	s.logger.Info("user profile found",
 		zap.String("layer", logLayer),
@@ -85,9 +111,24 @@ func (s *Service) Update(ctx context.Context, profile *userprofile.UserProfile) 
 			zap.Error(err))
 		return fmt.Errorf("error updating userprofile %w", err)
 	}
+	if !isAliasValid(profile) {
+		s.logger.Error(
+			"Invalid Alias",
+			zap.String("layer", logLayer),
+			zap.String("function", logCreate),
+		)
+		return fmt.Errorf("invalid alias: %v", profile.Alias)
+	}
 	s.logger.Info("user profile updated",
 		zap.String("layer", logLayer),
 		zap.String("function", logUpdate),
 	)
 	return nil
+}
+
+func isAliasValid(req *userprofile.UserProfile) bool {
+	if !strings.Contains(req.Alias, "@") || req.Alias == "" {
+		return false
+	}
+	return true
 }

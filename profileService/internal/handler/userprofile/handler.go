@@ -4,17 +4,15 @@ import (
 	"encoding/json"
 	"github.com/go-chi/chi/v5"
 	userinstituteDomain "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/userinstitute"
-	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/usercourseinstance"
-	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/userlanguage"
-	"strconv"
-	"strings"
-
 	userprofileDomain "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/userprofile"
 	_ "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/institute"
+	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/usercourseinstance"
 	userinstitute "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/userinstitute"
+	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/userlanguage"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/userprofile"
 	"go.uber.org/zap"
 	"net/http"
+	"strconv"
 )
 
 type Handler struct {
@@ -49,15 +47,7 @@ func (h *Handler) AddProfile(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusBadRequest, "invalid request body")
 		return
 	}
-	if !strings.Contains(req.Alias, "@") || req.Alias == "" {
-		h.logger.Error("invalid alias",
-			zap.String("alias", req.Alias),
-			zap.String("function", logAddProfile),
-			zap.String("layer", logLayer),
-		)
-		writeError(w, http.StatusBadRequest, "invalid alias")
-		return
-	}
+
 	if req.NameEnglish == "" {
 		h.logger.Error("invalid name_english",
 			zap.String("engName", req.NameEnglish),

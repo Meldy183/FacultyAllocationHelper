@@ -46,7 +46,7 @@ const (
 		UPDATE user_profile
 		SET user_id = $1, email = $2, position = $3, english_name = $4,
 		    russian_name = $5, alias = $6, employment_type = $7, degree = $8,
-		    mode = $9, start_date = $10, end_date = $11, maxload = $12, workload = $13, student_type = $14
+		    mode = $9, start_date = $10, end_date = $11, maxload = $12, workload = $14, student_type = $15
 		WHERE profile_id = $13
 	`
 )
