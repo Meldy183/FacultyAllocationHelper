@@ -1,16 +1,34 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Wrapper from "@/shared/ui/wrapper";
 import SideBar from "@/shared/ui/wrapper/sidebar";
 import SideBarContent from "@/app/faculty/SideBarContent";
-import styles from "./styles.module.scss";
 import TeacherAssistance from "@/app/faculty/teacherAssistantField";
-import CreateFacultyMenu from "../../features/ui/faculty/CreateNewFaculty";
-import { useGetMembersByParamQuery } from "@/features/api/slises/profile";
+import CreateFacultyMenu from "@/features/ui/faculty/CreateNewFaculty";
+import { useLazyGetMembersByParamQuery } from "@/features/api/slises/profile";
+import { UserDataInterface } from "@/shared/types/apiTypes/members";
+import { useAppSelector } from "@/features/store/hooks";
+import { FilterGroup } from "@/shared/types/apiTypes/filters";
+import { transformWorkingFilters } from "@/shared/lib/transformFilter";
+import styles from "./styles.module.scss";
+import { profileFiltersCacheKey } from "@/shared/configs/constants/cache/api/profile/filters";
 
 const AssistantsPage: React.FC = () => {
-	const { data, error, isLoading } = useGetMembersByParamQuery([]);
+	const filters: FilterGroup[] = useAppSelector(state => state.facultyFilters.filters)
+	const [getUsers, { data, error, isLoading }] = useLazyGetMembersByParamQuery({
+		fixedCacheKey: profileFiltersCacheKey
+	});
+	const [users, setUsers] = useState<UserDataInterface[]>([]);
+
+	useEffect(() => {
+		const transformedFilters = transformWorkingFilters(filters);
+		getUsers(transformedFilters);
+	}, [filters, getUsers]);
+
+	useEffect(() => {
+		if (data) setUsers(data?.data || []);
+	}, [data, error, isLoading]);
 
 	if (error) return <>smth went wrong</>
 
@@ -29,7 +47,7 @@ const AssistantsPage: React.FC = () => {
 						<div className={styles.colPosition}>Position</div>
 					</li>
 					{
-						isLoading ? <>data loading</> : data?.data.map((item, i) => <TeacherAssistance {...item} key={ i } />)
+						isLoading ? <>data loading</> : users.map((item, i) => <TeacherAssistance {...item} key={ i } />)
 					}
 					</ul>
 			</div>

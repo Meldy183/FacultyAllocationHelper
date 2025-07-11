@@ -6,13 +6,29 @@ import { useGetFiltersQuery } from "@/features/api/slises/profile";
 import { FilterGroup, FilterItem } from "@/shared/types/apiTypes/filters";
 import { Label } from "@/shared/ui/label";
 import { Checkbox } from "@/shared/ui/checkbox";
+import { useAppDispatch, useAppSelector } from "@/features/store/hooks";
+import { toggleFilter } from "@/features/store/slices/filters/faculty";
 
 const SideBarContent: React.FC = () => {
+	const filters = useAppSelector(state => state.facultyFilters.filters);
+	const dispatcher = useAppDispatch();
+
 	const { data, error } = useGetFiltersQuery({});
 
-	React.useEffect(() => {
-		console.log(data)
-	}, [data]);
+	const toggleFilters = (filterGroupName: string, filter: FilterItem) => {
+		dispatcher(toggleFilter({
+			name: filterGroupName,
+			items: [filter]
+		}))
+	}
+
+	const isChecked = (filterGroupName: string, filter: FilterItem): boolean => {
+		return filters.some(
+				(filterGroup) =>
+					filterGroup.name === filterGroupName &&
+					filterGroup.items.some((i) => i.name === filter.name)
+			)
+	}
 
 	return (
 		<>
@@ -27,7 +43,7 @@ const SideBarContent: React.FC = () => {
 										{
 											filterGroup.items.map((filter: FilterItem) =>
 												<Label key={ filter.name }>
-													<Checkbox />
+													<Checkbox checked={ isChecked(filterGroup.name, filter) } onCheckedChange={ () => toggleFilters(filterGroup.name, filter) } />
 													<span className={ styles.text }>{ filter.name }</span>
 												</Label>
 											)

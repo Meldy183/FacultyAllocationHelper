@@ -1,6 +1,6 @@
-import { FilterGroup, RawFiltersResponse } from "@/shared/types/apiTypes/filters";
+import { FilterGroup, FiltersRequest, RawFiltersResponse } from "@/shared/types/apiTypes/filters";
 
-export function transformFilters(raw: RawFiltersResponse): FilterGroup[] {
+export function transformRawFilters(raw: RawFiltersResponse): FilterGroup[] {
 	return Object.entries(raw.filters).map(([name, rawItems]) => ({
 		name,
 		items: rawItems.map(rawItem => {
@@ -8,4 +8,12 @@ export function transformFilters(raw: RawFiltersResponse): FilterGroup[] {
 			return { name: itemName, value };
 		})
 	}));
+}
+
+export function transformWorkingFilters(filters: FilterGroup[]): FiltersRequest {
+	const obj: FiltersRequest = {};
+	filters.forEach(filter => {
+		obj[filter.name] = filter.items.map(item => item.name);
+	})
+	return obj;
 }

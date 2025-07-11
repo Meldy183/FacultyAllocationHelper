@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { API_PATH } from "@/shared/configs/constants";
 import { GetMemberProcessType, GetAllUsers, CreateMember, GetFiltersType } from "@/shared/types/apiTypes/members";
-import { transformFilters } from "@/shared/lib/transformFilter";
+import { transformRawFilters } from "@/shared/lib/transformFilter";
 import { RawFiltersResponse } from "@/shared/types/apiTypes/filters";
 
 export const memberSlice = createApi({
@@ -10,13 +10,14 @@ export const memberSlice = createApi({
     baseUrl: `${ API_PATH }/profile/`,
     credentials: "include"
   }),
+  refetchOnReconnect: true,
   endpoints: (builder) => ({
-    getFilters: builder.query<GetFiltersType["responseBody"], GetFiltersType["requestParams"]>({
+    getFilters: builder.query<GetFiltersType["responseBody"], GetFiltersType["requestQuery"]>({
       query: () => ({
         url: "filters",
         method: "GET",
       }),
-      transformResponse: (response: RawFiltersResponse) => transformFilters(response)
+      transformResponse: (response: RawFiltersResponse) => transformRawFilters(response)
     }),
     getUser: builder.query<GetMemberProcessType["responseBody"], GetMemberProcessType["requestQuery"]>({
       query: ({ id }) => ({
@@ -24,8 +25,8 @@ export const memberSlice = createApi({
         method: "GET",
       })
     }),
-    getMembersByParam: builder.query<GetAllUsers["responseBody"], GetAllUsers["requestParams"]>({
-      query: (query) => ({
+    getMembersByParam: builder.query<GetAllUsers["responseBody"], GetAllUsers["requestQuery"]>({
+      query: (query) =>  ({
         url: `getAllUsers`,
         method: "GET",
         params: query
@@ -43,7 +44,7 @@ export const memberSlice = createApi({
 
 export const {
   useGetUserQuery,
-  useGetMembersByParamQuery,
+  useLazyGetMembersByParamQuery,
   useCreateUserMutation,
   useGetFiltersQuery
 } = memberSlice;

@@ -66,11 +66,11 @@ export type GetMemberProcessType = {
 
 export type GetFiltersType = {
   responseBody: FilterGroup[],
-  requestParams: {}
+  requestQuery: {}
 }
 
 export type GetAllUsers = {
-  requestParams: { [key: string]: string[] }
+  requestQuery: { [key: string]: string[] }
   responseBody: {
     data: UserDataInterface[]
   },
