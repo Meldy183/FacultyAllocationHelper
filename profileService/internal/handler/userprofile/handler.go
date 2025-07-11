@@ -29,11 +29,18 @@ const (
 	logGetProfile = "GetProfile"
 )
 
-func NewHandler(serviceUP *userprofile.Service, serviceUI *userinstitute.Service, logger *zap.Logger) *Handler {
+func NewHandler(serviceUP *userprofile.Service,
+	serviceUI *userinstitute.Service,
+	serviceLang *userlanguage.Service,
+	serviceCourse *usercourseinstance.Service,
+	logger *zap.Logger,
+) *Handler {
 	return &Handler{
-		serviceUP: serviceUP,
-		logger:    logger.Named("userprofile_handler"),
-		serviceUI: serviceUI,
+		serviceUP:     serviceUP,
+		serviceUI:     serviceUI,
+		serviceLang:   serviceLang,
+		serviceCourse: serviceCourse,
+		logger:        logger.Named("userprofile_handler"),
 	}
 }
 func (h *Handler) AddProfile(w http.ResponseWriter, r *http.Request) {
@@ -208,4 +215,11 @@ func writeJSON(w http.ResponseWriter, status int, data interface{}) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
 	_ = json.NewEncoder(w).Encode(data)
+}
+
+func RegisterRoutes(router chi.Router, h *Handler) {
+	router.Route("/profile", func(r chi.Router) {
+		r.Post("/addUser", h.AddProfile)
+		r.Get("/getProfile/{id}", h.GetProfile)
+	})
 }

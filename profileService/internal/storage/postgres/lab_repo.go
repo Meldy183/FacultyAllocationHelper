@@ -15,7 +15,7 @@ type LabRepo struct {
 	logger *zap.Logger
 }
 
-func NewLabRepo(logger *zap.Logger, pool *pgxpool.Pool) *LabRepo {
+func NewLabRepo(pool *pgxpool.Pool, logger *zap.Logger) *LabRepo {
 	return &LabRepo{pool: pool, logger: logger}
 }
 

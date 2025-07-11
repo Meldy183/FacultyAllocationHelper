@@ -5,9 +5,16 @@ import (
 	"fmt"
 	"github.com/joho/godotenv"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/config"
-	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
+	userprofile2 "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/handler/userprofile"
+	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/http"
+	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/usercourseinstance"
+	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/userinstitute"
+	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/userlanguage"
+	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/userprofile"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/storage/db"
+	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/storage/postgres"
 	"go.uber.org/zap"
+	httpNet "net/http"
 )
 
 func main() {
@@ -16,7 +23,7 @@ func main() {
 		panic(loggerErr)
 	}
 	defer logger.Sync()
-	ctx := logctx.WithLogger(context.Background(), logger)
+	ctx := context.Background()
 	if err := godotenv.Load(); err != nil {
 		logger.Fatal("Error loading .env file", zap.Error(err))
 	}
@@ -27,6 +34,44 @@ func main() {
 	}
 	logger.Info(fmt.Sprintf("Connected to database %v", cfg.Database))
 	defer pool.Close()
+	// Repository layer inits
+	userProfileRepo := postgres.NewUserProfileRepo(pool, logger)
+	userLanguageRepo := postgres.NewUserLanguageRepo(pool, logger)
+	userInstituteRepo := postgres.NewUserInstituteRepo(pool, logger)
+	userCourseInstanceRepo := postgres.NewUserCourseInstance(pool, logger)
+	// TODO languageRepo := postgres.NewLanguageRepo(pool, logger)
+	// TODO labRepo := postgres.NewLabRepo(pool, logger)
+	// TODO instituteRepo := postgres.NewInstituteRepo(pool, logger)
+	// Service layer inits
+	userProfileService := userprofile.NewService(userProfileRepo, logger)
+	userLanguageService := userlanguage.NewService(userLanguageRepo, logger)
+	userInstituteService := userinstitute.NewService(userInstituteRepo, logger)
+	userCourseInstanceService := usercourseinstance.NewService(userCourseInstanceRepo, logger)
+	// TODO languageService := language.NewService(languageRepo, logger)
+	// TODO labService := lab.NewService(labRepo, logger)
+	// TODO instituteService := institute.NewService(instituteRepo, logger)
+	handler := userprofile2.NewHandler(
+		userProfileService,
+		userInstituteService,
+		userLanguageService,
+		userCourseInstanceService,
+		logger,
+	)
+	router := http.NewRouter(handler)
+	server := httpNet.Server{
+		Addr:         cfg.Server.Host + ":" + cfg.Server.Port,
+		Handler:      router,
+		ReadTimeout:  cfg.Server.ReadTimeout,
+		WriteTimeout: cfg.Server.WriteTimeout,
+		IdleTimeout:  cfg.Server.IdleTimeout,
+	}
+	logger.Info("Starting Server",
+		zap.String("address", server.Addr),
+	)
+	if err := server.ListenAndServe(); err != nil {
+		logger.Fatal("Error starting server", zap.Error(err))
+	}
+
 }
 
 func initLogger() (*zap.Logger, error) {

@@ -18,7 +18,7 @@ const (
 	layer = "Service"
 )
 
-func NewService(logger *zap.Logger, repo institute.Repository) *Service {
+func NewService(repo institute.Repository, logger *zap.Logger) *Service {
 	return &Service{repo: repo, logger: logger}
 }
 
