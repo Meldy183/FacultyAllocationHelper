@@ -22,7 +22,7 @@ type HTTPServer struct {
 type Database struct {
 	Host            string        `yaml:"host" env:"DB_HOST"`
 	Port            string        `yaml:"port"`
-	Name            string        `yaml:"name"`
+	DBName          string        `yaml:"name"`
 	User            string        `yaml:"user"`
 	Password        string        `yaml:"password" env:"DB_PASSWORD"`
 	SSLMode         string        `yaml:"ssl_mode"`
