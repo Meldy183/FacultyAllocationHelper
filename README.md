@@ -52,97 +52,18 @@ To use the application, you should register or sign in.
 
 ---
 
+## 📚 Documentation
 
+All project documentation is organized into dedicated Markdown files. Click through to explore each section:
 
-## Architecture
+- **Development Guide** ([CONTRIBUTING.md](CONTRIBUTING.md))  
 
-### Static view
+- **Quality Assurance**  
+  - Quality characteristics & attribute scenarios ([docs/quality-attributes/quality-attribute-scenarios.md](docs/quality-attributes/quality-attribute-scenarios.md))  
+  - Automated tests ([docs/quality-assurance/automated-tests.md](docs/quality-assurance/automated-tests.md))  
+  - User acceptance tests ([docs/quality-assurance/user-acceptance-tests.md](docs/quality-assurance/user-acceptance-tests.md))
 
-- UML Component Diagram: ![Static View Diagram](docs/architecture/static-view/ComponentUML.png)
-- [PlantUML source](docs/architecture/static-view/StaticView.puml)
+- **Build & Deployment Automation**  
+  - Continuous Integration ([docs/automation/continuous-integration.md](docs/automation/continuous-integration.md))  
 
-Our system uses a monolith backend, separate frontend and an outer SSO. The database is accessed by backend. Communication between the services is implemented via HTTP calls. This approach simplifies the code navigation and decreases logic duplication.
-
-### Dynamic view
-
-- UML Sequence Diagram: ![Dynamic View Diagram](docs/architecture/dynamic-view/DynamicView_SequenceDiagram.png)
-
-This diagram shows interactions between different user types and services in our system.
-
-### Deployment view
-
-- UML Deployment Diagram: ![Deployment View Diagram](docs/architecture/deployment-view/DeploymentUML.png)
-- [PlantUML source](docs/architecture/deployment-view/DeploymentUML.puml)
-
-Simple containerization allows to quickly deploy or scale the frontend and backend on the same server. Using a single database simplifies data backup and migration.
-
-## Development
-
-### Kanban board
-
-Link to our Kanban screenshot (updated daily): https://drive.google.com/file/d/1Oo3Lh--Dajjf32G4280qaKicAVV2Ycqy/view?usp=share_link
-
-- **To do** - The task is assigned to a team member
-- **In progress** - The work on a task is in progress
-- **Done** - The result is accessible to the customer
-
-### Git workflow
-
-The chosen workflow is gitflow
-
-- The issues are marked by the followwing lables: frontend, backend, UX/UI, devops
-- Any issue can be assigned by any member at any moment
-- The branches are created and named after each microservice, like authorization, parsing or profile service. There are also separate branches for frontend and backend generally
-- Commits are made in free form by any member
--  Pull requests can be created by any member for the purposes of requesting changing the functionality
-- Any member's code can be reviewed by another member
-- Any member can merge pull requests for other members
-- The issues are resolved by their assignees
-
-#### Issue templates
-
-[Bug report](issue_templates/Bug_Report.md)
-[Technical Task](issue_templates/Technical_Task.md)
-[User Story](issue_templates/User_Story.md)
-
-#### Gitgraph diagram
-
-[gitgrapgh](docs/development/git-workflow/gitgraph.png)
-
-### Secrets management
-
-So far, the secrets are transmitted manually when configuring the server. They are not stored in the repository.
-
-## Build and deployment
-
-### Continious integration
-
-[The CI workflow file](fah-frontend/.gitlab-ci.yml)
-
-[Link to where all CI workflow runs can be seen](https://gitlab.pg.innopolis.university/f.markin/fah/-/pipelines)
-
-ESlint is included as a static analyzer but not launched
-
-## Quality assurance
-
-### User acceptance tests
-
-[The user acceptance tests](docs/quality-assurance/user-acceptance-tests.md)
-
-### Quality attribute scenarios
-
-[The quality attribute scenarios](docs/quality-assurance/quality-attribute-scenarios.md)
-
-### Automated testing
-
-For unit testing, Jest was chosen as the main tool. It is widely
-used for testing React applications, and Next.js which is based on React is well com-
-patible with it. An extension for Jest was used for proper work with Next.js.
-
-Beyond the standard testing package in Go, Ginkgo, GoConvey and Testify were con-
-sidered. However, the Go standard package was chosen as the only one because it is
-lightweight, fast, and tightly integrated with the Go toolchain (go test).
-
-[The integration tests in the repo](FAH-auth-service/tests/integration)
-
-[The unit tests in the repo](fah-frontend/__test__)
+- **Architecture** ([docs/architecture/architecture.md](docs/architecture/architecture.md))  
