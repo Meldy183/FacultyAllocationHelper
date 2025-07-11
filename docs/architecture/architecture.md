@@ -31,24 +31,6 @@ Our system follows a **modular monolith** architecture:
 - 📌 **UML Sequence Diagram**  
   ![Dynamic View Diagram](docs/architecture/dynamic-view/DynamicView_SequenceDiagram.png)
 
-This diagram illustrates a **non-trivial scenario** — for example, a faculty member assigning a TA to a course. It includes:
-
-- UI interaction
-- Backend validation
-- DB updates
-- UI feedback
-
-The interaction flow:
-1. User submits input via frontend
-2. Frontend sends HTTP request to backend
-3. Backend performs validation and updates the DB
-4. Result is returned to frontend and reflected in UI
-
-📈 We’ve measured this full cycle in production:  
-⏱ **Average response time**: under **200ms**
-
----
-
 ### 🚀 Deployment View
 
 - 📌 **UML Deployment Diagram**  

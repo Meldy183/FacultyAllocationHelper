@@ -34,7 +34,7 @@ We use **Jira** as the main tools for planning. However, we have also got a boar
 
 ## 🔁 Git Workflow
 
-Мы используем **GitLab Flow**
+We use **GitLab Flow**
 
 ### 📌 Main rules
 
