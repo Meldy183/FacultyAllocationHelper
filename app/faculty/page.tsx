@@ -12,13 +12,10 @@ import { useAppSelector } from "@/features/store/hooks";
 import { FilterGroup } from "@/shared/types/apiTypes/filters";
 import { transformWorkingFilters } from "@/shared/lib/transformFilter";
 import styles from "./styles.module.scss";
-import { profileFiltersCacheKey } from "@/shared/configs/constants/cache/api/profile/filters";
 
 const AssistantsPage: React.FC = () => {
 	const filters: FilterGroup[] = useAppSelector(state => state.facultyFilters.filters)
-	const [getUsers, { data, error, isLoading }] = useLazyGetMembersByParamQuery({
-		fixedCacheKey: profileFiltersCacheKey
-	});
+	const [getUsers, { data, error, isLoading }] = useLazyGetMembersByParamQuery();
 	const [users, setUsers] = useState<UserDataInterface[]>([]);
 
 	useEffect(() => {

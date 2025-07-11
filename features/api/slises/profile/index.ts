@@ -3,6 +3,7 @@ import { API_PATH } from "@/shared/configs/constants";
 import { GetMemberProcessType, GetAllUsers, CreateMember, GetFiltersType } from "@/shared/types/apiTypes/members";
 import { transformRawFilters } from "@/shared/lib/transformFilter";
 import { RawFiltersResponse } from "@/shared/types/apiTypes/filters";
+import { buildQuery } from "@/shared/lib/buildQuery";
 
 export const memberSlice = createApi({
   reducerPath: "api/profile",
@@ -26,10 +27,9 @@ export const memberSlice = createApi({
       })
     }),
     getMembersByParam: builder.query<GetAllUsers["responseBody"], GetAllUsers["requestQuery"]>({
-      query: (query) =>  ({
-        url: `getAllUsers`,
+      query: (query) => ({
+        url: `getAllUsers${ buildQuery(query) }`,
         method: "GET",
-        params: query
       })
     }),
     createUser: builder.mutation<CreateMember["responseBody"], CreateMember["requestBody"]>({

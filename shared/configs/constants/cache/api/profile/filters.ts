@@ -1,1 +1,0 @@
-export const profileFiltersCacheKey = "CACHE_API_PROFILE_FILTERS";
