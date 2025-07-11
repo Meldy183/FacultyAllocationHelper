@@ -28,12 +28,12 @@ Our system follows a **modular monolith** architecture:
 
 ### 🔄 Dynamic View
 
-- 📌 **UML Sequence Diagram**  
+- 📌 **UML Sequence Diagram**
   ![Dynamic View Diagram](docs/architecture/dynamic-view/DynamicView_SequenceDiagram.png)
 
 ### 🚀 Deployment View
 
-- 📌 **UML Deployment Diagram**  
+- 📌 **UML Deployment Diagram**
   ![Deployment View Diagram](docs/architecture/deployment-view/DeploymentUML.png)
 
 - 📝 [View the PlantUML source](docs/architecture/deployment-view/DeploymentUML.puml)
