@@ -54,15 +54,15 @@ func InitSchema(ctx context.Context, pool *pgxpool.Pool) error {
 	defer conn.Release()
 	query := `CREATE TABLE IF NOT EXISTS user_profile (
     	profile_id SERIAL PRIMARY KEY,
-    	user_id VARCHAR(255) UNIQUE NOT NULL,
+    	user_id VARCHAR(255) UNIQUE,
     	email VARCHAR(50) UNIQUE NOT NULL,
     	position VARCHAR(255) NOT NULL,
     	english_name VARCHAR(255) UNIQUE NOT NULL,
-    	russian_name VARCHAR(255) UNIQUE NOT NULL,
+    	russian_name VARCHAR(255) UNIQUE,
     	alias VARCHAR(255) UNIQUE NOT NULL,
     	employment_type VARCHAR(255) UNIQUE,
-    	degree BOOL NOT NULL,
-    	mode VARCHAR(255) NOT NULL,
+    	degree BOOL,
+    	mode VARCHAR(255),
     	start_date DATE,
     	end_date DATE,
     	maxload INTEGER
@@ -108,9 +108,9 @@ func InitSchema(ctx context.Context, pool *pgxpool.Pool) error {
 	query = `CREATE TABLE IF NOT EXISTS user_language (
     	user_language_id SERIAL PRIMARY KEY,
     	profile_id INT NOT NULL,
-    	language_code VARCHAR(255) NOT NULL,
+    	code VARCHAR(255) NOT NULL,
     	FOREIGN KEY (profile_id) REFERENCES user_profile(profile_id),
-    	FOREIGN KEY (language_code) REFERENCES language(language_code)
+    	FOREIGN KEY (code) REFERENCES language(code)
 	)`
 	_, err = conn.Exec(ctx, query)
 	if err != nil {
@@ -137,7 +137,7 @@ func InitSchema(ctx context.Context, pool *pgxpool.Pool) error {
 		user_course_id SERIAL PRIMARY KEY,
 		profile_id INT NOT NULL,
 		instance_id INT NOT NULL,
-		FOREIGN KEY (profile_id) REFERENCES user_profile(profile_id),
+		FOREIGN KEY (profile_id) REFERENCES user_profile (profile_id)
 	)`
 	_, err = conn.Exec(ctx, query)
 	if err != nil {
@@ -154,9 +154,9 @@ func InitSchema(ctx context.Context, pool *pgxpool.Pool) error {
 	log.Info("started transaction")
 	defer tx.Rollback(ctx)
 	_, err = tx.Exec(ctx, `
-		INSERT INTO language (language_code, language_name)
+		INSERT INTO language (code, language_name)
 		VALUES ('en', 'English'), ('ru', 'Russian')
-		ON CONFLICT (language_code) DO NOTHING;
+		ON CONFLICT (code) DO NOTHING;
 	`)
 	if err != nil {
 		log.Error("Error adding language", zap.Error(err))

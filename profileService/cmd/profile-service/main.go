@@ -16,6 +16,10 @@ import (
 	httpNet "net/http"
 )
 
+const (
+	logMain = "Main"
+)
+
 func main() {
 	logger, loggerErr := initLogger()
 	if loggerErr != nil {
@@ -29,8 +33,15 @@ func main() {
 	if err != nil {
 		logger.Fatal("Error connecting to database", zap.Error(err))
 	}
-	logger.Info(fmt.Sprintf("Connected to database %v", cfg.Database))
+	logger.Info(fmt.Sprintf("Connection is completed  %v", cfg.Database))
 	defer pool.Close()
+	err = db.InitSchema(ctx, pool)
+	if err != nil {
+		logger.Fatal("Error initializing schema",
+			zap.String("function", logMain),
+			zap.Error(err),
+		)
+	}
 	// Repository layer inits
 	userProfileRepo := postgres.NewUserProfileRepo(pool, logger)
 	userLanguageRepo := postgres.NewUserLanguageRepo(pool, logger)
