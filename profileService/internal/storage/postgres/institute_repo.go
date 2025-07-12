@@ -20,22 +20,32 @@ func NewInstituteRepo(pool *pgxpool.Pool, logger *zap.Logger) *InstituteRepo {
 }
 
 const (
-	queryGetByID = `SELECT institute_id, name FROM institute WHERE institute_id = $1`
-	queryGetAll  = `SELECT institute_id, name FROM institute`
+	queryGetByID        = `SELECT institute_id, name FROM institute WHERE institute_id = $1`
+	queryGetAll         = `SELECT institute_id, name FROM institute`
+	logGetInstituteByID = "GetInstituteByID"
+	logGetAllInstitutes = "GetAllInstitutes"
 )
 
 func (r *InstituteRepo) GetByID(ctx context.Context, instituteID int64) (*institute.Institute, error) {
-	r.logger.Info("Getting instituteByID information by institute_id")
 	row := r.pool.QueryRow(ctx, queryGetByID, instituteID)
 	var instituteByID institute.Institute
 	err := row.Scan(
 		&instituteByID.InstituteID,
 		&instituteByID.Name)
 	if err != nil {
-		r.logger.Error("Error getting instituteByID", zap.Error(err))
+		r.logger.Error("Error getting instituteByID",
+			zap.String("layer", logLayer),
+			zap.String("function", logGetInstituteByID),
+			zap.Int64("instituteID", instituteID),
+			zap.Error(err),
+		)
 		return nil, fmt.Errorf("error getting instituteByID: %w", err)
 	}
-	r.logger.Info("Successfully got instituteByID", zap.Any("institute", instituteByID))
+	r.logger.Info("Successfully got instituteByID",
+		zap.String("layer", logLayer),
+		zap.String("function", logGetInstituteByID),
+		zap.Int64("institueID", instituteID),
+	)
 	return &instituteByID, nil
 }
 
@@ -43,7 +53,11 @@ func (r *InstituteRepo) GetAll(ctx context.Context) ([]*institute.Institute, err
 	r.logger.Info("Getting all institutes")
 	rows, err := r.pool.Query(ctx, queryGetAll)
 	if err != nil {
-		r.logger.Error("Error getting all institutes", zap.Error(err))
+		r.logger.Error("Error getting all institutes",
+			zap.String("layer", logLayer),
+			zap.String("function", logGetAll),
+			zap.Error(err),
+		)
 		return nil, fmt.Errorf("error getting all institutes: %w", err)
 	}
 	defer rows.Close()
@@ -54,11 +68,19 @@ func (r *InstituteRepo) GetAll(ctx context.Context) ([]*institute.Institute, err
 			&iterThroughInstitutes.InstituteID,
 			&iterThroughInstitutes.Name)
 		if err != nil {
-			r.logger.Error("Error getting all institutes", zap.Error(err))
+			r.logger.Error("Error getting all institutes",
+				zap.String("layer", logLayer),
+				zap.String("function", logGetAll),
+				zap.Error(err),
+			)
 			return nil, fmt.Errorf("error getting all institutes: %w", err)
 		}
 		institutes = append(institutes, &iterThroughInstitutes)
 	}
-	r.logger.Info("Finished getting all institutes")
+	r.logger.Info("Finished getting all institutes",
+		zap.String("layer", logLayer),
+		zap.String("function", logGetAll),
+		zap.Int64("institutes", int64(len(institutes))),
+	)
 	return institutes, nil
 }

@@ -23,13 +23,18 @@ func NewUserLanguageRepo(pool *pgxpool.Pool, logger *zap.Logger) *UserLanguageRe
 const (
 	queryAdd              = `INSERT INTO user_language (user_language_id, profile_id, language_code) VALUES ($1, $2, $3)`
 	queryGetUserLanguages = `SELECT language_code FROM user_language WHERE profile_id = $1`
+	logAddUserLanguage    = "AddUserLanguage"
+	logGetUserLanguage    = "GetUserLanguage"
 )
 
 func (r *UserLanguageRepo) Add(ctx context.Context, userLanguage *userlanguage.UserLanguage) error {
-	r.logger.Info("Adding user-language to database with ID", zap.Int("ID", userLanguage.ProfileID))
 	_, err := r.pool.Exec(ctx, queryAdd, userLanguage.UserLanguageID, userLanguage.ProfileID, userLanguage.LanguageCode)
 	if err != nil {
-		r.logger.Error("Error adding user-language to database", zap.Error(err))
+		r.logger.Error("Error adding user-language to database",
+			zap.String("layer", logLayer),
+			zap.String("function", logAddUserLanguage),
+			zap.Error(err),
+		)
 		return fmt.Errorf("adding user-language to database with ID: %w", err)
 	}
 	return nil
@@ -40,21 +45,38 @@ func (r *UserLanguageRepo) GetUserLanguages(ctx context.Context, profileID int64
 	rows, err := r.pool.Query(ctx, queryGetUserLanguages, profileID)
 	var userLanguages []*language.Language
 	if err != nil {
-		r.logger.Error("Error getting user-languages", zap.Error(err))
+		r.logger.Error("Error getting user-languages",
+			zap.String("layer", logLayer),
+			zap.String("function", logGetUserLanguage),
+			zap.Error(err),
+		)
 		return nil, fmt.Errorf("getting user-languages from database with ID: %w", err)
 	}
 	defer rows.Close()
 	for rows.Next() {
 		var languageCode string
 		if err := rows.Scan(&languageCode); err != nil {
-			r.logger.Error("Error getting user-languages", zap.Error(err))
+			r.logger.Error("Error getting user-languages",
+				zap.String("layer", logLayer),
+				zap.String("function", logGetUserLanguage),
+				zap.Error(err),
+			)
 			return nil, fmt.Errorf("getting user-languages from database with ID: %w", err)
 		}
 		userLanguages = append(userLanguages, &language.Language{})
 	}
 	if err := rows.Err(); err != nil {
-		r.logger.Error("Error iterating rows", zap.Error(err))
+		r.logger.Error("Error iterating rows",
+			zap.String("layer", logLayer),
+			zap.String("function", logGetUserLanguage),
+			zap.Error(err),
+		)
 		return nil, fmt.Errorf("getting user-languages from database with ID: %w", err)
 	}
+	r.logger.Info("Successfully got user-languages",
+		zap.String("layer", logLayer),
+		zap.String("function", logGetUserLanguage),
+		zap.Int("user-languages", len(userLanguages)),
+	)
 	return userLanguages, nil
 }

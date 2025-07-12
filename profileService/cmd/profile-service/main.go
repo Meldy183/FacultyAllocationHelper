@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/joho/godotenv"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/config"
 	userprofile2 "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/handler/userprofile"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/http"
@@ -20,13 +19,11 @@ import (
 func main() {
 	logger, loggerErr := initLogger()
 	if loggerErr != nil {
+		fmt.Println("Panic occured")
 		panic(loggerErr)
 	}
 	defer logger.Sync()
 	ctx := context.Background()
-	if err := godotenv.Load(); err != nil {
-		logger.Fatal("Error loading .env file", zap.Error(err))
-	}
 	cfg := config.MustLoadConfig()
 	pool, err := db.NewPostgresPool(ctx, cfg.Database)
 	if err != nil {
