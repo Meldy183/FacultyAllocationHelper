@@ -15,11 +15,12 @@ import { transformWorkingFilters } from "@/shared/lib/transformFilter";
 import { useDebounce } from "@/shared/hooks/useDebounce";
 import { debounceTime } from "@/shared/configs/constants/dev/debounceTime";
 import loaderSvg from "@/public/icons/svg/loader.svg";
+import wrongSvg from "@/public/icons/svg/wrong.svg";
 import styles from "./styles.module.scss";
 
 const AssistantsPage: React.FC = () => {
 	const filters: FilterGroup[] = useAppSelector(state => state.facultyFilters.filters);
-	const [getUsers, { data, error, isLoading }] = useLazyGetMembersByParamQuery();
+	const [getUsers, { data, error, isError, isLoading }] = useLazyGetMembersByParamQuery();
 	const [users, setUsers] = useState<UserDataInterface[]>([]);
 
 	const debouncedFilters = useDebounce(filters, debounceTime)
@@ -30,10 +31,9 @@ const AssistantsPage: React.FC = () => {
 	}, [debouncedFilters, getUsers]);
 
 	useEffect(() => {
+		console.log(error)
 		if (data) setUsers(data?.data || []);
 	}, [data, error, isLoading]);
-
-	if (error) return <>smth went wrong</>
 
 	return <Wrapper>
 		<SideBar hiddenText={ "Filters" }><SideBarContent/></SideBar>
@@ -42,19 +42,26 @@ const AssistantsPage: React.FC = () => {
 			<CreateFacultyMenu />
 		</div>
 		<div className={ styles.assistance }>
-				<ul className={styles.list}>
-					<li className={styles.header}>
-						<div className={styles.colName}>Name, alias</div>
-						<div className={styles.colEmail}>Email</div>
-						<div className={styles.colInstitute}>Institute</div>
-						<div className={styles.colPosition}>Position</div>
-					</li>
-					{
-						isLoading ?
-							<><Image className={ styles.loadingImage } src={ loaderSvg } alt={ "loading" } /></>
-							: users.map((item, i) => <TeacherAssistance {...item} key={ i } />)
-					}
+			{
+				isError
+					? <div className={ styles.wrongMessage }>
+						<div className={ styles.wrongText }>something went wrong: <>{ error && 'data' in error ? (error.data! as { message: string }).message : 'An error occurred' }</></div>
+						<Image className={ styles.wrongImage } src={ wrongSvg } alt={ "something went wrong" } />
+					</div>
+					: <ul className={styles.list}>
+						<li className={styles.header}>
+							<div className={styles.colName}>Name, alias</div>
+							<div className={styles.colEmail}>Email</div>
+							<div className={styles.colInstitute}>Institute</div>
+							<div className={styles.colPosition}>Position</div>
+						</li>
+						{
+							isLoading ?
+								<><Image className={ styles.loadingImage } src={ loaderSvg } alt={ "loading" } /></>
+								: users.map((item, i) => <TeacherAssistance {...item} key={ i } />)
+						}
 					</ul>
+			}
 			</div>
 	</Wrapper>
 }

@@ -13,7 +13,7 @@ const SideBarContent: React.FC = () => {
 	const filters = useAppSelector(state => state.facultyFilters.filters);
 	const dispatcher = useAppDispatch();
 
-	const { data, error } = useGetFiltersQuery({});
+	const { data, isError } = useGetFiltersQuery({});
 
 	const toggleFilters = (filterGroupName: string, filter: FilterItem) => {
 		dispatcher(toggleFilter({
@@ -36,6 +36,7 @@ const SideBarContent: React.FC = () => {
 				<div className={ styles.menu }>
 					<Accordion type={ "multiple" }>
 						{
+							isError ? <>could not load filters</> :
 							data?.map((filterGroup: FilterGroup) => (
 								<AccordionItem className={ styles.accordionItem } value={ filterGroup.name } key={ filterGroup.name }>
 									<AccordionTrigger className={ styles.button }>{ filterGroup.name }</AccordionTrigger>

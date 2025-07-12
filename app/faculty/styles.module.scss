@@ -274,3 +274,15 @@
 .loadingImage {
   width: 100%;
 }
+
+.wrongMessage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  .wrongText {
+    color: #292D32;
+    font-size: 24px;
+  }
+  .wrongImage {
+  }
+}
