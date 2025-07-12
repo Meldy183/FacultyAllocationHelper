@@ -19,7 +19,6 @@ type UserProfile struct {
 	ProfileID      int64
 	UserID         string
 	Email          string
-	Workload       float64
 	Position       Position
 	EnglishName    string
 	RussianName    string

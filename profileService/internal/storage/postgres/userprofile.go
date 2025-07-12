@@ -22,14 +22,14 @@ func NewUserProfileRepo(pool *pgxpool.Pool, logger *zap.Logger) *UserProfileRepo
 const (
 	queryGetByUserID = `
 		SELECT profile_id, user_id, email, position, english_name, russian_name, alias,
-		       employment_type, degree, mode, start_date, end_date, maxload, workload, student_type
+		       employment_type, degree, mode, start_date, end_date, maxload, student_type
 		FROM user_profile
 		WHERE user_id = $1
 	`
 
 	queryGetByProfileID = `
 		SELECT profile_id, user_id, email, position, english_name, russian_name, alias,
-		       employment_type, degree, mode, start_date, end_date, maxload, workload, student_type
+		       employment_type, degree, mode, start_date, end_date, maxload, student_type
 		FROM user_profile
 		WHERE profile_id = $1
 	`
@@ -46,7 +46,7 @@ const (
 		UPDATE user_profile
 		SET user_id = $1, email = $2, position = $3, english_name = $4,
 		    russian_name = $5, alias = $6, employment_type = $7, degree = $8,
-		    mode = $9, start_date = $10, end_date = $11, maxload = $12, workload = $14, student_type = $15
+		    mode = $9, start_date = $10, end_date = $11, maxload = $12, student_type = $14
 		WHERE profile_id = $13
 	`
 	logLayer          = "repository"
@@ -72,7 +72,6 @@ func (r *UserProfileRepo) GetByUserID(ctx context.Context, userID string) (*user
 		&userProfile.StartDate,
 		&userProfile.EndDate,
 		&userProfile.MaxLoad,
-		&userProfile.Workload,
 		&userProfile.StudentType)
 	if err != nil {
 		r.logger.Error("Error getting user profile",
@@ -106,7 +105,6 @@ func (r *UserProfileRepo) GetByProfileID(ctx context.Context, profileID int64) (
 		&userProfile.Degree,
 		&userProfile.StartDate,
 		&userProfile.EndDate,
-		&userProfile.MaxLoad,
 		&userProfile.Workload,
 		&userProfile.StudentType)
 	if err != nil {
@@ -154,7 +152,7 @@ func (r *UserProfileRepo) Update(ctx context.Context, userProfile *userprofile.U
 	_, err := r.pool.Exec(ctx, queryUpdateUserProfile, userProfile.UserID, userProfile.Email, userProfile.Position,
 		userProfile.EnglishName, userProfile.RussianName, userProfile.Alias, userProfile.EmploymentType,
 		userProfile.Degree, userProfile.Mode, userProfile.StartDate, userProfile.EndDate, userProfile.MaxLoad,
-		userProfile.ProfileID, userProfile.StudentType, userProfile.Workload)
+		userProfile.ProfileID, userProfile.StudentType)
 	if err != nil {
 		r.logger.Error("Error updating user profile",
 			zap.String("layer", logLayer),

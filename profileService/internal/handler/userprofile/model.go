@@ -18,7 +18,7 @@ type GetProfileResponse struct {
 	Position       string        `json:"position"`
 	Institute      string        `json:"institute"`
 	InstituteID    int           `json:"institute_id"`
-	Workload       float64       `json:"workload"`
+	Workload       float64       `json:"workload,omitempty"`
 	StudentType    string        `json:"student_type"`
 	Degree         bool          `json:"degree"`
 	Fsro           string        `json:"fsro,omitempty"`
