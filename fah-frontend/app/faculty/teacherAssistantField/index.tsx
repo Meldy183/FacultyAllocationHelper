@@ -3,8 +3,8 @@ import Link from "next/link";
 import { UserDataInterface } from "@/shared/types/apiTypes/members";
 import styles from "../styles.module.scss";
 
-const TeacherAssistance: React.FC<UserDataInterface> = (props) => {
-  return <Link href={ `/faculty/${ props.id }` }>
+const TeacherAssistance: React.FC<UserDataInterface> = (props: UserDataInterface) => {
+  return <Link href={ `/faculty/${ props.profile_id }` }>
     <li className={styles.row}>
       <div className={styles.colName}>
         <h2>{ props.nameEng }</h2>

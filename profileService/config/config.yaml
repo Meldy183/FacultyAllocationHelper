@@ -1,0 +1,17 @@
+server:
+  host: ${SERVER_HOST}
+  port: 8083
+  read_timeout: 30s
+  write_timeout: 30s
+  idle_timeout: 60s
+
+database:
+  host: ${DB_HOST}
+  port: 5432
+  name: "postgres"
+  user: "user"
+  password: ${DB_PASSWORD}
+  ssl_mode: "disable"
+  max_open_connections: 1000
+  max_idle_connections: 100
+  connection_max_lifetime: 300s

@@ -1,4 +1,4 @@
-import { GroupFilterInterface } from "@/shared/types/apiTypes/filters";
+import { FilterGroup } from "@/shared/types/apiTypes/filters";
 
 type Language = {
   language: string;
@@ -64,8 +64,13 @@ export type GetMemberProcessType = {
   responseBody: UserDataInterface,
 }
 
+export type GetFiltersType = {
+  responseBody: FilterGroup[],
+  requestQuery: {}
+}
+
 export type GetAllUsers = {
-  requestBody: GroupFilterInterface[],
+  requestQuery: { [key: string]: string[] }
   responseBody: {
     data: UserDataInterface[]
   },

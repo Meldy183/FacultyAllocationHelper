@@ -80,5 +80,35 @@ services:
     restart: unless-stopped
     networks:
       - fah
+  db:
+    image: postgres:15
+    container_name: profile_db
+    env_file:
+      - .env
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+    networks:
+      - fah
+
+  profile-service:
+    build:
+      context: ./profileService
+      dockerfile: Dockerfile
+    container_name: profile_service
+    ports:
+      - "8083:8083"
+    depends_on:
+      - db
+    env_file:
+      - .env
 volumes:
   db-data:

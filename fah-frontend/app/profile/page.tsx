@@ -1,17 +1,11 @@
 import React from "react";
 import CourseField from "@/shared/ui/CourseField";
 import Image from "next/image";
-// import Image from "next/image";
-// import { Button } from "@/shared/ui/button";
-// import Wrapper from "@/shared/ui/wrapper";
-// import crossSvg from "@/public/icons/svg/cross.svg";
-// import styles from "./styles.module.scss";
 import styles from "./ProfileDashboard.module.scss";
 import userIcon from "@/public/icons/faculty/faculty-member/faculty-member-icon.svg"
 import { Button } from "@/shared/ui/button";
 import Link from "next/link";
 import Wrapper from "@/shared/ui/wrapper";
-
 
 const faculty = {
 	name: "Name",

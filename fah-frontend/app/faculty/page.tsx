@@ -1,74 +1,38 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
+import Image from "next/image";
 import Wrapper from "@/shared/ui/wrapper";
 import SideBar from "@/shared/ui/wrapper/sidebar";
 import SideBarContent from "@/app/faculty/SideBarContent";
-import styles from "./styles.module.scss";
 import TeacherAssistance from "@/app/faculty/teacherAssistantField";
-import { useGetMembersByParamQuery } from "@/features/api/slises/courses/members";
-import CreateFacultyMenu from "../../features/ui/faculty/CreateNewFaculty";
-
-const user = {
-	"nameEng": "Fyodor Markin",
-	"nameRu": "Маркин Фёдор Сергеевич",
-	"alias": "@meld_i",
-	"email": "f.markin@innopolis.university",
-	"position": "Intern TA",
-	"institute": "Институт разработки ПО и программной инженерии",
-	"workload": 0.7,
-	"studentType": "MS1",
-	"degree": true,
-	"FSRO": "employnment",
-	"languages": [
-		{
-			"language": "Russian"
-		}
-	],
-	"courses": [
-		{
-			"id": "courseInstance_id"
-		}
-	],
-	"employnmentType": "Combination of positions",
-	"hiringStatus": "??",
-	"mode": "remote",
-	"maxLoad": 40,
-	"frontalHours": 40,
-	"extraActivities": 1.5,
-	"workloadStats": {
-		"uniteStat": [
-			{
-				"id": "T1",
-				"classes": {
-					"lec": 1,
-					"tut": 2,
-					"lab": 3,
-					"elec": 4,
-					"rate": 5
-				}
-			}
-		],
-		"total": {
-			"totalLec": 1,
-			"totalTut": 2,
-			"totalLab": 3,
-			"totalElec": 12,
-			"totalRate": 12
-		}
-	}
-}
-
-const data = {
-	data: new Array(10).fill(user).map((user, index) => ({...user, id: index}))
-}
+import CreateFacultyMenu from "@/features/ui/faculty/CreateNewFaculty";
+import { useLazyGetMembersByParamQuery } from "@/features/api/slises/profile";
+import { UserDataInterface } from "@/shared/types/apiTypes/members";
+import { useAppSelector } from "@/features/store/hooks";
+import { FilterGroup } from "@/shared/types/apiTypes/filters";
+import { transformWorkingFilters } from "@/shared/lib/transformFilter";
+import { useDebounce } from "@/shared/hooks/useDebounce";
+import { debounceTime } from "@/shared/configs/constants/dev/debounceTime";
+import loaderSvg from "@/public/icons/svg/loader.svg";
+import wrongSvg from "@/public/icons/svg/wrong.svg";
+import styles from "./styles.module.scss";
 
 const AssistantsPage: React.FC = () => {
-	// const { data, error, isLoading } = useGetMembersByParamQuery([]);
+	const filters: FilterGroup[] = useAppSelector(state => state.facultyFilters.filters);
+	const [getUsers, { data, error, isError, isLoading }] = useLazyGetMembersByParamQuery();
+	const [users, setUsers] = useState<UserDataInterface[]>([]);
 
-	// if (error) return <>smth went wrong</>
+	const debouncedFilters = useDebounce(filters, debounceTime)
 
+	useEffect(() => {
+		const transformedFilters = transformWorkingFilters(debouncedFilters);
+		getUsers(transformedFilters);
+	}, [debouncedFilters, getUsers]);
 
+	useEffect(() => {
+		if (data) setUsers(data?.data || []);
+	}, [data, error, isLoading]);
 
 	return <Wrapper>
 		<SideBar hiddenText={ "Filters" }><SideBarContent/></SideBar>
@@ -77,17 +41,26 @@ const AssistantsPage: React.FC = () => {
 			<CreateFacultyMenu />
 		</div>
 		<div className={ styles.assistance }>
-				<ul className={styles.list}>
-					<li className={styles.header}>
-						<div className={styles.colName}>Name, alias</div>
-						<div className={styles.colEmail}>Email</div>
-						<div className={styles.colInstitute}>Institute</div>
-						<div className={styles.colPosition}>Position</div>
-					</li>
-					{
-						data?.data.map((item, i) => <TeacherAssistance {...item} key={ i } />)
-					}
+			{
+				isError
+					? <div className={ styles.wrongMessage }>
+						<div className={ styles.wrongText }>something went wrong: <>{ error && 'data' in error ? (error.data! as { message: string }).message : 'An error occurred' }</></div>
+						<Image className={ styles.wrongImage } src={ wrongSvg } alt={ "something went wrong" } />
+					</div>
+					: <ul className={styles.list}>
+						<li className={styles.header}>
+							<div className={styles.colName}>Name, alias</div>
+							<div className={styles.colEmail}>Email</div>
+							<div className={styles.colInstitute}>Institute</div>
+							<div className={styles.colPosition}>Position</div>
+						</li>
+						{
+							isLoading ?
+								<><Image className={ styles.loadingImage } src={ loaderSvg } alt={ "loading" } /></>
+								: users.map((item, i) => <TeacherAssistance {...item} key={ i } />)
+						}
 					</ul>
+			}
 			</div>
 	</Wrapper>
 }

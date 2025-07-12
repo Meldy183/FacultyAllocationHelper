@@ -89,7 +89,7 @@
 }
 
 .head {
-  position: sticky;
+  position: static;
   top: 0;
   background-color: #FFFFFF;
   border-bottom: 2px solid #40BA21;
@@ -155,15 +155,11 @@
     .title {}
     .input {}
   }
-
-
-  
 }
 
 
 .allocateExisting {
   .searchBarContainer {
-    width: 350px;
     margin: 20px;
     display: flex;
     align-items: center;
@@ -174,7 +170,7 @@
       font-weight: 400;
       font-size: 16px;
       line-height: 24px;
-      width: 260px;
+      width: 100%;
       color: #666666;
       border: 1px solid #40BA21;
       border-radius: 15px;
@@ -183,13 +179,9 @@
   }
 
   .searchButton {
-    padding-top: 8px;
     height: 40px;
-    width: 80px;
-    padding-bottom: 8px;
-    padding-left: 12px;
-    padding-right: 12px;
     border-radius: 15px;
+    width: auto;
   }
   .membersContainer {
     padding: 20px;
