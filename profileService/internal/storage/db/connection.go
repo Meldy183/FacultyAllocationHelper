@@ -59,7 +59,7 @@ func InitSchema(ctx context.Context, pool *pgxpool.Pool) error {
     	position VARCHAR(255) NOT NULL,
     	english_name VARCHAR(255) UNIQUE NOT NULL,
     	russian_name VARCHAR(255) UNIQUE NOT NULL,
-    	telegram_alias VARCHAR(255) UNIQUE NOT NULL,
+    	alias VARCHAR(255) UNIQUE NOT NULL,
     	employment_type VARCHAR(255) UNIQUE,
     	degree BOOL NOT NULL,
     	mode VARCHAR(255) NOT NULL,

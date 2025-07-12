@@ -44,7 +44,7 @@ func (r *InstituteRepo) GetByID(ctx context.Context, instituteID int64) (*instit
 	r.logger.Info("Successfully got instituteByID",
 		zap.String("layer", logLayer),
 		zap.String("function", logGetInstituteByID),
-		zap.Int64("institueID", instituteID),
+		zap.Int64("instituteID", instituteID),
 	)
 	return &instituteByID, nil
 }
