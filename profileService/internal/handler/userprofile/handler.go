@@ -192,7 +192,6 @@ func (h *Handler) GetProfile(w http.ResponseWriter, r *http.Request) {
 		Position:       string(profile.Position),
 		InstituteID:    inst.InstituteID,
 		Institute:      inst.Name,
-		Workload:       profile.Workload,
 		StudentType:    profile.StudentType,
 		Degree:         profile.Degree,
 		Languages:      langEntries,
