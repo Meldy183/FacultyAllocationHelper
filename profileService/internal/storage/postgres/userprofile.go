@@ -105,7 +105,6 @@ func (r *UserProfileRepo) GetByProfileID(ctx context.Context, profileID int64) (
 		&userProfile.Degree,
 		&userProfile.StartDate,
 		&userProfile.EndDate,
-		&userProfile.Workload,
 		&userProfile.StudentType)
 	if err != nil {
 		r.logger.Error("Error getting user profile",
