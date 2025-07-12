@@ -47,6 +47,7 @@ services:
     depends_on:
       - auth-server
       - parsing_service
+      - profile-service
     
     env_file:
       - .env
