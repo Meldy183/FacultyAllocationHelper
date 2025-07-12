@@ -31,7 +31,6 @@ const AssistantsPage: React.FC = () => {
 	}, [debouncedFilters, getUsers]);
 
 	useEffect(() => {
-		console.log(error)
 		if (data) setUsers(data?.data || []);
 	}, [data, error, isLoading]);
 
