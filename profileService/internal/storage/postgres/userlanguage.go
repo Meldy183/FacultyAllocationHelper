@@ -21,8 +21,8 @@ func NewUserLanguageRepo(pool *pgxpool.Pool, logger *zap.Logger) *UserLanguageRe
 }
 
 const (
-	queryAdd              = `INSERT INTO user_language (user_language_id, profile_id, language_code) VALUES ($1, $2, $3)`
-	queryGetUserLanguages = `SELECT language_code FROM user_language WHERE profile_id = $1`
+	queryAdd              = `INSERT INTO user_language (user_language_id, profile_id, code) VALUES ($1, $2, $3)`
+	queryGetUserLanguages = `SELECT code FROM user_language WHERE profile_id = $1`
 	logAddUserLanguage    = "AddUserLanguage"
 	logGetUserLanguage    = "GetUserLanguage"
 )

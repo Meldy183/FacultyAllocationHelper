@@ -17,19 +17,18 @@ var (
 
 type UserProfile struct {
 	ProfileID      int64
-	UserID         string
 	Email          string
 	Position       Position
 	EnglishName    string
-	RussianName    string
+	RussianName    *string
 	Alias          string
-	EmploymentType string
-	StudentType    string
-	Degree         bool
-	Mode           Mode
+	EmploymentType *string
+	StudentType    *string
+	Degree         *bool
+	Mode           *Mode
 	StartDate      *time.Time
 	EndDate        *time.Time
-	MaxLoad        int
+	MaxLoad        *int
 }
 
 type Mode string
@@ -72,17 +71,16 @@ func NewUserProfile(
 	}
 	return &UserProfile{
 		ProfileID:      id,
-		UserID:         userID,
 		Position:       position,
 		EnglishName:    engName,
-		RussianName:    russianName,
+		RussianName:    &russianName,
 		Alias:          alias,
-		EmploymentType: employmentType,
-		Degree:         degree,
-		Mode:           mode,
+		EmploymentType: &employmentType,
+		Degree:         &degree,
+		Mode:           &mode,
 		StartDate:      startDate,
 		EndDate:        endDate,
-		MaxLoad:        maxLoad,
+		MaxLoad:        &maxLoad,
 	}, nil
 }
 
@@ -113,6 +111,6 @@ func (p *UserProfile) ChangeMode(m Mode) error {
 	if !m.IsValid() {
 		return ErrInvalidMode
 	}
-	p.Mode = m
+	p.Mode = &m
 	return nil
 }

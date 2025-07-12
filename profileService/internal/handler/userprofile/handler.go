@@ -126,7 +126,7 @@ func (h *Handler) GetProfile(w http.ResponseWriter, r *http.Request) {
 		h.logger.Error("invalid profileID",
 			zap.String("function", logGetProfile),
 			zap.String("layer", logLayer),
-			zap.String("id", idParam),
+			zap.Int64("id", profileID),
 		)
 		writeError(w, http.StatusBadRequest, "invalid profileID")
 		return
@@ -134,7 +134,7 @@ func (h *Handler) GetProfile(w http.ResponseWriter, r *http.Request) {
 	profile, err := h.serviceUP.GetByProfileID(ctx, profileID)
 	if err != nil {
 		h.logger.Error("error getting userprofile",
-			zap.String("layer", logGetProfile),
+			zap.String("layer", logLayer),
 			zap.String("function", logGetProfile),
 			zap.Error(err),
 		)
@@ -144,7 +144,7 @@ func (h *Handler) GetProfile(w http.ResponseWriter, r *http.Request) {
 	inst, err := h.serviceUI.GetUserInstituteByID(ctx, profileID)
 	if err != nil {
 		h.logger.Error("error getting institute",
-			zap.String("layer", logGetProfile),
+			zap.String("layer", logLayer),
 			zap.String("function", logGetProfile),
 			zap.Error(err),
 		)
@@ -154,7 +154,7 @@ func (h *Handler) GetProfile(w http.ResponseWriter, r *http.Request) {
 	languages, err := h.serviceLang.GetUserLanguages(ctx, profileID)
 	if err != nil {
 		h.logger.Error("error getting languages",
-			zap.String("layer", logGetProfile),
+			zap.String("layer", logLayer),
 			zap.String("function", logGetProfile),
 			zap.Error(err),
 		)
@@ -170,15 +170,20 @@ func (h *Handler) GetProfile(w http.ResponseWriter, r *http.Request) {
 	coursesID, err := h.serviceCourse.GetInstancesByProfileID(ctx, profileID)
 	if err != nil {
 		h.logger.Error("error getting course ids",
-			zap.String("layer", logGetProfile),
+			zap.String("layer", logLayer),
 			zap.String("function", logGetProfile),
 			zap.Error(err),
 		)
 		writeError(w, http.StatusInternalServerError, "error getting courses")
 		return
 	}
-	var courseEntries []Course
+	courseEntries := make([]Course, 0)
 	for _, courseID := range coursesID {
+		h.logger.Info("getting course entry",
+			zap.String("layer", logLayer),
+			zap.String("function", logGetProfile),
+			zap.Int64("id", courseID),
+		)
 		courseEntries = append(courseEntries, Course{
 			CourseInstanceID: courseID,
 		})
@@ -194,14 +199,14 @@ func (h *Handler) GetProfile(w http.ResponseWriter, r *http.Request) {
 		Institute:      inst.Name,
 		StudentType:    profile.StudentType,
 		Degree:         profile.Degree,
-		Languages:      langEntries,
-		Courses:        courseEntries,
+		Languages:      &langEntries,
+		Courses:        &courseEntries,
 		EmploymentType: profile.EmploymentType,
-		Mode:           string(profile.Mode),
+		Mode:           (*string)(profile.Mode),
 		MaxLoad:        profile.MaxLoad,
 	}
 	h.logger.Info("Successfully fetched profile",
-		zap.String("layer", logGetProfile),
+		zap.String("layer", logLayer),
 		zap.String("function", logGetProfile),
 	)
 	writeJSON(w, http.StatusOK, resp)
@@ -219,6 +224,6 @@ func writeJSON(w http.ResponseWriter, status int, data interface{}) {
 func RegisterRoutes(router chi.Router, h *Handler) {
 	router.Route("/profile", func(r chi.Router) {
 		r.Post("/addUser", h.AddProfile)
-		r.Get("/getProfile", h.GetProfile)
+		r.Get("/getProfile/{id}", h.GetProfile)
 	})
 }

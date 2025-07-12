@@ -10,27 +10,27 @@ type AddProfileRequest struct {
 }
 
 type GetProfileResponse struct {
-	ProfileID      int64         `json:"profile_id"`
-	NameEnglish    string        `json:"name_eng"`
-	NameRussian    string        `json:"name_ru"`
-	Alias          string        `json:"alias"`
-	Email          string        `json:"email"`
-	Position       string        `json:"position"`
-	Institute      string        `json:"institute"`
-	InstituteID    int           `json:"institute_id"`
-	Workload       float64       `json:"workload,omitempty"`
-	StudentType    string        `json:"student_type"`
-	Degree         bool          `json:"degree"`
-	Fsro           string        `json:"fsro,omitempty"`
-	Languages      []Lang        `json:"languages"`
-	Courses        []Course      `json:"courses"`
-	EmploymentType string        `json:"employment_type"`
-	HiringStatus   string        `json:"hiring_status,omitempty"`
-	Mode           string        `json:"mode"`
-	MaxLoad        int           `json:"max_load"`
-	FrontalHours   int           `json:"frontal_hours,omitempty"`
-	ExtraActivity  float64       `json:"extra_activity,omitempty"`
-	WorkloadStats  WorkloadStats `json:"workload_stats,omitempty"`
+	ProfileID      int64          `json:"profile_id"`
+	NameEnglish    string         `json:"name_eng"`
+	NameRussian    *string        `json:"name_ru"`
+	Alias          string         `json:"alias"`
+	Email          string         `json:"email"`
+	Position       string         `json:"position"`
+	Institute      string         `json:"institute"`
+	InstituteID    int            `json:"institute_id"`
+	Workload       *float64       `json:"workload"`
+	StudentType    *string        `json:"student_type"`
+	Degree         *bool          `json:"degree"`
+	Fsro           *string        `json:"fsro,omitempty"`
+	Languages      *[]Lang        `json:"languages"`
+	Courses        *[]Course      `json:"courses"`
+	EmploymentType *string        `json:"employment_type"`
+	HiringStatus   *string        `json:"hiring_status,omitempty"`
+	Mode           *string        `json:"mode"`
+	MaxLoad        *int           `json:"max_load"`
+	FrontalHours   *int           `json:"frontal_hours,omitempty"`
+	ExtraActivity  *float64       `json:"extra_activity,omitempty"`
+	WorkloadStats  *WorkloadStats `json:"workload_stats,omitempty"`
 }
 
 type Lang struct {

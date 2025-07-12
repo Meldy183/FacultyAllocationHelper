@@ -77,31 +77,6 @@ func (s *Service) GetByProfileID(ctx context.Context, profileID int64) (*userpro
 
 	return profile, nil
 }
-func (s *Service) GetByUserID(ctx context.Context, userID string) (*userprofile.UserProfile, error) {
-	profile, err := s.repo.GetByUserID(ctx, userID)
-	if err != nil {
-		s.logger.Error("error getting userprofile",
-			zap.String("layer", logLayer),
-			zap.String("function", logGetByUserID),
-			zap.String("userID", userID),
-			zap.Error(err))
-		return nil, fmt.Errorf("error getting userprofile %w", err)
-	}
-	if !isAliasValid(profile) {
-		s.logger.Error(
-			"Invalid Alias",
-			zap.String("layer", logLayer),
-			zap.String("function", logCreate),
-		)
-		return nil, fmt.Errorf("invalid alias: %v", profile.Alias)
-	}
-	s.logger.Info("user profile found",
-		zap.String("layer", logLayer),
-		zap.String("function", logGetByUserID),
-		zap.String("userID", userID),
-	)
-	return profile, nil
-}
 func (s *Service) Update(ctx context.Context, profile *userprofile.UserProfile) error {
 	err := s.repo.Update(ctx, profile)
 	if err != nil {

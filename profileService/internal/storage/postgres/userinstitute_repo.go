@@ -21,7 +21,7 @@ func NewUserInstituteRepo(pool *pgxpool.Pool, logger *zap.Logger) *UserInstitute
 }
 
 const (
-	queryGetUserInstituteByID = `SELECT institute_id, name FROM user_institute ui JOIN institute i ON ui.institute_id = i.institute_id WHERE ui.profile_id = $1`
+	queryGetUserInstituteByID = `SELECT i.institute_id, i.name FROM user_institute ui JOIN institute i ON ui.institute_id = i.institute_id WHERE ui.profile_id = $1`
 	queryAddUserInstitute     = `INSERT INTO user_institute (profile_id, institute_id, is_repr)
 								 VALUES ($1, $2, $3)
 								 RETURNING user_institute_id`
