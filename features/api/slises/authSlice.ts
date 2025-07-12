@@ -14,7 +14,6 @@ export const authSlice = createApi({
 		credentials: "include"
 	}),
 	endpoints: (builder) => ({
-		//позже типизировать как builder.query<типы>
 		register: builder.mutation<RegisterProcessType["response"], RegisterProcessType["request"]>({
 			query: (body) => ({
 				url: "/register",
