@@ -14,6 +14,7 @@ import (
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/storage/postgres"
 	"go.uber.org/zap"
 	httpNet "net/http"
+	"time"
 )
 
 const (
@@ -29,19 +30,25 @@ func main() {
 	defer logger.Sync()
 	ctx := context.Background()
 	cfg := config.MustLoadConfig()
-	pool, err := db.NewPostgresPool(ctx, cfg.Database)
+	dataBase := db.NewConnectAndInit(logger)
+	pool, err := dataBase.NewPostgresPool(ctx, cfg.Database)
 	if err != nil {
 		logger.Fatal("Error connecting to database", zap.Error(err))
 	}
 	logger.Info(fmt.Sprintf("Connection is completed  %v", cfg.Database))
+	time.Sleep(5 * time.Second)
 	defer pool.Close()
-	err = db.InitSchema(ctx, pool)
+	err = dataBase.InitSchema(ctx, pool)
 	if err != nil {
 		logger.Fatal("Error initializing schema",
 			zap.String("function", logMain),
 			zap.Error(err),
 		)
 	}
+	logger.Info(
+		"Schema initialized",
+		zap.String("function", logMain),
+	)
 	// Repository layer inits
 	userProfileRepo := postgres.NewUserProfileRepo(pool, logger)
 	userLanguageRepo := postgres.NewUserLanguageRepo(pool, logger)
@@ -73,7 +80,7 @@ func main() {
 		WriteTimeout: cfg.Server.WriteTimeout,
 		IdleTimeout:  cfg.Server.IdleTimeout,
 	}
-	logger.Info("Starting Server",
+	logger.Info("Started Server",
 		zap.String("address", server.Addr),
 	)
 	if err := server.ListenAndServe(); err != nil {

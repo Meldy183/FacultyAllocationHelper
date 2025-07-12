@@ -5,14 +5,19 @@ import (
 	"fmt"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/config"
-	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
 	"go.uber.org/zap"
 )
 
-func NewPostgresPool(ctx context.Context, cfg config.Database) (*pgxpool.Pool, error) {
+type ConnectAndInit struct {
+	logger *zap.Logger
+}
+
+func NewConnectAndInit(logger *zap.Logger) *ConnectAndInit {
+	return &ConnectAndInit{logger: logger}
+}
+func (str *ConnectAndInit) NewPostgresPool(ctx context.Context, cfg config.Database) (*pgxpool.Pool, error) {
 	const op = "postgresql connection"
-	log := logctx.Logger(ctx)
-	log.Info("Connecting to PostgreSQL",
+	str.logger.Info("Connecting to PostgreSQL",
 		zap.String("host", cfg.Host),
 		zap.String("port", cfg.Port),
 		zap.String("database", cfg.DatabaseName),
@@ -27,40 +32,39 @@ func NewPostgresPool(ctx context.Context, cfg config.Database) (*pgxpool.Pool, e
 		cfg.SSLMode)
 	poolConfig, err := pgxpool.ParseConfig(connectionString)
 	if err != nil {
-		log.Error("Error parsing PostgreSQL connection string", zap.Error(err))
+		str.logger.Error("Error parsing PostgreSQL connection string", zap.Error(err))
 		return nil, err
 	}
-	log.Info("Connected to PostgreSQL", zap.String("connectionString", connectionString))
+	str.logger.Info("Connected to PostgreSQL", zap.String("connectionString", connectionString))
 	poolConfig.MaxConns = int32(cfg.MaxOpenConnections)
 	poolConfig.MinConns = int32(cfg.MaxIdleConnections)
 	poolConfig.MaxConnLifetime = cfg.ConnMaxLifetime
 	pool, err := pgxpool.NewWithConfig(ctx, poolConfig)
 	if err != nil {
-		log.Error("Error connecting to PostgreSQL", zap.Error(err))
+		str.logger.Error("Error connecting to PostgreSQL", zap.Error(err))
 		return nil, err
 	}
-	log.Info("config sent successfully, end connection func")
+	str.logger.Info("config sent successfully, end connection func")
 	return pool, err
 }
 
-func InitSchema(ctx context.Context, pool *pgxpool.Pool) error {
-	log := logctx.Logger(ctx)
+func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) error {
 	conn, err := pool.Acquire(ctx)
 	if err != nil {
-		log.Error("Error acquiring connection", zap.Error(err))
+		str.logger.Error("Error acquiring connection", zap.Error(err))
 		return err
 	}
-	log.Info("connected to PostgreSQL")
+	str.logger.Info("connected to PostgreSQL")
 	defer conn.Release()
 	query := `CREATE TABLE IF NOT EXISTS user_profile (
     	profile_id SERIAL PRIMARY KEY,
     	user_id VARCHAR(255) UNIQUE,
     	email VARCHAR(50) UNIQUE NOT NULL,
     	position VARCHAR(255) NOT NULL,
-    	english_name VARCHAR(255) UNIQUE NOT NULL,
-    	russian_name VARCHAR(255) UNIQUE,
+    	english_name VARCHAR(255) NOT NULL,
+    	russian_name VARCHAR(255),
     	alias VARCHAR(255) UNIQUE NOT NULL,
-    	employment_type VARCHAR(255) UNIQUE,
+    	employment_type VARCHAR(255),
     	degree BOOL,
     	mode VARCHAR(255),
     	start_date DATE,
@@ -69,70 +73,69 @@ func InitSchema(ctx context.Context, pool *pgxpool.Pool) error {
 	)`
 	_, err = conn.Exec(ctx, query)
 	if err != nil {
-		log.Error("Error creating user_table", zap.Error(err))
+		str.logger.Error("Error creating user_table", zap.Error(err))
 		return err
 	}
-	log.Info("created user_table")
+	str.logger.Info("created user_table")
 	query = `CREATE TABLE IF NOT EXISTS language (
     	code VARCHAR(20) PRIMARY KEY,
     	language_name VARCHAR(255) UNIQUE NOT NULL
 	)`
 	_, err = conn.Exec(ctx, query)
 	if err != nil {
-		log.Error("Error creating language_table", zap.Error(err))
+		str.logger.Error("Error creating language_table", zap.Error(err))
 		return err
 	}
-	log.Info("created language_table")
+	str.logger.Info("created language_table")
 	query = `CREATE TABLE IF NOT EXISTS institute (
     	institute_id SERIAL PRIMARY KEY,
     	name VARCHAR(255) UNIQUE NOT NULL
 	)`
 	_, err = conn.Exec(ctx, query)
 	if err != nil {
-		log.Error("Error creating institute_table", zap.Error(err))
+		str.logger.Error("Error creating institute_table", zap.Error(err))
 		return err
 	}
-	log.Info("created institute_table")
+	str.logger.Info("created institute_table")
 	query = `CREATE TABLE IF NOT EXISTS lab (
     	lab_id SERIAL PRIMARY KEY,
     	name VARCHAR(255) UNIQUE NOT NULL,
     	institute_id INT NOT NULL,
-    	FOREIGN KEY (institute_id) REFERENCES institute(institute_id)
+    	FOREIGN KEY (institute_id) REFERENCES institute (institute_id)
 	)`
 	_, err = conn.Exec(ctx, query)
 	if err != nil {
-		log.Error("Error creating lab_table", zap.Error(err))
+		str.logger.Error("Error creating lab_table", zap.Error(err))
 		return err
 	}
-	log.Info("created lab_table")
+	str.logger.Info("created lab_table")
 	query = `CREATE TABLE IF NOT EXISTS user_language (
     	user_language_id SERIAL PRIMARY KEY,
     	profile_id INT NOT NULL,
     	code VARCHAR(255) NOT NULL,
-    	FOREIGN KEY (profile_id) REFERENCES user_profile(profile_id),
-    	FOREIGN KEY (code) REFERENCES language(code)
+    	FOREIGN KEY (profile_id) REFERENCES user_profile (profile_id),
+    	FOREIGN KEY (code) REFERENCES language (code)
 	)`
 	_, err = conn.Exec(ctx, query)
 	if err != nil {
-		log.Error("Error creating user_language_table", zap.Error(err))
+		str.logger.Error("Error creating user_language_table", zap.Error(err))
 		return err
 	}
-	log.Info("created user_language_table")
+	str.logger.Info("created user_language_table")
 	query = `CREATE TABLE IF NOT EXISTS user_institute (
     	user_institute_id SERIAL PRIMARY KEY,
     	profile_id INT NOT NULL,
     	institute_id INT NOT NULL,
     	is_repr BOOL NOT NULL,
-    	FOREIGN KEY (profile_id) REFERENCES user_profile(profile_id),
-    	FOREIGN KEY (institute_id) REFERENCES institute(institute_id)
+    	FOREIGN KEY (profile_id) REFERENCES user_profile (profile_id),
+    	FOREIGN KEY (institute_id) REFERENCES institute (institute_id)
 	)`
 	_, err = conn.Exec(ctx, query)
 	if err != nil {
-
-		log.Error("Error creating user_institute_table", zap.Error(err))
+		str.logger.Error("Error creating user_institute_table", zap.Error(err))
 		return err
 	}
-	log.Info("created course_table")
+	str.logger.Info("created course_table")
 	query = `CREATE TABLE IF NOT EXISTS user_course_instance (
 		user_course_id SERIAL PRIMARY KEY,
 		profile_id INT NOT NULL,
@@ -142,16 +145,16 @@ func InitSchema(ctx context.Context, pool *pgxpool.Pool) error {
 	_, err = conn.Exec(ctx, query)
 	if err != nil {
 
-		log.Error("Error creating user_course_table", zap.Error(err))
+		str.logger.Error("Error creating user_course_table", zap.Error(err))
 		return err
 	}
+	str.logger.Info("created user_course_table")
 	tx, err := pool.Begin(ctx)
 	if err != nil {
-
-		log.Error("Error starting transaction", zap.Error(err))
+		str.logger.Error("Error starting transaction", zap.Error(err))
 		return err
 	}
-	log.Info("started transaction")
+	str.logger.Info("started transaction")
 	defer tx.Rollback(ctx)
 	_, err = tx.Exec(ctx, `
 		INSERT INTO language (code, language_name)
@@ -159,15 +162,29 @@ func InitSchema(ctx context.Context, pool *pgxpool.Pool) error {
 		ON CONFLICT (code) DO NOTHING;
 	`)
 	if err != nil {
-		log.Error("Error adding language", zap.Error(err))
+		str.logger.Error("Error adding language", zap.Error(err))
 		return fmt.Errorf("failed to insert languages: %w", err)
 	}
+	str.logger.Info("added languages SUCCESS")
+	_, err = tx.Exec(ctx, `
+		INSERT INTO institute (institute_id, name)
+		VALUES (1, 'Институт анализа данных и Искусственного Интеллекта'),
+		       (2, 'Институт разработки ПО и програмной инженерии'),
+		       (3, 'Институт робототехники и компьютерного зрения'),
+		       (4, 'Институт информационной безопасности'),
+		       (5, 'Институт гуманитарных и социальных наук')
+		ON CONFLICT (institute_id) DO NOTHING;
+	`)
+	if err != nil {
+		str.logger.Error("Error adding institute manually",
+			zap.Error(err))
+	}
+	str.logger.Info("added institutes SUCCESS")
 	if err := tx.Commit(ctx); err != nil {
-
-		log.Error("Error committing transaction", zap.Error(err))
+		str.logger.Error("Error committing transaction", zap.Error(err))
 		return fmt.Errorf("failed to commit transaction: %w", err)
 	}
 	//TODO FSRO when will be more obvious what to do
-	log.Info("committed transaction")
+	str.logger.Info("committed transaction")
 	return nil
 }
