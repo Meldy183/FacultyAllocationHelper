@@ -86,7 +86,7 @@ services:
     image: postgres:15
     container_name: db
     env_file:
-      - .env
+      - db.env
     ports:
       - "5433:5432"
     volumes:
@@ -112,7 +112,7 @@ services:
       - db
       - parsing_service
     env_file:
-      - .env
+      - db.env
     networks:
       - fah
 volumes:

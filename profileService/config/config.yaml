@@ -10,7 +10,7 @@ database:
   port: 5432
   name: "postgres"
   user: "user"
-  password: ${DB_PASSWORD}
+  password: ${POSTGRES_PASSWORD}
   ssl_mode: "disable"
   max_open_connections: 1000
   max_idle_connections: 100
