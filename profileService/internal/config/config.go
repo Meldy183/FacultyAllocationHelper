@@ -24,7 +24,7 @@ type Server struct {
 type Database struct {
 	Host               string        `yaml:"host" env:"DB_HOST"`
 	Port               string        `yaml:"port"`
-	User               string        `yaml:"user"`
+	User               string        `yaml:"user" env:"POSTGRES_USER"`
 	Password           string        `yaml:"password" env:"POSTGRES_PASSWORD"`
 	DatabaseName       string        `yaml:"name"`
 	SSLMode            string        `yaml:"ssl_mode"`
