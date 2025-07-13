@@ -29,26 +29,23 @@ const AssistantsPage: React.FC = () => {
   const debouncedFilters = useDebounce(filters, debounceTime);
 
   const getAllUsers = async () => {
-    const promisses = [];
-    for (let i = 0; i < users.length; i++) {
-	//@ts-ignore
-      const request = fetch(`/api/profile/getUser/${ users[i].toString() }`);
-      promisses.push(request);
-    }
+	const promises = users.map((userId) =>
+		fetch(`/api/profile/getUser/${userId.toString()}`)
+	);
 
-    const smth = await Promise.all(responses.map((res) => res.json()));
+	const responses = await Promise.all(promises);
 
-    console.log(smth)
-    //@ts-ignore
-    _setUsers(smth);
-    return smth;
-  }
+	const jsonData = await Promise.all(responses.map((res) => res.json()));
+
+	console.log(jsonData);
+	_setUsers(jsonData);
+	return jsonData;
+	};
+
 
   useEffect(() => {
-    const smth = getAllUsers().then(data => _setUsers(data));
-    //@ts-ignore
-    // _setUsers(smth)
-  }, [users]);
+	getAllUsers();
+	}, [users]);
 
   useEffect(() => {
     const transformedFilters = transformWorkingFilters(debouncedFilters);
