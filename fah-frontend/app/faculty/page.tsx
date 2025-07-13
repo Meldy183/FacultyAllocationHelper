@@ -36,7 +36,13 @@ const AssistantsPage: React.FC = () => {
       promisses.push(request);
     }
 
-    const smth = await Promise.all(promisses);
+    const smth = await Promise.all(promisses).then(data => {
+		const response = [];
+		for (let i = 0; i < data.length; i ++) {
+			response.push(data[i].json())
+		}
+		return response;
+	});
     console.log(smth)
     //@ts-ignore
     _setUsers(smth);
