@@ -7,7 +7,10 @@ const TeacherAssistance: React.FC<UserDataInterface> = (props: UserDataInterface
   return <Link href={ `/faculty/${ props.profile_id }` }>
     <li className={styles.row}>
       <div className={styles.colName}>
-        <h2>{ props.nameEng }</h2>
+        <h2>{
+          //@ts-ignore
+          props.name_eng
+        }</h2>
         <div>{ props.alias }</div>
       </div>
       <div className={styles.colEmail}>{ props.email }</div>

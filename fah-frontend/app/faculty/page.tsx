@@ -19,50 +19,71 @@ import wrongSvg from "@/public/icons/svg/wrong.svg";
 import styles from "./styles.module.scss";
 
 const AssistantsPage: React.FC = () => {
-	const filters: FilterGroup[] = useAppSelector(state => state.facultyFilters.filters);
-	const [getUsers, { data, error, isError, isLoading }] = useLazyGetMembersByParamQuery();
-	const [users, setUsers] = useState<UserDataInterface[]>([]);
+  const filters: FilterGroup[] = useAppSelector(state => state.facultyFilters.filters);
+  const [getUsers, { data, error, isError, isLoading }] = useLazyGetMembersByParamQuery();
+  const [users, setUsers] = useState<number[]>([]);
 
-	const debouncedFilters = useDebounce(filters, debounceTime)
+  //@ts-ignore
+  const [_users, _setUsers] = useState<UserDataInterface[]>();
 
-	useEffect(() => {
-		const transformedFilters = transformWorkingFilters(debouncedFilters);
-		getUsers(transformedFilters);
-	}, [debouncedFilters, getUsers]);
+  const debouncedFilters = useDebounce(filters, debounceTime);
 
-	useEffect(() => {
-		if (data) setUsers(data?.data || []);
-	}, [data, error, isLoading]);
+  const getAllUsers = async () => {
+    const promisses = [];
+    for (let i = 0; i < users.length; i++) {
+      const request = fetch(`/api/profile/getUser/${ users[i] }`);
+      promisses.push(request);
+    }
 
-	return <Wrapper>
-		<SideBar hiddenText={ "Filters" }><SideBarContent/></SideBar>
-		<div className={ styles.headerContainer }>
-			<div className={styles.name}>Faculty list</div>
-			<CreateFacultyMenu />
-		</div>
-		<div className={ styles.assistance }>
-			{
-				isError
-					? <div className={ styles.wrongMessage }>
-						<div className={ styles.wrongText }>something went wrong: <>{ error && 'data' in error ? (error.data! as { message: string }).message : 'An error occurred' }</></div>
-						<Image className={ styles.wrongImage } src={ wrongSvg } alt={ "something went wrong" } />
-					</div>
-					: <ul className={styles.list}>
-						<li className={styles.header}>
-							<div className={styles.colName}>Name, alias</div>
-							<div className={styles.colEmail}>Email</div>
-							<div className={styles.colInstitute}>Institute</div>
-							<div className={styles.colPosition}>Position</div>
-						</li>
-						{
-							isLoading ?
-								<><Image className={ styles.loadingImage } src={ loaderSvg } alt={ "loading" } /></>
-								: users.map((item, i) => <TeacherAssistance {...item} key={ i } />)
-						}
-					</ul>
-			}
-			</div>
-	</Wrapper>
+    const smth = await Promise.all(promisses)
+    return smth;
+  }
+
+  useEffect(() => {
+    const smth = getAllUsers();
+    //@ts-ignore
+    _setUsers(smth)
+  }, [users]);
+
+  useEffect(() => {
+    const transformedFilters = transformWorkingFilters(debouncedFilters);
+    getUsers(transformedFilters);
+  }, [debouncedFilters, getUsers]);
+
+  useEffect(() => {
+    //@ts-ignore
+    if (data.faculty_ids) setUsers(data.faculty_ids);
+  }, [data, error, isLoading]);
+
+  return <Wrapper>
+    <SideBar hiddenText={ "Filters" }><SideBarContent/></SideBar>
+    <div className={ styles.headerContainer }>
+      <div className={styles.name}>Faculty list</div>
+      <CreateFacultyMenu />
+    </div>
+    <div className={ styles.assistance }>
+      {
+        isError
+          ? <div className={ styles.wrongMessage }>
+            <div className={ styles.wrongText }>something went wrong: <>{ error && 'data' in error ? (error.data! as { message: string }).message : 'An error occurred' }</></div>
+            <Image className={ styles.wrongImage } src={ wrongSvg } alt={ "something went wrong" } />
+          </div>
+          : <ul className={styles.list}>
+            <li className={styles.header}>
+              <div className={styles.colName}>Name, alias</div>
+              <div className={styles.colEmail}>Email</div>
+              <div className={styles.colInstitute}>Institute</div>
+              <div className={styles.colPosition}>Position</div>
+            </li>
+            {
+              isLoading ?
+                <><Image className={ styles.loadingImage } src={ loaderSvg } alt={ "loading" } /></>
+                : (_users && _users.map((item, i) => <TeacherAssistance {...item} key={ i } />))
+            }
+          </ul>
+      }
+    </div>
+  </Wrapper>
 }
 
 export default AssistantsPage;
