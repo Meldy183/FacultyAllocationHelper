@@ -64,3 +64,6 @@ type Classes struct {
 	Elec int `json:"elec"`
 	Rate int `json:"rate"`
 }
+
+type GetAllFacultiesResponse struct {
+}
