@@ -20,11 +20,12 @@ func NewService(repo userprofile.Repository, logger *zap.Logger) *Service {
 }
 
 const (
-	logLayer          = "service"
-	logCreate         = "create"
-	logUpdate         = "update"
-	logGetByProfileID = "get_by_profile_id"
-	logGetByUserID    = "get_by_user_id"
+	logLayer                = "service"
+	logCreate               = "create"
+	logUpdate               = "update"
+	logGetByProfileID       = "get_by_profile_id"
+	logGetByUserID          = "get_by_user_id"
+	logGetProfilesByFilters = "get_profiles_by_filters"
 )
 
 func (s *Service) Create(ctx context.Context, profile *userprofile.UserProfile) error {
@@ -99,6 +100,21 @@ func (s *Service) Update(ctx context.Context, profile *userprofile.UserProfile) 
 		zap.String("function", logUpdate),
 	)
 	return nil
+}
+
+func (s *Service) GetProfilesByFilter(ctx context.Context, institutes []int, positions []int) ([]int64, error) {
+	profiles, err := s.repo.GetProfilesByFilter(ctx, institutes, positions)
+	if err != nil {
+		s.logger.Error("error getting userprofile by filter",
+			zap.String("layer", logLayer),
+			zap.String("function", logGetProfilesByFilters),
+			zap.Ints("institutes", institutes),
+			zap.Ints("positions", positions),
+			zap.Error(err),
+		)
+		return nil, fmt.Errorf("error getting userprofile by filter %w", err)
+	}
+	return profiles, nil
 }
 
 func isAliasValid(req *userprofile.UserProfile) bool {

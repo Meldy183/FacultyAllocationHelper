@@ -96,7 +96,6 @@ func (r *UserProfileRepo) Create(ctx context.Context, userProfile *userprofile.U
 		userProfile.EnglishName,
 		userProfile.Alias,
 	).Scan(&userProfile.ProfileID)
-
 	if err != nil {
 		r.logger.Error("Error creating user profile",
 			zap.String("layer", logLayer),
