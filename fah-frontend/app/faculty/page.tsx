@@ -52,7 +52,7 @@ const AssistantsPage: React.FC = () => {
 
   useEffect(() => {
     //@ts-ignore
-    if (data.faculty_ids) setUsers(data.faculty_ids);
+    if (data?.faculty_ids) setUsers(data.faculty_ids);
   }, [data, error, isLoading]);
 
   return <Wrapper>
