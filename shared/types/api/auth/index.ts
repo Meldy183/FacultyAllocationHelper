@@ -1,5 +1,3 @@
-// RegisterInterface, LoginInterface, RefreshInterface, LogoutInterface
-
 export type RegisterProcessType = {
 	request: {
 		email: string,

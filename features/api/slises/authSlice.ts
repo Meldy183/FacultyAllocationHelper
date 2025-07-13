@@ -4,8 +4,8 @@ import type {
 	LoginProcessType,
 	RefreshProcessType,
 	LogoutProcessType 
-} from "@/shared/types/apiTypes/auth";
-import { API_PATH } from "@/shared/configs/constants";
+} from "@/shared/types/api/auth";
+import { API_PATH } from "@/shared/configs/constants/api/paths";
 
 export const authSlice = createApi({
 	reducerPath: "api/auth",

@@ -10,7 +10,11 @@ interface Props {
 
 const CourseComposition: React.FC<Props> = ({ handleAllocateMember, faculties }) => {
   const handleChange = (value: string, member: string) => {
-    if (value === "Allocate existing members") handleAllocateMember(member);
+    console.log(member, value);
+    if (value === "Allocate existing members") {
+      handleAllocateMember(member);
+      console.log("cli")
+    }
   }
 
   return <div className={styles.allocation}>

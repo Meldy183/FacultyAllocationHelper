@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import { UserDataInterface } from "@/shared/types/apiTypes/members";
+import { UserDataInterface } from "shared/types/api/profile";
 import styles from "../styles.module.scss";
 
 const TeacherAssistance: React.FC<UserDataInterface> = (props: UserDataInterface) => {
