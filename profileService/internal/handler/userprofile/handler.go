@@ -2,6 +2,9 @@ package userprofile
 
 import (
 	"encoding/json"
+	"net/http"
+	"strconv"
+
 	"github.com/go-chi/chi/v5"
 	userinstituteDomain "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/userinstitute"
 	userprofileDomain "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/userprofile"
@@ -11,8 +14,6 @@ import (
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/userlanguage"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/userprofile"
 	"go.uber.org/zap"
-	"net/http"
-	"strconv"
 )
 
 type Handler struct {
@@ -222,7 +223,7 @@ func writeJSON(w http.ResponseWriter, status int, data interface{}) {
 }
 
 func RegisterRoutes(router chi.Router, h *Handler) {
-	router.Route("/profile", func(r chi.Router) {
+	router.Route("", func(r chi.Router) {
 		r.Post("/addUser", h.AddProfile)
 		r.Get("/getProfile/{id}", h.GetProfile)
 	})
