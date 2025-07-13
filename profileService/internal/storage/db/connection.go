@@ -3,6 +3,7 @@ package db
 import (
 	"context"
 	"fmt"
+
 	"github.com/jackc/pgx/v5/pgxpool"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/config"
 	"go.uber.org/zap"
@@ -119,6 +120,23 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 	str.logger.Info("created institute_table",
 		zap.String("layer", layer),
 		zap.String("function", "creating table"))
+
+	query = `CREATE TABLE IF NOT EXISTS position (
+      position_id SERIAL PRIMARY KEY,
+      name VARCHAR(255) UNIQUE NOT NULL
+    )`
+	_, err = conn.Exec(ctx, query)
+	if err != nil {
+		str.logger.Error("Error creating position_table",
+			zap.String("layer", layer),
+			zap.String("function", "creating table"),
+			zap.Error(err))
+		return err
+	}
+	str.logger.Info("created position_table",
+		zap.String("layer", layer),
+		zap.String("function", "creating table"))
+
 	query = `CREATE TABLE IF NOT EXISTS lab (
       lab_id SERIAL PRIMARY KEY,
       name VARCHAR(255) UNIQUE NOT NULL,
@@ -432,6 +450,28 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 	str.logger.Info("added institutes SUCCESS",
 		zap.String("layer", layer),
 		zap.String("function", "adding institute"))
+
+	_, err = tx.Exec(ctx, `
+    INSERT INTO position (position_id, name)
+    VALUES (1, 'Professor'),
+           (2, 'Docent'),
+           (3, 'Senior Instructor'),
+           (4, 'Instructor'),
+           (5, 'TA'),
+		   (6, 'TA intern'),
+		   (7, 'Visiting')
+    ON CONFLICT (position_id) DO NOTHING;
+  `)
+	if err != nil {
+		str.logger.Error("Error adding positions manually",
+			zap.String("layer", layer),
+			zap.String("function", "adding position"),
+			zap.Error(err))
+	}
+	str.logger.Info("added positions SUCCESS",
+		zap.String("layer", layer),
+		zap.String("function", "adding position"))
+
 	if err := tx.Commit(ctx); err != nil {
 		str.logger.Error("Error committing transaction",
 			zap.String("layer", layer),
