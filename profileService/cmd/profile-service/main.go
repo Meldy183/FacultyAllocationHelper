@@ -3,6 +3,8 @@ package main
 import (
 	"context"
 	"fmt"
+	httpNet "net/http"
+
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/config"
 	userprofile2 "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/handler/userprofile"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/http"
@@ -13,8 +15,6 @@ import (
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/storage/db"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/storage/postgres"
 	"go.uber.org/zap"
-	httpNet "net/http"
-	"time"
 )
 
 const (
@@ -36,7 +36,6 @@ func main() {
 		logger.Fatal("Error connecting to database", zap.Error(err))
 	}
 	logger.Info(fmt.Sprintf("Connection is completed  %v", cfg.Database))
-	time.Sleep(5 * time.Second)
 	defer pool.Close()
 	err = dataBase.InitSchema(ctx, pool)
 	if err != nil {

@@ -3,6 +3,7 @@ package db
 import (
 	"context"
 	"fmt"
+
 	"github.com/jackc/pgx/v5/pgxpool"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/config"
 	"go.uber.org/zap"
@@ -41,6 +42,7 @@ func (str *ConnectAndInit) NewPostgresPool(ctx context.Context, cfg config.Datab
 	poolConfig.MaxConns = int32(cfg.MaxOpenConnections)
 	poolConfig.MinConns = int32(cfg.MaxIdleConnections)
 	poolConfig.MaxConnLifetime = cfg.ConnMaxLifetime
+	poolConfig.ConnConfig.ConnectTimeout = cfg.ConnTimeout
 	pool, err := pgxpool.NewWithConfig(ctx, poolConfig)
 	if err != nil {
 		str.logger.Error("Error connecting to PostgreSQL", zap.Error(err))
