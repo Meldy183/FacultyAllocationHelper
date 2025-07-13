@@ -82,7 +82,11 @@ const AssistantsPage: React.FC = () => {
             {
               isLoading ?
                 <><Image className={ styles.loadingImage } src={ loaderSvg } alt={ "loading" } /></>
-                : (_users && _users.map((item, i) => <TeacherAssistance {...item} key={ i } />))
+                : (_users && _users.map((item, i) =>{
+					console.log(item);
+					
+					return  <TeacherAssistance {...item} key={ i } />
+				}))
             }
           </ul>
       }
