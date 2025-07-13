@@ -5,5 +5,3 @@ export const facultyPositions = [
 ]
 
 export const API_PATH = process.env.NEXT_PUBLIC_BASE_API + "/api";
-
-export const DevMode = process.env.DEV_MODE;

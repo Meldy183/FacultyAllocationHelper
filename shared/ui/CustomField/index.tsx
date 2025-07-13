@@ -1,7 +1,7 @@
 import React from "react";
 import { FormControl, FormItem, FormLabel } from "@/shared/ui/form";
-import styles from "./styles.module.scss";
 import { Input } from "@/shared/ui/input";
+import styles from "./styles.module.scss";
 
 interface fieldProps {
   field: any,

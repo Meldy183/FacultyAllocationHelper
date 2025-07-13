@@ -10,8 +10,8 @@ import { CreateMemberResolver, CreateMemberType } from "@/shared/types/resolvers
 import { useCreateUserMutation } from "@/features/api/slises/profile";
 import { Label } from "@/shared/ui/label";
 import { Switch } from "@/shared/ui/switch";
-import styles from "./styles.module.scss";
 import { instituteList, roleList } from "@/shared/configs/constants/ui";
+import styles from "./styles.module.scss";
 
 
 interface IProps {
@@ -132,7 +132,7 @@ const CreateNewFacultyForm: React.FC<IProps> = ({ onSubmit }) => {
                   value={field.value?.toString()}
                   onValueChange={ (value) => field.onChange(Number(value)) }
                 >
-                  <SelectTrigger className={styles.select}>
+                  <SelectTrigger className={ styles.select }>
                     <SelectValue placeholder="Select a institute" />
                   </SelectTrigger>
                   <SelectContent>
