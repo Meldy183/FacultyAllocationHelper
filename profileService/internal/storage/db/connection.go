@@ -13,13 +13,12 @@ type ConnectAndInit struct {
 	logger *zap.Logger
 }
 
-const layer = "Repository"
+const layer = "InitDBLayer"
 
 func NewConnectAndInit(logger *zap.Logger) *ConnectAndInit {
 	return &ConnectAndInit{logger: logger}
 }
 func (str *ConnectAndInit) NewPostgresPool(ctx context.Context, cfg config.Database) (*pgxpool.Pool, error) {
-	const op = "postgresql connection"
 	str.logger.Info("Connecting to PostgreSQL",
 		zap.String("host", cfg.Host),
 		zap.String("port", cfg.Port),
@@ -42,7 +41,6 @@ func (str *ConnectAndInit) NewPostgresPool(ctx context.Context, cfg config.Datab
 	poolConfig.MaxConns = int32(cfg.MaxOpenConnections)
 	poolConfig.MinConns = int32(cfg.MaxIdleConnections)
 	poolConfig.MaxConnLifetime = cfg.ConnMaxLifetime
-	poolConfig.ConnConfig.ConnectTimeout = cfg.ConnTimeout
 	pool, err := pgxpool.NewWithConfig(ctx, poolConfig)
 	if err != nil {
 		str.logger.Error("Error connecting to PostgreSQL", zap.Error(err))
@@ -62,10 +60,23 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 	}
 	str.logger.Info("connected to PostgreSQL")
 	defer conn.Release()
-	query := `CREATE TABLE IF NOT EXISTS user_profile (
+
+	query := `CREATE TABLE IF NOT EXISTS position (
+      position_id SERIAL PRIMARY KEY,
+      name VARCHAR(255) UNIQUE NOT NULL
+    )`
+	_, err = conn.Exec(ctx, query)
+	if err != nil {
+		str.logger.Error("Error creating position_table",
+			zap.String("layer", layer),
+			zap.String("function", "creating table"),
+			zap.Error(err))
+		return err
+	}
+	query = `CREATE TABLE IF NOT EXISTS user_profile (
       profile_id SERIAL PRIMARY KEY,
       email VARCHAR(50) UNIQUE NOT NULL,
-      position VARCHAR(255) NOT NULL,
+      position_id INTEGER NOT NULL,
       english_name VARCHAR(255) NOT NULL,
       russian_name VARCHAR(255),
       alias VARCHAR(255) UNIQUE NOT NULL,
@@ -75,7 +86,8 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
       mode VARCHAR(255),
       start_date DATE,
       end_date DATE,
-      maxload INTEGER
+      maxload INTEGER,
+	  FOREIGN KEY (position_id) REFERENCES position (position_id)
   )`
 	_, err = conn.Exec(ctx, query)
 	if err != nil {
@@ -118,6 +130,11 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 	str.logger.Info("created institute_table",
 		zap.String("layer", layer),
 		zap.String("function", "creating table"))
+
+	str.logger.Info("created position_table",
+		zap.String("layer", layer),
+		zap.String("function", "creating table"))
+
 	query = `CREATE TABLE IF NOT EXISTS lab (
       lab_id SERIAL PRIMARY KEY,
       name VARCHAR(255) UNIQUE NOT NULL,
@@ -240,8 +257,7 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 		zap.String("function", "creating table"))
 	query = `CREATE TABLE IF NOT EXISTS program (
     program_id SERIAL PRIMARY KEY,
-    name VARCHAR(20),
-    code VARCHAR(20)
+    name VARCHAR(20)
   )`
 	_, err = conn.Exec(ctx, query)
 	if err != nil {
@@ -258,10 +274,9 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 	query = `CREATE TABLE IF NOT EXISTS track (
     track_id SERIAL PRIMARY KEY,
     name VARCHAR(20),
-    code VARCHAR(20),
     program_id INT,
     FOREIGN KEY (program_id) REFERENCES program (program_id)
-  )`
+  )` // name это типо CS AI пон???
 	_, err = conn.Exec(ctx, query)
 	if err != nil {
 
@@ -433,6 +448,28 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 	str.logger.Info("added institutes SUCCESS",
 		zap.String("layer", layer),
 		zap.String("function", "adding institute"))
+
+	_, err = tx.Exec(ctx, `
+    INSERT INTO position (position_id, name)
+    VALUES (1, 'Professor'),
+           (2, 'Docent'),
+           (3, 'Senior Instructor'),
+           (4, 'Instructor'),
+           (5, 'TA'),
+		   (6, 'TA intern'),
+		   (7, 'Visiting')
+    ON CONFLICT (position_id) DO NOTHING;
+  `)
+	if err != nil {
+		str.logger.Error("Error adding positions manually",
+			zap.String("layer", layer),
+			zap.String("function", "adding position"),
+			zap.Error(err))
+	}
+	str.logger.Info("added positions SUCCESS",
+		zap.String("layer", layer),
+		zap.String("function", "adding position"))
+
 	if err := tx.Commit(ctx); err != nil {
 		str.logger.Error("Error committing transaction",
 			zap.String("layer", layer),

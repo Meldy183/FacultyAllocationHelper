@@ -3,6 +3,7 @@ package postgres
 import (
 	"context"
 	"fmt"
+
 	"github.com/jackc/pgx/v5/pgxpool"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/institute"
 	"go.uber.org/zap"
@@ -50,7 +51,6 @@ func (r *InstituteRepo) GetByID(ctx context.Context, instituteID int64) (*instit
 }
 
 func (r *InstituteRepo) GetAll(ctx context.Context) ([]*institute.Institute, error) {
-	r.logger.Info("Getting all institutes")
 	rows, err := r.pool.Query(ctx, queryGetAll)
 	if err != nil {
 		r.logger.Error("Error getting all institutes",

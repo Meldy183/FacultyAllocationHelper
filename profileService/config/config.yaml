@@ -15,4 +15,3 @@ database:
   max_open_connections: 1000
   max_idle_connections: 100
   connection_max_lifetime: 300s
-  connection_timeout: 10s

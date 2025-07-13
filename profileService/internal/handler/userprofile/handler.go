@@ -9,6 +9,7 @@ import (
 	userinstituteDomain "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/userinstitute"
 	userprofileDomain "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/userprofile"
 	_ "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/institute"
+	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/position"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/usercourseinstance"
 	userinstitute "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/userinstitute"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/userlanguage"
@@ -17,31 +18,35 @@ import (
 )
 
 type Handler struct {
-	serviceUP     *userprofile.Service
-	serviceUI     *userinstitute.Service
-	serviceLang   *userlanguage.Service
-	serviceCourse *usercourseinstance.Service
-	logger        *zap.Logger
+	serviceUP       *userprofile.Service
+	serviceUI       *userinstitute.Service
+	serviceLang     *userlanguage.Service
+	serviceCourse   *usercourseinstance.Service
+	servicePosition *position.Service
+	logger          *zap.Logger
 }
 
 const (
-	logLayer      = "Handler"
-	logAddProfile = "AddProfile"
-	logGetProfile = "GetProfile"
+	logLayer           = "Handler"
+	logAddProfile      = "AddProfile"
+	logGetProfile      = "GetProfile"
+	logGetAllFaculties = "GetAllFaculties"
 )
 
 func NewHandler(serviceUP *userprofile.Service,
 	serviceUI *userinstitute.Service,
 	serviceLang *userlanguage.Service,
 	serviceCourse *usercourseinstance.Service,
+	servicePosition *position.Service,
 	logger *zap.Logger,
 ) *Handler {
 	return &Handler{
-		serviceUP:     serviceUP,
-		serviceUI:     serviceUI,
-		serviceLang:   serviceLang,
-		serviceCourse: serviceCourse,
-		logger:        logger.Named("userprofile_handler"),
+		serviceUP:       serviceUP,
+		serviceUI:       serviceUI,
+		serviceLang:     serviceLang,
+		serviceCourse:   serviceCourse,
+		servicePosition: servicePosition,
+		logger:          logger.Named("userprofile_handler"),
 	}
 }
 func (h *Handler) AddProfile(w http.ResponseWriter, r *http.Request) {
@@ -65,9 +70,9 @@ func (h *Handler) AddProfile(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusBadRequest, "invalid NameEnglish")
 		return
 	}
-	if req.Position == "" {
+	if req.PositionID <= 0 {
 		h.logger.Error("invalid position",
-			zap.String("position", req.Position),
+			zap.Int("position_id", req.PositionID),
 			zap.String("function", logAddProfile),
 			zap.String("layer", logLayer),
 		)
@@ -86,7 +91,7 @@ func (h *Handler) AddProfile(w http.ResponseWriter, r *http.Request) {
 	profile := &userprofileDomain.UserProfile{
 		EnglishName: req.NameEnglish,
 		Email:       req.Email,
-		Position:    userprofileDomain.Position(req.Position),
+		PositionID:  req.PositionID,
 		Alias:       req.Alias,
 	}
 	if err := h.serviceUP.Create(ctx, profile); err != nil {
@@ -189,14 +194,24 @@ func (h *Handler) GetProfile(w http.ResponseWriter, r *http.Request) {
 			CourseInstanceID: courseID,
 		})
 	}
+	positionName, err := h.servicePosition.GetByID(ctx, profile.PositionID)
+	if err != nil {
+		h.logger.Error("error getting position name by id",
+			zap.String("layer", logLayer),
+			zap.String("function", logGetProfile),
+			zap.Int("id", profile.PositionID),
+			zap.Error(err),
+		)
+		writeError(w, http.StatusInternalServerError, "error getting position by id")
+		return
+	}
 	resp := GetProfileResponse{
 		ProfileID:      profileID,
 		NameEnglish:    profile.EnglishName,
 		NameRussian:    profile.RussianName,
 		Alias:          profile.Alias,
 		Email:          profile.Email,
-		Position:       string(profile.Position),
-		InstituteID:    inst.InstituteID,
+		Position:       *positionName,
 		Institute:      inst.Name,
 		StudentType:    profile.StudentType,
 		Degree:         profile.Degree,
@@ -210,6 +225,55 @@ func (h *Handler) GetProfile(w http.ResponseWriter, r *http.Request) {
 		zap.String("layer", logLayer),
 		zap.String("function", logGetProfile),
 	)
+	writeJSON(w, http.StatusOK, resp)
+}
+
+func (h *Handler) GetAllFaculties(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	instQuery := r.URL.Query()["institute_id"]
+	var insts []int
+	for _, elem := range instQuery {
+		id, err := strconv.Atoi(elem)
+		if err != nil {
+			h.logger.Error(
+				"Error converting query to int",
+				zap.String("layer", logLayer),
+				zap.String("function", logGetAllFaculties),
+				zap.Error(err),
+			)
+			writeError(w, http.StatusInternalServerError, "error institute id")
+			return
+		}
+		insts = append(insts, id)
+	}
+	posQuery := r.URL.Query()["position"]
+	var positions []int
+	for _, elem := range posQuery {
+		pos, err := strconv.Atoi(elem)
+		if err != nil {
+			h.logger.Error("error converting to int the position",
+				zap.String("layer", logLayer),
+				zap.String("function", logGetAllFaculties),
+				zap.Error(err),
+			)
+			writeError(w, http.StatusInternalServerError, "error position id")
+			return
+		}
+		positions = append(positions, pos)
+	}
+	profileIds, err := h.serviceUP.GetProfilesByFilter(ctx, insts, positions)
+	if err != nil {
+		h.logger.Error("Error getting profile ids",
+			zap.String("layer", logLayer),
+			zap.String("function", logGetAllFaculties),
+			zap.Error(err),
+		)
+		writeError(w, http.StatusInternalServerError, "error getting profiles")
+		return
+	}
+	resp := &GetAllFacultiesResponse{
+		Profiles: profileIds,
+	}
 	writeJSON(w, http.StatusOK, resp)
 }
 func writeError(w http.ResponseWriter, status int, message string) {
@@ -226,5 +290,6 @@ func RegisterRoutes(router chi.Router, h *Handler) {
 	router.Route("/", func(r chi.Router) {
 		r.Post("/addUser", h.AddProfile)
 		r.Get("/getProfile/{id}", h.GetProfile)
+		r.Get("/getAllUsers", h.GetAllFaculties)
 	})
 }

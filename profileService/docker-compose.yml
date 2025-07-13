@@ -1,53 +1,29 @@
-networks:
-  fah:
 services:
   db:
     image: postgres:15
-    container_name: db
+    container_name: profile_db
     env_file:
-      - db.env
+      - ./.env
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: postgres
     ports:
-      - "5433:5432"
+      - "5432:5432"
     volumes:
-      - db-data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U user"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 10s
-    restart: unless-stopped
-    networks:
-      - fah
+      - postgres_data:/var/lib/postgresql/data
 
   profile-service:
     build:
-      context: ./profileService
+      context: .
       dockerfile: Dockerfile
-    container_name: profile-service
+    container_name: profile_service
     ports:
       - "8083:8083"
     depends_on:
       - db
-      - parsing_service
     env_file:
-      - db.env
-    networks:
-      - fah
-  academic-service:
-    build:
-      context: ./academicService
-      dockerfile: Dockerfile
-    container_name: academic-service
-    ports:
-      - "8084:8084"
-    depends_on:
-      - db
-      - profile-service
-    env_file:
-      - db.env
-    networks:
-      - fah
-    
+      - ./.env
+
 volumes:
-  db-data:
+  postgres_data:
