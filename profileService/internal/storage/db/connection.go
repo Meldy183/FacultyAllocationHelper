@@ -19,7 +19,6 @@ func NewConnectAndInit(logger *zap.Logger) *ConnectAndInit {
 	return &ConnectAndInit{logger: logger}
 }
 func (str *ConnectAndInit) NewPostgresPool(ctx context.Context, cfg config.Database) (*pgxpool.Pool, error) {
-	const op = "postgresql connection"
 	str.logger.Info("Connecting to PostgreSQL",
 		zap.String("host", cfg.Host),
 		zap.String("port", cfg.Port),

@@ -200,6 +200,7 @@ func (h *Handler) GetProfile(w http.ResponseWriter, r *http.Request) {
 			zap.String("layer", logLayer),
 			zap.String("function", logGetProfile),
 			zap.Int("id", profile.PositionID),
+			zap.Error(err),
 		)
 		writeError(w, http.StatusInternalServerError, "error getting position by id")
 		return
@@ -228,8 +229,52 @@ func (h *Handler) GetProfile(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) GetAllFaculties(w http.ResponseWriter, r *http.Request) {
-	//ctx := r.Context()
-
+	ctx := r.Context()
+	instQuery := r.URL.Query()["institute_id"]
+	var insts []int
+	for _, elem := range instQuery {
+		id, err := strconv.Atoi(elem)
+		if err != nil {
+			h.logger.Error(
+				"Error converting query to int",
+				zap.String("layer", logLayer),
+				zap.String("function", logGetAllFaculties),
+				zap.Error(err),
+			)
+			writeError(w, http.StatusInternalServerError, "error institute id")
+			return
+		}
+		insts = append(insts, id)
+	}
+	posQuery := r.URL.Query()["position"]
+	var positions []int
+	for _, elem := range posQuery {
+		pos, err := strconv.Atoi(elem)
+		if err != nil {
+			h.logger.Error("error converting to int the position",
+				zap.String("layer", logLayer),
+				zap.String("function", logGetAllFaculties),
+				zap.Error(err),
+			)
+			writeError(w, http.StatusInternalServerError, "error position id")
+			return
+		}
+		positions = append(positions, pos)
+	}
+	profileIds, err := h.serviceUP.GetProfilesByFilter(ctx, insts, positions)
+	if err != nil {
+		h.logger.Error("Error getting profile ids",
+			zap.String("layer", logLayer),
+			zap.String("function", logGetAllFaculties),
+			zap.Error(err),
+		)
+		writeError(w, http.StatusInternalServerError, "error getting profiles")
+		return
+	}
+	resp := &GetAllFacultiesResponse{
+		Profiles: profileIds,
+	}
+	writeJSON(w, http.StatusOK, resp)
 }
 func writeError(w http.ResponseWriter, status int, message string) {
 	writeJSON(w, status, map[string]string{"error": message})
@@ -245,5 +290,6 @@ func RegisterRoutes(router chi.Router, h *Handler) {
 	router.Route("/", func(r chi.Router) {
 		r.Post("/addUser", h.AddProfile)
 		r.Get("/getProfile/{id}", h.GetProfile)
+		r.Get("/getAllUsers", h.GetAllFaculties)
 	})
 }
