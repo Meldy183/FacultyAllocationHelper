@@ -2,6 +2,9 @@ package userprofile
 
 import (
 	"encoding/json"
+	"net/http"
+	"strconv"
+
 	"github.com/go-chi/chi/v5"
 	userinstituteDomain "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/userinstitute"
 	userprofileDomain "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/userprofile"
@@ -11,8 +14,6 @@ import (
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/userlanguage"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/userprofile"
 	"go.uber.org/zap"
-	"net/http"
-	"strconv"
 )
 
 type Handler struct {
@@ -64,9 +65,9 @@ func (h *Handler) AddProfile(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusBadRequest, "invalid NameEnglish")
 		return
 	}
-	if req.Position == "" {
+	if req.PositionID <= 0 {
 		h.logger.Error("invalid position",
-			zap.String("position", req.Position),
+			zap.Int("position_id", req.PositionID),
 			zap.String("function", logAddProfile),
 			zap.String("layer", logLayer),
 		)
@@ -85,7 +86,7 @@ func (h *Handler) AddProfile(w http.ResponseWriter, r *http.Request) {
 	profile := &userprofileDomain.UserProfile{
 		EnglishName: req.NameEnglish,
 		Email:       req.Email,
-		Position:    userprofileDomain.Position(req.Position),
+		PositionID:  req.PositionID,
 		Alias:       req.Alias,
 	}
 	if err := h.serviceUP.Create(ctx, profile); err != nil {
@@ -194,8 +195,7 @@ func (h *Handler) GetProfile(w http.ResponseWriter, r *http.Request) {
 		NameRussian:    profile.RussianName,
 		Alias:          profile.Alias,
 		Email:          profile.Email,
-		Position:       string(profile.Position),
-		InstituteID:    inst.InstituteID,
+		Position:       profile.Position,
 		Institute:      inst.Name,
 		StudentType:    profile.StudentType,
 		Degree:         profile.Degree,

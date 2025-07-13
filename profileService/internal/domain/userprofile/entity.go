@@ -18,7 +18,7 @@ var (
 type UserProfile struct {
 	ProfileID      int64
 	Email          string
-	Position       Position
+	PositionID     int
 	EnglishName    string
 	RussianName    *string
 	Alias          string
@@ -32,7 +32,8 @@ type UserProfile struct {
 }
 
 type Mode string
-type Position string
+
+// type Position string
 
 const (
 	ModeOnsite Mode = "onsite"
@@ -40,20 +41,20 @@ const (
 	ModeRemote Mode = "remote"
 )
 
-const (
-	PositionTA         Position = "TA"
-	PositionIntern     Position = "TA Intern"
-	PositionInstructor Position = "Instructor"
-	PositionSenior     Position = "Senior Instructor"
-	PositionDocent     Position = "Docent"
-	PositionProfessor  Position = "Professor"
-	PositionVisiting   Position = "Visiting"
-)
+// const (
+// 	PositionTA         Position = "TA"
+// 	PositionIntern     Position = "TA Intern"
+// 	PositionInstructor Position = "Instructor"
+// 	PositionSenior     Position = "Senior Instructor"
+// 	PositionDocent     Position = "Docent"
+// 	PositionProfessor  Position = "Professor"
+// 	PositionVisiting   Position = "Visiting"
+// )
 
 func NewUserProfile(
 	id int64,
 	userID string,
-	position Position,
+	positionID int,
 	engName, russianName, alias, employmentType string,
 	degree bool,
 	mode Mode,
@@ -66,12 +67,12 @@ func NewUserProfile(
 	if !IsWorkloadValid(maxLoad) {
 		return nil, ErrInvalidLoad
 	}
-	if !IsPositionValid(position) {
+	if !IsPositionValid(positionID) {
 		return nil, ErrInvalidPosition
 	}
 	return &UserProfile{
 		ProfileID:      id,
-		Position:       position,
+		PositionID:     positionID,
 		EnglishName:    engName,
 		RussianName:    &russianName,
 		Alias:          alias,
@@ -88,14 +89,15 @@ func IsWorkloadValid(workload int) bool {
 	return workload <= 40 && workload >= 0
 }
 
-func IsPositionValid(pos Position) bool {
-	switch pos {
-	case PositionInstructor, PositionSenior, PositionTA,
-		PositionIntern, PositionDocent, PositionProfessor, PositionVisiting:
-		return true
-	default:
-		return false
-	}
+func IsPositionValid(positionID int) bool {
+	return positionID <= 7 && positionID >= 1
+	// switch pos {
+	// case PositionInstructor, PositionSenior, PositionTA,
+	// 	PositionIntern, PositionDocent, PositionProfessor, PositionVisiting:
+	// 	return true
+	// default:
+	// 	return false
+	// }
 }
 
 func (m Mode) IsValid() bool {
