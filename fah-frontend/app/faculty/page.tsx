@@ -32,7 +32,7 @@ const AssistantsPage: React.FC = () => {
     const promisses = [];
     for (let i = 0; i < users.length; i++) {
 	//@ts-ignore
-      const request = fetch(/api/profile/getUser/${ users[i].toString() });
+      const request = fetch(`/api/profile/getUser/${ users[i].toString() }`);
       promisses.push(request);
     }
 
