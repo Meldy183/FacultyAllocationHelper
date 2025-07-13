@@ -3,6 +3,7 @@ package db
 import (
 	"context"
 	"fmt"
+
 	"github.com/jackc/pgx/v5/pgxpool"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/config"
 	"go.uber.org/zap"
@@ -239,7 +240,6 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 	query = `CREATE TABLE IF NOT EXISTS program (
     program_id SERIAL PRIMARY KEY,
     name VARCHAR(20),
-    code VARCHAR(20)
   )`
 	_, err = conn.Exec(ctx, query)
 	if err != nil {
@@ -256,10 +256,9 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 	query = `CREATE TABLE IF NOT EXISTS track (
     track_id SERIAL PRIMARY KEY,
     name VARCHAR(20),
-    code VARCHAR(20),
     program_id INT,
     FOREIGN KEY (program_id) REFERENCES program (program_id)
-  )`
+  )` // name это типо CS AI пон???
 	_, err = conn.Exec(ctx, query)
 	if err != nil {
 
