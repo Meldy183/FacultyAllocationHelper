@@ -27,9 +27,10 @@ type Handler struct {
 }
 
 const (
-	logLayer      = "Handler"
-	logAddProfile = "AddProfile"
-	logGetProfile = "GetProfile"
+	logLayer           = "Handler"
+	logAddProfile      = "AddProfile"
+	logGetProfile      = "GetProfile"
+	logGetAllFaculties = "GetAllFaculties"
 )
 
 func NewHandler(serviceUP *userprofile.Service,
@@ -226,6 +227,10 @@ func (h *Handler) GetProfile(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, resp)
 }
 
+func (h *Handler) GetAllFaculties(w http.ResponseWriter, r *http.Request) {
+	//ctx := r.Context()
+
+}
 func writeError(w http.ResponseWriter, status int, message string) {
 	writeJSON(w, status, map[string]string{"error": message})
 }

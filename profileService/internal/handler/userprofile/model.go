@@ -66,4 +66,5 @@ type Classes struct {
 }
 
 type GetAllFacultiesResponse struct {
+	Profiles []int64 `json:"faculty_ids"`
 }
