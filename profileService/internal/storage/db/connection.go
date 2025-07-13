@@ -67,7 +67,7 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 	query := `CREATE TABLE IF NOT EXISTS user_profile (
       profile_id SERIAL PRIMARY KEY,
       email VARCHAR(50) UNIQUE NOT NULL,
-      position VARCHAR(255) NOT NULL,
+      position_id INTEGER NOT NULL,
       english_name VARCHAR(255) NOT NULL,
       russian_name VARCHAR(255),
       alias VARCHAR(255) UNIQUE NOT NULL,
@@ -78,6 +78,7 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
       start_date DATE,
       end_date DATE,
       maxload INTEGER
+	  FOREIGN KEY (position_id) REFERENCES position (position_id)
   )`
 	_, err = conn.Exec(ctx, query)
 	if err != nil {
