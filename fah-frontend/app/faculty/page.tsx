@@ -50,7 +50,7 @@ const AssistantsPage: React.FC = () => {
   }
 
   useEffect(() => {
-    const smth = getAllUsers();
+    const smth = getAllUsers().then(data => _setUsers(data));
     //@ts-ignore
     // _setUsers(smth)
   }, [users]);
