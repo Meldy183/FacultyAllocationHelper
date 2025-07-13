@@ -113,5 +113,7 @@ services:
       - parsing_service
     env_file:
       - .env
+    networks:
+      - fah
 volumes:
   db-data:
