@@ -43,7 +43,9 @@ const (
 		    mode = $8, start_date = $9, end_date = $10, maxload = $11, student_type = $13
 		WHERE profile_id = $12
 	`
-	queryGetProfilesByFiler = ``
+	queryGetProfilesByFiler = `SELECT profile_id FROM user_profile up JOIN user_institute ui ON up.profile_id = ui.profile_id
+WHERE up.position_id = ANY($1) AND ui.institute_id = ANY($2)
+`
 
 	logLayer              = "repository"
 	logGetByProfileID     = "GetByProfileID"
@@ -134,7 +136,7 @@ func (r *UserProfileRepo) Update(ctx context.Context, userProfile *userprofile.U
 	return nil
 }
 
-func (r *UserProfileRepo) GetProfilesByFilter(ctx context.Context, institutes []int, positions []int) (error, []int64) {
+func (r *UserProfileRepo) GetProfilesByFilter(ctx context.Context, institutes []int, positions []int) ([]int64, error) {
 	if len(institutes) == 0 {
 		instRepo, err := NewInstituteRepo(r.pool, r.logger).GetAll(ctx)
 		if err != nil {
@@ -142,7 +144,8 @@ func (r *UserProfileRepo) GetProfilesByFilter(ctx context.Context, institutes []
 				zap.String("layer", logLayer),
 				zap.String("function", logGetProfilesByFiler),
 				zap.Error(err),
-				)
+			)
+			return nil, fmt.Errorf("GetAllInstitutes failed: %w", err)
 		}
 		for _, inst := range instRepo {
 			institutes = append(institutes, inst.InstituteID)
@@ -151,9 +154,55 @@ func (r *UserProfileRepo) GetProfilesByFilter(ctx context.Context, institutes []
 			zap.String("layer", logLayer),
 			zap.String("function", logGetProfilesByFiler),
 			zap.Int("institutes", len(institutes)),
-			)
+		)
 	}
 	if len(positions) == 0 {
-		posRepo, err :=
+		posRepo, err := NewPositionRepo(r.pool, r.logger).GetAll(ctx)
+		if err != nil {
+			r.logger.Error("Error getting all positions",
+				zap.String("layer", logLayer),
+				zap.String("function", logGetProfilesByFiler),
+				zap.Error(err),
+			)
+			return nil, fmt.Errorf("GetAllPositions failed: %w", err)
+		}
+		for _, pos := range posRepo {
+			positions = append(positions, pos.PositionID)
+		}
+		r.logger.Info("Positions length is zero, filtering by all positions",
+			zap.String("layer", logLayer),
+			zap.String("function", logGetProfilesByFiler),
+			zap.Int("positions", len(positions)),
+		)
 	}
+	rows, err := r.pool.Query(ctx, queryGetProfilesByFiler, institutes, positions)
+	if err != nil {
+		r.logger.Error("Error getting all profileIDs",
+			zap.String("layer", logLayer),
+			zap.String("function", logGetProfilesByFiler),
+			zap.Error(err),
+		)
+		return nil, fmt.Errorf("GetAllProfileIDs failed: %w", err)
+	}
+	defer rows.Close()
+	profileIDs := make([]int64, 0)
+	for rows.Next() {
+		var profileID int64
+		err = rows.Scan(&profileID)
+		if err != nil {
+			r.logger.Error("Error getting single profileID",
+				zap.String("layer", logLayer),
+				zap.String("function", logGetProfilesByFiler),
+				zap.Error(err),
+			)
+			return nil, fmt.Errorf("GetAllProfileIDs failed: %w", err)
+		}
+		profileIDs = append(profileIDs, profileID)
+	}
+	r.logger.Info("ProfileIDs received successfully",
+		zap.String("layer", logLayer),
+		zap.String("function", logGetProfilesByFiler),
+		zap.Int("profileIDs", len(profileIDs)),
+	)
+	return profileIDs, nil
 }
