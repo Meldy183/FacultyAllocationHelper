@@ -43,7 +43,7 @@ const (
 		    mode = $8, start_date = $9, end_date = $10, maxload = $11, student_type = $13
 		WHERE profile_id = $12
 	`
-	queryGetProfilesByFiler = `SELECT profile_id FROM user_profile up JOIN user_institute ui ON up.profile_id = ui.profile_id
+	queryGetProfilesByFiler = `SELECT up.profile_id FROM user_profile up JOIN user_institute ui ON up.profile_id = ui.profile_id
 WHERE up.position_id = ANY($1) AND ui.institute_id = ANY($2)
 `
 
