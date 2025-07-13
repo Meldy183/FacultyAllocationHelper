@@ -223,7 +223,7 @@ func writeJSON(w http.ResponseWriter, status int, data interface{}) {
 }
 
 func RegisterRoutes(router chi.Router, h *Handler) {
-	router.Route("", func(r chi.Router) {
+	router.Route("/", func(r chi.Router) {
 		r.Post("/addUser", h.AddProfile)
 		r.Get("/getProfile/{id}", h.GetProfile)
 	})
