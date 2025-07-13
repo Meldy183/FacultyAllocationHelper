@@ -31,18 +31,21 @@ const AssistantsPage: React.FC = () => {
   const getAllUsers = async () => {
     const promisses = [];
     for (let i = 0; i < users.length; i++) {
-      const request = fetch(`/api/profile/getUser/${ users[i] }`);
+      const request = fetch(/api/profile/getUser/${ users[i] });
       promisses.push(request);
     }
 
-    const smth = await Promise.all(promisses)
+    const smth = await Promise.all(promisses);
+    console.log(smth)
+    //@ts-ignore
+    _setUsers(smth);
     return smth;
   }
 
   useEffect(() => {
     const smth = getAllUsers();
     //@ts-ignore
-    _setUsers(smth)
+    // _setUsers(smth)
   }, [users]);
 
   useEffect(() => {
@@ -52,7 +55,7 @@ const AssistantsPage: React.FC = () => {
 
   useEffect(() => {
     //@ts-ignore
-    if (data?.faculty_ids) setUsers(data.faculty_ids);
+    if (data && data.faculty_ids) setUsers(data.faculty_ids);
   }, [data, error, isLoading]);
 
   return <Wrapper>
