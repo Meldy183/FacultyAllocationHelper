@@ -3,6 +3,7 @@ package postgres
 import (
 	"context"
 	"fmt"
+
 	"github.com/jackc/pgx/v5/pgxpool"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/userprofile"
 	"go.uber.org/zap"
@@ -57,7 +58,7 @@ func (r *UserProfileRepo) GetByProfileID(ctx context.Context, profileID int64) (
 	err := row.Scan(
 		&userProfile.ProfileID,
 		&userProfile.Email,
-		&userProfile.Position,
+		&userProfile.PositionID,
 		&userProfile.EnglishName,
 		&userProfile.RussianName,
 		&userProfile.Alias,
@@ -89,7 +90,7 @@ func (r *UserProfileRepo) GetByProfileID(ctx context.Context, profileID int64) (
 func (r *UserProfileRepo) Create(ctx context.Context, userProfile *userprofile.UserProfile) error {
 	err := r.pool.QueryRow(ctx, queryInsertUserProfile,
 		userProfile.Email,
-		userProfile.Position,
+		userProfile.PositionID,
 		userProfile.EnglishName,
 		userProfile.Alias,
 	).Scan(&userProfile.ProfileID)
@@ -112,7 +113,7 @@ func (r *UserProfileRepo) Create(ctx context.Context, userProfile *userprofile.U
 }
 
 func (r *UserProfileRepo) Update(ctx context.Context, userProfile *userprofile.UserProfile) error {
-	_, err := r.pool.Exec(ctx, queryUpdateUserProfile, 0, userProfile.Email, userProfile.Position,
+	_, err := r.pool.Exec(ctx, queryUpdateUserProfile, 0, userProfile.Email, userProfile.PositionID,
 		userProfile.EnglishName, userProfile.RussianName, userProfile.Alias, userProfile.EmploymentType,
 		userProfile.Degree, userProfile.Mode, userProfile.StartDate, userProfile.EndDate, userProfile.MaxLoad,
 		userProfile.ProfileID, userProfile.StudentType)

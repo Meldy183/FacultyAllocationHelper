@@ -9,6 +9,7 @@ import (
 	userinstituteDomain "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/userinstitute"
 	userprofileDomain "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/userprofile"
 	_ "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/institute"
+	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/position"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/usercourseinstance"
 	userinstitute "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/userinstitute"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/userlanguage"
@@ -17,11 +18,12 @@ import (
 )
 
 type Handler struct {
-	serviceUP     *userprofile.Service
-	serviceUI     *userinstitute.Service
-	serviceLang   *userlanguage.Service
-	serviceCourse *usercourseinstance.Service
-	logger        *zap.Logger
+	serviceUP       *userprofile.Service
+	serviceUI       *userinstitute.Service
+	serviceLang     *userlanguage.Service
+	serviceCourse   *usercourseinstance.Service
+	servicePosition *position.Service
+	logger          *zap.Logger
 }
 
 const (
@@ -34,14 +36,16 @@ func NewHandler(serviceUP *userprofile.Service,
 	serviceUI *userinstitute.Service,
 	serviceLang *userlanguage.Service,
 	serviceCourse *usercourseinstance.Service,
+	servicePosition *position.Service,
 	logger *zap.Logger,
 ) *Handler {
 	return &Handler{
-		serviceUP:     serviceUP,
-		serviceUI:     serviceUI,
-		serviceLang:   serviceLang,
-		serviceCourse: serviceCourse,
-		logger:        logger.Named("userprofile_handler"),
+		serviceUP:       serviceUP,
+		serviceUI:       serviceUI,
+		serviceLang:     serviceLang,
+		serviceCourse:   serviceCourse,
+		servicePosition: servicePosition,
+		logger:          logger.Named("userprofile_handler"),
 	}
 }
 func (h *Handler) AddProfile(w http.ResponseWriter, r *http.Request) {
@@ -189,13 +193,23 @@ func (h *Handler) GetProfile(w http.ResponseWriter, r *http.Request) {
 			CourseInstanceID: courseID,
 		})
 	}
+	positionName, err := h.servicePosition.GetByID(ctx, profile.PositionID)
+	if err != nil {
+		h.logger.Error("error getting position name by id",
+			zap.String("layer", logLayer),
+			zap.String("function", logGetProfile),
+			zap.Int("id", profile.PositionID),
+		)
+		writeError(w, http.StatusInternalServerError, "error getting position by id")
+		return
+	}
 	resp := GetProfileResponse{
 		ProfileID:      profileID,
 		NameEnglish:    profile.EnglishName,
 		NameRussian:    profile.RussianName,
 		Alias:          profile.Alias,
 		Email:          profile.Email,
-		Position:       profile.Position,
+		Position:       *positionName,
 		Institute:      inst.Name,
 		StudentType:    profile.StudentType,
 		Degree:         profile.Degree,
