@@ -42,11 +42,13 @@ const (
 		    mode = $8, start_date = $9, end_date = $10, maxload = $11, student_type = $13
 		WHERE profile_id = $12
 	`
+	queryGetProfilesByFiler = ``
 
-	logLayer          = "repository"
-	logGetByProfileID = "GetByProfileID"
-	logCreate         = "Create"
-	logUpdate         = "Update"
+	logLayer              = "repository"
+	logGetByProfileID     = "GetByProfileID"
+	logCreate             = "Create"
+	logUpdate             = "Update"
+	logGetProfilesByFiler = "GetProfilesByFiler"
 )
 
 func (r *UserProfileRepo) GetByProfileID(ctx context.Context, profileID int64) (*userprofile.UserProfile, error) {
@@ -132,5 +134,25 @@ func (r *UserProfileRepo) Update(ctx context.Context, userProfile *userprofile.U
 }
 
 func (r *UserProfileRepo) GetProfilesByFilter(ctx context.Context, institutes []int, positions []int) (error, []int64) {
-	return nil, nil
+	if len(institutes) == 0 {
+		instRepo, err := NewInstituteRepo(r.pool, r.logger).GetAll(ctx)
+		if err != nil {
+			r.logger.Error("Error getting all institutes",
+				zap.String("layer", logLayer),
+				zap.String("function", logGetProfilesByFiler),
+				zap.Error(err),
+				)
+		}
+		for _, inst := range instRepo {
+			institutes = append(institutes, inst.InstituteID)
+		}
+		r.logger.Info("Institutes length is zero, filtering by all institutes",
+			zap.String("layer", logLayer),
+			zap.String("function", logGetProfilesByFiler),
+			zap.Int("institutes", len(institutes)),
+			)
+	}
+	if len(positions) == 0 {
+		posRepo, err :=
+	}
 }
