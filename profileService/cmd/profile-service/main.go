@@ -3,9 +3,13 @@ package main
 import (
 	"context"
 	"fmt"
+	httpNet "net/http"
+	"time"
+
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/config"
 	userprofile2 "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/handler/userprofile"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/http"
+	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/position"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/usercourseinstance"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/userinstitute"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/userlanguage"
@@ -13,8 +17,6 @@ import (
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/storage/db"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/storage/postgres"
 	"go.uber.org/zap"
-	httpNet "net/http"
-	"time"
 )
 
 const (
@@ -54,6 +56,7 @@ func main() {
 	userLanguageRepo := postgres.NewUserLanguageRepo(pool, logger)
 	userInstituteRepo := postgres.NewUserInstituteRepo(pool, logger)
 	userCourseInstanceRepo := postgres.NewUserCourseInstance(pool, logger)
+	positionRepo := postgres.NewPositionRepo(pool, logger)
 	// TODO languageRepo := postgres.NewLanguageRepo(pool, logger)
 	// TODO labRepo := postgres.NewLabRepo(pool, logger)
 	// TODO instituteRepo := postgres.NewInstituteRepo(pool, logger)
@@ -62,6 +65,7 @@ func main() {
 	userLanguageService := userlanguage.NewService(userLanguageRepo, logger)
 	userInstituteService := userinstitute.NewService(userInstituteRepo, logger)
 	userCourseInstanceService := usercourseinstance.NewService(userCourseInstanceRepo, logger)
+	positionService := position.NewService(positionRepo, logger)
 	// TODO languageService := language.NewService(languageRepo, logger)
 	// TODO labService := lab.NewService(labRepo, logger)
 	// TODO instituteService := institute.NewService(instituteRepo, logger)
@@ -70,6 +74,7 @@ func main() {
 		userInstituteService,
 		userLanguageService,
 		userCourseInstanceService,
+		positionService,
 		logger,
 	)
 	router := http.NewRouter(handler)
