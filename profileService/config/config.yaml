@@ -9,8 +9,8 @@ database:
   host: ${DB_HOST}
   port: 5432
   name: "postgres"
-  user: "user"
-  password: ${DB_PASSWORD}
+  user: ${POSTGRES_USER}
+  password: ${POSTGRES_PASSWORD}
   ssl_mode: "disable"
   max_open_connections: 1000
   max_idle_connections: 100

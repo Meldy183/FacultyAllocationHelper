@@ -13,7 +13,7 @@ type ConnectAndInit struct {
 	logger *zap.Logger
 }
 
-const layer = "Repository"
+const layer = "InitDBLayer"
 
 func NewConnectAndInit(logger *zap.Logger) *ConnectAndInit {
 	return &ConnectAndInit{logger: logger}
@@ -33,6 +33,9 @@ func (str *ConnectAndInit) NewPostgresPool(ctx context.Context, cfg config.Datab
 		cfg.Port,
 		cfg.DatabaseName,
 		cfg.SSLMode)
+	str.logger.Error("Checker",
+		zap.String("connectionString", connectionString),
+		zap.String("layer", layer))
 	poolConfig, err := pgxpool.ParseConfig(connectionString)
 	if err != nil {
 		str.logger.Error("Error parsing PostgreSQL connection string", zap.Error(err))
@@ -239,7 +242,7 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 		zap.String("function", "creating table"))
 	query = `CREATE TABLE IF NOT EXISTS program (
     program_id SERIAL PRIMARY KEY,
-    name VARCHAR(20),
+    name VARCHAR(20)
   )`
 	_, err = conn.Exec(ctx, query)
 	if err != nil {
