@@ -6,12 +6,13 @@ All notable changes to this project will be documented in this file.
 ## [MVP-2.5] - 2025-07-13
 
 ### Added 
-
+Profile service:
+    1. Adding new faculty
+    2. In faculty list viewing records from the database
+    3. Viewing faculty profile with actual faculty data
 
 ### Added [Unreleased]
-
 - Table parsing service
-- Profile service
 
 ### Changed
 - HTTP to HTTPS protocol 
