@@ -105,7 +105,7 @@ services:
     build:
       context: ./profileService
       dockerfile: Dockerfile
-    container_name: profile_service
+    container_name: profile-service
     ports:
       - "8083:8083"
     depends_on:
