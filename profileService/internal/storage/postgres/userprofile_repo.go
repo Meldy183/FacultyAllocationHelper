@@ -22,7 +22,7 @@ func NewUserProfileRepo(pool *pgxpool.Pool, logger *zap.Logger) *UserProfileRepo
 
 const (
 	queryGetByProfileID = `
-		SELECT profile_id, email, position, english_name, russian_name, alias,
+		SELECT profile_id, email, position_id, english_name, russian_name, alias,
 		       employment_type, degree, mode, start_date, end_date, maxload, student_type
 		FROM user_profile
 		WHERE profile_id = $1
@@ -30,7 +30,7 @@ const (
 
 	queryInsertUserProfile = `
 		INSERT INTO user_profile (
-			email, position, english_name, alias
+			email, position_id, english_name, alias
 		)
 		VALUES ($1, $2, $3, $4)
 		RETURNING profile_id
@@ -38,7 +38,7 @@ const (
 
 	queryUpdateUserProfile = `
 		UPDATE user_profile
-		SET email = $1, position = $2, english_name = $3,
+		SET email = $1, position_id = $2, english_name = $3,
 		    russian_name = $4, alias = $5, employment_type = $6, degree = $7,
 		    mode = $8, start_date = $9, end_date = $10, maxload = $11, student_type = $13
 		WHERE profile_id = $12

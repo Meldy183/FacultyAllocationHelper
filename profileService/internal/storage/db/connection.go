@@ -33,9 +33,6 @@ func (str *ConnectAndInit) NewPostgresPool(ctx context.Context, cfg config.Datab
 		cfg.Port,
 		cfg.DatabaseName,
 		cfg.SSLMode)
-	str.logger.Error("Checker",
-		zap.String("connectionString", connectionString),
-		zap.String("layer", layer))
 	poolConfig, err := pgxpool.ParseConfig(connectionString)
 	if err != nil {
 		str.logger.Error("Error parsing PostgreSQL connection string", zap.Error(err))
@@ -64,7 +61,20 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 	}
 	str.logger.Info("connected to PostgreSQL")
 	defer conn.Release()
-	query := `CREATE TABLE IF NOT EXISTS user_profile (
+
+	query := `CREATE TABLE IF NOT EXISTS position (
+      position_id SERIAL PRIMARY KEY,
+      name VARCHAR(255) UNIQUE NOT NULL
+    )`
+	_, err = conn.Exec(ctx, query)
+	if err != nil {
+		str.logger.Error("Error creating position_table",
+			zap.String("layer", layer),
+			zap.String("function", "creating table"),
+			zap.Error(err))
+		return err
+	}
+	query = `CREATE TABLE IF NOT EXISTS user_profile (
       profile_id SERIAL PRIMARY KEY,
       email VARCHAR(50) UNIQUE NOT NULL,
       position_id INTEGER NOT NULL,
@@ -77,7 +87,7 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
       mode VARCHAR(255),
       start_date DATE,
       end_date DATE,
-      maxload INTEGER
+      maxload INTEGER,
 	  FOREIGN KEY (position_id) REFERENCES position (position_id)
   )`
 	_, err = conn.Exec(ctx, query)
@@ -122,18 +132,6 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 		zap.String("layer", layer),
 		zap.String("function", "creating table"))
 
-	query = `CREATE TABLE IF NOT EXISTS position (
-      position_id SERIAL PRIMARY KEY,
-      name VARCHAR(255) UNIQUE NOT NULL
-    )`
-	_, err = conn.Exec(ctx, query)
-	if err != nil {
-		str.logger.Error("Error creating position_table",
-			zap.String("layer", layer),
-			zap.String("function", "creating table"),
-			zap.Error(err))
-		return err
-	}
 	str.logger.Info("created position_table",
 		zap.String("layer", layer),
 		zap.String("function", "creating table"))
