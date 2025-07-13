@@ -96,7 +96,7 @@ const CreateNewFacultyForm: React.FC<IProps> = ({ onSubmit }) => {
         />
         <FormField
           control={ form.control }
-          name="position"
+          name="position_id"
           render={({ field, fieldState }) => (
             <div className={styles.fieldBlock}>
               <div className={styles.fieldDescription}>Position</div>
