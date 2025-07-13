@@ -211,6 +211,7 @@ func (h *Handler) GetProfile(w http.ResponseWriter, r *http.Request) {
 	)
 	writeJSON(w, http.StatusOK, resp)
 }
+
 func writeError(w http.ResponseWriter, status int, message string) {
 	writeJSON(w, status, map[string]string{"error": message})
 }

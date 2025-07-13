@@ -42,6 +42,7 @@ const (
 		    mode = $8, start_date = $9, end_date = $10, maxload = $11, student_type = $13
 		WHERE profile_id = $12
 	`
+
 	logLayer          = "repository"
 	logGetByProfileID = "GetByProfileID"
 	logCreate         = "Create"
@@ -128,4 +129,8 @@ func (r *UserProfileRepo) Update(ctx context.Context, userProfile *userprofile.U
 		zap.Int64("profileId", userProfile.ProfileID),
 	)
 	return nil
+}
+
+func (r *UserProfileRepo) GetProfilesByFilter(ctx context.Context, institutes []int, positions []int) (error, []int64) {
+	return nil, nil
 }
