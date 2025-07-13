@@ -5,7 +5,7 @@ export const CreateMemberResolver = z.object({
   email: z.string().email({}),
   alias: z.string(),
   institute_id: z.number(),
-  position: z.number().min(1, {
+  position_id: z.number().min(1, {
     message: "please choose one of provided variants"
   }).max(5, {
     message: "please choose one of provided variants"
