@@ -6,13 +6,14 @@ import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { AnimatePresence, motion } from "framer-motion";
 import AllocateExistingMember from "./AllocateMemberMenu";
 import CourseComposition from "./CourseComposition";
-import { facultyPositions } from "@/shared/configs/constants";
+import { facultyPositions } from "@/shared/configs/constants/api/paths";
 import styles from "./styles.module.scss";
 
 const AssignNewMember: React.FC = () => {
 	const [changNow, setChangNow] = useState<string>("");
 
 	const handleChangedFaculty = (member: string) => {
+		console.log(member);
 		setChangNow(member);
 	}
 

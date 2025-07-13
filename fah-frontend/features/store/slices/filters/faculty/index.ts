@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { FilterGroup } from "@/shared/types/apiTypes/filters";
+import { FilterGroup } from "shared/types/api/filters";
 
 const initialState: { filters: FilterGroup[] } = {
   filters: []

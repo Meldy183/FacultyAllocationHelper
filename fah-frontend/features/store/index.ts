@@ -3,6 +3,7 @@ import counterReducer from "./slices/test";
 import facultyFilterReducer from "./slices/filters/faculty";
 import { authSlice } from "@/features/api/slises/authSlice";
 import { memberSlice } from "@/features/api/slises/profile";
+import { DevMode } from "@/shared/configs/constants/dev/DevMode";
 
 const makeStore = () => configureStore({
 	reducer: {
@@ -13,7 +14,7 @@ const makeStore = () => configureStore({
 	},
 	middleware: getDefaultMiddleware =>
 		getDefaultMiddleware().concat(authSlice.middleware, memberSlice.middleware),
-	devTools: process.env.WORK_MODE !== 'production'
+	devTools: DevMode !== 'production'
 });
 
 export const store = makeStore();

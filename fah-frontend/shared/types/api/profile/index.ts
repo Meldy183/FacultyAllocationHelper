@@ -1,4 +1,5 @@
-import { FilterGroup } from "@/shared/types/apiTypes/filters";
+import { FilterGroup } from "@/shared/types/api/filters";
+import { CreateMemberType } from "@/shared/types/resolvers/profile";
 
 type Language = {
   language: string;
@@ -77,13 +78,7 @@ export type GetAllUsers = {
 }
 
 export type CreateMember = {
-  requestBody: {
-    nameEng: string,
-    email: string,
-    alias: string,
-    institute: string,
-    position: string,
-  },
+  requestBody: CreateMemberType,
   responseBody: {
     message: string
   }

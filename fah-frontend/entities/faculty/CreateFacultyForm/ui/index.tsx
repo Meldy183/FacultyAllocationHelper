@@ -5,13 +5,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@/shared/ui/button";
 import { handleErrorForm } from "@/shared/hooks/hadleErrorForm";
 import { useForm } from "react-hook-form";
-import styles from "@/features/ui/faculty/CreateNewFaculty/styles.module.scss";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CreateMemberResolver } from "@/shared/types/resolvers/createMember";
-import { z } from "zod";
+import { CreateMemberResolver, CreateMemberType } from "@/shared/types/resolvers/profile";
 import { useCreateUserMutation } from "@/features/api/slises/profile";
+import { Label } from "@/shared/ui/label";
+import { Switch } from "@/shared/ui/switch";
+import { instituteList, roleList } from "@/shared/configs/constants/ui";
+import styles from "./styles.module.scss";
 
-type FormInputType = z.infer<typeof CreateMemberResolver>;
 
 interface IProps {
   onSubmit: (response?: any) => void
@@ -20,25 +21,26 @@ interface IProps {
 const CreateNewFacultyForm: React.FC<IProps> = ({ onSubmit }) => {
   const [createUser] = useCreateUserMutation();
 
-  const form = useForm<FormInputType>({
+  const form = useForm<CreateMemberType>({
     resolver: zodResolver(CreateMemberResolver),
     defaultValues: {
-      nameEng: "",
+      name_eng: "",
       email: "",
       alias: "",
-      institute: "",
-      position: "",
+      institute_id: 1,
+      position: 1,
+      is_repr: false
     },
   });
 
-  const submitHandler = async (formData: FormInputType) => {
+  const submitHandler = async (formData: CreateMemberType) => {
     try {
       const { data, error } = await createUser(formData);
       if (error) throw error;
-      console.log(data)
+      console.log(formData);
       onSubmit(data);
     } catch (e) {
-      handleErrorForm<FormInputType>(e, form.setError);
+      handleErrorForm<CreateMemberType>(e, form.setError);
     }
   };
 
@@ -47,8 +49,8 @@ const CreateNewFacultyForm: React.FC<IProps> = ({ onSubmit }) => {
       <div className={styles.content}>
         <div className={styles.title}>Add a Faculty Member</div>
         <FormField
-          control={form.control}
-          name="nameEng"
+          control={ form.control }
+          name="name_eng"
           render={({ field, fieldState }) => (
             <div className={styles.fieldBlock}>
               <CustomField
@@ -62,7 +64,7 @@ const CreateNewFacultyForm: React.FC<IProps> = ({ onSubmit }) => {
           )}
         />
         <FormField
-          control={form.control}
+          control={ form.control }
           name="email"
           render={({ field, fieldState }) => (
             <div className={styles.fieldBlock}>
@@ -78,7 +80,7 @@ const CreateNewFacultyForm: React.FC<IProps> = ({ onSubmit }) => {
           )}
         />
         <FormField
-          control={form.control}
+          control={ form.control }
           name="alias"
           render={({ field, fieldState }) => (
             <div className={styles.fieldBlock}>
@@ -93,38 +95,25 @@ const CreateNewFacultyForm: React.FC<IProps> = ({ onSubmit }) => {
           )}
         />
         <FormField
-          control={form.control}
-          name="institute"
-          render={({ field, fieldState }) => (
-            <div className={styles.fieldBlock}>
-              <CustomField
-                field={field}
-                fieldName={field.name}
-                title="Department"
-                customClassName={styles.input}
-              />
-              {fieldState.error && <div className={styles.error}>{fieldState.error.message}</div>}
-            </div>
-          )}
-        />
-        <FormField
-          control={form.control}
+          control={ form.control }
           name="position"
           render={({ field, fieldState }) => (
             <div className={styles.fieldBlock}>
               <div className={styles.fieldDescription}>Position</div>
               <FormControl>
                 <Select
-                  value={field.value}
-                  onValueChange={field.onChange}
+                  value={field.value?.toString()}
+                  onValueChange={ (value) => field.onChange(Number(value)) }
                 >
                   <SelectTrigger className={styles.select}>
                     <SelectValue placeholder="Select a position" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="Primary instructor">Primary instructor</SelectItem>
-                    <SelectItem value="Tutor instructor">Tutor instructor</SelectItem>
-                    <SelectItem value="Teaching assistant">Teaching assistant</SelectItem>
+                    {
+                      roleList.map(({ id, name }) => (
+                        <SelectItem key={ id } value={ id.toString() }>{ name }</SelectItem>
+                      ))
+                    }
                   </SelectContent>
                 </Select>
               </FormControl>
@@ -132,6 +121,48 @@ const CreateNewFacultyForm: React.FC<IProps> = ({ onSubmit }) => {
             </div>
           )}
         />
+        <FormField
+          control={ form.control }
+          name="institute_id"
+          render={({ field, fieldState }) => (
+            <div className={styles.fieldBlock}>
+              <div className={styles.fieldDescription}>Institute</div>
+              <FormControl>
+                <Select
+                  value={field.value?.toString()}
+                  onValueChange={ (value) => field.onChange(Number(value)) }
+                >
+                  <SelectTrigger className={ styles.select }>
+                    <SelectValue placeholder="Select a institute" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {
+                      instituteList.map(({ id, name }) => (
+                        <SelectItem key={ id } value={ id.toString() }>{ name }</SelectItem>
+                      ))
+                    }
+                  </SelectContent>
+                </Select>
+              </FormControl>
+              {fieldState.error &&
+                <div className={styles.error}>{fieldState.error.message}</div>}
+            </div>
+          )}
+        />
+        <FormField
+          control={ form.control }
+          name={"is_repr"}
+          render={ ({ field }) => (
+            <Label className={ styles.switchElement }>
+              <Switch
+                checked={ field.value }
+                onCheckedChange={ field.onChange }
+                className={ styles.switcher }
+              />
+              <span className={ styles.switcherText }>is institute representative</span>
+            </Label>
+          )
+          } />
         {form.formState.errors.root && (
           <p className="text-red-500 text-sm">{ form.formState.errors.root.message }</p>
         )}
