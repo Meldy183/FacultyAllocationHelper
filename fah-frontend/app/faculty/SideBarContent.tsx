@@ -15,6 +15,11 @@ const SideBarContent: React.FC = () => {
 
 	const { data, isError } = useGetFiltersQuery({});
 
+	React.useEffect(() => {
+		console.log(data);
+	
+	}, [data])
+
 	const toggleFilters = (filterGroupName: string, filter: FilterItem) => {
 		dispatcher(toggleFilter({
 			name: filterGroupName,
