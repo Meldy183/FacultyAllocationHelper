@@ -9,7 +9,6 @@ import (
 	userinstituteDomain "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/userinstitute"
 	userprofileDomain "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/userprofile"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/institute"
-	_ "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/institute"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/position"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/usercourseinstance"
 	userinstitute "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/userinstitute"
