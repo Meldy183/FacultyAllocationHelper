@@ -1,96 +1,67 @@
-"use client";
-
-import React, { useEffect, useState } from "react";
-import Image from "next/image";
-import Wrapper from "@/shared/ui/wrapper";
-import SideBar from "@/shared/ui/wrapper/sidebar";
-import SideBarContent from "@/app/faculty/SideBarContent";
-import TeacherAssistance from "@/app/faculty/teacherAssistantField";
-import CreateFacultyMenu from "@/features/ui/faculty/CreateNewFaculty";
-import { useLazyGetMembersByParamQuery } from "@/features/api/slises/profile";
-import { UserDataInterface } from "shared/types/api/profile";
-import { useAppSelector } from "@/features/store/hooks";
-import { FilterGroup } from "shared/types/api/filters";
-import { transformWorkingFilters } from "@/shared/lib/transformFilter";
-import { useDebounce } from "@/shared/hooks/useDebounce";
-import { debounceTime } from "@/shared/configs/constants/dev/debounceTime";
-import loaderSvg from "@/public/icons/svg/loader.svg";
-import wrongSvg from "@/public/icons/svg/wrong.svg";
+"use client"
 import styles from "./styles.module.scss";
+import React from "react";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/shared/ui/accordion";
+import { useGetFiltersQuery } from "@/features/api/slises/profile";
+import { FilterGroup, FilterItem } from "shared/types/api/filters";
+import { Label } from "@/shared/ui/label";
+import { Checkbox } from "@/shared/ui/checkbox";
+import { useAppDispatch, useAppSelector } from "@/features/store/hooks";
+import { toggleFilter } from "@/features/store/slices/filters/faculty";
 
-const AssistantsPage: React.FC = () => {
-  const filters: FilterGroup[] = useAppSelector(state => state.facultyFilters.filters);
-  const [getUsers, { data, error, isError, isLoading }] = useLazyGetMembersByParamQuery();
-  const [users, setUsers] = useState<number[]>([]);
+const SideBarContent: React.FC = () => {
+	const filters = useAppSelector(state => state.facultyFilters.filters);
+	const dispatcher = useAppDispatch();
 
-  //@ts-ignore
-  const [_users, _setUsers] = useState<UserDataInterface[]>();
+	const { data, isError } = useGetFiltersQuery({});
 
-  const debouncedFilters = useDebounce(filters, debounceTime);
+	React.useEffect(() => {
+		console.log(data);
+	}, [data])
 
-  const getAllUsers = async () => {
-  const promises = users.map((userId) =>
-    fetch(`/api/profile/getProfile/${userId.toString()}`)
-  );
+	const toggleFilters = (filterGroupName: string, filter: FilterItem) => {
+		dispatcher(toggleFilter({
+			name: filterGroupName,
+			items: [filter]
+		}))
+	}
 
-  const responses = await Promise.all(promises);
+	const isChecked = (filterGroupName: string, filter: FilterItem): boolean => {
+		return filters.some(
+				(filterGroup) =>
+					filterGroup.name === filterGroupName &&
+					filterGroup.items.some((i) => i.name === filter.name)
+			)
+	}
 
-  //@ts-ignore
-  const jsonData = await Promise.all(responses.map((res) => res.json()));
-
-  console.log(jsonData);
-  _setUsers(jsonData);
-  return jsonData;
-  };
-
-
-  useEffect(() => {
-  getAllUsers();
-  }, [users]);
-
-  useEffect(() => {
-    const transformedFilters = transformWorkingFilters(debouncedFilters);
-    getUsers(transformedFilters);
-  }, [debouncedFilters, getUsers]);
-
-  useEffect(() => {
-    //@ts-ignore
-    if (data && data.faculty_ids) setUsers(data.faculty_ids);
-  }, [data, error, isLoading]);
-
-  return <Wrapper>
-    <SideBar hiddenText={ "Filters" }><SideBarContent/></SideBar>
-    <div className={ styles.headerContainer }>
-      <div className={styles.name}>Faculty list</div>
-      <CreateFacultyMenu />
-    </div>
-    <div className={ styles.assistance }>
-      {
-        isError
-          ? <div className={ styles.wrongMessage }>
-            <div className={ styles.wrongText }>something went wrong: <>{ error && 'data' in error ? (error.data! as { message: string }).message : 'An error occurred' }</></div>
-            <Image className={ styles.wrongImage } src={ wrongSvg } alt={ "something went wrong" } />
-          </div>
-          : <ul className={styles.list}>
-            <li className={styles.header}>
-              <div className={styles.colName}>Name, alias</div>
-              <div className={styles.colEmail}>Email</div>
-              <div className={styles.colInstitute}>Institute</div>
-              <div className={styles.colPosition}>Position</div>
-            </li>
-            {
-              isLoading ?
-                <><Image className={ styles.loadingImage } src={ loaderSvg } alt={ "loading" } /></>
-                : (_users && _users.map((item, i) =>{
-          console.log(item);
-          
-          return  <TeacherAssistance {...item} key={ i } />
-        }))
-            }
-          </ul>
-      }
-    </div>
-  </Wrapper>
+	return (
+		<>
+			<div className={ styles.sideBar }>
+				<div className={ styles.menu }>
+					<Accordion type={ "multiple" }>
+						{
+							isError ? <>could not load filters</> :
+							data?.map((filterGroup: FilterGroup) => (
+								<AccordionItem className={ styles.accordionItem } value={ filterGroup.name } key={ filterGroup.name }>
+									<AccordionTrigger className={ styles.button }>{ filterGroup.name }</AccordionTrigger>
+									<AccordionContent>
+										{
+											filterGroup.items.map((filter: FilterItem) =>
+												<Label key={ filter.name }>
+													<Checkbox checked={ isChecked(filterGroup.name, filter) } onCheckedChange={ () => toggleFilters(filterGroup.name, filter) } />
+													<span className={ styles.text }>{ filter.name }</span>
+												</Label>
+											)
+										}
+									</AccordionContent>
+								</AccordionItem>
+							))
+						}
+					</Accordion>
+				</div>
+			</div>
+		</>
+	)
 }
 
-export default AssistantsPage;
+export default SideBarContent;
