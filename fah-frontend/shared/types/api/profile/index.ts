@@ -9,54 +9,41 @@ type Course = {
   id: string;
 };
 
-type WorkloadStatsClasses = {
-  lec: number;
-  tut: number;
-  lab: number;
-  elec: number;
+type WorkloadStatsEntry = {
+  lec_hours: number;
+  tut_hours: number;
+  lab_hours: number;
+  elective_hours: number;
   rate: number;
 };
 
-type WorkloadStatsUniteStat = {
-  id: string;
-  classes: WorkloadStatsClasses;
-};
-
-type WorkloadStatsTotal = {
-  totalLec: number;
-  totalTut: number;
-  totalLab: number;
-  totalElec: number;
-  totalRate: number;
-};
-
-type WorkloadStats = {
-  uniteStat: WorkloadStatsUniteStat[];
-  total: WorkloadStatsTotal;
-};
-
 export interface UserDataInterface {
-  profile_id: number;
-  nameEng: string;
-  nameRu: string;
+  name_eng: string;
+  name_ru: string;
   alias: string;
   email: string;
   position: string;
   institute: string;
   workload: number;
-  studentType: string;
+  student_type: string;
   degree: boolean;
-  FSRO: string;
+  fsro: string;
   languages: Language[];
   courses: Course[];
-  employnmentType: string;
-  hiringStatus: string;
+  employnment_type: string;
+  hiring_status: string;
   mode: string;
-  maxLoad: number;
-  frontalHours: number;
-  extraActivities: number;
-  workloadStats: WorkloadStats;
-};
+  max_load: number;
+  frontal_hours: number;
+  extra_activities: number;
+  workload_stats: {
+    t1?: WorkloadStatsEntry;
+    t2?: WorkloadStatsEntry;
+    t3?: WorkloadStatsEntry;
+    total: WorkloadStatsEntry;
+  };
+}
+
 
 export type GetMemberProcessType = {
   requestQuery: {
@@ -73,7 +60,7 @@ export type GetFiltersType = {
 export type GetAllUsers = {
   requestQuery: { [key: string]: string[] }
   responseBody: {
-    data: UserDataInterface[]
+    profiles: UserDataInterface[]
   },
 }
 

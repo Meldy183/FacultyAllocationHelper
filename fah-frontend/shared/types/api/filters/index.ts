@@ -1,4 +1,7 @@
-export type RawFilter = { [key: string]: number };
+export type RawFilter = {
+	id: number,
+	name: string
+};
 export type RawFilters = { [key: string]: RawFilter[] };
 export type RawFiltersResponse = { filters: RawFilters };
 

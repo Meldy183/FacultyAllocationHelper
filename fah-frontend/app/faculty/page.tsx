@@ -19,77 +19,50 @@ import wrongSvg from "@/public/icons/svg/wrong.svg";
 import styles from "./styles.module.scss";
 
 const AssistantsPage: React.FC = () => {
-  const filters: FilterGroup[] = useAppSelector(state => state.facultyFilters.filters);
-  const [getUsers, { data, error, isError, isLoading }] = useLazyGetMembersByParamQuery();
-  const [users, setUsers] = useState<number[]>([]);
+	const filters: FilterGroup[] = useAppSelector(state => state.facultyFilters.filters);
+	const [getUsers, { data, error, isError, isLoading }] = useLazyGetMembersByParamQuery();
+	const [users, setUsers] = useState<UserDataInterface[]>([]);
 
-  //@ts-ignore
-  const [_users, _setUsers] = useState<UserDataInterface[]>();
+	const debouncedFilters = useDebounce(filters, debounceTime);
 
-  const debouncedFilters = useDebounce(filters, debounceTime);
+	useEffect(() => {
+		const transformedFilters = transformWorkingFilters(debouncedFilters);
+		getUsers(transformedFilters);
+	}, [debouncedFilters, getUsers]);
 
-  const getAllUsers = async () => {
-	const promises = users.map((userId) =>
-		fetch(`/api/profile/getUser/${userId.toString()}`)
-	);
+	useEffect(() => {
+		if (data) setUsers(data?.profiles || []);
+	}, [data, error, isLoading]);
 
-	const responses = await Promise.all(promises);
-
-	const jsonData = await Promise.all(responses.map((res) => res.json()));
-
-	console.log(jsonData);
-	_setUsers(jsonData);
-	return jsonData;
-	};
-
-
-  useEffect(() => {
-	getAllUsers();
-	}, [users]);
-
-  useEffect(() => {
-    const transformedFilters = transformWorkingFilters(debouncedFilters);
-    getUsers(transformedFilters);
-  }, [debouncedFilters, getUsers]);
-
-  useEffect(() => {
-    //@ts-ignore
-    if (data && data.faculty_ids) setUsers(data.faculty_ids);
-  }, [data, error, isLoading]);
-
-  return <Wrapper>
-    <SideBar hiddenText={ "Filters" }><SideBarContent/></SideBar>
-    <div className={ styles.headerContainer }>
-      <div className={styles.name}>Faculty list</div>
-      <CreateFacultyMenu />
-    </div>
-    <div className={ styles.assistance }>
-      {
-        isError
-          ? <div className={ styles.wrongMessage }>
-            <div className={ styles.wrongText }>something went wrong: <>{ error && 'data' in error ? (error.data! as { message: string }).message : 'An error occurred' }</></div>
-            <Image className={ styles.wrongImage } src={ wrongSvg } alt={ "something went wrong" } />
-          </div>
-          : <ul className={styles.list}>
-            <li className={styles.header}>
-              <div className={styles.colName}>Name, alias</div>
-              <div className={styles.colEmail}>Email</div>
-              <div className={styles.colInstitute}>Institute</div>
-              <div className={styles.colPosition}>Position</div>
-            </li>
-            {
-              isLoading ?
-                <><Image className={ styles.loadingImage } src={ loaderSvg } alt={ "loading" } /></>
-                : (_users && _users.map((item, i) =>{
-					console.log(item);
-					
-					return  <TeacherAssistance {...item} key={ i } />
-				}))
-            }
-          </ul>
-      }
-    </div>
-  </Wrapper>
+	return <Wrapper>
+		<SideBar hiddenText={ "Filters" }><SideBarContent/></SideBar>
+		<div className={ styles.headerContainer }>
+			<div className={styles.name}>Faculty list</div>
+			<CreateFacultyMenu />
+		</div>
+		<div className={ styles.assistance }>
+			{
+				isError
+					? <div className={ styles.wrongMessage }>
+						<div className={ styles.wrongText }>something went wrong: <>{ error && 'data' in error ? (error.data! as { message: string }).message : 'An error occurred' }</></div>
+						<Image className={ styles.wrongImage } src={ wrongSvg } alt={ "something went wrong" } />
+					</div>
+					: <ul className={styles.list}>
+						<li className={styles.header}>
+							<div className={styles.colName}>Name, alias</div>
+							<div className={styles.colEmail}>Email</div>
+							<div className={styles.colInstitute}>Institute</div>
+							<div className={styles.colPosition}>Position</div>
+						</li>
+						{
+							isLoading ?
+								<><Image className={ styles.loadingImage } src={ loaderSvg } alt={ "loading" } /></>
+								: users.map((item, i) => <TeacherAssistance {...item} key={ i } />)
+						}
+					</ul>
+			}
+		</div>
+	</Wrapper>
 }
 
 export default AssistantsPage;
