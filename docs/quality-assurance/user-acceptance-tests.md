@@ -45,7 +45,7 @@ This section includes user acceptance tests written in the GIVEN/WHEN/THEN forma
 ---
 
 ## 🕒 "Time Machine" Feature (Read-only Past Year View)  
-**📝 Status**: Discussed during the meeting — ❌ *Not planned yet*
+**📝 Status**: Discussed during the meeting — 🟡 *In progress*
 
 **Acceptance Criteria**  
 - **GIVEN** I am an authorized user able to manage TAs and courses  

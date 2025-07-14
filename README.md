@@ -3,6 +3,7 @@
 > A tool for simplifying the faculty allocation in Innopolis University
 
 🔗 [Link to the deployed version](https://facallhelp.ru)
+
 📹 [Demo video](https://www.youtube.com/watch?v=dQw4w9WgXcQ)
 
 ---
