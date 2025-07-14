@@ -19,55 +19,53 @@ import wrongSvg from "@/public/icons/svg/wrong.svg";
 import styles from "./styles.module.scss";
 
 const AssistantsPage: React.FC = () => {
-  const filters: FilterGroup[] = useAppSelector((state) => state.facultyFilters.filters);
+  const filters: FilterGroup[] = useAppSelector(state => state.facultyFilters.filters);
   const [getUsers, { data, error, isError, isLoading }] = useLazyGetMembersByParamQuery();
-  const [userIds, setUserIds] = useState<number[]>([]);
-  const [profiles, setProfiles] = useState<UserDataInterface[]>([]);
+  const [users, setUsers] = useState<number[]>([]);
+  const [_users, _setUsers] = useState<UserDataInterface[]>([]);
 
   const debouncedFilters = useDebounce(filters, debounceTime);
 
-  // Fetch list of user IDs based on filters
-  useEffect(() => {
+  // Fetch the initial list of user IDs based on filters
+  useEffect(() => {	
     const transformedFilters = transformWorkingFilters(debouncedFilters);
+	console.log(transformWorkingFilters);
+	
     getUsers(transformedFilters);
   }, [debouncedFilters, getUsers]);
 
-  // Update IDs when data arrives
+  // Update users state when data changes
   useEffect(() => {
-    if (data?.profiles) {
-      //@ts-ignore
-      setUserIds(data.profiles);
-    } else {
-      setUserIds([]);
-    }
-  }, [data]);
+    //@ts-ignore
+    if (data) setUsers(data?.profiles || []);
+  }, [data, error, isLoading]);
 
-  // Fetch full profile data for each user ID
+  // Fetch individual user profiles when users array changes
   useEffect(() => {
-    if (userIds.length === 0) {
-      setProfiles([]);
-      return;
-    }
+    const fetchProfile = async (id: number): Promise<UserDataInterface> => {
+      const response = await fetch(/api/profile/getProfile/${id});
+      if (!response.ok) {
+        throw new Error(Failed to fetch profile for user ${id});
+      }
+      return response.json();
+    };
 
     const fetchProfiles = async () => {
       try {
-        const responses = await Promise.all(
-          userIds.map((id) =>
-            fetch(`/api/profile/getProfile/${id}`).then((res) => {
-              if (!res.ok) throw new Error(`Failed to fetch profile for user ${id}`);
-              return res.json() as Promise<UserDataInterface>;
-            })
-          )
-        );
-        setProfiles(responses);
-      } catch (err) {
-        console.error(err);
-        setProfiles([]);
+        const promises = users.map(id => fetchProfile(id));
+        const profiles = await Promise.all(promises);
+        _setUsers(profiles);
+      } catch (error) {
+        console.error('Error fetching profiles:', error);
       }
     };
 
-    fetchProfiles();
-  }, [userIds]);
+    if (users.length > 0) {
+      fetchProfiles();
+    } else {
+      _setUsers([]);
+    }
+  }, [users]);
 
   return (
     <Wrapper>
@@ -82,16 +80,9 @@ const AssistantsPage: React.FC = () => {
         {isError ? (
           <div className={styles.wrongMessage}>
             <div className={styles.wrongText}>
-              something went wrong:{" "}
-              {error && "data" in error
-                ? (error.data as { message: string }).message
-                : "An error occurred"}
+              something went wrong: <>{error && 'data' in error ? (error.data! as { message: string }).message : 'An error occurred'}</>
             </div>
-            <Image
-              className={styles.wrongImage}
-              src={wrongSvg}
-              alt={"something went wrong"}
-            />
+            <Image className={styles.wrongImage} src={wrongSvg} alt={"something went wrong"} />
           </div>
         ) : (
           <ul className={styles.list}>
@@ -102,13 +93,10 @@ const AssistantsPage: React.FC = () => {
               <div className={styles.colPosition}>Position</div>
             </li>
             {isLoading ? (
-              <Image
-                className={styles.loadingImage}
-                src={loaderSvg}
-                alt={"loading"}
-              />
+              <Image className={styles.loadingImage} src={loaderSvg} alt={"loading"} />
             ) : (
-              profiles.map((item, i) => <TeacherAssistance {...item} key={i} />)
+              //@ts-ignore
+              _users.map(item => <TeacherAssistance {...item} key={item.id} />)
             )}
           </ul>
         )}
