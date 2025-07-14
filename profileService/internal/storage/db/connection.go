@@ -76,7 +76,7 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
       mode VARCHAR(255),
       start_date DATE,
       end_date DATE,
-      maxload INTEGER
+      maxload INTEGER,
 	  FOREIGN KEY (position_id) REFERENCES position (position_id)
   )`
 	_, err = conn.Exec(ctx, query)
