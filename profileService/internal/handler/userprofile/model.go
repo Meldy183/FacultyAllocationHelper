@@ -68,3 +68,18 @@ type Classes struct {
 type GetAllFacultiesResponse struct {
 	Profiles []int64 `json:"faculty_ids"`
 }
+
+type InstituteObj struct {
+	ID   int    `json:"id"`
+	Name string `json:"name"`
+}
+
+type PositionObj struct {
+	ID   int    `json:"id"`
+	Name string `json:"name"`
+}
+
+type GetFacultyFiltersResponce struct {
+	InstituteFilters []InstituteObj `json:"institute"`
+	PositionFilters  []PositionObj  `json:"position"`
+}

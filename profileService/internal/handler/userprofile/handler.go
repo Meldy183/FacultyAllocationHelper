@@ -8,7 +8,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	userinstituteDomain "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/userinstitute"
 	userprofileDomain "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/userprofile"
-	_ "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/institute"
+	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/institute"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/position"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/usercourseinstance"
 	userinstitute "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/userinstitute"
@@ -18,19 +18,21 @@ import (
 )
 
 type Handler struct {
-	serviceUP       *userprofile.Service
-	serviceUI       *userinstitute.Service
-	serviceLang     *userlanguage.Service
-	serviceCourse   *usercourseinstance.Service
-	servicePosition *position.Service
-	logger          *zap.Logger
+	serviceUP        *userprofile.Service
+	serviceUI        *userinstitute.Service
+	serviceLang      *userlanguage.Service
+	serviceCourse    *usercourseinstance.Service
+	servicePosition  *position.Service
+	serviceInstitute *institute.Service
+	logger           *zap.Logger
 }
 
 const (
-	logLayer           = "Handler"
-	logAddProfile      = "AddProfile"
-	logGetProfile      = "GetProfile"
-	logGetAllFaculties = "GetAllFaculties"
+	logLayer             = "Handler"
+	logAddProfile        = "AddProfile"
+	logGetProfile        = "GetProfile"
+	logGetAllFaculties   = "GetAllFaculties"
+	logGetFacultyFilters = "GetFacultyFilters"
 )
 
 func NewHandler(serviceUP *userprofile.Service,
@@ -38,15 +40,17 @@ func NewHandler(serviceUP *userprofile.Service,
 	serviceLang *userlanguage.Service,
 	serviceCourse *usercourseinstance.Service,
 	servicePosition *position.Service,
+	serviceInstitute *institute.Service,
 	logger *zap.Logger,
 ) *Handler {
 	return &Handler{
-		serviceUP:       serviceUP,
-		serviceUI:       serviceUI,
-		serviceLang:     serviceLang,
-		serviceCourse:   serviceCourse,
-		servicePosition: servicePosition,
-		logger:          logger.Named("userprofile_handler"),
+		serviceUP:        serviceUP,
+		serviceUI:        serviceUI,
+		serviceLang:      serviceLang,
+		serviceCourse:    serviceCourse,
+		servicePosition:  servicePosition,
+		serviceInstitute: serviceInstitute,
+		logger:           logger.Named("userprofile_handler"),
 	}
 }
 func (h *Handler) AddProfile(w http.ResponseWriter, r *http.Request) {
@@ -276,6 +280,55 @@ func (h *Handler) GetAllFaculties(w http.ResponseWriter, r *http.Request) {
 	}
 	writeJSON(w, http.StatusOK, resp)
 }
+
+func (h *Handler) GetFacultyFilters(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	positions, err := h.servicePosition.GetAll(ctx)
+	if err != nil {
+		h.logger.Error("Error getting all positions",
+			zap.String("layer", logLayer),
+			zap.String("function", logGetFacultyFilters),
+			zap.Error(err),
+		)
+		writeError(w, http.StatusInternalServerError, "error getting all positions")
+		return
+	}
+
+	institutes, err := h.serviceInstitute.GetAll(ctx)
+	if err != nil {
+		h.logger.Error("Error getting all institutes",
+			zap.String("layer", logLayer),
+			zap.String("function", logGetFacultyFilters),
+			zap.Error(err),
+		)
+		writeError(w, http.StatusInternalServerError, "error getting all institutes")
+		return
+	}
+	instituteObjects := make([]InstituteObj, 0)
+	for _, elem := range institutes {
+		iobj := InstituteObj{
+			ID:   elem.InstituteID,
+			Name: elem.Name,
+		}
+		instituteObjects = append(instituteObjects, iobj)
+	}
+
+	positionObjects := make([]PositionObj, 0)
+	for _, elem := range positions {
+		pobj := PositionObj{
+			ID:   elem.PositionID,
+			Name: elem.Name,
+		}
+		positionObjects = append(positionObjects, pobj)
+	}
+	responce := GetFacultyFiltersResponce{
+		InstituteFilters: instituteObjects,
+		PositionFilters:  positionObjects,
+	}
+
+	writeJSON(w, http.StatusOK, responce)
+}
+
 func writeError(w http.ResponseWriter, status int, message string) {
 	writeJSON(w, status, map[string]string{"error": message})
 }
@@ -288,8 +341,9 @@ func writeJSON(w http.ResponseWriter, status int, data interface{}) {
 
 func RegisterRoutes(router chi.Router, h *Handler) {
 	router.Route("/", func(r chi.Router) {
-		r.Post("/addUser", h.AddProfile)
-		r.Get("/getUser/{id}", h.GetProfile)
-		r.Get("/getAllUsers", h.GetAllFaculties)
+		r.Post("/addProfile", h.AddProfile)
+		r.Get("/getProfile/{id}", h.GetProfile)
+		r.Get("/getAllProfiles", h.GetAllFaculties)
+		r.Get("/filters", h.GetFacultyFilters)
 	})
 }

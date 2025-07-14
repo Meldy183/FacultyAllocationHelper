@@ -17,3 +17,28 @@ func Logger(ctx context.Context) *zap.Logger {
 	}
 	return l
 }
+
+const (
+	logHandlerLayer            = "Handler"
+	logServiceLayer            = "Service"
+	logRepoLayer               = "Repository"
+	logDBInitLayer             = "DB Initialization"
+	logGetInstituteByID        = "getInstituteByID"
+	logGetAllInstitutes        = "getAllInstitutes"
+	logGetAllLabs              = "getAllLabs"
+	logGetLabsByInstituteID    = "getLabsByInstituteID"
+	logGetAllLanguages         = "getAllLanguages"
+	logGetLanguageByCode       = "getLanguageByCode"
+	logGetPositionByID         = "getPositionByID"
+	logGetAllPositions         = "getAllPositions"
+	logGetInstancesByProfileID = "getInstancesByProfileID"
+	logAddCourseInstance       = "addCourseInstance"
+	logGetInstituteByProfileID = "getInstituteByProfileID"
+	logAddUserInstitute        = "addUserInstitute"
+	logAddUserLanguage         = "addUserLanguage"
+	logGetLanguagesByProfileID = "getLanguagesByProfileID"
+	logAddProfile              = "addUserProfile"
+	logGetFacultyByProfileID   = "getFacultyByProfileID"
+	logUpdateFaculty           = "updateFaculty"
+	logGetFacultiesByFilters   = "getFacultiesByFilters"
+)
