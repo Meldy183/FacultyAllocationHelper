@@ -19,7 +19,7 @@ services:
     ports:
       - "8081:8081"
     env_file:
-      - .env
+      - profileService/.env
     depends_on:
       auth-db:
         condition: service_healthy
@@ -38,7 +38,7 @@ services:
       - auth-server
     
     env_file:
-      - .env
+      - profileService/.env
     networks:
       - fah
  
@@ -46,7 +46,7 @@ services:
     container_name: auth_db
     image: postgres:latest
     env_file:
-      - .env
+      - profileService/.env
     volumes:
       - db-data:/var/lib/postgresql/data
     ports:
