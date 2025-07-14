@@ -44,8 +44,8 @@ export default function ProfileDashboard() {
 						<div className={styles.userInfo}>
 							<Image src={ userIcon } alt={ "user icon" } className={ styles.avatar } />
 							<div>
-								<h1 className={styles.name}>{ data.nameEng }</h1>
-								<p className={styles.subName}>{ data.nameRu }</p>
+								<h1 className={styles.name}>{ data.name_eng }</h1>
+								<p className={styles.subName}>{ data.name_ru }</p>
 							</div>
 						</div>
 
@@ -62,8 +62,8 @@ export default function ProfileDashboard() {
 						<div className={styles.grid}>
 							<div>Email: { data.email }</div>
 							<div>Telegram alias: { data.alias }</div>
-							<div>Student? { data.studentType }</div>
-							<div>Responsible from FSRO: { data.FSRO }</div>
+							<div>Student? { data.student_type }</div>
+							<div>Responsible from FSRO: { data.fsro }</div>
 							<div>Degree: { data.degree }</div>
 							{/*больше не реализовывал*/}
 							<div>Languages: Eng/Ru/Eng, Ru</div>

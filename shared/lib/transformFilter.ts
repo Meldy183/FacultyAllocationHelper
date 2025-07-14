@@ -1,13 +1,17 @@
 import { FilterGroup, FiltersRequest, RawFiltersResponse } from "shared/types/api/filters";
 
 export function transformRawFilters(raw: RawFiltersResponse): FilterGroup[] {
-	return Object.entries(raw.filters).map(([name, rawItems]) => ({
+	const filters = Object.entries(raw.filters).map(([name, rawItems]) => ({
 		name,
-		items: rawItems.map(rawItem => {
-			const [itemName, value] = Object.entries(rawItem)[0];
-			return { name: itemName, value };
-		})
+		items: rawItems.map(rawItem => ({
+			name: rawItem.name,
+			value: rawItem.id
+		}))
 	}));
+
+	console.log(filters)
+
+	return filters;
 }
 
 export function transformWorkingFilters(filters: FilterGroup[]): FiltersRequest {

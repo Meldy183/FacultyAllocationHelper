@@ -28,7 +28,7 @@ const CreateNewFacultyForm: React.FC<IProps> = ({ onSubmit }) => {
       email: "",
       alias: "",
       institute_id: 1,
-      position: 1,
+      position_id: 1,
       is_repr: false
     },
   });
@@ -96,7 +96,7 @@ const CreateNewFacultyForm: React.FC<IProps> = ({ onSubmit }) => {
         />
         <FormField
           control={ form.control }
-          name="position"
+          name="position_id"
           render={({ field, fieldState }) => (
             <div className={styles.fieldBlock}>
               <div className={styles.fieldDescription}>Position</div>

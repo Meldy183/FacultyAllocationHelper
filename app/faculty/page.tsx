@@ -23,7 +23,7 @@ const AssistantsPage: React.FC = () => {
 	const [getUsers, { data, error, isError, isLoading }] = useLazyGetMembersByParamQuery();
 	const [users, setUsers] = useState<UserDataInterface[]>([]);
 
-	const debouncedFilters = useDebounce(filters, debounceTime)
+	const debouncedFilters = useDebounce(filters, debounceTime);
 
 	useEffect(() => {
 		const transformedFilters = transformWorkingFilters(debouncedFilters);
@@ -31,7 +31,7 @@ const AssistantsPage: React.FC = () => {
 	}, [debouncedFilters, getUsers]);
 
 	useEffect(() => {
-		if (data) setUsers(data?.data || []);
+		if (data) setUsers(data?.profiles || []);
 	}, [data, error, isLoading]);
 
 	return <Wrapper>
@@ -61,7 +61,7 @@ const AssistantsPage: React.FC = () => {
 						}
 					</ul>
 			}
-			</div>
+		</div>
 	</Wrapper>
 }
 
