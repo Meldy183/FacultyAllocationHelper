@@ -25,13 +25,14 @@ const AssistantsPage: React.FC = () => {
 
 	const debouncedFilters = useDebounce(filters, debounceTime);
 
+
 	useEffect(() => {
 		const transformedFilters = transformWorkingFilters(debouncedFilters);
 		getUsers(transformedFilters);
 	}, [debouncedFilters, getUsers]);
 
 	useEffect(() => {
-		if (data) setUsers(data?.profiles || []);
+		if (data && data.profiles) setUsers(data.profiles);
 	}, [data, error, isLoading]);
 
 	return <Wrapper>
@@ -57,7 +58,7 @@ const AssistantsPage: React.FC = () => {
 						{
 							isLoading ?
 								<><Image className={ styles.loadingImage } src={ loaderSvg } alt={ "loading" } /></>
-								: users.map((item, i) => <TeacherAssistance {...item} key={ i } />)
+								: (users && users.map((item, i) => <TeacherAssistance {...item} key={ i } />))
 						}
 					</ul>
 			}

@@ -53,13 +53,10 @@ export const memberSlice = createApi({
               console.log(draft);
               console.log("<<--->>");
               const newUser = {
-                //@ts-ignore
-                institute: instituteList.find(item => item.id === newUserBody.institute_id).name,
-                //@ts-ignore
-                position: roleList.find(item => item.id === newUserBody.position_id).name,
+                institute: instituteList.find(item => item.id === newUserBody.institute_id)!.name,
+                position: roleList.find(item => item.id === newUserBody.position_id)!.name,
                 ...newUserBody
               }
-              //@ts-ignore
               draft.profiles = [newUser, ...draft.profiles];
             }
           )
