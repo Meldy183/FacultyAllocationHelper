@@ -43,7 +43,7 @@ const AssistantsPage: React.FC = () => {
   // Fetch individual user profiles when users array changes
   useEffect(() => {
     const fetchProfile = async (id: number): Promise<UserDataInterface> => {
-      const response = await fetch(/api/profile/getProfile/${id});
+      const response = await fetch(`/api/profile/getProfile/${id}`);
       if (!response.ok) {
         throw new Error(Failed to fetch profile for user ${id});
       }
