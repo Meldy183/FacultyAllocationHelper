@@ -12,6 +12,8 @@ services:
       - ./certbot/www:/var/www/certbot
     depends_on:
       - profile-service
+      - fah_frontend
+
     networks:
       - fah
   certbot:
