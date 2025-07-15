@@ -46,8 +46,6 @@ services:
       - "3000:3000"
 
     depends_on:
-      - auth-server
-      - parsing_service
       - profile-service
     
     env_file:
@@ -60,8 +58,6 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8082:8082"
-    depends_on:
-      - auth-server
     networks:
       - fah
   auth-db:
