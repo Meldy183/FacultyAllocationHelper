@@ -268,8 +268,44 @@ func (h *Handler) GetAllFaculties(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusInternalServerError, "error getting profiles")
 		return
 	}
-	resp := &GetAllFacultiesResponse{
-		Profiles: profileIds,
+	resp := make([]ShortProfile, 0)
+	for _, id := range profileIds {
+		profile, err := h.serviceUP.GetProfileByID(ctx, id)
+		if err != nil {
+			h.logger.Error("Error getting profile by id",
+				zap.String("layer", logctx.LogHandlerLayer),
+				zap.String("function", logctx.LogGetAllFaculties),
+				zap.Int64("ID", id),
+				zap.Error(err),
+			)
+			return
+		}
+		pos, err := h.servicePosition.GetPositionByID(ctx, profile.PositionID)
+		if err != nil {
+			h.logger.Error("Error getting position by id",
+				zap.String("layer", logctx.LogHandlerLayer),
+				zap.String("function", logctx.LogGetAllFaculties),
+				zap.Int64("ID", id),
+				zap.Error(err),
+			)
+		}
+		inst, err := h.serviceUI.GetUserInstituteByID(ctx, profile.ProfileID)
+		if err != nil {
+			h.logger.Error("Error getting user institute by id",
+				zap.String("layer", logctx.LogHandlerLayer),
+				zap.String("function", logctx.LogGetAllFaculties),
+				zap.Int64("ID", id),
+				zap.Error(err),
+			)
+		}
+		resp = append(resp, ShortProfile{
+			ProfileID:   profile.ProfileID,
+			NameEnglish: profile.EnglishName,
+			Alias:       profile.Alias,
+			Email:       profile.Email,
+			Position:    *pos,
+			Institute:   inst.Name,
+		})
 	}
 	writeJSON(w, http.StatusOK, resp)
 }
@@ -314,7 +350,7 @@ func (h *Handler) GetFacultyFilters(w http.ResponseWriter, r *http.Request) {
 		}
 		positionObjects = append(positionObjects, pobj)
 	}
-	responce := GetFacultyFiltersResponce{
+	responce := GetFacultyFiltersResponse{
 		InstituteFilters: instituteObjects,
 		PositionFilters:  positionObjects,
 	}

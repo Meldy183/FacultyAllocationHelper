@@ -66,9 +66,17 @@ type Classes struct {
 }
 
 type GetAllFacultiesResponse struct {
-	Profiles []int64 `json:"faculty_ids"`
+	Profiles []ShortProfile `json:"profiles"`
 }
 
+type ShortProfile struct {
+	ProfileID   int64  `json:"profile_id"`
+	NameEnglish string `json:"name_eng"`
+	Alias       string `json:"alias"`
+	Email       string `json:"email"`
+	Position    string `json:"position"`
+	Institute   string `json:"institute"`
+}
 type InstituteObj struct {
 	ID   int    `json:"id"`
 	Name string `json:"name"`
@@ -79,7 +87,7 @@ type PositionObj struct {
 	Name string `json:"name"`
 }
 
-type GetFacultyFiltersResponce struct {
+type GetFacultyFiltersResponse struct {
 	InstituteFilters []InstituteObj `json:"institute"`
 	PositionFilters  []PositionObj  `json:"position"`
 }
