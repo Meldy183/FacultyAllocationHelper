@@ -3,12 +3,10 @@ package main
 import (
 	"context"
 	"fmt"
-	httpNet "net/http"
-	"time"
-
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/config"
 	userprofile2 "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/handler/userprofile"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/http"
+	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/institute"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/position"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/usercourseinstance"
@@ -18,10 +16,7 @@ import (
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/storage/db"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/storage/postgres"
 	"go.uber.org/zap"
-)
-
-const (
-	logMain = "Main"
+	httpNet "net/http"
 )
 
 func main() {
@@ -32,26 +27,35 @@ func main() {
 	}
 	defer logger.Sync()
 	ctx := context.Background()
-	cfg := config.MustLoadConfig()
+	cfg := config.MustLoadConfig(logger)
 	dataBase := db.NewConnectAndInit(logger)
 	pool, err := dataBase.NewPostgresPool(ctx, cfg.Database)
 	if err != nil {
-		logger.Fatal("Error connecting to database", zap.Error(err))
+		logger.Fatal("Error connecting to database",
+			zap.String("layer", logctx.LogMainFuncLayer),
+			zap.String("function", logctx.LogMain),
+			zap.Error(err),
+		)
 	}
-	logger.Info(fmt.Sprintf("Connection is completed  %v", cfg.Database))
-	time.Sleep(5 * time.Second)
+	logger.Info(fmt.Sprintf("Connection is completed  %v", cfg.Database),
+		zap.String("layer", logctx.LogMainFuncLayer),
+		zap.String("function", logctx.LogMain),
+	)
 	defer pool.Close()
 	err = dataBase.InitSchema(ctx, pool)
 	if err != nil {
 		logger.Fatal("Error initializing schema",
-			zap.String("function", logMain),
+			zap.String("layer", logctx.LogMainFuncLayer),
+			zap.String("function", logctx.LogMain),
 			zap.Error(err),
 		)
 	}
 	logger.Info(
 		"Schema initialized",
-		zap.String("function", logMain),
+		zap.String("layer", logctx.LogMainFuncLayer),
+		zap.String("function", logctx.LogMain),
 	)
+
 	// Repository layer inits
 	userProfileRepo := postgres.NewUserProfileRepo(pool, logger)
 	userLanguageRepo := postgres.NewUserLanguageRepo(pool, logger)

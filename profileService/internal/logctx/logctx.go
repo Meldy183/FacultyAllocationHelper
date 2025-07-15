@@ -43,4 +43,7 @@ const (
 	LogUpdateFaculty           = "updateFaculty"
 	LogGetFacultiesByFilters   = "getFacultiesByFilters"
 	LogMustLoadConfig          = "mustLoadConfig"
+	LogMain                    = "Main"
+	LogNewPostgresPool         = "NewPostgresPool"
+	LogInitSchema              = "InitSchema"
 )

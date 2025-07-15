@@ -3,6 +3,7 @@ package db
 import (
 	"context"
 	"fmt"
+	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/config"
@@ -13,18 +14,10 @@ type ConnectAndInit struct {
 	logger *zap.Logger
 }
 
-const layer = "InitDBLayer"
-
 func NewConnectAndInit(logger *zap.Logger) *ConnectAndInit {
 	return &ConnectAndInit{logger: logger}
 }
 func (str *ConnectAndInit) NewPostgresPool(ctx context.Context, cfg config.Database) (*pgxpool.Pool, error) {
-	str.logger.Info("Connecting to PostgreSQL",
-		zap.String("host", cfg.Host),
-		zap.String("port", cfg.Port),
-		zap.String("database", cfg.DatabaseName),
-		zap.String("sslmode", cfg.SSLMode),
-	)
 	connectionString := fmt.Sprintf("postgresql://%s:%s@%s:%s/%s?sslmode=%s",
 		cfg.User,
 		cfg.Password,
@@ -32,38 +25,66 @@ func (str *ConnectAndInit) NewPostgresPool(ctx context.Context, cfg config.Datab
 		cfg.Port,
 		cfg.DatabaseName,
 		cfg.SSLMode)
-	str.logger.Error("Checker",
-		zap.String("connectionString", connectionString),
-		zap.String("layer", layer))
 	poolConfig, err := pgxpool.ParseConfig(connectionString)
 	if err != nil {
-		str.logger.Error("Error parsing PostgreSQL connection string", zap.Error(err))
+		str.logger.Error("Error parsing PostgreSQL connection string",
+			zap.String("layer", logctx.LogDBInitLayer),
+			zap.String("function", logctx.LogNewPostgresPool),
+			zap.Error(err),
+		)
 		return nil, err
 	}
-	str.logger.Info("Connected to PostgreSQL", zap.String("connectionString", connectionString))
+	str.logger.Info("Connected to PostgreSQL",
+		zap.String("layer", logctx.LogDBInitLayer),
+		zap.String("function", logctx.LogNewPostgresPool),
+	)
 	poolConfig.MaxConns = int32(cfg.MaxOpenConnections)
 	poolConfig.MinConns = int32(cfg.MaxIdleConnections)
 	poolConfig.MaxConnLifetime = cfg.ConnMaxLifetime
 	pool, err := pgxpool.NewWithConfig(ctx, poolConfig)
 	if err != nil {
-		str.logger.Error("Error connecting to PostgreSQL", zap.Error(err))
+		str.logger.Error("Error connecting to PostgreSQL",
+			zap.String("layer", logctx.LogDBInitLayer),
+			zap.String("function", logctx.LogNewPostgresPool),
+			zap.Error(err),
+		)
 		return nil, err
 	}
-	str.logger.Info("config sent successfully, end connection func")
+	str.logger.Info("config sent successfully, end connection func",
+		zap.String("layer", logctx.LogDBInitLayer),
+		zap.String("function", logctx.LogNewPostgresPool),
+	)
 	return pool, err
 }
 func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) error {
 	conn, err := pool.Acquire(ctx)
 	if err != nil {
 		str.logger.Error("Error acquiring connection",
-			zap.String("layer", layer),
-			zap.String("function", "connection aquirement"),
-			zap.Error(err))
+			zap.String("layer", logctx.LogDBInitLayer),
+			zap.String("function", logctx.LogInitSchema),
+			zap.Error(err),
+		)
 		return err
 	}
-	str.logger.Info("connected to PostgreSQL")
 	defer conn.Release()
-	query := `CREATE TABLE IF NOT EXISTS user_profile (
+	query := `CREATE TABLE IF NOT EXISTS position (
+      position_id SERIAL PRIMARY KEY,
+      name VARCHAR(255) UNIQUE NOT NULL
+    )`
+	_, err = conn.Exec(ctx, query)
+	if err != nil {
+		str.logger.Error("Error creating position_table",
+			zap.String("layer", logctx.LogDBInitLayer),
+			zap.String("function", logctx.LogInitSchema),
+			zap.Error(err),
+		)
+		return err
+	}
+	str.logger.Info("created position_table",
+		zap.String("layer", logctx.LogDBInitLayer),
+		zap.String("function", logctx.LogInitSchema),
+	)
+	query = `CREATE TABLE IF NOT EXISTS user_profile (
       profile_id SERIAL PRIMARY KEY,
       email VARCHAR(50) UNIQUE NOT NULL,
       position_id INTEGER NOT NULL,
@@ -82,14 +103,15 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 	_, err = conn.Exec(ctx, query)
 	if err != nil {
 		str.logger.Error("Error creating user_table",
-			zap.String("layer", layer),
-			zap.String("function", "creating table"),
+			zap.String("layer", logctx.LogDBInitLayer),
+			zap.String("function", logctx.LogInitSchema),
 			zap.Error(err))
 		return err
 	}
 	str.logger.Info("created user_table",
-		zap.String("layer", layer),
-		zap.String("function", "creating table"))
+		zap.String("layer", logctx.LogDBInitLayer),
+		zap.String("function", logctx.LogInitSchema),
+	)
 	query = `CREATE TABLE IF NOT EXISTS language (
       code VARCHAR(20) PRIMARY KEY,
       language_name VARCHAR(255) UNIQUE NOT NULL
@@ -97,14 +119,15 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 	_, err = conn.Exec(ctx, query)
 	if err != nil {
 		str.logger.Error("Error creating language_table",
-			zap.String("layer", layer),
-			zap.String("function", "creating table"),
+			zap.String("layer", logctx.LogDBInitLayer),
+			zap.String("function", logctx.LogInitSchema),
 			zap.Error(err))
 		return err
 	}
 	str.logger.Info("created language_table",
-		zap.String("layer", layer),
-		zap.String("function", "creating table"))
+		zap.String("layer", logctx.LogDBInitLayer),
+		zap.String("function", logctx.LogInitSchema),
+	)
 	query = `CREATE TABLE IF NOT EXISTS institute (
       institute_id SERIAL PRIMARY KEY,
       name VARCHAR(255) UNIQUE NOT NULL
@@ -112,30 +135,16 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 	_, err = conn.Exec(ctx, query)
 	if err != nil {
 		str.logger.Error("Error creating institute_table",
-			zap.String("layer", layer),
-			zap.String("function", "creating table"),
-			zap.Error(err))
+			zap.String("layer", logctx.LogDBInitLayer),
+			zap.String("function", logctx.LogInitSchema),
+			zap.Error(err),
+		)
 		return err
 	}
 	str.logger.Info("created institute_table",
-		zap.String("layer", layer),
-		zap.String("function", "creating table"))
-
-	query = `CREATE TABLE IF NOT EXISTS position (
-      position_id SERIAL PRIMARY KEY,
-      name VARCHAR(255) UNIQUE NOT NULL
-    )`
-	_, err = conn.Exec(ctx, query)
-	if err != nil {
-		str.logger.Error("Error creating position_table",
-			zap.String("layer", layer),
-			zap.String("function", "creating table"),
-			zap.Error(err))
-		return err
-	}
-	str.logger.Info("created position_table",
-		zap.String("layer", layer),
-		zap.String("function", "creating table"))
+		zap.String("layer", logctx.LogDBInitLayer),
+		zap.String("function", logctx.LogInitSchema),
+	)
 
 	query = `CREATE TABLE IF NOT EXISTS lab (
       lab_id SERIAL PRIMARY KEY,
@@ -146,14 +155,16 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 	_, err = conn.Exec(ctx, query)
 	if err != nil {
 		str.logger.Error("Error creating lab_table",
-			zap.String("layer", layer),
-			zap.String("function", "creating table"),
-			zap.Error(err))
+			zap.String("layer", logctx.LogDBInitLayer),
+			zap.String("function", logctx.LogInitSchema),
+			zap.Error(err),
+		)
 		return err
 	}
 	str.logger.Info("created lab_table",
-		zap.String("layer", layer),
-		zap.String("function", "creating table"))
+		zap.String("layer", logctx.LogDBInitLayer),
+		zap.String("function", logctx.LogInitSchema),
+	)
 	query = `CREATE TABLE IF NOT EXISTS user_language (
       user_language_id SERIAL PRIMARY KEY,
       profile_id INT NOT NULL,
@@ -164,14 +175,16 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 	_, err = conn.Exec(ctx, query)
 	if err != nil {
 		str.logger.Error("Error creating user_language_table",
-			zap.String("layer", layer),
-			zap.String("function", "creating table"),
-			zap.Error(err))
+			zap.String("layer", logctx.LogDBInitLayer),
+			zap.String("function", logctx.LogInitSchema),
+			zap.Error(err),
+		)
 		return err
 	}
 	str.logger.Info("created user_language_table",
-		zap.String("layer", layer),
-		zap.String("function", "creating table"))
+		zap.String("layer", logctx.LogDBInitLayer),
+		zap.String("function", logctx.LogInitSchema),
+	)
 	query = `CREATE TABLE IF NOT EXISTS user_institute (
       user_institute_id SERIAL PRIMARY KEY,
       profile_id INT NOT NULL,
@@ -183,9 +196,10 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 	_, err = conn.Exec(ctx, query)
 	if err != nil {
 		str.logger.Error("Error creating user_institute_table",
-			zap.String("layer", layer),
-			zap.String("function", "creating table"),
-			zap.Error(err))
+			zap.String("layer", logctx.LogDBInitLayer),
+			zap.String("function", logctx.LogInitSchema),
+			zap.Error(err),
+		)
 		return err
 	}
 	query = `CREATE TABLE IF NOT EXISTS course (
@@ -203,14 +217,16 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 	if err != nil {
 
 		str.logger.Error("Error creating course table",
-			zap.String("layer", layer),
-			zap.String("function", "creating table"),
-			zap.Error(err))
+			zap.String("layer", logctx.LogDBInitLayer),
+			zap.String("function", logctx.LogInitSchema),
+			zap.Error(err),
+		)
 		return err
 	}
 	str.logger.Info("created course table",
-		zap.String("layer", layer),
-		zap.String("function", "creating table"))
+		zap.String("layer", logctx.LogDBInitLayer),
+		zap.String("function", logctx.LogInitSchema),
+	)
 	query = `CREATE TABLE IF NOT EXISTS institute_course (
     institute_course_id SERIAL PRIMARY KEY,
     course_id INT,
@@ -222,14 +238,16 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 	if err != nil {
 
 		str.logger.Error("Error creating institute_course table",
-			zap.String("layer", layer),
-			zap.String("function", "creating table"),
-			zap.Error(err))
+			zap.String("layer", logctx.LogDBInitLayer),
+			zap.String("function", logctx.LogInitSchema),
+			zap.Error(err),
+		)
 		return err
 	}
 	str.logger.Info("created institute_course table",
-		zap.String("layer", layer),
-		zap.String("function", "creating table"))
+		zap.String("layer", logctx.LogDBInitLayer),
+		zap.String("function", logctx.LogInitSchema),
+	)
 	query = `CREATE TABLE IF NOT EXISTS course_instance (
     instance_id SERIAL PRIMARY KEY,
     course_id INT,
@@ -249,14 +267,16 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 	if err != nil {
 
 		str.logger.Error("Error creating course_instance table",
-			zap.String("layer", layer),
-			zap.String("function", "creating table"),
-			zap.Error(err))
+			zap.String("layer", logctx.LogDBInitLayer),
+			zap.String("function", logctx.LogInitSchema),
+			zap.Error(err),
+		)
 		return err
 	}
 	str.logger.Info("created course_instance table",
-		zap.String("layer", layer),
-		zap.String("function", "creating table"))
+		zap.String("layer", logctx.LogDBInitLayer),
+		zap.String("function", logctx.LogInitSchema),
+	)
 	query = `CREATE TABLE IF NOT EXISTS program (
     program_id SERIAL PRIMARY KEY,
     name VARCHAR(20)
@@ -265,14 +285,16 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 	if err != nil {
 
 		str.logger.Error("Error creating program table",
-			zap.String("layer", layer),
-			zap.String("function", "creating table"),
-			zap.Error(err))
+			zap.String("layer", logctx.LogDBInitLayer),
+			zap.String("function", logctx.LogInitSchema),
+			zap.Error(err),
+		)
 		return err
 	}
 	str.logger.Info("created program table",
-		zap.String("layer", layer),
-		zap.String("function", "creating table"))
+		zap.String("layer", logctx.LogDBInitLayer),
+		zap.String("function", logctx.LogInitSchema),
+	)
 	query = `CREATE TABLE IF NOT EXISTS track (
     track_id SERIAL PRIMARY KEY,
     name VARCHAR(20),
@@ -283,14 +305,16 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 	if err != nil {
 
 		str.logger.Error("Error creating track table",
-			zap.String("layer", layer),
-			zap.String("function", "creating table"),
-			zap.Error(err))
+			zap.String("layer", logctx.LogDBInitLayer),
+			zap.String("function", logctx.LogInitSchema),
+			zap.Error(err),
+		)
 		return err
 	}
 	str.logger.Info("created track table",
-		zap.String("layer", layer),
-		zap.String("function", "creating table"))
+		zap.String("layer", logctx.LogDBInitLayer),
+		zap.String("function", logctx.LogInitSchema),
+	)
 	query = `CREATE TABLE IF NOT EXISTS track_course_instance (
     track_course_instance_id SERIAL PRIMARY KEY,
     track_id INT,
@@ -302,14 +326,16 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 	if err != nil {
 
 		str.logger.Error("Error creating track_course_instance table",
-			zap.String("layer", layer),
-			zap.String("function", "creating table"),
-			zap.Error(err))
+			zap.String("layer", logctx.LogDBInitLayer),
+			zap.String("function", logctx.LogInitSchema),
+			zap.Error(err),
+		)
 		return err
 	}
 	str.logger.Info("created track_course_instance table",
-		zap.String("layer", layer),
-		zap.String("function", "creating table"))
+		zap.String("layer", logctx.LogDBInitLayer),
+		zap.String("function", logctx.LogInitSchema),
+	)
 	query = `CREATE TABLE IF NOT EXISTS program_course_instance (
     program_course_instance_id SERIAL PRIMARY KEY,
     program_id INT,
@@ -321,14 +347,16 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 	if err != nil {
 
 		str.logger.Error("Error creating program_course_instance table",
-			zap.String("layer", layer),
-			zap.String("function", "creating table"),
-			zap.Error(err))
+			zap.String("layer", logctx.LogDBInitLayer),
+			zap.String("function", logctx.LogInitSchema),
+			zap.Error(err),
+		)
 		return err
 	}
 	str.logger.Info("created program_course_instance table",
-		zap.String("layer", layer),
-		zap.String("function", "creating table"))
+		zap.String("layer", logctx.LogDBInitLayer),
+		zap.String("function", logctx.LogInitSchema),
+	)
 	query = `CREATE TABLE IF NOT EXISTS course_staff (
     assignment_id SERIAL PRIMARY KEY,
     instance_id INT,
@@ -346,14 +374,16 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 	if err != nil {
 
 		str.logger.Error("Error creating course_staff table",
-			zap.String("layer", layer),
-			zap.String("function", "creating table"),
-			zap.Error(err))
+			zap.String("layer", logctx.LogDBInitLayer),
+			zap.String("function", logctx.LogInitSchema),
+			zap.Error(err),
+		)
 		return err
 	}
 	str.logger.Info("created course_staff table",
-		zap.String("layer", layer),
-		zap.String("function", "creating table"))
+		zap.String("layer", logctx.LogDBInitLayer),
+		zap.String("function", logctx.LogInitSchema),
+	)
 
 	query = `CREATE TABLE IF NOT EXISTS user_course_instance (
     user_course_id SERIAL PRIMARY KEY,
@@ -366,14 +396,16 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 	if err != nil {
 
 		str.logger.Error("Error creating user_course_table",
-			zap.String("layer", layer),
-			zap.String("function", "creating table"),
-			zap.Error(err))
+			zap.String("layer", logctx.LogDBInitLayer),
+			zap.String("function", logctx.LogInitSchema),
+			zap.Error(err),
+		)
 		return err
 	}
 	str.logger.Info("created user_course_table",
-		zap.String("layer", layer),
-		zap.String("function", "creating table"))
+		zap.String("layer", logctx.LogDBInitLayer),
+		zap.String("function", logctx.LogInitSchema),
+	)
 	query = `CREATE TABLE IF NOT EXISTS profile_staff (
     profile_staff_id SERIAL PRIMARY KEY,
     staff_id INT,
@@ -385,14 +417,14 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 	if err != nil {
 
 		str.logger.Error("Error creating profile_staff table",
-			zap.String("layer", layer),
-			zap.String("function", "creating table"),
+			zap.String("layer", logctx.LogDBInitLayer),
+			zap.String("function", logctx.LogInitSchema),
 			zap.Error(err))
 		return err
 	}
 	str.logger.Info("created profile_staff table",
-		zap.String("layer", layer),
-		zap.String("function", "creating table"))
+		zap.String("layer", logctx.LogDBInitLayer),
+		zap.String("function", logctx.LogInitSchema))
 	query = `CREATE TABLE IF NOT EXISTS user_profile_version (
     profile_version_id SERIAL PRIMARY KEY,
     profile_id INT,
@@ -408,14 +440,15 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 	tx, err := pool.Begin(ctx)
 	if err != nil {
 		str.logger.Error("Error starting transaction",
-			zap.String("layer", layer),
-			zap.String("function", "creating table"),
+			zap.String("layer", logctx.LogDBInitLayer),
+			zap.String("function", logctx.LogInitSchema),
 			zap.Error(err))
 		return err
 	}
 	str.logger.Info("started transaction",
-		zap.String("layer", layer),
-		zap.String("function", "creating table"))
+		zap.String("layer", logctx.LogDBInitLayer),
+		zap.String("function", logctx.LogInitSchema),
+	)
 	defer tx.Rollback(ctx)
 	_, err = tx.Exec(ctx, `
     INSERT INTO language (code, language_name)
@@ -424,14 +457,16 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
   `)
 	if err != nil {
 		str.logger.Error("Error adding language",
-			zap.String("layer", layer),
-			zap.String("function", "adding language"),
-			zap.Error(err))
+			zap.String("layer", logctx.LogDBInitLayer),
+			zap.String("function", logctx.LogInitSchema),
+			zap.Error(err),
+		)
 		return fmt.Errorf("failed to insert languages: %w", err)
 	}
 	str.logger.Info("added languages SUCCESS",
-		zap.String("layer", layer),
-		zap.String("function", "adding langusage"))
+		zap.String("layer", logctx.LogDBInitLayer),
+		zap.String("function", logctx.LogInitSchema),
+	)
 	_, err = tx.Exec(ctx, `
     INSERT INTO institute (institute_id, name)
     VALUES (1, 'Институт анализа данных и Искусственного Интеллекта'),
@@ -443,13 +478,15 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
   `)
 	if err != nil {
 		str.logger.Error("Error adding institute manually",
-			zap.String("layer", layer),
-			zap.String("function", "adding institute"),
-			zap.Error(err))
+			zap.String("layer", logctx.LogDBInitLayer),
+			zap.String("function", logctx.LogInitSchema),
+			zap.Error(err),
+		)
 	}
 	str.logger.Info("added institutes SUCCESS",
-		zap.String("layer", layer),
-		zap.String("function", "adding institute"))
+		zap.String("layer", logctx.LogDBInitLayer),
+		zap.String("function", logctx.LogInitSchema),
+	)
 
 	_, err = tx.Exec(ctx, `
     INSERT INTO position (position_id, name)
@@ -464,24 +501,28 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
   `)
 	if err != nil {
 		str.logger.Error("Error adding positions manually",
-			zap.String("layer", layer),
-			zap.String("function", "adding position"),
-			zap.Error(err))
+			zap.String("layer", logctx.LogDBInitLayer),
+			zap.String("function", logctx.LogInitSchema),
+			zap.Error(err),
+		)
 	}
 	str.logger.Info("added positions SUCCESS",
-		zap.String("layer", layer),
-		zap.String("function", "adding position"))
+		zap.String("layer", logctx.LogDBInitLayer),
+		zap.String("function", logctx.LogInitSchema),
+	)
 
 	if err := tx.Commit(ctx); err != nil {
 		str.logger.Error("Error committing transaction",
-			zap.String("layer", layer),
-			zap.String("function", "commiting transaction"),
-			zap.Error(err))
+			zap.String("layer", logctx.LogDBInitLayer),
+			zap.String("function", logctx.LogInitSchema),
+			zap.Error(err),
+		)
 		return fmt.Errorf("failed to commit transaction: %w", err)
 	}
 	//TODO FSRO when will be more obvious what to do
 	str.logger.Info("committed transaction",
-		zap.String("layer", layer),
-		zap.String("function", "commiting transaction"))
+		zap.String("layer", logctx.LogDBInitLayer),
+		zap.String("function", logctx.LogInitSchema),
+	)
 	return nil
 }

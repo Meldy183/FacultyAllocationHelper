@@ -40,14 +40,14 @@ func MustLoadConfig(logger *zap.Logger) *Config {
 	if configPath == "" {
 		logger.Fatal("CONFIG_PATH environment variable not set",
 			zap.String("layer", logctx.LogMainFuncLayer),
-			zap.String("function", "MustLoadConfig"),
+			zap.String("function", logctx.LogMustLoadConfig),
 			zap.Error(errors.New("empty path")),
 		)
 	}
 	if _, errExistence := os.Stat(configPath); os.IsNotExist(errExistence) {
 		logger.Fatal("CONFIG_PATH does not exist",
 			zap.String("layer", logctx.LogMainFuncLayer),
-			zap.String("function", "MustLoadConfig"),
+			zap.String("function", logctx.LogMustLoadConfig),
 			zap.Error(errors.New(configPath)),
 		)
 	}
@@ -55,8 +55,12 @@ func MustLoadConfig(logger *zap.Logger) *Config {
 	if errRead := cleanenv.ReadConfig(configPath, &cfg); errRead != nil {
 		logger.Fatal("Unable to read config",
 			zap.String("layer", logctx.LogMainFuncLayer),
-			zap.String("function", "MustLoadConfig"),
+			zap.String("function", logctx.LogMustLoadConfig),
 			zap.Error(errRead))
 	}
+	logger.Info("Successfully loaded config",
+		zap.String("layer", logctx.LogMainFuncLayer),
+		zap.String("function", logctx.LogMustLoadConfig),
+	)
 	return &cfg
 }
