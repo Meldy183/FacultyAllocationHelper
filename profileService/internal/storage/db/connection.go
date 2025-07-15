@@ -87,18 +87,11 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 	query = `CREATE TABLE IF NOT EXISTS user_profile (
       profile_id SERIAL PRIMARY KEY,
       email VARCHAR(50) UNIQUE NOT NULL,
-      position_id INTEGER NOT NULL,
       english_name VARCHAR(255) NOT NULL,
       russian_name VARCHAR(255),
       alias VARCHAR(255) UNIQUE NOT NULL,
-      employment_type VARCHAR(255),
-	  student_type VARCHAR(3),
-      degree BOOL,
-      mode VARCHAR(255),
       start_date DATE,
       end_date DATE,
-      maxload INTEGER,
-	  FOREIGN KEY (position_id) REFERENCES position (position_id)
   )`
 	_, err = conn.Exec(ctx, query)
 	if err != nil {
@@ -253,9 +246,8 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
     course_id INT,
     semester VARCHAR(2),
     year INT,
-    lab_format VARCHAR(10),
-    lecture_format VARCHAR(10),
-    academic_year VARCHAR(10),
+    mode VARCHAR(20)
+    academic_year_id INT,
     form VARCHAR(30),
     groups_needed INT,
     groups_taken INT,
@@ -303,7 +295,6 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
   )` // name это типо CS AI пон???
 	_, err = conn.Exec(ctx, query)
 	if err != nil {
-
 		str.logger.Error("Error creating track table",
 			zap.String("layer", logctx.LogDBInitLayer),
 			zap.String("function", logctx.LogInitSchema),
@@ -406,22 +397,6 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 		zap.String("layer", logctx.LogDBInitLayer),
 		zap.String("function", logctx.LogInitSchema),
 	)
-	query = `CREATE TABLE IF NOT EXISTS profile_staff (
-    profile_staff_id SERIAL PRIMARY KEY,
-    staff_id INT,
-    profile_id INT,
-    FOREIGN KEY (profile_id) REFERENCES user_profile (profile_id),
-    FOREIGN KEY (staff_id) REFERENCES course_staff (assignment_id)
-  )`
-	_, err = conn.Exec(ctx, query)
-	if err != nil {
-
-		str.logger.Error("Error creating profile_staff table",
-			zap.String("layer", logctx.LogDBInitLayer),
-			zap.String("function", logctx.LogInitSchema),
-			zap.Error(err))
-		return err
-	}
 	str.logger.Info("created profile_staff table",
 		zap.String("layer", logctx.LogDBInitLayer),
 		zap.String("function", logctx.LogInitSchema))
@@ -435,7 +410,14 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
     labs_count INT,
     elective_count INT,
     workload FLOAT,
+	maxload INT,
+	position_id INT,
+	employment_type VARCHAR(128),
+	degree BOOLEAN,
+	mode VARCHAR(16),
     FOREIGN KEY (profile_id) REFERENCES user_profile (profile_id)
+	FOREIGN KEY (position_id) REFERENCES position (position_id)
+
   )`
 	tx, err := pool.Begin(ctx)
 	if err != nil {
