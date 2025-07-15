@@ -59,9 +59,6 @@ func main() {
 	userCourseInstanceRepo := postgres.NewUserCourseInstance(pool, logger)
 	positionRepo := postgres.NewPositionRepo(pool, logger)
 	instituteRepo := postgres.NewInstituteRepo(pool, logger)
-	// TODO languageRepo := postgres.NewLanguageRepo(pool, logger)
-	// TODO labRepo := postgres.NewLabRepo(pool, logger)
-	// TODO instituteRepo := postgres.NewInstituteRepo(pool, logger)
 	// Service layer inits
 	userProfileService := userprofile.NewService(userProfileRepo, logger)
 	userLanguageService := userlanguage.NewService(userLanguageRepo, logger)
@@ -69,9 +66,6 @@ func main() {
 	userCourseInstanceService := usercourseinstance.NewService(userCourseInstanceRepo, logger)
 	positionService := position.NewService(positionRepo, logger)
 	instituteService := institute.NewService(instituteRepo, logger)
-	// TODO languageService := language.NewService(languageRepo, logger)
-	// TODO labService := lab.NewService(labRepo, logger)
-	// TODO instituteService := institute.NewService(instituteRepo, logger)
 	handler := userprofile2.NewHandler(
 		userProfileService,
 		userInstituteService,
