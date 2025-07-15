@@ -21,12 +21,12 @@ func NewService(repo userlanguage.Repository, logger *zap.Logger) *Service {
 
 const (
 	logLayer            = "service"
-	logAdd              = "Add"
+	logAdd              = "AddUserLanguage"
 	logGetUserLanguages = "getUserLanguages"
 )
 
-func (s *Service) Add(ctx context.Context, userLanguage *userlanguage.UserLanguage) error {
-	err := s.repo.Add(ctx, userLanguage)
+func (s *Service) AddUserLanguage(ctx context.Context, userLanguage *userlanguage.UserLanguage) error {
+	err := s.repo.AddUserLanguage(ctx, userLanguage)
 	if err != nil {
 		s.logger.Error("User Institute Added to DB",
 			zap.String(logLayer, logLayer),

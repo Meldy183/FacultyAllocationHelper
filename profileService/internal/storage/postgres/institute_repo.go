@@ -27,7 +27,7 @@ const (
 	logGetAllInstitutes = "GetAllInstitutes"
 )
 
-func (r *InstituteRepo) GetByID(ctx context.Context, instituteID int64) (*institute.Institute, error) {
+func (r *InstituteRepo) GetInstituteByID(ctx context.Context, instituteID int64) (*institute.Institute, error) {
 	row := r.pool.QueryRow(ctx, queryGetByID, instituteID)
 	var instituteByID institute.Institute
 	err := row.Scan(
@@ -50,7 +50,7 @@ func (r *InstituteRepo) GetByID(ctx context.Context, instituteID int64) (*instit
 	return &instituteByID, nil
 }
 
-func (r *InstituteRepo) GetAll(ctx context.Context) ([]*institute.Institute, error) {
+func (r *InstituteRepo) GetAllInstitutes(ctx context.Context) ([]*institute.Institute, error) {
 	rows, err := r.pool.Query(ctx, queryGetAll)
 	if err != nil {
 		r.logger.Error("Error getting all institutes",

@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/language"
+	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
 	"go.uber.org/zap"
 )
 
@@ -14,46 +15,41 @@ type Service struct {
 	logger *zap.Logger
 }
 
-const (
-	layer     = "Service"
-	getAll    = "GetAll"
-	getByCode = "GetByCode"
-)
-
 func NewService(repo language.Repository, logger *zap.Logger) *Service {
 	return &Service{repo: repo, logger: logger}
 }
 
-func (s *Service) GetAll(ctx context.Context) ([]*language.Language, error) {
-	languages, err := s.repo.GetAll(ctx)
+func (s *Service) GetAllLanguages(ctx context.Context) ([]*language.Language, error) {
+	languages, err := s.repo.GetAllLanguages(ctx)
 	if err != nil {
 		s.logger.Error("Failed to get all languages",
-			zap.String("layer", layer),
-			zap.String("function", getAll),
-			zap.Error(err))
+			zap.String("layer", logctx.LogServiceLayer),
+			zap.String("function", logctx.LogGetAllLanguages),
+			zap.Error(err),
+		)
 		return nil, fmt.Errorf("failed to get all languages. error: %w", err)
 	}
 	s.logger.Info("Successfully got all languages",
-		zap.String("layer", layer),
-		zap.String("function", getAll),
+		zap.String("layer", logctx.LogServiceLayer),
+		zap.String("function", logctx.LogGetAllLanguages),
 	)
 	return languages, nil
 }
 
-func (s *Service) GetByCode(ctx context.Context, code string) (*language.Language, error) {
-	lang, err := s.repo.GetByCode(ctx, code)
+func (s *Service) GetLanguageByCode(ctx context.Context, code string) (*language.Language, error) {
+	lang, err := s.repo.GetLanguageByCode(ctx, code)
 	if err != nil {
 		s.logger.Error("Failed to get lang by code",
-			zap.String("layer", layer),
-			zap.String("function", getByCode),
+			zap.String("layer", logctx.LogServiceLayer),
+			zap.String("function", logctx.LogGetLanguageByCode),
 			zap.String("code", code),
 			zap.Error(err),
 		)
 		return nil, fmt.Errorf("failed to get lang by code: %s. error: %w", code, err)
 	}
 	s.logger.Info("Successfully got lang by code",
-		zap.String("layer", layer),
-		zap.String("function", getByCode),
+		zap.String("layer", logctx.LogServiceLayer),
+		zap.String("function", logctx.LogGetLanguageByCode),
 		zap.String("code", code),
 	)
 	return lang, nil

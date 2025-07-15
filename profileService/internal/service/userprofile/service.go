@@ -28,7 +28,7 @@ const (
 	logGetProfilesByFilters = "get_profiles_by_filters"
 )
 
-func (s *Service) Create(ctx context.Context, profile *userprofile.UserProfile) error {
+func (s *Service) AddProfile(ctx context.Context, profile *userprofile.UserProfile) error {
 	if !isAliasValid(profile) {
 		s.logger.Error(
 			"Invalid Alias",
@@ -37,7 +37,7 @@ func (s *Service) Create(ctx context.Context, profile *userprofile.UserProfile) 
 		)
 		return fmt.Errorf("invalid alias: %v", profile.Alias)
 	}
-	err := s.repo.Create(ctx, profile)
+	err := s.repo.AddProfile(ctx, profile)
 	if err != nil {
 		s.logger.Error("error creating userprofile",
 			zap.String("layer", logLayer),
@@ -51,8 +51,8 @@ func (s *Service) Create(ctx context.Context, profile *userprofile.UserProfile) 
 	)
 	return nil
 }
-func (s *Service) GetByProfileID(ctx context.Context, profileID int64) (*userprofile.UserProfile, error) {
-	profile, err := s.repo.GetByProfileID(ctx, profileID)
+func (s *Service) GetProfileByID(ctx context.Context, profileID int64) (*userprofile.UserProfile, error) {
+	profile, err := s.repo.GetProfileByID(ctx, profileID)
 	if err != nil {
 		s.logger.Error("error getting userprofile",
 			zap.String("layer", logLayer),
@@ -78,8 +78,8 @@ func (s *Service) GetByProfileID(ctx context.Context, profileID int64) (*userpro
 
 	return profile, nil
 }
-func (s *Service) Update(ctx context.Context, profile *userprofile.UserProfile) error {
-	err := s.repo.Update(ctx, profile)
+func (s *Service) UpdateProfileByID(ctx context.Context, profile *userprofile.UserProfile) error {
+	err := s.repo.UpdateProfileByID(ctx, profile)
 	if err != nil {
 		s.logger.Error("error updating userprofile",
 			zap.String("layer", logLayer),

@@ -91,7 +91,7 @@ func (h *Handler) AddProfile(w http.ResponseWriter, r *http.Request) {
 		PositionID:  req.PositionID,
 		Alias:       req.Alias,
 	}
-	if err := h.serviceUP.Create(ctx, profile); err != nil {
+	if err := h.serviceUP.AddProfile(ctx, profile); err != nil {
 		h.logger.Error("error creating userprofile",
 			zap.String("layer", logctx.LogHandlerLayer),
 			zap.String("function", logctx.LogAddProfile),
@@ -134,7 +134,7 @@ func (h *Handler) GetProfile(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusBadRequest, "invalid profileID")
 		return
 	}
-	profile, err := h.serviceUP.GetByProfileID(ctx, profileID)
+	profile, err := h.serviceUP.GetProfileByID(ctx, profileID)
 	if err != nil {
 		h.logger.Error("error getting userprofile",
 			zap.String("layer", logctx.LogHandlerLayer),
@@ -191,7 +191,7 @@ func (h *Handler) GetProfile(w http.ResponseWriter, r *http.Request) {
 			CourseInstanceID: courseID,
 		})
 	}
-	positionName, err := h.servicePosition.GetByID(ctx, profile.PositionID)
+	positionName, err := h.servicePosition.GetPositionByID(ctx, profile.PositionID)
 	if err != nil {
 		h.logger.Error("error getting position name by id",
 			zap.String("layer", logctx.LogHandlerLayer),
@@ -276,7 +276,7 @@ func (h *Handler) GetAllFaculties(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) GetFacultyFilters(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	positions, err := h.servicePosition.GetAll(ctx)
+	positions, err := h.servicePosition.GetAllPositions(ctx)
 	if err != nil {
 		h.logger.Error("Error getting all positions",
 			zap.String("layer", logctx.LogHandlerLayer),
@@ -287,7 +287,7 @@ func (h *Handler) GetFacultyFilters(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	institutes, err := h.serviceInstitute.GetAll(ctx)
+	institutes, err := h.serviceInstitute.GetAllInstitutes(ctx)
 	if err != nil {
 		h.logger.Error("Error getting all institutes",
 			zap.String("layer", logctx.LogHandlerLayer),

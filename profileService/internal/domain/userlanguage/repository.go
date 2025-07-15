@@ -6,6 +6,6 @@ import (
 )
 
 type Repository interface {
-	Add(ctx context.Context, userLanguage *UserLanguage) error
+	AddUserLanguage(ctx context.Context, userLanguage *UserLanguage) error
 	GetUserLanguages(ctx context.Context, profileID int64) ([]*language.Language, error)
 }

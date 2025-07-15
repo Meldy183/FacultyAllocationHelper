@@ -27,7 +27,7 @@ const (
 	logGetAllPositions   = "GetAllPositions"
 )
 
-func (r *PositionRepo) GetByID(ctx context.Context, positionID int) (*string, error) {
+func (r *PositionRepo) GetPositionByID(ctx context.Context, positionID int) (*string, error) {
 	row := r.pool.QueryRow(ctx, queryGetPositionByID, positionID)
 	var positionByID position.Position
 	err := row.Scan(
@@ -50,7 +50,7 @@ func (r *PositionRepo) GetByID(ctx context.Context, positionID int) (*string, er
 	return &positionByID.Name, nil
 }
 
-func (r *PositionRepo) GetAll(ctx context.Context) ([]*position.Position, error) {
+func (r *PositionRepo) GetAllPositions(ctx context.Context) ([]*position.Position, error) {
 	r.logger.Info("Getting all positions")
 	rows, err := r.pool.Query(ctx, queryGetAllPositions)
 	if err != nil {

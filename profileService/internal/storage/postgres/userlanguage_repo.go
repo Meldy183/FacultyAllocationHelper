@@ -27,7 +27,7 @@ const (
 	logGetUserLanguage    = "GetUserLanguage"
 )
 
-func (r *UserLanguageRepo) Add(ctx context.Context, userLanguage *userlanguage.UserLanguage) error {
+func (r *UserLanguageRepo) AddUserLanguage(ctx context.Context, userLanguage *userlanguage.UserLanguage) error {
 	_, err := r.pool.Exec(ctx, queryAdd, userLanguage.UserLanguageID, userLanguage.ProfileID, userLanguage.LanguageCode)
 	if err != nil {
 		r.logger.Error("Error adding user-language to database",

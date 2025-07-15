@@ -48,13 +48,13 @@ WHERE up.position_id = ANY($1) AND ui.institute_id = ANY($2)
 `
 
 	logLayer              = "repository"
-	logGetByProfileID     = "GetByProfileID"
-	logCreate             = "Create"
-	logUpdate             = "Update"
+	logGetByProfileID     = "GetProfileByID"
+	logCreate             = "AddProfile"
+	logUpdate             = "UpdateProfileByID"
 	logGetProfilesByFiler = "GetProfilesByFiler"
 )
 
-func (r *UserProfileRepo) GetByProfileID(ctx context.Context, profileID int64) (*userprofile.UserProfile, error) {
+func (r *UserProfileRepo) GetProfileByID(ctx context.Context, profileID int64) (*userprofile.UserProfile, error) {
 	row := r.pool.QueryRow(ctx, queryGetByProfileID, profileID)
 	var userProfile userprofile.UserProfile
 	err := row.Scan(
@@ -89,7 +89,7 @@ func (r *UserProfileRepo) GetByProfileID(ctx context.Context, profileID int64) (
 	return &userProfile, err
 }
 
-func (r *UserProfileRepo) Create(ctx context.Context, userProfile *userprofile.UserProfile) error {
+func (r *UserProfileRepo) AddProfile(ctx context.Context, userProfile *userprofile.UserProfile) error {
 	err := r.pool.QueryRow(ctx, queryInsertUserProfile,
 		userProfile.Email,
 		userProfile.PositionID,
@@ -113,7 +113,7 @@ func (r *UserProfileRepo) Create(ctx context.Context, userProfile *userprofile.U
 	return nil
 }
 
-func (r *UserProfileRepo) Update(ctx context.Context, userProfile *userprofile.UserProfile) error {
+func (r *UserProfileRepo) UpdateProfileByID(ctx context.Context, userProfile *userprofile.UserProfile) error {
 	_, err := r.pool.Exec(ctx, queryUpdateUserProfile, 0, userProfile.Email, userProfile.PositionID,
 		userProfile.EnglishName, userProfile.RussianName, userProfile.Alias, userProfile.EmploymentType,
 		userProfile.Degree, userProfile.Mode, userProfile.StartDate, userProfile.EndDate, userProfile.MaxLoad,
@@ -137,7 +137,7 @@ func (r *UserProfileRepo) Update(ctx context.Context, userProfile *userprofile.U
 
 func (r *UserProfileRepo) GetProfilesByFilter(ctx context.Context, institutes []int, positions []int) ([]int64, error) {
 	if len(institutes) == 0 {
-		instRepo, err := NewInstituteRepo(r.pool, r.logger).GetAll(ctx)
+		instRepo, err := NewInstituteRepo(r.pool, r.logger).GetAllInstitutes(ctx)
 		if err != nil {
 			r.logger.Error("Error getting all institutes",
 				zap.String("layer", logLayer),
@@ -156,7 +156,7 @@ func (r *UserProfileRepo) GetProfilesByFilter(ctx context.Context, institutes []
 		)
 	}
 	if len(positions) == 0 {
-		posRepo, err := NewPositionRepo(r.pool, r.logger).GetAll(ctx)
+		posRepo, err := NewPositionRepo(r.pool, r.logger).GetAllPositions(ctx)
 		if err != nil {
 			r.logger.Error("Error getting all positions",
 				zap.String("layer", logLayer),

@@ -22,11 +22,11 @@ func NewLanguageRepo(pool *pgxpool.Pool, logger *zap.Logger) *LanguageRepo {
 const (
 	queryGetLangByCode = `SELECT code, language_name FROM language WHERE code = $1`
 	queryGetAllLang    = `SELECT code, language_name FROM language`
-	logGetAll          = "GetAll"
-	logGetByCode       = "GetByCode"
+	logGetAll          = "GetAllInstitutes"
+	logGetByCode       = "GetLanguageByCode"
 )
 
-func (r *LanguageRepo) GetAll(ctx context.Context) ([]*language.Language, error) {
+func (r *LanguageRepo) GetAllLanguages(ctx context.Context) ([]*language.Language, error) {
 	rows, err := r.pool.Query(ctx, queryGetAllLang)
 	if err != nil {
 		r.logger.Error("failed to query all languages",
@@ -68,7 +68,7 @@ func (r *LanguageRepo) GetAll(ctx context.Context) ([]*language.Language, error)
 	)
 	return languages, nil
 }
-func (r *LanguageRepo) GetByCode(ctx context.Context, code string) (*language.Language, error) {
+func (r *LanguageRepo) GetLanguageByCode(ctx context.Context, code string) (*language.Language, error) {
 	row := r.pool.QueryRow(ctx, queryGetLangByCode, code)
 	var lang language.Language
 	err := row.Scan(&lang.LanguageCode, &lang.LanguageName)
