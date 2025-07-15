@@ -17,6 +17,7 @@ import (
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/storage/postgres"
 	"go.uber.org/zap"
 	httpNet "net/http"
+	"time"
 )
 
 func main() {
@@ -41,6 +42,7 @@ func main() {
 		zap.String("layer", logctx.LogMainFuncLayer),
 		zap.String("function", logctx.LogMain),
 	)
+	time.Sleep(time.Second)
 	defer pool.Close()
 	err = dataBase.InitSchema(ctx, pool)
 	if err != nil {

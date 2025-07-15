@@ -38,7 +38,7 @@ const (
 	LogAddUserInstitute        = "addUserInstitute"
 	LogAddUserLanguage         = "addUserLanguage"
 	LogGetLanguagesByProfileID = "getLanguagesByProfileID"
-	LogAddProfile              = "addUserProfile"
+	LogAddProfile              = "addProfile"
 	LogGetFacultyByProfileID   = "getFacultyByProfileID"
 	LogUpdateFaculty           = "updateFaculty"
 	LogGetFacultiesByFilters   = "getFacultiesByFilters"
@@ -46,4 +46,7 @@ const (
 	LogMain                    = "Main"
 	LogNewPostgresPool         = "NewPostgresPool"
 	LogInitSchema              = "InitSchema"
+	LogGetProfile              = "getProfile"
+	LogGetAllFaculties         = "getAllFaculties"
+	LogGetFacultyFilters       = "getFacultyFilters"
 )
