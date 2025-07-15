@@ -1,8 +1,10 @@
 package config
 
 import (
+	"errors"
 	"github.com/ilyakaznacheev/cleanenv"
-	"log"
+	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
+	"go.uber.org/zap"
 	"os"
 	"time"
 )
@@ -33,17 +35,32 @@ type Database struct {
 	ConnTimeout        time.Duration `yaml:"connection_timeout"`
 }
 
-func MustLoadConfig() *Config {
+func MustLoadConfig(logger *zap.Logger) *Config {
 	configPath := os.Getenv("CONFIG_PATH")
 	if configPath == "" {
-		log.Fatal("CONFIG_PATH environment variable not set")
+		logger.Fatal("CONFIG_PATH environment variable not set",
+			zap.String("layer", logctx.LogMainFuncLayer),
+			zap.String("function", logctx.LogMustLoadConfig),
+			zap.Error(errors.New("empty path")),
+		)
 	}
-	if _, errExtstance := os.Stat(configPath); os.IsNotExist(errExtstance) {
-		log.Fatalf("CONFIG_PATH does not exist: %s", configPath)
+	if _, errExistence := os.Stat(configPath); os.IsNotExist(errExistence) {
+		logger.Fatal("CONFIG_PATH does not exist",
+			zap.String("layer", logctx.LogMainFuncLayer),
+			zap.String("function", logctx.LogMustLoadConfig),
+			zap.Error(errors.New(configPath)),
+		)
 	}
 	var cfg Config
 	if errRead := cleanenv.ReadConfig(configPath, &cfg); errRead != nil {
-		log.Fatal(errRead)
+		logger.Fatal("Unable to read config",
+			zap.String("layer", logctx.LogMainFuncLayer),
+			zap.String("function", logctx.LogMustLoadConfig),
+			zap.Error(errRead))
 	}
+	logger.Info("Successfully loaded config",
+		zap.String("layer", logctx.LogMainFuncLayer),
+		zap.String("function", logctx.LogMustLoadConfig),
+	)
 	return &cfg
 }
