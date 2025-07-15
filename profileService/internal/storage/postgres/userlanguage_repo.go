@@ -6,6 +6,7 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/language"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/userlanguage"
+	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
 	"go.uber.org/zap"
 )
 
@@ -23,16 +24,14 @@ func NewUserLanguageRepo(pool *pgxpool.Pool, logger *zap.Logger) *UserLanguageRe
 const (
 	queryAdd              = `INSERT INTO user_language (user_language_id, profile_id, code) VALUES ($1, $2, $3)`
 	queryGetUserLanguages = `SELECT code FROM user_language WHERE profile_id = $1`
-	logAddUserLanguage    = "AddUserLanguage"
-	logGetUserLanguage    = "GetUserLanguage"
 )
 
 func (r *UserLanguageRepo) AddUserLanguage(ctx context.Context, userLanguage *userlanguage.UserLanguage) error {
 	_, err := r.pool.Exec(ctx, queryAdd, userLanguage.UserLanguageID, userLanguage.ProfileID, userLanguage.LanguageCode)
 	if err != nil {
 		r.logger.Error("Error adding user-language to database",
-			zap.String("layer", logLayer),
-			zap.String("function", logAddUserLanguage),
+			zap.String("layer", logctx.LogRepoLayer),
+			zap.String("function", logctx.LogAddUserLanguage),
 			zap.Error(err),
 		)
 		return fmt.Errorf("adding user-language to database with ID: %w", err)
@@ -46,8 +45,8 @@ func (r *UserLanguageRepo) GetUserLanguages(ctx context.Context, profileID int64
 	var userLanguages []*language.Language
 	if err != nil {
 		r.logger.Error("Error getting user-languages",
-			zap.String("layer", logLayer),
-			zap.String("function", logGetUserLanguage),
+			zap.String("layer", logctx.LogRepoLayer),
+			zap.String("function", logctx.LogGetUserLanguages),
 			zap.Error(err),
 		)
 		return nil, fmt.Errorf("getting user-languages from database with ID: %w", err)
@@ -57,8 +56,8 @@ func (r *UserLanguageRepo) GetUserLanguages(ctx context.Context, profileID int64
 		var languageCode string
 		if err := rows.Scan(&languageCode); err != nil {
 			r.logger.Error("Error getting user-languages",
-				zap.String("layer", logLayer),
-				zap.String("function", logGetUserLanguage),
+				zap.String("layer", logctx.LogRepoLayer),
+				zap.String("function", logctx.LogGetUserLanguages),
 				zap.Error(err),
 			)
 			return nil, fmt.Errorf("getting user-languages from database with ID: %w", err)
@@ -67,15 +66,15 @@ func (r *UserLanguageRepo) GetUserLanguages(ctx context.Context, profileID int64
 	}
 	if err := rows.Err(); err != nil {
 		r.logger.Error("Error iterating rows",
-			zap.String("layer", logLayer),
-			zap.String("function", logGetUserLanguage),
+			zap.String("layer", logctx.LogRepoLayer),
+			zap.String("function", logctx.LogGetUserLanguages),
 			zap.Error(err),
 		)
 		return nil, fmt.Errorf("getting user-languages from database with ID: %w", err)
 	}
 	r.logger.Info("Successfully got user-languages",
-		zap.String("layer", logLayer),
-		zap.String("function", logGetUserLanguage),
+		zap.String("layer", logctx.LogRepoLayer),
+		zap.String("function", logctx.LogGetUserLanguages),
 		zap.Int("user-languages", len(userLanguages)),
 	)
 	return userLanguages, nil

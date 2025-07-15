@@ -3,6 +3,7 @@ package postgres
 import (
 	"context"
 	"fmt"
+	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/userprofile"
@@ -46,12 +47,6 @@ const (
 	queryGetProfilesByFiler = `SELECT up.profile_id FROM user_profile up JOIN user_institute ui ON up.profile_id = ui.profile_id
 WHERE up.position_id = ANY($1) AND ui.institute_id = ANY($2)
 `
-
-	logLayer              = "repository"
-	logGetByProfileID     = "GetProfileByID"
-	logCreate             = "AddProfile"
-	logUpdate             = "UpdateProfileByID"
-	logGetProfilesByFiler = "GetProfilesByFiler"
 )
 
 func (r *UserProfileRepo) GetProfileByID(ctx context.Context, profileID int64) (*userprofile.UserProfile, error) {
@@ -74,16 +69,16 @@ func (r *UserProfileRepo) GetProfileByID(ctx context.Context, profileID int64) (
 	)
 	if err != nil {
 		r.logger.Error("Error getting user profile",
-			zap.String("layer", logLayer),
-			zap.String("function", logGetByProfileID),
+			zap.String("layer", logctx.LogRepoLayer),
+			zap.String("function", logctx.LogGetProfileByID),
 			zap.Int64("profileID", profileID),
 			zap.Error(err),
 		)
 		return nil, fmt.Errorf("GetUserProfile failed: %w", err)
 	}
 	r.logger.Info("User profile found",
-		zap.String("layer", logLayer),
-		zap.String("function", logGetByProfileID),
+		zap.String("layer", logctx.LogRepoLayer),
+		zap.String("function", logctx.LogGetProfileByID),
 		zap.Int64("profileID", profileID),
 	)
 	return &userProfile, err
@@ -98,16 +93,16 @@ func (r *UserProfileRepo) AddProfile(ctx context.Context, userProfile *userprofi
 	).Scan(&userProfile.ProfileID)
 	if err != nil {
 		r.logger.Error("Error creating user profile",
-			zap.String("layer", logLayer),
-			zap.String("function", logCreate),
+			zap.String("layer", logctx.LogRepoLayer),
+			zap.String("function", logctx.LogAddProfile),
 			zap.Int64("profileID", userProfile.ProfileID),
 			zap.Error(err),
 		)
 		return fmt.Errorf("CreateUserProfile failed: %w", err)
 	}
 	r.logger.Info("User profile created",
-		zap.String("layer", logLayer),
-		zap.String("function", logCreate),
+		zap.String("layer", logctx.LogRepoLayer),
+		zap.String("function", logctx.LogAddProfile),
 		zap.Int64("profileId", userProfile.ProfileID),
 	)
 	return nil
@@ -120,16 +115,16 @@ func (r *UserProfileRepo) UpdateProfileByID(ctx context.Context, userProfile *us
 		userProfile.ProfileID, userProfile.StudentType)
 	if err != nil {
 		r.logger.Error("Error updating user profile",
-			zap.String("layer", logLayer),
-			zap.String("function", logUpdate),
+			zap.String("layer", logctx.LogRepoLayer),
+			zap.String("function", logctx.LogUpdateFaculty),
 			zap.Int64("profileId", userProfile.ProfileID),
 			zap.Error(err),
 		)
 		return fmt.Errorf("UpdateUserProfile failed: %w", err)
 	}
 	r.logger.Info("User profile updated",
-		zap.String("layer", logLayer),
-		zap.String("function", logUpdate),
+		zap.String("layer", logctx.LogRepoLayer),
+		zap.String("function", logctx.LogUpdateFaculty),
 		zap.Int64("profileId", userProfile.ProfileID),
 	)
 	return nil
@@ -140,8 +135,8 @@ func (r *UserProfileRepo) GetProfilesByFilter(ctx context.Context, institutes []
 		instRepo, err := NewInstituteRepo(r.pool, r.logger).GetAllInstitutes(ctx)
 		if err != nil {
 			r.logger.Error("Error getting all institutes",
-				zap.String("layer", logLayer),
-				zap.String("function", logGetProfilesByFiler),
+				zap.String("layer", logctx.LogRepoLayer),
+				zap.String("function", logctx.LogGetProfilesByFilters),
 				zap.Error(err),
 			)
 			return nil, fmt.Errorf("GetAllInstitutes failed: %w", err)
@@ -150,8 +145,8 @@ func (r *UserProfileRepo) GetProfilesByFilter(ctx context.Context, institutes []
 			institutes = append(institutes, inst.InstituteID)
 		}
 		r.logger.Info("Institutes length is zero, filtering by all institutes",
-			zap.String("layer", logLayer),
-			zap.String("function", logGetProfilesByFiler),
+			zap.String("layer", logctx.LogRepoLayer),
+			zap.String("function", logctx.LogGetProfilesByFilters),
 			zap.Int("institutes", len(institutes)),
 		)
 	}
@@ -159,8 +154,8 @@ func (r *UserProfileRepo) GetProfilesByFilter(ctx context.Context, institutes []
 		posRepo, err := NewPositionRepo(r.pool, r.logger).GetAllPositions(ctx)
 		if err != nil {
 			r.logger.Error("Error getting all positions",
-				zap.String("layer", logLayer),
-				zap.String("function", logGetProfilesByFiler),
+				zap.String("layer", logctx.LogRepoLayer),
+				zap.String("function", logctx.LogGetProfilesByFilters),
 				zap.Error(err),
 			)
 			return nil, fmt.Errorf("GetAllPositions failed: %w", err)
@@ -169,16 +164,16 @@ func (r *UserProfileRepo) GetProfilesByFilter(ctx context.Context, institutes []
 			positions = append(positions, pos.PositionID)
 		}
 		r.logger.Info("Positions length is zero, filtering by all positions",
-			zap.String("layer", logLayer),
-			zap.String("function", logGetProfilesByFiler),
+			zap.String("layer", logctx.LogRepoLayer),
+			zap.String("function", logctx.LogGetProfilesByFilters),
 			zap.Int("positions", len(positions)),
 		)
 	}
 	rows, err := r.pool.Query(ctx, queryGetProfilesByFiler, institutes, positions)
 	if err != nil {
 		r.logger.Error("Error getting all profileIDs",
-			zap.String("layer", logLayer),
-			zap.String("function", logGetProfilesByFiler),
+			zap.String("layer", logctx.LogRepoLayer),
+			zap.String("function", logctx.LogGetProfilesByFilters),
 			zap.Error(err),
 		)
 		return nil, fmt.Errorf("GetAllProfileIDs failed: %w", err)
@@ -190,8 +185,8 @@ func (r *UserProfileRepo) GetProfilesByFilter(ctx context.Context, institutes []
 		err = rows.Scan(&profileID)
 		if err != nil {
 			r.logger.Error("Error getting single profileID",
-				zap.String("layer", logLayer),
-				zap.String("function", logGetProfilesByFiler),
+				zap.String("layer", logctx.LogRepoLayer),
+				zap.String("function", logctx.LogGetProfilesByFilters),
 				zap.Error(err),
 			)
 			return nil, fmt.Errorf("GetAllProfileIDs failed: %w", err)
@@ -199,8 +194,8 @@ func (r *UserProfileRepo) GetProfilesByFilter(ctx context.Context, institutes []
 		profileIDs = append(profileIDs, profileID)
 	}
 	r.logger.Info("ProfileIDs received successfully",
-		zap.String("layer", logLayer),
-		zap.String("function", logGetProfilesByFiler),
+		zap.String("layer", logctx.LogRepoLayer),
+		zap.String("function", logctx.LogGetProfilesByFilters),
 		zap.Int("profileIDs", len(profileIDs)),
 	)
 	return profileIDs, nil

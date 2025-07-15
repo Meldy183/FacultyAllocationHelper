@@ -6,6 +6,7 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/institute"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/userinstitute"
+	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
 	"go.uber.org/zap"
 )
 
@@ -25,8 +26,6 @@ const (
 	queryAddUserInstitute     = `INSERT INTO user_institute (profile_id, institute_id, is_repr)
 								 VALUES ($1, $2, $3)
 								 RETURNING user_institute_id`
-	logGetUserInstituteByID = "GetUserInstituteByID"
-	logAddUserInstitute     = "AddUserInstitute"
 )
 
 func (r *UserInstituteRepo) GetUserInstituteByID(ctx context.Context, profileID int64) (*institute.Institute, error) {
@@ -38,16 +37,16 @@ func (r *UserInstituteRepo) GetUserInstituteByID(ctx context.Context, profileID 
 	)
 	if err != nil {
 		r.logger.Error("GetUserInstituteByID",
-			zap.String("layer", logLayer),
-			zap.String("function", logGetUserInstituteByID),
+			zap.String("layer", logctx.LogRepoLayer),
+			zap.String("function", logctx.LogGetUserInstitute),
 			zap.Int64("profileID", profileID),
 			zap.Error(err),
 		)
 		return nil, fmt.Errorf("GetUserInstituteByID: %w", err)
 	}
 	r.logger.Info("GetUserInstituteByID Success",
-		zap.String("layer", logLayer),
-		zap.String("function", logGetUserInstituteByID),
+		zap.String("layer", logctx.LogRepoLayer),
+		zap.String("function", logctx.LogGetUserInstitute),
 		zap.Int64("profileID", profileID),
 	)
 	return &instituteById, nil
@@ -58,16 +57,16 @@ func (r *UserInstituteRepo) AddUserInstitute(ctx context.Context, userInstitute 
 		userInstitute.IsRepresentative).Scan(&userInstitute.UserInstituteID)
 	if err != nil {
 		r.logger.Error("AddUserInstitute",
-			zap.String("layer", logLayer),
-			zap.String("function", logAddUserInstitute),
+			zap.String("layer", logctx.LogRepoLayer),
+			zap.String("function", logctx.LogAddUserInstitute),
 			zap.Int64("profileID", userInstitute.ProfileID),
 			zap.Error(err),
 		)
 		return fmt.Errorf("AddUserInstitute: %w", err)
 	}
 	r.logger.Info("Success of adding UserInstitute",
-		zap.String("layer", logLayer),
-		zap.String("function", logAddUserInstitute),
+		zap.String("layer", logctx.LogRepoLayer),
+		zap.String("function", logctx.LogAddUserInstitute),
 		zap.Int64("profileID", userInstitute.ProfileID),
 	)
 	return nil

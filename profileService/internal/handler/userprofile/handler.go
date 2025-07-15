@@ -128,7 +128,7 @@ func (h *Handler) GetProfile(w http.ResponseWriter, r *http.Request) {
 	if err != nil || profileID <= 0 {
 		h.logger.Error("invalid profileID",
 			zap.String("layer", logctx.LogHandlerLayer),
-			zap.String("function", logctx.LogGetProfile),
+			zap.String("function", logctx.LogGetProfileByID),
 			zap.Int64("id", profileID),
 		)
 		writeError(w, http.StatusBadRequest, "invalid profileID")
@@ -138,7 +138,7 @@ func (h *Handler) GetProfile(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		h.logger.Error("error getting userprofile",
 			zap.String("layer", logctx.LogHandlerLayer),
-			zap.String("function", logctx.LogGetProfile),
+			zap.String("function", logctx.LogGetProfileByID),
 			zap.Error(err),
 		)
 		writeError(w, http.StatusInternalServerError, "error getting userprofile")
@@ -148,7 +148,7 @@ func (h *Handler) GetProfile(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		h.logger.Error("error getting institute",
 			zap.String("layer", logctx.LogHandlerLayer),
-			zap.String("function", logctx.LogGetProfile),
+			zap.String("function", logctx.LogGetProfileByID),
 			zap.Error(err),
 		)
 		writeError(w, http.StatusInternalServerError, "error getting userprofile")
@@ -158,7 +158,7 @@ func (h *Handler) GetProfile(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		h.logger.Error("error getting languages",
 			zap.String("layer", logctx.LogHandlerLayer),
-			zap.String("function", logctx.LogGetProfile),
+			zap.String("function", logctx.LogGetProfileByID),
 			zap.Error(err),
 		)
 		writeError(w, http.StatusInternalServerError, "error getting languages")
@@ -174,7 +174,7 @@ func (h *Handler) GetProfile(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		h.logger.Error("error getting course ids",
 			zap.String("layer", logctx.LogHandlerLayer),
-			zap.String("function", logctx.LogGetProfile),
+			zap.String("function", logctx.LogGetProfileByID),
 			zap.Error(err),
 		)
 		writeError(w, http.StatusInternalServerError, "error getting courses")
@@ -184,7 +184,7 @@ func (h *Handler) GetProfile(w http.ResponseWriter, r *http.Request) {
 	for _, courseID := range coursesID {
 		h.logger.Info("getting course entry",
 			zap.String("layer", logctx.LogHandlerLayer),
-			zap.String("function", logctx.LogGetProfile),
+			zap.String("function", logctx.LogGetProfileByID),
 			zap.Int64("id", courseID),
 		)
 		courseEntries = append(courseEntries, Course{
@@ -195,7 +195,7 @@ func (h *Handler) GetProfile(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		h.logger.Error("error getting position name by id",
 			zap.String("layer", logctx.LogHandlerLayer),
-			zap.String("function", logctx.LogGetProfile),
+			zap.String("function", logctx.LogGetProfileByID),
 			zap.Int("id", profile.PositionID),
 			zap.Error(err),
 		)
@@ -220,7 +220,7 @@ func (h *Handler) GetProfile(w http.ResponseWriter, r *http.Request) {
 	}
 	h.logger.Info("Successfully fetched profile",
 		zap.String("layer", logctx.LogHandlerLayer),
-		zap.String("function", logctx.LogGetProfile),
+		zap.String("function", logctx.LogGetProfileByID),
 	)
 	writeJSON(w, http.StatusOK, resp)
 }

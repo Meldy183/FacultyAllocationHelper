@@ -48,7 +48,7 @@ func (s *Service) GetProfileByID(ctx context.Context, profileID int64) (*userpro
 	if err != nil {
 		s.logger.Error("error getting userprofile",
 			zap.String("layer", logctx.LogServiceLayer),
-			zap.String("function", logctx.LogGetProfile),
+			zap.String("function", logctx.LogGetProfileByID),
 			zap.Int64("profileID", profileID),
 			zap.Error(err))
 		return nil, fmt.Errorf("error getting userprofile %w", err)
@@ -57,13 +57,13 @@ func (s *Service) GetProfileByID(ctx context.Context, profileID int64) (*userpro
 		s.logger.Error(
 			"Invalid Alias",
 			zap.String("layer", logctx.LogServiceLayer),
-			zap.String("function", logctx.LogGetProfile),
+			zap.String("function", logctx.LogGetProfileByID),
 		)
 		return nil, fmt.Errorf("invalid alias: %v", profile.Alias)
 	}
 	s.logger.Info("user profile found",
 		zap.String("layer", logctx.LogServiceLayer),
-		zap.String("function", logctx.LogGetProfile),
+		zap.String("function", logctx.LogGetProfileByID),
 		zap.Int64("profileID", profileID),
 		zap.Any("profile", profile),
 	)
