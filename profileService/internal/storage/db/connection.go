@@ -405,6 +405,37 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
     workload FLOAT,
     FOREIGN KEY (profile_id) REFERENCES user_profile (profile_id)
   )`
+	_, err = conn.Exec(ctx, query)
+	if err != nil {
+
+		str.logger.Error("Error creating user_profile_version table",
+			zap.String("layer", layer),
+			zap.String("function", "creating table"),
+			zap.Error(err))
+		return err
+	}
+	str.logger.Info("created user_profile_version table",
+		zap.String("layer", layer),
+		zap.String("function", "creating table"))
+	query = `CREATE TABLE IF NOT EXISTS log (
+	log_id SERIAL PRIMARY KEY,
+	user_id VARCHAR(255),
+	action VARCHAR(50),
+	timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	subject_id INT
+	)`
+	_, err = conn.Exec(ctx, query)
+	if err != nil {
+
+		str.logger.Error("Error creating log table",
+			zap.String("layer", layer),
+			zap.String("function", "creating table"),
+			zap.Error(err))
+		return err
+	}
+	str.logger.Info("created log table",
+		zap.String("layer", layer),
+		zap.String("function", "creating table"))
 	tx, err := pool.Begin(ctx)
 	if err != nil {
 		str.logger.Error("Error starting transaction",
@@ -416,6 +447,7 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 	str.logger.Info("started transaction",
 		zap.String("layer", layer),
 		zap.String("function", "creating table"))
+
 	defer tx.Rollback(ctx)
 	_, err = tx.Exec(ctx, `
     INSERT INTO language (code, language_name)

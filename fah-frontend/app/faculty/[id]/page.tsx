@@ -44,6 +44,7 @@ const AssistantsPage: React.FC = () => {
 
 
   useEffect(() => {
+	console.log(users);
 	getAllUsers();
 	}, [users]);
 
