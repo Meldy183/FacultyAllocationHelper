@@ -7,11 +7,12 @@ services:
       - 80:80
       - 443:443
     volumes:
-      - './nginx-temp.conf:/etc/nginx/nginx.conf:ro'
+      - './nginx-temp.conf:/etc/nginx/nginx.conf'
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot
     depends_on:
       - profile-service
+      - certbots
     networks:
       - fah
   certbot:
