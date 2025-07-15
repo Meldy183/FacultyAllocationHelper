@@ -4,7 +4,7 @@
 
 🔗 [Link to the deployed version](https://facallhelp.ru)
 
-📹 [Demo video](https://www.youtube.com/watch?v=dQw4w9WgXcQ)
+📹 [Demo video](https://drive.google.com/file/d/1etbRiZlviE2BXqW-ShE9jJlDH_Bad_Zv/view?usp=share_link)
 
 ---
 
