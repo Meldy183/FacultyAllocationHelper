@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/institute"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/userinstitute"
+	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
 	"go.uber.org/zap"
 )
 
@@ -19,33 +20,27 @@ func NewService(r userinstitute.Repository, logger *zap.Logger) *Service {
 	return &Service{repo: r, logger: logger}
 }
 
-const (
-	logLayer                = "Service"
-	logGetUserInstituteByID = "GetUserInstituteByID"
-	logAddUserInstitute     = "logAddUserInstitute"
-)
-
 func (s *Service) GetUserInstituteByID(ctx context.Context, userID int64) (*institute.Institute, error) {
 	if userID <= 0 {
 		s.logger.Error("userID must be positive",
-			zap.String(logLayer, logLayer),
-			zap.String("function", logGetUserInstituteByID),
+			zap.String("layer", logctx.LogServiceLayer),
+			zap.String("function", logctx.LogGetUserInstitute),
 			zap.Int64("userID", userID))
 		return nil, fmt.Errorf("userID must be positive: %d", userID)
 	}
 	userInst, err := s.repo.GetUserInstituteByID(ctx, userID)
 	if err != nil {
 		s.logger.Error("Error getting Institute by ProfileID",
-			zap.String(logLayer, logLayer),
-			zap.String("function", logGetUserInstituteByID),
+			zap.String("layer", logctx.LogServiceLayer),
+			zap.String("function", logctx.LogGetUserInstitute),
 			zap.Int64("ID", userID),
 			zap.Error(err),
 		)
 		return nil, fmt.Errorf("error getting institute by ID: %w", err)
 	}
 	s.logger.Info("User Institute by ID found",
-		zap.String(logLayer, logLayer),
-		zap.String("function", logGetUserInstituteByID),
+		zap.String("layer", logctx.LogServiceLayer),
+		zap.String("function", logctx.LogGetUserInstitute),
 		zap.Int64("ID", userID),
 	)
 	return userInst, nil
@@ -56,14 +51,14 @@ func (s *Service) AddUserInstitute(ctx context.Context, userInstitute *userinsti
 	err := s.repo.AddUserInstitute(ctx, userInstitute)
 	if err != nil {
 		s.logger.Error("Error adding Institute to DB",
-			zap.String(logLayer, logLayer),
-			zap.String("function", logAddUserInstitute),
+			zap.String("layer", logctx.LogServiceLayer),
+			zap.String("function", logctx.LogAddUserInstitute),
 			zap.Error(err))
 		return fmt.Errorf("error adding Institute to DB: %w", err)
 	}
 	s.logger.Info("User Institute added to DB",
-		zap.String(logLayer, logLayer),
-		zap.String("function", logAddUserInstitute),
+		zap.String("layer", logctx.LogServiceLayer),
+		zap.String("function", logctx.LogAddUserInstitute),
 	)
 	return nil
 }
