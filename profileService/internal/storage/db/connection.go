@@ -3,10 +3,9 @@ package db
 import (
 	"context"
 	"fmt"
-	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
-
 	"github.com/jackc/pgx/v5/pgxpool"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/config"
+	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
 	"go.uber.org/zap"
 )
 
@@ -91,7 +90,7 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
       russian_name VARCHAR(255),
       alias VARCHAR(255) UNIQUE NOT NULL,
       start_date DATE,
-      end_date DATE,
+      end_date DATE
   )`
 	_, err = conn.Exec(ctx, query)
 	if err != nil {
@@ -199,7 +198,6 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
     course_id SERIAL PRIMARY KEY,
     code VARCHAR (50),
     name VARCHAR (50),
-
     officialName VARCHAR (100),
     hardness_coefficient DECIMAL,
     institute_id INTEGER,
@@ -246,7 +244,7 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
     course_id INT,
     semester VARCHAR(2),
     year INT,
-    mode VARCHAR(20)
+    mode VARCHAR(20),
     academic_year_id INT,
     form VARCHAR(30),
     groups_needed INT,
@@ -415,7 +413,7 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 	employment_type VARCHAR(128),
 	degree BOOLEAN,
 	mode VARCHAR(16),
-    FOREIGN KEY (profile_id) REFERENCES user_profile (profile_id)
+    FOREIGN KEY (profile_id) REFERENCES user_profile (profile_id),
 	FOREIGN KEY (position_id) REFERENCES position (position_id)
 
   )`
@@ -501,7 +499,7 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 		)
 		return fmt.Errorf("failed to commit transaction: %w", err)
 	}
-	//TODO FSRO when will be more obvious what to do
+	//TODO: FSRO when will be more obvious what to do
 	str.logger.Info("committed transaction",
 		zap.String("layer", logctx.LogDBInitLayer),
 		zap.String("function", logctx.LogInitSchema),
