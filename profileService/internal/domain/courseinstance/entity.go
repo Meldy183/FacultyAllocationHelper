@@ -1,28 +1,31 @@
 package courseinstance
 
-import UserProfileVersion
-
-
 type CourseInstance struct {
-	InstanceID     int64
-	Year           int
-	CourseID       int64
-	SemesterID     int
-	AcademicYearID int
-	Form           *Form
-	Mode           *Mode
-	GroupsNeeded   int
-	GroupsTaken    *int
+	InstanceID         int64
+	Year               int
+	CourseID           int64
+	SemesterID         int
+	AcademicYearID     int
+	Form               *Form
+	Mode               *Mode
+	GroupsNeeded       int
+	GroupsTaken        *int
 	PIAllocationStatus Status
+	TIAllocationStatus Status
 }
 
-type Status string
+type StatusState int
 
 const (
-	ID Status = 
-	StatusNA Status = "Not Allocated"
-	StatusNN   Status = "Not needed"
+	StatusNotAllocated StatusState = iota
+	StatusNotNeeded
+	StatusHasValue
 )
+
+type Status struct {
+	State StatusState
+	Value int
+}
 
 type Form string
 
@@ -41,16 +44,26 @@ const (
 )
 
 func NewCourse(
-	id int64,
-	name string,
-	off_name *string,
-	lec_hours, lab_hours *int,
+	instance_id, course_id int64,
+	year, semester_id, academic_year_id, groups_needed int,
+	groups_taken *int,
+	form *Form,
+	mode *Mode,
+	pi_alloc_Stat Status,
+	ti_alloc_status Status,
+
 ) (*CourseInstance, error) {
 	return &CourseInstance{
-		CourseID:     id,
-		Name:         name,
-		OfficialName: off_name,
-		LecHours:     lec_hours,
-		LabHours:     lab_hours,
+		InstanceID:         instance_id,
+		Year:               year,
+		CourseID:           course_id,
+		SemesterID:         semester_id,
+		AcademicYearID:     academic_year_id,
+		Form:               form,
+		Mode:               mode,
+		GroupsNeeded:       groups_needed,
+		GroupsTaken:        groups_taken,
+		PIAllocationStatus: pi_alloc_Stat,
+		TIAllocationStatus: ti_alloc_status,
 	}, nil
 }
