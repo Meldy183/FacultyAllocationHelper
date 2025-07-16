@@ -1,7 +1,7 @@
 package lab
 
 type Lab struct {
-	ID          int
+	LabID       int
 	Name        string
 	InstituteID int
 }

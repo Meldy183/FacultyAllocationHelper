@@ -31,7 +31,7 @@ func (s *Service) GetPositionByID(ctx context.Context, positionID int) (*string,
 	}
 	positionByID, err := s.repo.GetPositionByID(ctx, positionID)
 	if err != nil {
-		s.logger.Error("failed to retrieve position by ID",
+		s.logger.Error("failed to retrieve position by LabID",
 			zap.String("layer", logctx.LogServiceLayer),
 			zap.String("function", logctx.LogGetPositionByID),
 			zap.Int("position_id", positionID),

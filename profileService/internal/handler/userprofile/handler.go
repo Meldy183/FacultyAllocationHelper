@@ -77,12 +77,12 @@ func (h *Handler) AddProfile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if req.InstituteID <= 0 {
-		h.logger.Error("invalid institute ID",
-			zap.Int("ID", req.InstituteID),
+		h.logger.Error("invalid institute LabID",
+			zap.Int("LabID", req.InstituteID),
 			zap.String("layer", logctx.LogHandlerLayer),
 			zap.String("function", logctx.LogAddProfile),
 		)
-		writeError(w, http.StatusBadRequest, "invalid institute ID")
+		writeError(w, http.StatusBadRequest, "invalid institute LabID")
 		return
 	}
 	profile := &userprofileDomain.UserProfile{
@@ -275,7 +275,7 @@ func (h *Handler) GetAllFaculties(w http.ResponseWriter, r *http.Request) {
 			h.logger.Error("Error getting facultyProfile by id",
 				zap.String("layer", logctx.LogHandlerLayer),
 				zap.String("function", logctx.LogGetAllFaculties),
-				zap.Int64("ID", id),
+				zap.Int64("LabID", id),
 				zap.Error(err),
 			)
 			return
@@ -285,7 +285,7 @@ func (h *Handler) GetAllFaculties(w http.ResponseWriter, r *http.Request) {
 			h.logger.Error("Error getting position by id",
 				zap.String("layer", logctx.LogHandlerLayer),
 				zap.String("function", logctx.LogGetAllFaculties),
-				zap.Int64("ID", id),
+				zap.Int64("LabID", id),
 				zap.Error(err),
 			)
 		}
@@ -294,7 +294,7 @@ func (h *Handler) GetAllFaculties(w http.ResponseWriter, r *http.Request) {
 			h.logger.Error("Error getting user institute by id",
 				zap.String("layer", logctx.LogHandlerLayer),
 				zap.String("function", logctx.LogGetAllFaculties),
-				zap.Int64("ID", id),
+				zap.Int64("LabID", id),
 				zap.Error(err),
 			)
 		}
