@@ -1,4 +1,4 @@
-package userinstitute
+package profileInstitute
 
 type UserInstitute struct {
 	UserInstituteID  int

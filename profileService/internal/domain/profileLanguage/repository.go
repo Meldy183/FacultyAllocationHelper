@@ -1,4 +1,4 @@
-package userlanguage
+package profileLanguage
 
 import (
 	"context"

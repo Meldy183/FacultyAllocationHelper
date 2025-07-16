@@ -1,4 +1,4 @@
-package userinstitute
+package profileInstitute
 
 import (
 	"context"

@@ -1,4 +1,4 @@
-package usercourseinstance
+package profileCourseInstance
 
 type UserCourseInstance struct {
 	UserCourseID     int

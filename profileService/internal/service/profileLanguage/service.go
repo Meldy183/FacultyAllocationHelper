@@ -1,26 +1,26 @@
-package userlanguage
+package profileLanguage
 
 import (
 	"context"
 	"fmt"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/language"
-	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/userlanguage"
+	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/profileLanguage"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
 	"go.uber.org/zap"
 )
 
-var _ userlanguage.Repository = (*Service)(nil)
+var _ profileLanguage.Repository = (*Service)(nil)
 
 type Service struct {
-	repo   userlanguage.Repository
+	repo   profileLanguage.Repository
 	logger *zap.Logger
 }
 
-func NewService(repo userlanguage.Repository, logger *zap.Logger) *Service {
+func NewService(repo profileLanguage.Repository, logger *zap.Logger) *Service {
 	return &Service{repo: repo, logger: logger}
 }
 
-func (s *Service) AddUserLanguage(ctx context.Context, userLanguage *userlanguage.UserLanguage) error {
+func (s *Service) AddUserLanguage(ctx context.Context, userLanguage *profileLanguage.UserLanguage) error {
 	err := s.repo.AddUserLanguage(ctx, userLanguage)
 	if err != nil {
 		s.logger.Error("User Institute Added to DB",

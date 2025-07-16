@@ -1,21 +1,21 @@
-package usercourseinstance
+package profileCourseInstance
 
 import (
 	"context"
 	"fmt"
-	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/usercourseinstance"
+	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/profileCourseInstance"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
 	"go.uber.org/zap"
 )
 
-var _ usercourseinstance.Repository = (*Service)(nil)
+var _ profileCourseInstance.Repository = (*Service)(nil)
 
 type Service struct {
-	repo   usercourseinstance.Repository
+	repo   profileCourseInstance.Repository
 	logger *zap.Logger
 }
 
-func NewService(repo usercourseinstance.Repository, logger *zap.Logger) *Service {
+func NewService(repo profileCourseInstance.Repository, logger *zap.Logger) *Service {
 	return &Service{repo: repo, logger: logger}
 }
 
@@ -36,9 +36,9 @@ func (s *Service) GetInstancesByProfileID(ctx context.Context, profileID int64) 
 			zap.Int64("profile_id", profileID),
 			zap.Error(err),
 		)
-		return nil, fmt.Errorf("failed to get instances by profile id %d: %v", profileID, err)
+		return nil, fmt.Errorf("failed to get instances by facultyProfile id %d: %v", profileID, err)
 	}
-	s.logger.Info("Successfully got instances by profile id",
+	s.logger.Info("Successfully got instances by facultyProfile id",
 		zap.String("layer", logctx.LogServiceLayer),
 		zap.String("function", logctx.LogGetInstancesByProfileID),
 		zap.Int64("profile_id", profileID),
@@ -46,7 +46,7 @@ func (s *Service) GetInstancesByProfileID(ctx context.Context, profileID int64) 
 	return ids, nil
 }
 
-func (s *Service) AddCourseInstance(ctx context.Context, instance *usercourseinstance.UserCourseInstance) error {
+func (s *Service) AddCourseInstance(ctx context.Context, instance *profileCourseInstance.UserCourseInstance) error {
 	if instance == nil {
 		s.logger.Error("instance cannot be nil",
 			zap.String("layer", logctx.LogServiceLayer),

@@ -7,11 +7,11 @@ import (
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
 
 	"github.com/jackc/pgx/v5/pgxpool"
-	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/userprofile"
+	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/facultyProfile"
 	"go.uber.org/zap"
 )
 
-var _ userprofile.Repository = (*UserProfileRepo)(nil)
+var _ facultyProfile.Repository = (*UserProfileRepo)(nil)
 
 type UserProfileRepo struct {
 	pool   *pgxpool.Pool
@@ -49,9 +49,9 @@ WHERE up.position_id = ANY($1) AND ui.institute_id = ANY($2)
 `
 )
 
-func (r *UserProfileRepo) GetProfileByID(ctx context.Context, profileID int64) (*userprofile.UserProfile, error) {
+func (r *UserProfileRepo) GetProfileByID(ctx context.Context, profileID int64) (*facultyProfile.UserProfile, error) {
 	row := r.pool.QueryRow(ctx, queryGetByProfileID, profileID)
-	var userProfile userprofile.UserProfile
+	var userProfile facultyProfile.UserProfile
 	err := row.Scan(
 		&userProfile.ProfileID,
 		&userProfile.Email,
@@ -68,7 +68,7 @@ func (r *UserProfileRepo) GetProfileByID(ctx context.Context, profileID int64) (
 		&userProfile.MaxLoad,
 	)
 	if err != nil {
-		r.logger.Error("Error getting user profile",
+		r.logger.Error("Error getting user facultyProfile",
 			zap.String("layer", logctx.LogRepoLayer),
 			zap.String("function", logctx.LogGetProfileByID),
 			zap.Int64("profileID", profileID),
@@ -76,7 +76,7 @@ func (r *UserProfileRepo) GetProfileByID(ctx context.Context, profileID int64) (
 		)
 		return nil, fmt.Errorf("GetUserProfile failed: %w", err)
 	}
-	r.logger.Info("User profile found",
+	r.logger.Info("User facultyProfile found",
 		zap.String("layer", logctx.LogRepoLayer),
 		zap.String("function", logctx.LogGetProfileByID),
 		zap.Int64("profileID", profileID),
@@ -84,7 +84,7 @@ func (r *UserProfileRepo) GetProfileByID(ctx context.Context, profileID int64) (
 	return &userProfile, err
 }
 
-func (r *UserProfileRepo) AddProfile(ctx context.Context, userProfile *userprofile.UserProfile) error {
+func (r *UserProfileRepo) AddProfile(ctx context.Context, userProfile *facultyProfile.UserProfile) error {
 	err := r.pool.QueryRow(ctx, queryInsertUserProfile,
 		userProfile.Email,
 		userProfile.PositionID,
@@ -92,7 +92,7 @@ func (r *UserProfileRepo) AddProfile(ctx context.Context, userProfile *userprofi
 		userProfile.Alias,
 	).Scan(&userProfile.ProfileID)
 	if err != nil {
-		r.logger.Error("Error creating user profile",
+		r.logger.Error("Error creating user facultyProfile",
 			zap.String("layer", logctx.LogRepoLayer),
 			zap.String("function", logctx.LogAddProfile),
 			zap.Int64("profileID", userProfile.ProfileID),
@@ -100,7 +100,7 @@ func (r *UserProfileRepo) AddProfile(ctx context.Context, userProfile *userprofi
 		)
 		return fmt.Errorf("CreateUserProfile failed: %w", err)
 	}
-	r.logger.Info("User profile created",
+	r.logger.Info("User facultyProfile created",
 		zap.String("layer", logctx.LogRepoLayer),
 		zap.String("function", logctx.LogAddProfile),
 		zap.Int64("profileId", userProfile.ProfileID),
@@ -108,13 +108,13 @@ func (r *UserProfileRepo) AddProfile(ctx context.Context, userProfile *userprofi
 	return nil
 }
 
-func (r *UserProfileRepo) UpdateProfileByID(ctx context.Context, userProfile *userprofile.UserProfile) error {
+func (r *UserProfileRepo) UpdateProfileByID(ctx context.Context, userProfile *facultyProfile.UserProfile) error {
 	_, err := r.pool.Exec(ctx, queryUpdateUserProfile, 0, userProfile.Email, userProfile.PositionID,
 		userProfile.EnglishName, userProfile.RussianName, userProfile.Alias, userProfile.EmploymentType,
 		userProfile.Degree, userProfile.Mode, userProfile.StartDate, userProfile.EndDate, userProfile.MaxLoad,
 		userProfile.ProfileID, userProfile.StudentType)
 	if err != nil {
-		r.logger.Error("Error updating user profile",
+		r.logger.Error("Error updating user facultyProfile",
 			zap.String("layer", logctx.LogRepoLayer),
 			zap.String("function", logctx.LogUpdateFaculty),
 			zap.Int64("profileId", userProfile.ProfileID),
@@ -122,7 +122,7 @@ func (r *UserProfileRepo) UpdateProfileByID(ctx context.Context, userProfile *us
 		)
 		return fmt.Errorf("UpdateUserProfile failed: %w", err)
 	}
-	r.logger.Info("User profile updated",
+	r.logger.Info("User facultyProfile updated",
 		zap.String("layer", logctx.LogRepoLayer),
 		zap.String("function", logctx.LogUpdateFaculty),
 		zap.Int64("profileId", userProfile.ProfileID),

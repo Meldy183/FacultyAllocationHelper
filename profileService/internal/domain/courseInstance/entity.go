@@ -1,4 +1,4 @@
-package courseinstance
+package courseInstance
 
 type CourseInstance struct {
 	InstanceID         int64

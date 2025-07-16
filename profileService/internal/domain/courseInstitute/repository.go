@@ -1,4 +1,4 @@
-package courseinstitute
+package courseInstitute
 
 import "context"
 

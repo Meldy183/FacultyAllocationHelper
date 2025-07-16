@@ -5,12 +5,12 @@ import (
 	"fmt"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/language"
-	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/userlanguage"
+	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/profileLanguage"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
 	"go.uber.org/zap"
 )
 
-var _ userlanguage.Repository = (*UserLanguageRepo)(nil)
+var _ profileLanguage.Repository = (*UserLanguageRepo)(nil)
 
 type UserLanguageRepo struct {
 	pool   *pgxpool.Pool
@@ -26,7 +26,7 @@ const (
 	queryGetUserLanguages = `SELECT code FROM user_language WHERE profile_id = $1`
 )
 
-func (r *UserLanguageRepo) AddUserLanguage(ctx context.Context, userLanguage *userlanguage.UserLanguage) error {
+func (r *UserLanguageRepo) AddUserLanguage(ctx context.Context, userLanguage *profileLanguage.UserLanguage) error {
 	_, err := r.pool.Exec(ctx, queryAdd, userLanguage.UserLanguageID, userLanguage.ProfileID, userLanguage.LanguageCode)
 	if err != nil {
 		r.logger.Error("Error adding user-language to database",

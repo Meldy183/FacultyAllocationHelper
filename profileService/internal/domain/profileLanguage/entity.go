@@ -1,4 +1,4 @@
-package userlanguage
+package profileLanguage
 
 type UserLanguage struct {
 	UserLanguageID int

@@ -5,12 +5,12 @@ import (
 	"fmt"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/institute"
-	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/userinstitute"
+	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/profileInstitute"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
 	"go.uber.org/zap"
 )
 
-var _ userinstitute.Repository = (*UserInstituteRepo)(nil)
+var _ profileInstitute.Repository = (*UserInstituteRepo)(nil)
 
 type UserInstituteRepo struct {
 	pool   *pgxpool.Pool
@@ -52,7 +52,7 @@ func (r *UserInstituteRepo) GetUserInstituteByID(ctx context.Context, profileID 
 	return &instituteById, nil
 }
 
-func (r *UserInstituteRepo) AddUserInstitute(ctx context.Context, userInstitute *userinstitute.UserInstitute) error {
+func (r *UserInstituteRepo) AddUserInstitute(ctx context.Context, userInstitute *profileInstitute.UserInstitute) error {
 	err := r.pool.QueryRow(ctx, queryAddUserInstitute, userInstitute.ProfileID, userInstitute.InstituteID,
 		userInstitute.IsRepresentative).Scan(&userInstitute.UserInstituteID)
 	if err != nil {

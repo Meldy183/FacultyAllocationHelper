@@ -3,11 +3,11 @@ package postgres
 import (
 	"context"
 	"github.com/jackc/pgx/v5/pgxpool"
-	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/userprofileversion"
+	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/profileVersion"
 	"go.uber.org/zap"
 )
 
-var _ userprofileversion.Repository = (*ProfileVersionRepo)(nil)
+var _ profileVersion.Repository = (*ProfileVersionRepo)(nil)
 
 type ProfileVersionRepo struct {
 	pool   *pgxpool.Pool
@@ -41,6 +41,6 @@ const (
 )
 
 func (r *ProfileVersionRepo) AddProfileVersion(ctx context.Context,
-	profileVersion *userprofileversion.UserProfileVersion) error {
+	profileVersion *profileVersion.ProfileVersion) error {
 	r.pool.Exec()
 }

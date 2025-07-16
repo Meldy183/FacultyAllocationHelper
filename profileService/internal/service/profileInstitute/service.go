@@ -1,22 +1,22 @@
-package userinstitute
+package profileInstitute
 
 import (
 	"context"
 	"fmt"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/institute"
-	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/userinstitute"
+	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/profileInstitute"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
 	"go.uber.org/zap"
 )
 
-var _ userinstitute.Repository = (*Service)(nil)
+var _ profileInstitute.Repository = (*Service)(nil)
 
 type Service struct {
-	repo   userinstitute.Repository
+	repo   profileInstitute.Repository
 	logger *zap.Logger
 }
 
-func NewService(r userinstitute.Repository, logger *zap.Logger) *Service {
+func NewService(r profileInstitute.Repository, logger *zap.Logger) *Service {
 	return &Service{repo: r, logger: logger}
 }
 
@@ -46,7 +46,7 @@ func (s *Service) GetUserInstituteByID(ctx context.Context, userID int64) (*inst
 	return userInst, nil
 }
 
-func (s *Service) AddUserInstitute(ctx context.Context, userInstitute *userinstitute.UserInstitute) error {
+func (s *Service) AddUserInstitute(ctx context.Context, userInstitute *profileInstitute.UserInstitute) error {
 
 	err := s.repo.AddUserInstitute(ctx, userInstitute)
 	if err != nil {

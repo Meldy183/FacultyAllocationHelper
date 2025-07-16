@@ -23,8 +23,8 @@ const routes: Routes[] = [
 		path: "/faculty"
 	},
 	{
-		name: "My profile",
-		path: "/profile"
+		name: "My facultyProfile",
+		path: "/facultyProfile"
 	}
 ]
 

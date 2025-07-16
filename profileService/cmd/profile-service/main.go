@@ -7,12 +7,12 @@ import (
 	userprofile2 "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/handler/userprofile"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/http"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
+	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/facultyProfile"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/institute"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/position"
-	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/usercourseinstance"
-	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/userinstitute"
-	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/userlanguage"
-	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/userprofile"
+	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/profileCourseInstance"
+	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/profileInstitute"
+	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/profileLanguage"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/storage/db"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/storage/postgres"
 	"go.uber.org/zap"
@@ -66,10 +66,10 @@ func main() {
 	positionRepo := postgres.NewPositionRepo(pool, logger)
 	instituteRepo := postgres.NewInstituteRepo(pool, logger)
 	// Service layer inits
-	userProfileService := userprofile.NewService(userProfileRepo, logger)
-	userLanguageService := userlanguage.NewService(userLanguageRepo, logger)
-	userInstituteService := userinstitute.NewService(userInstituteRepo, logger)
-	userCourseInstanceService := usercourseinstance.NewService(userCourseInstanceRepo, logger)
+	userProfileService := facultyProfile.NewService(userProfileRepo, logger)
+	userLanguageService := profileLanguage.NewService(userLanguageRepo, logger)
+	userInstituteService := profileInstitute.NewService(userInstituteRepo, logger)
+	userCourseInstanceService := profileCourseInstance.NewService(userCourseInstanceRepo, logger)
 	positionService := position.NewService(positionRepo, logger)
 	instituteService := institute.NewService(instituteRepo, logger)
 	handler := userprofile2.NewHandler(

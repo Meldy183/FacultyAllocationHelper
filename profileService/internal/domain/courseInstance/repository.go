@@ -1,4 +1,4 @@
-package courseinstance
+package courseInstance
 
 import "context"
 

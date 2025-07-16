@@ -1,4 +1,4 @@
-package userprofile
+package facultyProfile
 
 import "context"
 

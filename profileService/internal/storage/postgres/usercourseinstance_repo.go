@@ -4,12 +4,12 @@ import (
 	"context"
 	"fmt"
 	"github.com/jackc/pgx/v5/pgxpool"
-	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/usercourseinstance"
+	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/profileCourseInstance"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
 	"go.uber.org/zap"
 )
 
-var _ usercourseinstance.Repository = (*UserCourseInstanceRepo)(nil)
+var _ profileCourseInstance.Repository = (*UserCourseInstanceRepo)(nil)
 
 type UserCourseInstanceRepo struct {
 	pool   *pgxpool.Pool
@@ -70,7 +70,7 @@ func (r *UserCourseInstanceRepo) GetInstancesByProfileID(ctx context.Context, pr
 }
 
 func (r *UserCourseInstanceRepo) AddCourseInstance(ctx context.Context,
-	userCourseInstance *usercourseinstance.UserCourseInstance) error {
+	userCourseInstance *profileCourseInstance.UserCourseInstance) error {
 	_, err := r.pool.Exec(ctx, queryAddCourseInstance, userCourseInstance.ProfileID, userCourseInstance.CourseInstanceID)
 	if err != nil {
 		r.logger.Error("AddCourseInstance",
