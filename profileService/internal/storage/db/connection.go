@@ -3,6 +3,7 @@ package db
 import (
 	"context"
 	"fmt"
+
 	"github.com/jackc/pgx/v5/pgxpool"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/config"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
@@ -66,7 +67,44 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 		return err
 	}
 	defer conn.Release()
-	query := `CREATE TABLE IF NOT EXISTS position (
+
+	query := `CREATE TABLE IF NOT EXISTS semester (
+	semester_id SERIAL PRIMARY KEY, 
+	semester_name VARCHAR
+	)`
+	_, err = conn.Exec(ctx, query)
+	if err != nil {
+
+		str.logger.Error("Error creating semester table",
+			zap.String("layer", logctx.LogDBInitLayer),
+			zap.String("function", logctx.LogInitSchema),
+			zap.Error(err))
+		return err
+	}
+	str.logger.Info("created semester table",
+		zap.String("layer", logctx.LogDBInitLayer),
+		zap.String("function", logctx.LogInitSchema),
+	)
+
+	query = `CREATE TABLE IF NOT EXISTS academic_year (
+	academic_year_id SERIAL PRIMARY KEY, 
+	academic_year_name VARCHAR
+	)`
+	_, err = conn.Exec(ctx, query)
+	if err != nil {
+
+		str.logger.Error("Error creating academic_year table",
+			zap.String("layer", logctx.LogDBInitLayer),
+			zap.String("function", logctx.LogInitSchema),
+			zap.Error(err))
+		return err
+	}
+	str.logger.Info("created academic_year table",
+		zap.String("layer", logctx.LogDBInitLayer),
+		zap.String("function", logctx.LogInitSchema),
+	)
+
+	query = `CREATE TABLE IF NOT EXISTS position (
       position_id SERIAL PRIMARY KEY,
       name VARCHAR(255) UNIQUE NOT NULL
     )`
@@ -88,7 +126,9 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
       email VARCHAR(50) UNIQUE NOT NULL,
       english_name VARCHAR(255) NOT NULL,
       russian_name VARCHAR(255),
-      alias VARCHAR(255) UNIQUE NOT NULL,
+      telegram_alias VARCHAR(255) UNIQUE NOT NULL,
+	  hiring_status : VSRCHAR(255),
+	  fsro : VARCHAR(255),
       start_date DATE,
       end_date DATE
   )`
@@ -194,12 +234,66 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 		)
 		return err
 	}
+
+	query = `CREATE TABLE IF NOT EXISTS user_profile_version (
+    profile_version_id SERIAL PRIMARY KEY,
+    profile_id INT,
+    year INT,
+    semester_id INT,
+    lectures_count INT,
+    tutorials_count INT,
+    labs_count INT,
+    elective_count INT,
+    workload FLOAT,
+	maxload INT,
+	degree BOOLEAN,
+	mode VARCHAR(16),
+    FOREIGN KEY (profile_id) REFERENCES user_profile (profile_id),
+	FOREIGN KEY (position_id) REFERENCES position (position_id)
+  )`
+	_, err = conn.Exec(ctx, query)
+	if err != nil {
+
+		str.logger.Error("Error creating user_profile_version table",
+			zap.String("layer", logctx.LogDBInitLayer),
+			zap.String("function", logctx.LogInitSchema),
+			zap.Error(err))
+		return err
+	}
+	str.logger.Info("created user_profile_version table",
+		zap.String("layer", logctx.LogDBInitLayer),
+		zap.String("function", logctx.LogInitSchema))
+
+	query = `CREATE TABLE IF NOT EXISTS semester_workload (
+	semester_workload_id SERIAL PRIMARY KEY, 
+    profile_version_id INT,
+    semester_id INT,
+    lectures_count INT,
+    tutorials_count INT,
+    labs_count INT,
+    elective_count INT,
+    
+    FOREIGN KEY (profile_version_id) REFERENCES user_profile_version (profile_version_id),
+	FOREIGN KEY (semester_id) REFERENCES semester (semester_id)
+	)`
+	_, err = conn.Exec(ctx, query)
+	if err != nil {
+
+		str.logger.Error("Error creating semester_workload table",
+			zap.String("layer", logctx.LogDBInitLayer),
+			zap.String("function", logctx.LogInitSchema),
+			zap.Error(err))
+		return err
+	}
+	str.logger.Info("created semester_workload table",
+		zap.String("layer", logctx.LogDBInitLayer),
+		zap.String("function", logctx.LogInitSchema),
+	)
+
 	query = `CREATE TABLE IF NOT EXISTS course (
     course_id SERIAL PRIMARY KEY,
-    code VARCHAR (50),
     name VARCHAR (50),
     officialName VARCHAR (100),
-    institute_id INTEGER,
     lec_hours INTEGER,
     lab_hours INTEGER
   )`
@@ -241,7 +335,7 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 	query = `CREATE TABLE IF NOT EXISTS course_instance (
     instance_id SERIAL PRIMARY KEY,
     course_id INT,
-    semester VARCHAR(2),
+    semester_id INT,
     year INT,
     mode VARCHAR(20),
     academic_year_id INT,
@@ -398,36 +492,7 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 	str.logger.Info("created profile_staff table",
 		zap.String("layer", logctx.LogDBInitLayer),
 		zap.String("function", logctx.LogInitSchema))
-	query = `CREATE TABLE IF NOT EXISTS user_profile_version (
-    profile_version_id SERIAL PRIMARY KEY,
-    profile_id INT,
-    year INT,
-    semester_id INT,
-    lectures_count INT,
-    tutorials_count INT,
-    labs_count INT,
-    elective_count INT,
-    workload FLOAT,
-	maxload INT,
-	position_id INT,
-	employment_type VARCHAR(128),
-	degree BOOLEAN,
-	mode VARCHAR(16),
-    FOREIGN KEY (profile_id) REFERENCES user_profile (profile_id),
-	FOREIGN KEY (position_id) REFERENCES position (position_id)
-  )`
-	_, err = conn.Exec(ctx, query)
-	if err != nil {
 
-		str.logger.Error("Error creating user_profile_version table",
-			zap.String("layer", logctx.LogDBInitLayer),
-			zap.String("function", logctx.LogInitSchema),
-			zap.Error(err))
-		return err
-	}
-	str.logger.Info("created user_profile_version table",
-		zap.String("layer", logctx.LogDBInitLayer),
-		zap.String("function", logctx.LogInitSchema))
 	query = `CREATE TABLE IF NOT EXISTS log (
   log_id SERIAL PRIMARY KEY,
   user_id VARCHAR(255),
