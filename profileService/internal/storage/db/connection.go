@@ -311,24 +311,43 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 		zap.String("layer", logctx.LogDBInitLayer),
 		zap.String("function", logctx.LogInitSchema),
 	)
-	query = `CREATE TABLE IF NOT EXISTS institute_course (
-    institute_course_id SERIAL PRIMARY KEY,
-    course_id INT,
-    institute_id INT,
-    FOREIGN KEY (course_id) REFERENCES course (course_id),
-    FOREIGN KEY (institute_id) REFERENCES institute (institute_id)
+
+	query = `CREATE TABLE IF NOT EXISTS responsible_institute (
+    responsible_institute_id SERIAL PRIMARY KEY,
+    name VARCHAR
   )`
 	_, err = conn.Exec(ctx, query)
 	if err != nil {
 
-		str.logger.Error("Error creating institute_course table",
+		str.logger.Error("Error creating responsible_institute table",
 			zap.String("layer", logctx.LogDBInitLayer),
 			zap.String("function", logctx.LogInitSchema),
 			zap.Error(err),
 		)
 		return err
 	}
-	str.logger.Info("created institute_course table",
+	str.logger.Info("created responsible_institute table",
+		zap.String("layer", logctx.LogDBInitLayer),
+		zap.String("function", logctx.LogInitSchema),
+	)
+
+	query = `CREATE TABLE IF NOT EXISTS institute_course_link (
+    institute_course_id SERIAL PRIMARY KEY,
+    course_id INT,
+    course_institute_id INT,
+    FOREIGN KEY (course_id) REFERENCES course (course_id),
+    FOREIGN KEY (course_institute_id) REFERENCES course_institutes (course_institute_id)
+  )`
+	_, err = conn.Exec(ctx, query)
+	if err != nil {
+		str.logger.Error("Error creating institute_course_link table",
+			zap.String("layer", logctx.LogDBInitLayer),
+			zap.String("function", logctx.LogInitSchema),
+			zap.Error(err),
+		)
+		return err
+	}
+	str.logger.Info("created institute_course_link table",
 		zap.String("layer", logctx.LogDBInitLayer),
 		zap.String("function", logctx.LogInitSchema),
 	)
@@ -564,6 +583,30 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 	)
 
 	_, err = tx.Exec(ctx, `
+    INSERT INTO course_institutes (course_institute_id, name)
+    VALUES (1, 'DS'),
+           (2, 'DS/Math'),
+           (3, 'DS/SDE'),
+           (4, 'GAMEDEV'),
+           (5, 'HUM'),
+		   (6, 'RO'),
+		   (7, 'SDE'),
+		   (8, 'SNE')
+    ON CONFLICT (institute_id) DO NOTHING;
+  `)
+	if err != nil {
+		str.logger.Error("Error adding institute manually",
+			zap.String("layer", logctx.LogDBInitLayer),
+			zap.String("function", logctx.LogInitSchema),
+			zap.Error(err),
+		)
+	}
+	str.logger.Info("added institutes SUCCESS",
+		zap.String("layer", logctx.LogDBInitLayer),
+		zap.String("function", logctx.LogInitSchema),
+	)
+
+	_, err = tx.Exec(ctx, `
     INSERT INTO position (position_id, name)
     VALUES (1, 'Professor'),
            (2, 'Docent'),
@@ -582,6 +625,73 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 		)
 	}
 	str.logger.Info("added positions SUCCESS",
+		zap.String("layer", logctx.LogDBInitLayer),
+		zap.String("function", logctx.LogInitSchema),
+	)
+
+	_, err = tx.Exec(ctx, `
+    INSERT INTO semester (semester_id, name)
+    VALUES (1, 'T1'),
+           (2, 'T2'),
+           (3, 'T3')
+    ON CONFLICT (semester_id) DO NOTHING;
+  `)
+	if err != nil {
+		str.logger.Error("Error adding semesters manually",
+			zap.String("layer", logctx.LogDBInitLayer),
+			zap.String("function", logctx.LogInitSchema),
+			zap.Error(err),
+		)
+	}
+	str.logger.Info("added semesters SUCCESS",
+		zap.String("layer", logctx.LogDBInitLayer),
+		zap.String("function", logctx.LogInitSchema),
+	)
+
+	_, err = tx.Exec(ctx, `
+    INSERT INTO academic_year (year_id, name)
+    VALUES (1, 'BS1'),
+           (2, 'BS2'),
+           (3, 'BS3'),
+		   (4, 'BS4'),
+           (5, 'MS1'),
+           (6, 'MS2'),
+		   (7, 'PhD1'),
+           (8, 'PhD2')
+		ON CONFLICT (semester_id) DO NOTHING;
+  `)
+	if err != nil {
+		str.logger.Error("Error adding academic_years manually",
+			zap.String("layer", logctx.LogDBInitLayer),
+			zap.String("function", logctx.LogInitSchema),
+			zap.Error(err),
+		)
+	}
+	str.logger.Info("added academic_years SUCCESS",
+		zap.String("layer", logctx.LogDBInitLayer),
+		zap.String("function", logctx.LogInitSchema),
+	)
+
+	_, err = tx.Exec(ctx, `
+    INSERT INTO academic_year (year_id, name)
+    VALUES (1, 'BS1'),
+           (2, 'BS2'),
+           (3, 'BS3'),
+		   (4, 'BS4'),
+           (5, 'MS1'),
+           (6, 'MS2'),
+		   (7, 'PhD1'),
+           (8, 'PhD2')
+		ON CONFLICT (semester_id) DO NOTHING;
+  `)
+	if err != nil {
+		str.logger.Error("Error adding academic_years manually",
+			zap.String("layer", logctx.LogDBInitLayer),
+			zap.String("function", logctx.LogInitSchema),
+			zap.Error(err),
+		)
+	}
+	str.logger.Info("added academic_years SUCCESS",
 		zap.String("layer", logctx.LogDBInitLayer),
 		zap.String("function", logctx.LogInitSchema),
 	)
