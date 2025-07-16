@@ -14,6 +14,7 @@ services:
       - profile-service
       - fah_frontend
       - parsing_service
+      - auth-server
 
     networks:
       - fah
