@@ -6,6 +6,6 @@ type LogPage struct {
 	LogID     int64
 	UserID    string
 	Action    string
-	SubjectID string
+	SubjectID int64
 	Timestamp time.Time
 }
