@@ -1,7 +1,5 @@
 package course
 
-// "time"
-
 type Course struct {
 	CourseID     int64
 	Name         string
@@ -11,16 +9,16 @@ type Course struct {
 }
 
 func NewCourse(
-	id int64,
+	courseID int64,
 	name string,
-	off_name *string,
-	lec_hours, lab_hours *int,
+	offName *string,
+	lecHours, labHours *int,
 ) (*Course, error) {
 	return &Course{
-		CourseID:     id,
+		CourseID:     courseID,
 		Name:         name,
-		OfficialName: off_name,
-		LecHours:     lec_hours,
-		LabHours:     lab_hours,
+		OfficialName: offName,
+		LecHours:     lecHours,
+		LabHours:     labHours,
 	}, nil
 }

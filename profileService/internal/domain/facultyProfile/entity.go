@@ -12,16 +12,17 @@ type UserProfile struct {
 	Alias       string
 	StartDate   *time.Time
 	EndDate     *time.Time
+	Fsro        *string
+	Status      *string
 }
 
 func NewUserProfile(
-	id int64,
-	userID string,
+	profileID int64,
 	engName, russianName, alias string,
 	startDate, endDate *time.Time,
 ) *UserProfile {
 	return &UserProfile{
-		ProfileID:   id,
+		ProfileID:   profileID,
 		EnglishName: engName,
 		RussianName: &russianName,
 		Alias:       alias,
