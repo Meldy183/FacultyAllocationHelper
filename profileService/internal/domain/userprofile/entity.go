@@ -19,7 +19,7 @@ func NewUserProfile(
 	userID string,
 	engName, russianName, alias string,
 	startDate, endDate *time.Time,
-) (*UserProfile, error) {
+) *UserProfile {
 	return &UserProfile{
 		ProfileID:   id,
 		EnglishName: engName,
@@ -27,5 +27,5 @@ func NewUserProfile(
 		Alias:       alias,
 		StartDate:   startDate,
 		EndDate:     endDate,
-	}, nil
+	}
 }
