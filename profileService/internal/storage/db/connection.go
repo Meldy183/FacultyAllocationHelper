@@ -434,7 +434,7 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
   log_id SERIAL PRIMARY KEY,
   user_id VARCHAR(255),
   action VARCHAR(50),
-  timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  timestamp TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
   subject_id INT
   )`
 	_, err = conn.Exec(ctx, query)
