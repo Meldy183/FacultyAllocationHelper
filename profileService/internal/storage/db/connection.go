@@ -3,6 +3,7 @@ package db
 import (
 	"context"
 	"fmt"
+
 	"github.com/jackc/pgx/v5/pgxpool"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/config"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
@@ -417,6 +418,38 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 	FOREIGN KEY (position_id) REFERENCES position (position_id)
 
   )`
+	_, err = conn.Exec(ctx, query)
+	if err != nil {
+
+		str.logger.Error("Error creating user_profile_version table",
+			zap.String("layer", logctx.LogDBInitLayer),
+			zap.String("function", logctx.LogInitSchema),
+			zap.Error(err))
+		return err
+	}
+	str.logger.Info("created user_profile_version table",
+		zap.String("layer", logctx.LogDBInitLayer),
+		zap.String("function", logctx.LogInitSchema))
+	query = `CREATE TABLE IF NOT EXISTS log (
+  log_id SERIAL PRIMARY KEY,
+  user_id VARCHAR(255),
+  action VARCHAR(50),
+  timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  subject_id INT
+  )`
+	_, err = conn.Exec(ctx, query)
+	if err != nil {
+
+		str.logger.Error("Error creating log table",
+			zap.String("layer", logctx.LogDBInitLayer),
+			zap.String("function", logctx.LogInitSchema),
+			zap.Error(err))
+		return err
+	}
+	str.logger.Info("created log table",
+		zap.String("layer", logctx.LogDBInitLayer),
+		zap.String("function", logctx.LogInitSchema))
+
 	tx, err := pool.Begin(ctx)
 	if err != nil {
 		str.logger.Error("Error starting transaction",
