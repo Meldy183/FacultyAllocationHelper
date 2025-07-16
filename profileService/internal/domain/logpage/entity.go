@@ -1,8 +1,11 @@
 package logpage
 
+import "time"
+
 type LogPage struct {
-	LogPageID int
+	LogID     int64
 	UserID    string
 	Action    string
 	SubjectID string
+	Timestamp time.Time
 }
