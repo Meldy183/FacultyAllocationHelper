@@ -29,7 +29,6 @@ const (
 		FROM user_profile_version
 		WHERE profile_version_id = $1
 	`
-
 	queryInsertVersion = `
 		INSERT INTO user_profile_version (
 			(position_id)
@@ -37,7 +36,6 @@ const (
 		VALUES ($1)
 		RETURNING profile_version_id
 	`
-
 	queryUpdateVersion = `
 		UPDATE user_profile_version
 		SET profile_id = $1, year = $2, semester = $3, lectures_count = $4, tutorials_count = $5, labs_count = $6,
