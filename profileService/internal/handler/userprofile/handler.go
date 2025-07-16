@@ -7,31 +7,31 @@ import (
 	"strconv"
 
 	"github.com/go-chi/chi/v5"
-	userinstituteDomain "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/userinstitute"
-	userprofileDomain "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/userprofile"
+	userprofileDomain "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/facultyProfile"
+	userinstituteDomain "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/profileInstitute"
+	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/facultyProfile"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/institute"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/position"
-	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/usercourseinstance"
-	userinstitute "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/userinstitute"
-	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/userlanguage"
-	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/userprofile"
+	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/profileCourseInstance"
+	userinstitute "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/profileInstitute"
+	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/profileLanguage"
 	"go.uber.org/zap"
 )
 
 type Handler struct {
-	serviceUP        *userprofile.Service
+	serviceUP        *facultyProfile.Service
 	serviceUI        *userinstitute.Service
-	serviceLang      *userlanguage.Service
-	serviceCourse    *usercourseinstance.Service
+	serviceLang      *profileLanguage.Service
+	serviceCourse    *profileCourseInstance.Service
 	servicePosition  *position.Service
 	serviceInstitute *institute.Service
 	logger           *zap.Logger
 }
 
-func NewHandler(serviceUP *userprofile.Service,
+func NewHandler(serviceUP *facultyProfile.Service,
 	serviceUI *userinstitute.Service,
-	serviceLang *userlanguage.Service,
-	serviceCourse *usercourseinstance.Service,
+	serviceLang *profileLanguage.Service,
+	serviceCourse *profileCourseInstance.Service,
 	servicePosition *position.Service,
 	serviceInstitute *institute.Service,
 	logger *zap.Logger,
@@ -92,11 +92,11 @@ func (h *Handler) AddProfile(w http.ResponseWriter, r *http.Request) {
 		Alias:       req.Alias,
 	}
 	if err := h.serviceUP.AddProfile(ctx, profile); err != nil {
-		h.logger.Error("error creating userprofile",
+		h.logger.Error("error creating facultyProfile",
 			zap.String("layer", logctx.LogHandlerLayer),
 			zap.String("function", logctx.LogAddProfile),
 			zap.Error(err))
-		writeError(w, http.StatusInternalServerError, "error creating userprofile")
+		writeError(w, http.StatusInternalServerError, "error creating facultyProfile")
 		return
 	}
 	userInstitute := &userinstituteDomain.UserInstitute{
@@ -105,15 +105,15 @@ func (h *Handler) AddProfile(w http.ResponseWriter, r *http.Request) {
 		IsRepresentative: req.IsRepresentative,
 	}
 	if err := h.serviceUI.AddUserInstitute(ctx, userInstitute); err != nil {
-		h.logger.Error("error adding userinstitute",
+		h.logger.Error("error adding profileInstitute",
 			zap.String("layer", logctx.LogHandlerLayer),
 			zap.String("function", logctx.LogAddProfile),
 			zap.Error(err))
-		writeError(w, http.StatusInternalServerError, "error adding userinstitute")
+		writeError(w, http.StatusInternalServerError, "error adding profileInstitute")
 		return
 	}
 
-	h.logger.Info("Successfully added userinstitute",
+	h.logger.Info("Successfully added profileInstitute",
 		zap.String("layer", logctx.LogHandlerLayer),
 		zap.String("function", logctx.LogAddProfile),
 	)
@@ -136,12 +136,12 @@ func (h *Handler) GetProfile(w http.ResponseWriter, r *http.Request) {
 	}
 	profile, err := h.serviceUP.GetProfileByID(ctx, profileID)
 	if err != nil {
-		h.logger.Error("error getting userprofile",
+		h.logger.Error("error getting facultyProfile",
 			zap.String("layer", logctx.LogHandlerLayer),
 			zap.String("function", logctx.LogGetProfileByID),
 			zap.Error(err),
 		)
-		writeError(w, http.StatusInternalServerError, "error getting userprofile")
+		writeError(w, http.StatusInternalServerError, "error getting facultyProfile")
 		return
 	}
 	inst, err := h.serviceUI.GetUserInstituteByID(ctx, profileID)
@@ -151,7 +151,7 @@ func (h *Handler) GetProfile(w http.ResponseWriter, r *http.Request) {
 			zap.String("function", logctx.LogGetProfileByID),
 			zap.Error(err),
 		)
-		writeError(w, http.StatusInternalServerError, "error getting userprofile")
+		writeError(w, http.StatusInternalServerError, "error getting facultyProfile")
 		return
 	}
 	languages, err := h.serviceLang.GetUserLanguages(ctx, profileID)
@@ -218,7 +218,7 @@ func (h *Handler) GetProfile(w http.ResponseWriter, r *http.Request) {
 		Mode:           (*string)(profile.Mode),
 		MaxLoad:        profile.MaxLoad,
 	}
-	h.logger.Info("Successfully fetched profile",
+	h.logger.Info("Successfully fetched facultyProfile",
 		zap.String("layer", logctx.LogHandlerLayer),
 		zap.String("function", logctx.LogGetProfileByID),
 	)
@@ -260,7 +260,7 @@ func (h *Handler) GetAllFaculties(w http.ResponseWriter, r *http.Request) {
 	}
 	profileIds, err := h.serviceUP.GetProfilesByFilter(ctx, insts, positions)
 	if err != nil {
-		h.logger.Error("Error getting profile ids",
+		h.logger.Error("Error getting facultyProfile ids",
 			zap.String("layer", logctx.LogHandlerLayer),
 			zap.String("function", logctx.LogGetAllFaculties),
 			zap.Error(err),
@@ -272,7 +272,7 @@ func (h *Handler) GetAllFaculties(w http.ResponseWriter, r *http.Request) {
 	for _, id := range profileIds {
 		profile, err := h.serviceUP.GetProfileByID(ctx, id)
 		if err != nil {
-			h.logger.Error("Error getting profile by id",
+			h.logger.Error("Error getting facultyProfile by id",
 				zap.String("layer", logctx.LogHandlerLayer),
 				zap.String("function", logctx.LogGetAllFaculties),
 				zap.Int64("ID", id),

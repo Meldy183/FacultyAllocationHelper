@@ -402,7 +402,7 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
     profile_version_id SERIAL PRIMARY KEY,
     profile_id INT,
     year INT,
-    semester VARCHAR(2),
+    semester_id INT,
     lectures_count INT,
     tutorials_count INT,
     labs_count INT,
