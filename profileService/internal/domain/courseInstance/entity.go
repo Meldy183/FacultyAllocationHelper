@@ -43,27 +43,27 @@ const (
 	ModeRemote Mode = "Remote"
 )
 
-func NewCourse(
-	instance_id, course_id int64,
-	year, semester_id, academic_year_id, groups_needed int,
-	groups_taken *int,
+func NewCourseInstance(
+	instanceId, courseId int64,
+	year, semesterId, academicYearId, groupsNeeded int,
+	groupsTaken *int,
 	form *Form,
 	mode *Mode,
-	pi_alloc_Stat Status,
-	ti_alloc_status Status,
+	piAllocStat Status,
+	tiAllocStatus Status,
 
 ) (*CourseInstance, error) {
 	return &CourseInstance{
-		InstanceID:         instance_id,
+		InstanceID:         instanceId,
 		Year:               year,
-		CourseID:           course_id,
-		SemesterID:         semester_id,
-		AcademicYearID:     academic_year_id,
+		CourseID:           courseId,
+		SemesterID:         semesterId,
+		AcademicYearID:     academicYearId,
 		Form:               form,
 		Mode:               mode,
-		GroupsNeeded:       groups_needed,
-		GroupsTaken:        groups_taken,
-		PIAllocationStatus: pi_alloc_Stat,
-		TIAllocationStatus: ti_alloc_status,
+		GroupsNeeded:       groupsNeeded,
+		GroupsTaken:        groupsTaken,
+		PIAllocationStatus: piAllocStat,
+		TIAllocationStatus: tiAllocStatus,
 	}, nil
 }
