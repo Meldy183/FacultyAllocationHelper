@@ -34,13 +34,13 @@ func (r *UserLanguageRepo) AddUserLanguage(ctx context.Context, userLanguage *pr
 			zap.String("function", logctx.LogAddUserLanguage),
 			zap.Error(err),
 		)
-		return fmt.Errorf("adding user-language to database with ID: %w", err)
+		return fmt.Errorf("adding user-language to database with LabID: %w", err)
 	}
 	return nil
 }
 
 func (r *UserLanguageRepo) GetUserLanguages(ctx context.Context, profileID int64) ([]*language.Language, error) {
-	r.logger.Info("Getting user-languages from database with ID", zap.Int64("ProfileID", profileID))
+	r.logger.Info("Getting user-languages from database with LabID", zap.Int64("ProfileID", profileID))
 	rows, err := r.pool.Query(ctx, queryGetUserLanguages, profileID)
 	var userLanguages []*language.Language
 	if err != nil {
@@ -49,7 +49,7 @@ func (r *UserLanguageRepo) GetUserLanguages(ctx context.Context, profileID int64
 			zap.String("function", logctx.LogGetUserLanguages),
 			zap.Error(err),
 		)
-		return nil, fmt.Errorf("getting user-languages from database with ID: %w", err)
+		return nil, fmt.Errorf("getting user-languages from database with LabID: %w", err)
 	}
 	defer rows.Close()
 	for rows.Next() {
@@ -60,7 +60,7 @@ func (r *UserLanguageRepo) GetUserLanguages(ctx context.Context, profileID int64
 				zap.String("function", logctx.LogGetUserLanguages),
 				zap.Error(err),
 			)
-			return nil, fmt.Errorf("getting user-languages from database with ID: %w", err)
+			return nil, fmt.Errorf("getting user-languages from database with LabID: %w", err)
 		}
 		userLanguages = append(userLanguages, &language.Language{})
 	}
@@ -70,7 +70,7 @@ func (r *UserLanguageRepo) GetUserLanguages(ctx context.Context, profileID int64
 			zap.String("function", logctx.LogGetUserLanguages),
 			zap.Error(err),
 		)
-		return nil, fmt.Errorf("getting user-languages from database with ID: %w", err)
+		return nil, fmt.Errorf("getting user-languages from database with LabID: %w", err)
 	}
 	r.logger.Info("Successfully got user-languages",
 		zap.String("layer", logctx.LogRepoLayer),
