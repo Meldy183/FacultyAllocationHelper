@@ -11,41 +11,38 @@ import (
 	"go.uber.org/zap"
 )
 
-var _ userprofile.Repository = (*UserProfileRepo)(nil)
+var _ userprofile.Repository = (*UserProfileVersionRepo)(nil)
 
-type UserProfileRepo struct {
+type UserProfileVersionRepo struct {
 	pool   *pgxpool.Pool
 	logger *zap.Logger
 }
 
-func NewUserProfileRepo(pool *pgxpool.Pool, logger *zap.Logger) *UserProfileRepo {
-	return &UserProfileRepo{pool: pool, logger: logger}
+func NewUserProfileVersionRepo(pool *pgxpool.Pool, logger *zap.Logger) *UserProfileVersionRepo {
+	return &UserProfileVersionRepo{pool: pool, logger: logger}
 }
 
 const (
-	queryGetByProfileID = `
-		SELECT profile_id, email, english_name, russian_name, alias, start_date, end_date
-		FROM user_profile
-		WHERE profile_id = $1
+	queryGetVersionByVersionID = `
+		SELECT profile_version_id, profile_id, year, semester, lectures_count, tutorials_count, labs_count,
+		elective_count, workload, maxload, position_id, employment_type, degree, mode 
+		FROM user_profile_version
+		WHERE profile_version_id = $1
 	`
 
-	queryInsertUserProfile = `
-		INSERT INTO user_profile (
-			email, english_name, alias
+	queryInsertVersion = `
+		INSERT INTO user_profile_version (
+			(position_id)
 		)
-		VALUES ($1, $2, $3)
-		RETURNING profile_id
+		VALUES ($1)
+		RETURNING profile_version_id
 	`
 
-	queryUpdateUserProfile = `
-		UPDATE user_profile
-		SET email = $1, position_id = $2, english_name = $3,
-		    russian_name = $4, alias = $5, employment_type = $6, degree = $7,
-		    mode = $8, start_date = $9, end_date = $10, maxload = $11, student_type = $13
-		WHERE profile_id = $12
-	`
-	queryGetProfilesByFiler = `SELECT up.profile_id FROM user_profile up JOIN user_institute ui ON up.profile_id = ui.profile_id
-WHERE up.position_id = ANY($1) AND ui.institute_id = ANY($2)
+	queryUpdateVersion = `
+		UPDATE user_profile_version
+		SET profile_id = $1, year = $2, semester = $3, lectures_count = $4, tutorials_count = $5, labs_count = $6,
+		elective_count = $7, workload = $8, maxload = $9, position_id = $10, employment_type = $11, degree = $12, mode = $13
+		WHERE profile_version_id = $14
 `
 )
 

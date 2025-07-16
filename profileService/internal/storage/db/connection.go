@@ -3,7 +3,6 @@ package db
 import (
 	"context"
 	"fmt"
-
 	"github.com/jackc/pgx/v5/pgxpool"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/config"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
@@ -200,7 +199,6 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
     code VARCHAR (50),
     name VARCHAR (50),
     officialName VARCHAR (100),
-    hardness_coefficient DECIMAL,
     institute_id INTEGER,
     lec_hours INTEGER,
     lab_hours INTEGER
@@ -247,6 +245,7 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
     year INT,
     mode VARCHAR(20),
     academic_year_id INT,
+	hardness_coefficient DECIMAL,
     form VARCHAR(30),
     groups_needed INT,
     groups_taken INT,
@@ -416,7 +415,6 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 	mode VARCHAR(16),
     FOREIGN KEY (profile_id) REFERENCES user_profile (profile_id),
 	FOREIGN KEY (position_id) REFERENCES position (position_id)
-
   )`
 	_, err = conn.Exec(ctx, query)
 	if err != nil {
@@ -439,7 +437,6 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
   )`
 	_, err = conn.Exec(ctx, query)
 	if err != nil {
-
 		str.logger.Error("Error creating log table",
 			zap.String("layer", logctx.LogDBInitLayer),
 			zap.String("function", logctx.LogInitSchema),
