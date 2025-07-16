@@ -33,15 +33,15 @@ func (s *Service) GetUserInstituteByID(ctx context.Context, userID int64) (*inst
 		s.logger.Error("Error getting Institute by ProfileID",
 			zap.String("layer", logctx.LogServiceLayer),
 			zap.String("function", logctx.LogGetUserInstitute),
-			zap.Int64("ID", userID),
+			zap.Int64("LabID", userID),
 			zap.Error(err),
 		)
-		return nil, fmt.Errorf("error getting institute by ID: %w", err)
+		return nil, fmt.Errorf("error getting institute by LabID: %w", err)
 	}
-	s.logger.Info("User Institute by ID found",
+	s.logger.Info("User Institute by LabID found",
 		zap.String("layer", logctx.LogServiceLayer),
 		zap.String("function", logctx.LogGetUserInstitute),
-		zap.Int64("ID", userID),
+		zap.Int64("LabID", userID),
 	)
 	return userInst, nil
 }

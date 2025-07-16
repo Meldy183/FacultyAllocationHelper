@@ -48,7 +48,7 @@ func (r *LabRepo) GetAllLabs(ctx context.Context) ([]*lab.Lab, error) {
 		}
 		var labToAdd lab.Lab
 		err := rows.Scan(
-			&labToAdd.ID,
+			&labToAdd.LabID,
 			&labToAdd.Name,
 			&labToAdd.InstituteID,
 		)
@@ -93,7 +93,7 @@ func (r *LabRepo) GetLabsByInstituteID(ctx context.Context, instituteID int64) (
 		}
 		var labToAdd lab.Lab
 		err := rows.Scan(
-			&labToAdd.ID,
+			&labToAdd.LabID,
 			&labToAdd.Name,
 			&labToAdd.InstituteID)
 		if err != nil {

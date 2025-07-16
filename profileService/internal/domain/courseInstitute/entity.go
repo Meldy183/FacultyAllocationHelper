@@ -1,6 +1,7 @@
 package courseInstitute
 
-type CourseInstitute struct {
-	InstituteID int
-	Name        string
+type InstituteCourse struct {
+	CourseInstituteID int
+	InstituteID       int
+	CourseID          int
 }

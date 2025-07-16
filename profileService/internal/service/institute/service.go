@@ -28,7 +28,7 @@ func (s *Service) GetInstituteByID(ctx context.Context, instituteID int64) (*ins
 	}
 	instituteByID, err := s.repo.GetInstituteByID(ctx, instituteID)
 	if err != nil {
-		s.logger.Error("failed to retrieve institute by ID",
+		s.logger.Error("failed to retrieve institute by LabID",
 			zap.String("layer", logctx.LogServiceLayer),
 			zap.String("function", logctx.LogGetInstituteProfileByID),
 			zap.Int64("institute_id", instituteID),
