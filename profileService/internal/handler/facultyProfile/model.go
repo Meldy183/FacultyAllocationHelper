@@ -71,6 +71,7 @@ type AddProfileRequest struct {
 	InstituteIDs     []int  `json:"institute_ids"`
 	PositionID       int    `json:"position_id"`
 	IsRepresentative bool   `json:"is_repr"`
+	Year             int    `json:"year"`
 }
 
 type AddProfileResponse struct {
