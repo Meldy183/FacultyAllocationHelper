@@ -51,7 +51,6 @@ func NewHandler(serviceUP *facultyProfile.Service,
 func (h *Handler) AddProfile(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	var req AddProfileRequest
-	var resp AddProfileResponse
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		h.logger.Error("error decoding json",
 			zap.String("layer", logctx.LogHandlerLayer),
@@ -133,7 +132,22 @@ func (h *Handler) AddProfile(w http.ResponseWriter, r *http.Request) {
 		)
 		writeError(w, http.StatusInternalServerError, "error adding profileVersion")
 	}
-
+	PositionName, err := h.servicePosition.GetPositionByID(ctx, version.PositionID)
+	if err != nil {
+		h.logger.Error("error getting position",
+			zap.String("layer", logctx.LogHandlerLayer),
+			zap.String("function", logctx.LogAddProfile),
+			zap.Error(err),
+		)
+		writeError(w, http.StatusInternalServerError, "error getting position")
+	}
+	profileSub := &Profile{
+		NameEnglish: req.NameEnglish,
+		PositionID:  PositionName,
+	}
+	resp := &AddProfileResponse{
+		ProfileVersionID: version.ProfileVersionId,
+	}
 }
 
 func (h *Handler) GetProfile(w http.ResponseWriter, r *http.Request) {

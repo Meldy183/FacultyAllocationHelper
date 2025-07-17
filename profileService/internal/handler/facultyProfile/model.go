@@ -65,22 +65,23 @@ type EditCourseResponse struct {
 }
 
 type AddProfileRequest struct {
-	ProfileData Profile
-}
-
-type AddProfileResponse struct {
-	ProfileVersionID int
-	ProfileData      Profile
-}
-
-type Profile struct {
 	NameEnglish      string `json:"name_eng"`
 	Email            string `json:"email"`
 	Alias            string `json:"alias"`
-	InstituteID      []int  `json:"institute_ids"`
+	InstituteIDs     []int  `json:"institute_ids"`
 	PositionID       int    `json:"position_id"`
 	IsRepresentative bool   `json:"is_repr"`
-	Year             int    `json:"year"`
+}
+
+type AddProfileResponse struct {
+	ProfileVersionID int64
+	NameEnglish      string   `json:"name_eng"`
+	Email            string   `json:"email"`
+	Alias            string   `json:"alias"`
+	InstituteNames   []string `json:"institute_ids"`
+	PositionName     string   `json:"position_id"`
+	IsRepresentative bool     `json:"is_repr"`
+	Year             int      `json:"year"`
 }
 
 type GetProfileResponse struct {
