@@ -78,7 +78,7 @@ func (h *Handler) AddProfile(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusBadRequest, "invalid position")
 		return
 	}
-	for _, elem := range req.InstituteID {
+	for _, elem := range req.InstituteIDs {
 		if elem <= 0 {
 			h.logger.Error("invalid instituteID",
 				zap.Int("InstituteID", elem),
@@ -103,11 +103,10 @@ func (h *Handler) AddProfile(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusInternalServerError, "error creating facultyProfile")
 		return
 	}
-	for _, elem := range req.InstituteID {
+	for _, elem := range req.InstituteIDs {
 		userInstitute := &userinstituteDomain.UserInstitute{
-			ProfileID:        profile.ProfileID,
-			InstituteID:      elem,
-			IsRepresentative: req.IsRepresentative,
+			ProfileID:   profile.ProfileID,
+			InstituteID: elem,
 		}
 		if err := h.serviceUI.AddUserInstitute(ctx, userInstitute); err != nil {
 			h.logger.Error("error adding profileInstitute",
@@ -132,7 +131,7 @@ func (h *Handler) AddProfile(w http.ResponseWriter, r *http.Request) {
 		)
 		writeError(w, http.StatusInternalServerError, "error adding profileVersion")
 	}
-	PositionName, err := h.servicePosition.GetPositionByID(ctx, version.PositionID)
+	positionName, err := h.servicePosition.GetPositionByID(ctx, version.PositionID)
 	if err != nil {
 		h.logger.Error("error getting position",
 			zap.String("layer", logctx.LogHandlerLayer),
@@ -141,12 +140,13 @@ func (h *Handler) AddProfile(w http.ResponseWriter, r *http.Request) {
 		)
 		writeError(w, http.StatusInternalServerError, "error getting position")
 	}
-	profileSub := &Profile{
-		NameEnglish: req.NameEnglish,
-		PositionID:  PositionName,
-	}
 	resp := &AddProfileResponse{
 		ProfileVersionID: version.ProfileVersionId,
+		NameEnglish:      req.NameEnglish,
+		Year:             version.Year,
+		PositionName:     *positionName,
+		Email:            profile.Email,
+		Alias:            profile.Alias,
 	}
 }
 
