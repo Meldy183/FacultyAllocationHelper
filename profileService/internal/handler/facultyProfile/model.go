@@ -63,6 +63,7 @@ type EditCourseResponse struct {
 	LectureHours             int      `json:"lecture_hours"`
 	LabHours                 int      `json:"lab_hours"`
 }
+
 type AddProfileRequest struct {
 	NameEnglish      string `json:"name_eng"`
 	Email            string `json:"email"`
@@ -73,7 +74,6 @@ type AddProfileRequest struct {
 	Year             int    `json:"year"`
 }
 
-// try
 type GetProfileResponse struct {
 	ProfileID      int64          `json:"profile_id"`
 	NameEnglish    string         `json:"name_eng"`
@@ -157,12 +157,12 @@ type GetAllFacultiesResponse struct {
 }
 
 type ShortProfile struct {
-	ProfileID   int64  `json:"profile_id"`
-	NameEnglish string `json:"name_eng"`
-	Alias       string `json:"alias"`
-	Email       string `json:"email"`
-	Position    string `json:"position"`
-	Institute   string `json:"institute"`
+	ProfileID   int64    `json:"profile_id"`
+	NameEnglish string   `json:"name_eng"`
+	Alias       string   `json:"alias"`
+	Email       string   `json:"email"`
+	Position    string   `json:"position_name"`
+	Institutes  []string `json:"institute_names"`
 }
 type InstituteObj struct {
 	ID   int    `json:"id"`
@@ -177,4 +177,10 @@ type PositionObj struct {
 type GetFacultyFiltersResponse struct {
 	InstituteFilters []InstituteObj `json:"institute"`
 	PositionFilters  []PositionObj  `json:"position"`
+}
+
+type EditProfileRequest struct {
+}
+
+type EditProfileResponse struct {
 }
