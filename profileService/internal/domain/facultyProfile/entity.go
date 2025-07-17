@@ -15,18 +15,3 @@ type UserProfile struct {
 	Fsro        *string
 	Status      *string
 }
-
-func NewUserProfile(
-	profileID int64,
-	engName, russianName, alias string,
-	startDate, endDate *time.Time,
-) *UserProfile {
-	return &UserProfile{
-		ProfileID:   profileID,
-		EnglishName: engName,
-		RussianName: &russianName,
-		Alias:       alias,
-		StartDate:   startDate,
-		EndDate:     endDate,
-	}
-}

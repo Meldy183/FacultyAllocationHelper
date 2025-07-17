@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/config"
-	userprofile2 "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/handler/userprofile"
+	userprofile2 "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/handler/facultyProfile"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/http"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/facultyProfile"

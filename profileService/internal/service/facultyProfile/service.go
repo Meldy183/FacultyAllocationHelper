@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-var _ facultyProfile.Repository = (*Service)(nil)
+var _ facultyProfile.Service = (*Service)(nil)
 
 type Service struct {
 	repo   facultyProfile.Repository
@@ -94,7 +94,7 @@ func (s *Service) UpdateProfileByID(ctx context.Context, profile *facultyProfile
 	return nil
 }
 
-func (s *Service) GetProfilesByFilter(ctx context.Context, institutes []int, positions []int) ([]int64, error) {
+func (s *Service) GetProfilesByFilters(ctx context.Context, institutes []int, positions []int) ([]int64, error) {
 	profilesByInst, err := s.repo.GetProfileIDsByInstituteIDs(ctx, institutes)
 	if err != nil {
 		s.logger.Error("error getting facultyProfile",

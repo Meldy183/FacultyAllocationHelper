@@ -1,8 +1,9 @@
-package userprofile
+package facultyProfile
 
 import (
 	"encoding/json"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
+	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/profileVersion"
 	"net/http"
 	"strconv"
 
@@ -19,13 +20,14 @@ import (
 )
 
 type Handler struct {
-	serviceUP        *facultyProfile.Service
-	serviceUI        *userinstitute.Service
-	serviceLang      *profileLanguage.Service
-	serviceCourse    *profileCourseInstance.Service
-	servicePosition  *position.Service
-	serviceInstitute *institute.Service
-	logger           *zap.Logger
+	serviceUP             *facultyProfile.Service
+	serviceUI             *userinstitute.Service
+	serviceLang           *profileLanguage.Service
+	serviceCourse         *profileCourseInstance.Service
+	servicePosition       *position.Service
+	serviceInstitute      *institute.Service
+	serviceVersionProfile *profileVersion.Service
+	logger                *zap.Logger
 }
 
 func NewHandler(serviceUP *facultyProfile.Service,
@@ -258,7 +260,7 @@ func (h *Handler) GetAllFaculties(w http.ResponseWriter, r *http.Request) {
 		}
 		positions = append(positions, pos)
 	}
-	profileIds, err := h.serviceUP.GetProfilesByFilter(ctx, insts, positions)
+	profileIds, err := h.serviceUP.GetProfilesByFilters(ctx, insts, positions)
 	if err != nil {
 		h.logger.Error("Error getting facultyProfile ids",
 			zap.String("layer", logctx.LogHandlerLayer),
@@ -280,7 +282,17 @@ func (h *Handler) GetAllFaculties(w http.ResponseWriter, r *http.Request) {
 			)
 			return
 		}
-		pos, err := h.servicePosition.GetPositionByID(ctx, profile.PositionID)
+		version, err := h.serviceVersionProfile.GetVersionByProfileID(ctx, id)
+		if err != nil {
+			h.logger.Error("Error getting facultyVersionProfile by id",
+				zap.String("layer", logctx.LogHandlerLayer),
+				zap.String("function", logctx.LogGetAllFaculties),
+				zap.Int64("LabID", id),
+				zap.Error(err),
+			)
+			return
+		}
+		pos, err := h.servicePosition.GetPositionByID(ctx, version.PositionID)
 		if err != nil {
 			h.logger.Error("Error getting position by id",
 				zap.String("layer", logctx.LogHandlerLayer),

@@ -2,11 +2,11 @@ package http
 
 import (
 	"github.com/go-chi/chi/v5"
-	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/handler/userprofile"
+	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/handler/facultyProfile"
 )
 
-func NewRouter(h *userprofile.Handler) chi.Router {
+func NewRouter(h *facultyProfile.Handler) chi.Router {
 	r := chi.NewRouter()
-	userprofile.RegisterRoutes(r, h)
+	facultyProfile.RegisterRoutes(r, h)
 	return r
 }

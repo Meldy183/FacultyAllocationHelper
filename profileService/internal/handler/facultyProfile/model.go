@@ -1,4 +1,4 @@
-package userprofile
+package facultyProfile
 
 type AddProfileRequest struct {
 	NameEnglish      string `json:"name_eng"`

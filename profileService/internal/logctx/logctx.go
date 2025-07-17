@@ -49,4 +49,7 @@ const (
 	LogGetInstancesByProfileID     = "getInstancesByProfileID"
 	LogGetProfileIDsByInstituteIDs = "getProfileIDsByInstituteIDs"
 	LogGetProfileIDsByPositionIDs  = "getProfileIDsByPositionIDs"
+	LogGetVersionByProfileID       = "getVersionByProfileID"
+	LogAddVersion                  = "addVersion"
+	LogGetVersionIDByProfileID     = "getVersionIDByProfileID"
 )
