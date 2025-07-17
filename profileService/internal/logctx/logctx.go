@@ -2,6 +2,7 @@ package logctx
 
 import (
 	"context"
+
 	"go.uber.org/zap"
 )
 
@@ -53,4 +54,5 @@ const (
 	LogAddVersion                  = "addVersion"
 	LogGetVersionIDByProfileID     = "getVersionIDByProfileID"
 	LogAddProfileVersion           = "addProfileVersion"
+	LogGetLogpages                 = "getLogPages"
 )
