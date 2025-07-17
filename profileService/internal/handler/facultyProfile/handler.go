@@ -90,7 +90,6 @@ func (h *Handler) AddProfile(w http.ResponseWriter, r *http.Request) {
 	profile := &userprofileDomain.UserProfile{
 		EnglishName: req.NameEnglish,
 		Email:       req.Email,
-		PositionID:  req.PositionID,
 		Alias:       req.Alias,
 	}
 	if err := h.serviceUP.AddProfile(ctx, profile); err != nil {
@@ -114,7 +113,7 @@ func (h *Handler) AddProfile(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusInternalServerError, "error adding profileInstitute")
 		return
 	}
-
+	if err := h.serviceVersionProfile.
 	h.logger.Info("Successfully added profileInstitute",
 		zap.String("layer", logctx.LogHandlerLayer),
 		zap.String("function", logctx.LogAddProfile),

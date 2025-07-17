@@ -4,9 +4,10 @@ type AddProfileRequest struct {
 	NameEnglish      string `json:"name_eng"`
 	Email            string `json:"email"`
 	Alias            string `json:"alias"`
-	InstituteID      int    `json:"institute_id"`
+	InstituteID      []int  `json:"institute_ids"`
 	PositionID       int    `json:"position_id"`
 	IsRepresentative bool   `json:"is_repr"`
+	Year             int    `json:"year"`
 }
 
 type GetProfileResponse struct {
@@ -15,13 +16,13 @@ type GetProfileResponse struct {
 	NameRussian    *string        `json:"name_ru"`
 	Alias          string         `json:"alias"`
 	Email          string         `json:"email"`
-	Position       string         `json:"position"`
-	Institute      string         `json:"institute"`
+	PositionName   string         `json:"position_name"`
+	InstituteNames []string       `json:"institute_names"`
 	Workload       *float64       `json:"workload"`
 	StudentType    *string        `json:"student_type"`
 	Degree         *bool          `json:"degree"`
 	Fsro           *string        `json:"fsro"`
-	Languages      *[]Lang        `json:"languages"`
+	LanguageCodes  *[]Lang        `json:"languages"`
 	Courses        *[]Course      `json:"courses"`
 	EmploymentType *string        `json:"employment_type"`
 	HiringStatus   *string        `json:"hiring_status"`
@@ -33,35 +34,57 @@ type GetProfileResponse struct {
 }
 
 type Lang struct {
-	Language string `json:"language"`
+	Language string `json:"language_code"`
 }
 
 type Course struct {
-	CourseInstanceID int64 `json:"id"`
+	CourseID             *int64     `json:"course_id"`
+	BriefName            *string    `json:"brief_name"`
+	OfficialName         *string    `json:"official_name"`
+	AcademicYearName     *string    `json:"academic_year_name"`
+	SemesterName         *string    `json:"semester_name"`
+	StudyPrograms        *[]string  `json:"study_program_names"`
+	InstituteName        *string    `json:"responsible_institute_name"`
+	Tracks               *[]string  `json:"track_names"`
+	IsAllocationFinished *bool      `json:"allocation_finished"`
+	Mode                 *string    `json:"mode"`
+	StudyYear            *int       `json:"study_year"`
+	Form                 *string    `json:"form"`
+	LectureHours         *int       `json:"lecture_hours"`
+	LabHours             *int       `json:"lab_hours"`
+	GroupsNeeded         *int       `json:"groups_needed"`
+	GroupsTaken          *int       `json:"groups_taken"`
+	PI                   PI         `json:"pi"`
+	TI                   PI         `json:"ti"`
+	TAs                  *[]Faculty `json:"tas"`
 }
 
+type PI struct {
+	AllocationStatus *string  `json:"allocation_status"`
+	ProfileData      *Faculty `json:"profile_data"`
+}
+type Faculty struct {
+	ProfileID      *int64   `json:"profile_id"`
+	NameEng        *string  `json:"name_eng"`
+	Alias          *string  `json:"alias"`
+	Email          *string  `json:"email"`
+	PositionName   *string  `json:"position_name"`
+	InstituteNames []string `json:"institute_names"`
+	Workload       *float64 `json:"workload"`
+	Classes        []string `json:"classes"`
+}
 type WorkloadStats struct {
-	UnitStat []UnitStat `json:"unitStat"`
-	Total    Total      `json:"total"`
-}
-
-type UnitStat struct {
-	Trimester string  `json:"trimester"`
-	Classes   Classes `json:"classes"`
-}
-type Total struct {
-	Lectures   int `json:"totalLec"`
-	TotalTut   int `json:"totalTut"`
-	TotalLab   int `json:"totalLab"`
-	TotalElect int `json:"totalElect"`
-	TotalRate  int `json:"totalRate"`
+	T1    []Classes `json:"t1"`
+	T2    []Classes `json:"t2"`
+	T3    []Classes `json:"t3"`
+	Total []Classes `json:"total"`
 }
 
 type Classes struct {
-	Lec  int `json:"lec"`
-	Tut  int `json:"tut"`
-	Lab  int `json:"lab"`
-	Elec int `json:"elec"`
+	Lec  int `json:"lec_hours"`
+	Tut  int `json:"tut_hours"`
+	Lab  int `json:"lab_hours"`
+	Elec int `json:"elective_hours"`
 	Rate int `json:"rate"`
 }
 
