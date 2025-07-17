@@ -1,4 +1,4 @@
-package ResponsibleInstitute
+package responsibleInstitute
 
 type ResponsibleInstitute struct {
 	ResponsibleInstituteID int

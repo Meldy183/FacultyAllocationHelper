@@ -198,6 +198,7 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
     course_id SERIAL PRIMARY KEY,
     code VARCHAR (50),
     name VARCHAR (50),
+	is_elective BOOL,
     officialName VARCHAR (100),
     institute_id INTEGER,
     lec_hours INTEGER,
