@@ -221,7 +221,7 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 
 	query = `CREATE TABLE IF NOT EXISTS responsible_institute (
     responsible_institute_id SERIAL PRIMARY KEY,
-    name VARCHAR
+    responsible_institute_name VARCHAR
   )`
 	_, err = conn.Exec(ctx, query)
 	if err != nil {
@@ -237,13 +237,12 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 		zap.String("layer", logctx.LogDBInitLayer),
 		zap.String("function", logctx.LogInitSchema),
 	)
-
 	query = `CREATE TABLE IF NOT EXISTS institute_course_link (
     institute_course_id SERIAL PRIMARY KEY,
     course_id INT,
-    course_institute_id INT,
+    responsible_institute_id INT,
     FOREIGN KEY (course_id) REFERENCES course (course_id),
-    FOREIGN KEY (course_institute_id) REFERENCES course_institutes (course_institute_id)
+    FOREIGN KEY (responsible_institute_id) REFERENCES responsible_institute (responsible_institute_id)
   )`
 	_, err = conn.Exec(ctx, query)
 	if err != nil {
@@ -255,6 +254,24 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 		return err
 	}
 	str.logger.Info("created institute_course_link table",
+		zap.String("layer", logctx.LogDBInitLayer),
+		zap.String("function", logctx.LogInitSchema),
+	)
+	query = `CREATE TABLE IF NOT EXISTS semester (
+    semester_id SERIAL PRIMARY KEY,
+    semester_name VARCHAR(20)
+  )`
+	_, err = conn.Exec(ctx, query)
+	if err != nil {
+
+		str.logger.Error("Error creating semester table",
+			zap.String("layer", logctx.LogDBInitLayer),
+			zap.String("function", logctx.LogInitSchema),
+			zap.Error(err),
+		)
+		return err
+	}
+	str.logger.Info("created semester table",
 		zap.String("layer", logctx.LogDBInitLayer),
 		zap.String("function", logctx.LogInitSchema),
 	)
@@ -518,7 +535,7 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 	)
 
 	_, err = tx.Exec(ctx, `
-    INSERT INTO course_institutes (course_institute_id, name)
+    INSERT INTO responsible_institute (responsible_institute_id, responsible_institute_name)
     VALUES (1, 'DS'),
            (2, 'DS/Math'),
            (3, 'DS/SDE'),
@@ -527,16 +544,16 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 		   (6, 'RO'),
 		   (7, 'SDE'),
 		   (8, 'SNE')
-    ON CONFLICT (institute_id) DO NOTHING;
+    ON CONFLICT (responsible_institute_id) DO NOTHING;
   `)
 	if err != nil {
-		str.logger.Error("Error adding institute manually",
+		str.logger.Error("Error adding responsible_institute manually",
 			zap.String("layer", logctx.LogDBInitLayer),
 			zap.String("function", logctx.LogInitSchema),
 			zap.Error(err),
 		)
 	}
-	str.logger.Info("added institutes SUCCESS",
+	str.logger.Info("added responsible_institutes SUCCESS",
 		zap.String("layer", logctx.LogDBInitLayer),
 		zap.String("function", logctx.LogInitSchema),
 	)
