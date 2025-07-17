@@ -95,18 +95,7 @@ func (s *Service) UpdateProfileByID(ctx context.Context, profile *facultyProfile
 }
 
 func (s *Service) GetProfilesByFilter(ctx context.Context, institutes []int, positions []int) ([]int64, error) {
-	profiles, err := s.repo.GetProfilesByFilter(ctx, institutes, positions)
-	if err != nil {
-		s.logger.Error("error getting facultyProfile by filter",
-			zap.String("layer", logctx.LogServiceLayer),
-			zap.String("function", logctx.LogGetProfilesByFilters),
-			zap.Ints("institutes", institutes),
-			zap.Ints("positions", positions),
-			zap.Error(err),
-		)
-		return nil, fmt.Errorf("error getting facultyProfile by filter %w", err)
-	}
-	return profiles, nil
+	profilesByInst :=
 }
 
 func isAliasValid(req *facultyProfile.UserProfile) bool {

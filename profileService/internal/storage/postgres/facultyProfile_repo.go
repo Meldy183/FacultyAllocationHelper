@@ -11,15 +11,15 @@ import (
 	"go.uber.org/zap"
 )
 
-var _ facultyProfile.Repository = (*UserProfileRepo)(nil)
+var _ facultyProfile.Repository = (*FacultyProfileRepo)(nil)
 
-type UserProfileRepo struct {
+type FacultyProfileRepo struct {
 	pool   *pgxpool.Pool
 	logger *zap.Logger
 }
 
-func NewUserProfileRepo(pool *pgxpool.Pool, logger *zap.Logger) *UserProfileRepo {
-	return &UserProfileRepo{pool: pool, logger: logger}
+func NewUserProfileRepo(pool *pgxpool.Pool, logger *zap.Logger) *FacultyProfileRepo {
+	return &FacultyProfileRepo{pool: pool, logger: logger}
 }
 
 const (
@@ -39,33 +39,25 @@ const (
 
 	queryUpdateUserProfile = `
 		UPDATE user_profile
-		SET email = $1, position_id = $2, english_name = $3,
-		    russian_name = $4, alias = $5, employment_type = $6, degree = $7,
-		    mode = $8, start_date = $9, end_date = $10, maxload = $11, student_type = $13
-		WHERE profile_id = $12
+		SET email = $1, english_name = $2,
+		    russian_name = $3, alias = $4, start_date = $5, end_date = $6
+		WHERE profile_id = $7
 	`
-	queryGetProfilesByFiler = `SELECT up.profile_id FROM user_profile up JOIN user_institute ui ON up.profile_id = ui.profile_id
-WHERE up.position_id = ANY($1) AND ui.institute_id = ANY($2)
-`
+	queryGetProfileIDsByInstituteIDs = `SELECT profile_id FROM user_institute WHERE institute_id = ANY($1)`
+	queryGetProfileIDsByPositionIDs  = `SELECT profile_id from user_profile_version where position_id = ANY($1)`
 )
 
-func (r *UserProfileRepo) GetProfileByID(ctx context.Context, profileID int64) (*facultyProfile.UserProfile, error) {
+func (r *FacultyProfileRepo) GetProfileByID(ctx context.Context, profileID int64) (*facultyProfile.UserProfile, error) {
 	row := r.pool.QueryRow(ctx, queryGetByProfileID, profileID)
 	var userProfile facultyProfile.UserProfile
 	err := row.Scan(
 		&userProfile.ProfileID,
 		&userProfile.Email,
-		&userProfile.PositionID,
 		&userProfile.EnglishName,
 		&userProfile.RussianName,
 		&userProfile.Alias,
-		&userProfile.EmploymentType,
-		&userProfile.StudentType,
-		&userProfile.Degree,
-		&userProfile.Mode,
 		&userProfile.StartDate,
 		&userProfile.EndDate,
-		&userProfile.MaxLoad,
 	)
 	if err != nil {
 		r.logger.Error("Error getting user facultyProfile",
@@ -84,10 +76,9 @@ func (r *UserProfileRepo) GetProfileByID(ctx context.Context, profileID int64) (
 	return &userProfile, err
 }
 
-func (r *UserProfileRepo) AddProfile(ctx context.Context, userProfile *facultyProfile.UserProfile) error {
+func (r *FacultyProfileRepo) AddProfile(ctx context.Context, userProfile *facultyProfile.UserProfile) error {
 	err := r.pool.QueryRow(ctx, queryInsertUserProfile,
 		userProfile.Email,
-		userProfile.PositionID,
 		userProfile.EnglishName,
 		userProfile.Alias,
 	).Scan(&userProfile.ProfileID)
@@ -108,11 +99,16 @@ func (r *UserProfileRepo) AddProfile(ctx context.Context, userProfile *facultyPr
 	return nil
 }
 
-func (r *UserProfileRepo) UpdateProfileByID(ctx context.Context, userProfile *facultyProfile.UserProfile) error {
-	_, err := r.pool.Exec(ctx, queryUpdateUserProfile, 0, userProfile.Email, userProfile.PositionID,
-		userProfile.EnglishName, userProfile.RussianName, userProfile.Alias, userProfile.EmploymentType,
-		userProfile.Degree, userProfile.Mode, userProfile.StartDate, userProfile.EndDate, userProfile.MaxLoad,
-		userProfile.ProfileID, userProfile.StudentType)
+func (r *FacultyProfileRepo) UpdateProfileByID(ctx context.Context, userProfile *facultyProfile.UserProfile) error {
+	_, err := r.pool.Exec(ctx, queryUpdateUserProfile,
+		userProfile.Email,
+		userProfile.EnglishName,
+		userProfile.RussianName,
+		userProfile.Alias,
+		userProfile.StartDate,
+		userProfile.EndDate,
+		userProfile.ProfileID,
+	)
 	if err != nil {
 		r.logger.Error("Error updating user facultyProfile",
 			zap.String("layer", logctx.LogRepoLayer),
@@ -130,73 +126,69 @@ func (r *UserProfileRepo) UpdateProfileByID(ctx context.Context, userProfile *fa
 	return nil
 }
 
-func (r *UserProfileRepo) GetProfilesByFilter(ctx context.Context, institutes []int, positions []int) ([]int64, error) {
-	if len(institutes) == 0 {
-		instRepo, err := NewInstituteRepo(r.pool, r.logger).GetAllInstitutes(ctx)
-		if err != nil {
-			r.logger.Error("Error getting all institutes",
-				zap.String("layer", logctx.LogRepoLayer),
-				zap.String("function", logctx.LogGetProfilesByFilters),
-				zap.Error(err),
-			)
-			return nil, fmt.Errorf("GetAllInstitutes failed: %w", err)
-		}
-		for _, inst := range instRepo {
-			institutes = append(institutes, inst.InstituteID)
-		}
-		r.logger.Info("Institutes length is zero, filtering by all institutes",
-			zap.String("layer", logctx.LogRepoLayer),
-			zap.String("function", logctx.LogGetProfilesByFilters),
-			zap.Int("institutes", len(institutes)),
-		)
-	}
-	if len(positions) == 0 {
-		posRepo, err := NewPositionRepo(r.pool, r.logger).GetAllPositions(ctx)
-		if err != nil {
-			r.logger.Error("Error getting all positions",
-				zap.String("layer", logctx.LogRepoLayer),
-				zap.String("function", logctx.LogGetProfilesByFilters),
-				zap.Error(err),
-			)
-			return nil, fmt.Errorf("GetAllPositions failed: %w", err)
-		}
-		for _, pos := range posRepo {
-			positions = append(positions, pos.PositionID)
-		}
-		r.logger.Info("Positions length is zero, filtering by all positions",
-			zap.String("layer", logctx.LogRepoLayer),
-			zap.String("function", logctx.LogGetProfilesByFilters),
-			zap.Int("positions", len(positions)),
-		)
-	}
-	rows, err := r.pool.Query(ctx, queryGetProfilesByFiler, institutes, positions)
+func (r *FacultyProfileRepo) GetProfileIDsByInstituteIDs(ctx context.Context, instituteIDs []int) ([]int64, error) {
+	rows, err := r.pool.Query(ctx, queryGetProfileIDsByInstituteIDs, instituteIDs)
 	if err != nil {
-		r.logger.Error("Error getting all profileIDs",
+		r.logger.Error("Error getting facultyProfile by instituteIDs",
 			zap.String("layer", logctx.LogRepoLayer),
-			zap.String("function", logctx.LogGetProfilesByFilters),
+			zap.String("function", logctx.LogGetProfileIDsByInstituteIDs),
+			zap.String("instituteIDs", fmt.Sprintf("%v", instituteIDs)),
 			zap.Error(err),
 		)
-		return nil, fmt.Errorf("GetAllProfileIDs failed: %w", err)
+		return nil, fmt.Errorf("GetProfileIDsByInstituteIDs failed: %w", err)
 	}
 	defer rows.Close()
-	profileIDs := make([]int64, 0)
+	var ids []int64
 	for rows.Next() {
-		var profileID int64
-		err = rows.Scan(&profileID)
-		if err != nil {
-			r.logger.Error("Error getting single profileID",
+		var id int64
+		if err := rows.Scan(&id); err != nil {
+			r.logger.Error("Error getting facultyProfile by instituteIDs",
 				zap.String("layer", logctx.LogRepoLayer),
-				zap.String("function", logctx.LogGetProfilesByFilters),
+				zap.String("function", logctx.LogGetProfileIDsByInstituteIDs),
+				zap.String("instituteIDs", fmt.Sprintf("%v", instituteIDs)),
 				zap.Error(err),
 			)
-			return nil, fmt.Errorf("GetAllProfileIDs failed: %w", err)
+			return nil, fmt.Errorf("GetProfileIDsByInstituteIDs failed: %w", err)
 		}
-		profileIDs = append(profileIDs, profileID)
+		ids = append(ids, id)
 	}
-	r.logger.Info("ProfileIDs received successfully",
+	r.logger.Info("facultyProfile by instituteIDs found",
 		zap.String("layer", logctx.LogRepoLayer),
-		zap.String("function", logctx.LogGetProfilesByFilters),
-		zap.Int("profileIDs", len(profileIDs)),
+		zap.String("function", logctx.LogGetProfileIDsByInstituteIDs),
+		zap.Int64s("instituteIDs", ids),
 	)
-	return profileIDs, nil
+	return ids, nil
+}
+func (r *FacultyProfileRepo) GetProfileIDsByPositionIDs(ctx context.Context, positionIDs []int) ([]int64, error) {
+	rows, err := r.pool.Query(ctx, queryGetProfileIDsByPositionIDs, positionIDs)
+	if err != nil {
+		r.logger.Error("Error getting facultyProfile by positionIDs",
+			zap.String("layer", logctx.LogRepoLayer),
+			zap.String("function", logctx.LogGetProfileIDsByPositionIDs),
+			zap.String("positionIDs", fmt.Sprintf("%v", positionIDs)),
+			zap.Error(err),
+		)
+		return nil, fmt.Errorf("GetProfileIDsByPositionIDs failed: %w", err)
+	}
+	defer rows.Close()
+	var ids []int64
+	for rows.Next() {
+		var id int64
+		if err := rows.Scan(&id); err != nil {
+			r.logger.Error("Error getting facultyProfile by positionIDs",
+				zap.String("layer", logctx.LogRepoLayer),
+				zap.String("function", logctx.LogGetProfileIDsByPositionIDs),
+				zap.String("positionIDs", fmt.Sprintf("%v", positionIDs)),
+				zap.Error(err),
+			)
+			return nil, fmt.Errorf("GetProfileIDsByPositionIDs failed: %w", err)
+		}
+		ids = append(ids, id)
+	}
+	r.logger.Info("facultyProfile by positionIDs found",
+		zap.String("layer", logctx.LogRepoLayer),
+		zap.String("function", logctx.LogGetProfileIDsByPositionIDs),
+		zap.Int64s("positionIDs", ids),
+	)
+	return ids, nil
 }
