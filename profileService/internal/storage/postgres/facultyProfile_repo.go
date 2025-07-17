@@ -43,8 +43,10 @@ const (
 		    russian_name = $3, alias = $4, start_date = $5, end_date = $6
 		WHERE profile_id = $7
 	`
-	queryGetProfileIDsByInstituteIDs = `SELECT profile_id FROM user_institute WHERE institute_id = ANY($1)`
-	queryGetProfileIDsByPositionIDs  = `SELECT profile_id from user_profile_version where position_id = ANY($1)`
+	queryGetProfileIDsByInstituteIDs = `SELECT profile_id FROM user_institute WHERE institute_id = ANY($1)
+ORDER BY profile_id`
+	queryGetProfileIDsByPositionIDs = `SELECT profile_id from user_profile_version where position_id = ANY($1)
+ORDER BY profile_id`
 )
 
 func (r *FacultyProfileRepo) GetProfileByID(ctx context.Context, profileID int64) (*facultyProfile.UserProfile, error) {

@@ -95,7 +95,27 @@ func (s *Service) UpdateProfileByID(ctx context.Context, profile *facultyProfile
 }
 
 func (s *Service) GetProfilesByFilter(ctx context.Context, institutes []int, positions []int) ([]int64, error) {
-	profilesByInst :=
+	profilesByInst, err := s.repo.GetProfileIDsByInstituteIDs(ctx, institutes)
+	if err != nil {
+		s.logger.Error("error getting facultyProfile",
+			zap.String("layer", logctx.LogServiceLayer),
+			zap.Ints("institutes", institutes),
+			zap.Ints("positions", positions),
+			zap.Error(err),
+		)
+		return nil, fmt.Errorf("error getting facultyProfile %w", err)
+	}
+	profilesByPosition, err := s.repo.GetProfileIDsByPositionIDs(ctx, positions)
+	if err != nil {
+		s.logger.Error("error getting facultyProfile",
+			zap.String("layer", logctx.LogServiceLayer),
+			zap.Ints("positions", positions),
+			zap.Ints("institutes", institutes),
+			zap.Error(err),
+		)
+	}
+	union := getUnion(profilesByInst, profilesByPosition)
+	return union, nil
 }
 
 func isAliasValid(req *facultyProfile.UserProfile) bool {
@@ -103,4 +123,24 @@ func isAliasValid(req *facultyProfile.UserProfile) bool {
 		return false
 	}
 	return true
+}
+
+func getUnion(arr1 []int64, arr2 []int64) []int64 {
+	ans := make([]int64, 0)
+	cnt1 := 0
+	cnt2 := 0
+	for cnt1 < len(arr1) && cnt2 < len(arr2) {
+		if arr1[cnt1] < arr2[cnt2] {
+			cnt1++
+			continue
+		}
+		if arr1[cnt1] > arr2[cnt2] {
+			cnt2++
+			continue
+		}
+		ans = append(ans, arr1[cnt1])
+		cnt1++
+		cnt2++
+	}
+	return ans
 }

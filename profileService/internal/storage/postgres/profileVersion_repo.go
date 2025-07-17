@@ -42,5 +42,5 @@ const (
 
 func (r *ProfileVersionRepo) AddProfileVersion(ctx context.Context,
 	profileVersion *profileVersion.ProfileVersion) error {
-	r.pool.Exec()
+
 }
