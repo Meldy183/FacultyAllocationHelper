@@ -275,6 +275,24 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 		zap.String("layer", logctx.LogDBInitLayer),
 		zap.String("function", logctx.LogInitSchema),
 	)
+	query = `CREATE TABLE IF NOT EXISTS semester (
+    semester_id SERIAL PRIMARY KEY,
+    semester_name VARCHAR(20)
+  )`
+	_, err = conn.Exec(ctx, query)
+	if err != nil {
+
+		str.logger.Error("Error creating semester table",
+			zap.String("layer", logctx.LogDBInitLayer),
+			zap.String("function", logctx.LogInitSchema),
+			zap.Error(err),
+		)
+		return err
+	}
+	str.logger.Info("created semester table",
+		zap.String("layer", logctx.LogDBInitLayer),
+		zap.String("function", logctx.LogInitSchema),
+	)
 	query = `CREATE TABLE IF NOT EXISTS course_instance (
     instance_id SERIAL PRIMARY KEY,
     course_id INT,
@@ -582,7 +600,7 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 	)
 
 	_, err = tx.Exec(ctx, `
-    INSERT INTO semester (semester_id, name)
+    INSERT INTO semester (semester_id, semester_name)
     VALUES (1, 'T1'),
            (2, 'T2'),
            (3, 'T3')
@@ -610,7 +628,7 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
            (6, 'MS2'),
 		   (7, 'PhD1'),
            (8, 'PhD2')
-		ON CONFLICT (semester_id) DO NOTHING;
+		ON CONFLICT (year_id) DO NOTHING;
   `)
 	if err != nil {
 		str.logger.Error("Error adding academic_years manually",

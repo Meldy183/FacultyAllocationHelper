@@ -42,7 +42,7 @@ func main() {
 		zap.String("layer", logctx.LogMainFuncLayer),
 		zap.String("function", logctx.LogMain),
 	)
-	time.Sleep(time.Second)
+	time.Sleep(time.Second * 3)
 	defer pool.Close()
 	err = dataBase.InitSchema(ctx, pool)
 	if err != nil {
