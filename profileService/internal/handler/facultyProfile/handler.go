@@ -103,6 +103,7 @@ func (h *Handler) AddProfile(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusInternalServerError, "error creating facultyProfile")
 		return
 	}
+	institutesList := make([]string, 0)
 	for _, elem := range req.InstituteIDs {
 		userInstitute := &userinstituteDomain.UserInstitute{
 			ProfileID:   profile.ProfileID,
@@ -116,6 +117,16 @@ func (h *Handler) AddProfile(w http.ResponseWriter, r *http.Request) {
 			writeError(w, http.StatusInternalServerError, "error adding profileInstitute")
 			return
 		}
+		inst, err := h.serviceInstitute.GetInstituteByID(ctx, int64(elem))
+		if err != nil {
+			h.logger.Error("error getting institute",
+				zap.String("layer", logctx.LogHandlerLayer),
+				zap.String("function", logctx.LogAddProfile),
+				zap.Error(err),
+			)
+			writeError(w, http.StatusInternalServerError, "error getting institute")
+		}
+		institutesList = append(institutesList, inst.Name)
 	}
 	version := &profileVersionDomain.ProfileVersion{
 		ProfileID:  profile.ProfileID,
@@ -147,7 +158,13 @@ func (h *Handler) AddProfile(w http.ResponseWriter, r *http.Request) {
 		PositionName:     *positionName,
 		Email:            profile.Email,
 		Alias:            profile.Alias,
+		InstituteNames:   institutesList,
 	}
+	h.logger.Info("success adding profile",
+		zap.String("layer", logctx.LogHandlerLayer),
+		zap.String("function", logctx.LogAddProfile),
+	)
+	writeJSON(w, http.StatusOK, resp)
 }
 
 func (h *Handler) GetProfile(w http.ResponseWriter, r *http.Request) {
