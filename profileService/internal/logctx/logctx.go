@@ -52,4 +52,5 @@ const (
 	LogGetVersionByProfileID       = "getVersionByProfileID"
 	LogAddVersion                  = "addVersion"
 	LogGetVersionIDByProfileID     = "getVersionIDByProfileID"
+	LogAddProfileVersion           = "addProfileVersion"
 )
