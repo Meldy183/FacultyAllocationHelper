@@ -73,6 +73,7 @@ type AddProfileRequest struct {
 	Year             int    `json:"year"`
 }
 
+// try
 type GetProfileResponse struct {
 	ProfileID      int64          `json:"profile_id"`
 	NameEnglish    string         `json:"name_eng"`
