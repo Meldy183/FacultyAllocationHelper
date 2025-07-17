@@ -3,6 +3,7 @@ package db
 import (
 	"context"
 	"fmt"
+
 	"github.com/jackc/pgx/v5/pgxpool"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/config"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
@@ -275,21 +276,21 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 		zap.String("layer", logctx.LogDBInitLayer),
 		zap.String("function", logctx.LogInitSchema),
 	)
-	query = `CREATE TABLE IF NOT EXISTS semester (
-    semester_id SERIAL PRIMARY KEY,
-    semester_name VARCHAR(20)
+	query = `CREATE TABLE IF NOT EXISTS academic_year (
+    academic_year_id SERIAL PRIMARY KEY,
+    academic_year_name VARCHAR(20)
   )`
 	_, err = conn.Exec(ctx, query)
 	if err != nil {
 
-		str.logger.Error("Error creating semester table",
+		str.logger.Error("Error creating academic_year table",
 			zap.String("layer", logctx.LogDBInitLayer),
 			zap.String("function", logctx.LogInitSchema),
 			zap.Error(err),
 		)
 		return err
 	}
-	str.logger.Info("created semester table",
+	str.logger.Info("created academic_year table",
 		zap.String("layer", logctx.LogDBInitLayer),
 		zap.String("function", logctx.LogInitSchema),
 	)
@@ -619,7 +620,7 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 	)
 
 	_, err = tx.Exec(ctx, `
-    INSERT INTO academic_year (year_id, name)
+    INSERT INTO academic_year (academic_year_id, academic_year_name)
     VALUES (1, 'BS1'),
            (2, 'BS2'),
            (3, 'BS3'),
@@ -628,7 +629,7 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
            (6, 'MS2'),
 		   (7, 'PhD1'),
            (8, 'PhD2')
-		ON CONFLICT (year_id) DO NOTHING;
+		ON CONFLICT (academic_year_id) DO NOTHING;
   `)
 	if err != nil {
 		str.logger.Error("Error adding academic_years manually",
@@ -641,31 +642,6 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 		zap.String("layer", logctx.LogDBInitLayer),
 		zap.String("function", logctx.LogInitSchema),
 	)
-
-	_, err = tx.Exec(ctx, `
-    INSERT INTO academic_year (year_id, name)
-    VALUES (1, 'BS1'),
-           (2, 'BS2'),
-           (3, 'BS3'),
-		   (4, 'BS4'),
-           (5, 'MS1'),
-           (6, 'MS2'),
-		   (7, 'PhD1'),
-           (8, 'PhD2')
-		ON CONFLICT (semester_id) DO NOTHING;
-  `)
-	if err != nil {
-		str.logger.Error("Error adding academic_years manually",
-			zap.String("layer", logctx.LogDBInitLayer),
-			zap.String("function", logctx.LogInitSchema),
-			zap.Error(err),
-		)
-	}
-	str.logger.Info("added academic_years SUCCESS",
-		zap.String("layer", logctx.LogDBInitLayer),
-		zap.String("function", logctx.LogInitSchema),
-	)
-
 	if err := tx.Commit(ctx); err != nil {
 		str.logger.Error("Error committing transaction",
 			zap.String("layer", logctx.LogDBInitLayer),
