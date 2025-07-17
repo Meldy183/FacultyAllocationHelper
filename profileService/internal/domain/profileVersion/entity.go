@@ -9,7 +9,5 @@ type ProfileVersion struct {
 	PositionID       int
 	EmploymentType   *string
 	Degree           *bool
-	Mode             *Mode
+	Mode             *string
 }
-
-type Mode string
