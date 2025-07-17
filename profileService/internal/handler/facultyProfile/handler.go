@@ -2,21 +2,21 @@ package facultyProfile
 
 import (
 	"encoding/json"
-	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
-	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/profileVersion"
-	"net/http"
-	"strconv"
-
 	"github.com/go-chi/chi/v5"
 	userprofileDomain "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/facultyProfile"
 	userinstituteDomain "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/profileInstitute"
+	profileVersionDomain "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/profileVersion"
+	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/facultyProfile"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/institute"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/position"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/profileCourseInstance"
 	userinstitute "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/profileInstitute"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/profileLanguage"
+	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/profileVersion"
 	"go.uber.org/zap"
+	"net/http"
+	"strconv"
 )
 
 type Handler struct {
@@ -51,6 +51,7 @@ func NewHandler(serviceUP *facultyProfile.Service,
 func (h *Handler) AddProfile(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	var req AddProfileRequest
+	var resp AddProfileResponse
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		h.logger.Error("error decoding json",
 			zap.String("layer", logctx.LogHandlerLayer),
@@ -78,15 +79,18 @@ func (h *Handler) AddProfile(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusBadRequest, "invalid position")
 		return
 	}
-	if req.InstituteID <= 0 {
-		h.logger.Error("invalid institute LabID",
-			zap.Int("LabID", req.InstituteID),
-			zap.String("layer", logctx.LogHandlerLayer),
-			zap.String("function", logctx.LogAddProfile),
-		)
-		writeError(w, http.StatusBadRequest, "invalid institute LabID")
-		return
+	for _, elem := range req.InstituteID {
+		if elem <= 0 {
+			h.logger.Error("invalid instituteID",
+				zap.Int("InstituteID", elem),
+				zap.String("layer", logctx.LogHandlerLayer),
+				zap.String("function", logctx.LogAddProfile),
+			)
+			writeError(w, http.StatusBadRequest, "invalid institute LabID")
+			return
+		}
 	}
+
 	profile := &userprofileDomain.UserProfile{
 		EnglishName: req.NameEnglish,
 		Email:       req.Email,
@@ -100,25 +104,36 @@ func (h *Handler) AddProfile(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusInternalServerError, "error creating facultyProfile")
 		return
 	}
-	userInstitute := &userinstituteDomain.UserInstitute{
-		ProfileID:        profile.ProfileID,
-		InstituteID:      req.InstituteID,
-		IsRepresentative: req.IsRepresentative,
+	for _, elem := range req.InstituteID {
+		userInstitute := &userinstituteDomain.UserInstitute{
+			ProfileID:        profile.ProfileID,
+			InstituteID:      elem,
+			IsRepresentative: req.IsRepresentative,
+		}
+		if err := h.serviceUI.AddUserInstitute(ctx, userInstitute); err != nil {
+			h.logger.Error("error adding profileInstitute",
+				zap.String("layer", logctx.LogHandlerLayer),
+				zap.String("function", logctx.LogAddProfile),
+				zap.Error(err))
+			writeError(w, http.StatusInternalServerError, "error adding profileInstitute")
+			return
+		}
 	}
-	if err := h.serviceUI.AddUserInstitute(ctx, userInstitute); err != nil {
-		h.logger.Error("error adding profileInstitute",
+	version := &profileVersionDomain.ProfileVersion{
+		ProfileID:  profile.ProfileID,
+		Year:       req.Year,
+		PositionID: req.PositionID,
+	}
+	err := h.serviceVersionProfile.AddProfileVersion(ctx, version)
+	if err != nil {
+		h.logger.Error("error adding profileVersion",
 			zap.String("layer", logctx.LogHandlerLayer),
 			zap.String("function", logctx.LogAddProfile),
-			zap.Error(err))
-		writeError(w, http.StatusInternalServerError, "error adding profileInstitute")
-		return
+			zap.Error(err),
+		)
+		writeError(w, http.StatusInternalServerError, "error adding profileVersion")
 	}
-	if err := h.serviceVersionProfile.
-	h.logger.Info("Successfully added profileInstitute",
-		zap.String("layer", logctx.LogHandlerLayer),
-		zap.String("function", logctx.LogAddProfile),
-	)
-	writeJSON(w, http.StatusCreated, profile)
+
 }
 
 func (h *Handler) GetProfile(w http.ResponseWriter, r *http.Request) {
@@ -315,7 +330,7 @@ func (h *Handler) GetAllFaculties(w http.ResponseWriter, r *http.Request) {
 			Alias:       profile.Alias,
 			Email:       profile.Email,
 			Position:    *pos,
-			Institute:   inst.Name,
+			Institut:    inst.Name,
 		})
 	}
 	writeJSON(w, http.StatusOK, resp)

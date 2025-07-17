@@ -2,6 +2,7 @@ package profileVersion
 
 import (
 	"context"
+	"fmt"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/profileVersion"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
 	"go.uber.org/zap"
@@ -33,4 +34,17 @@ func (s *Service) GetVersionIDByProfileID(ctx context.Context, profileID int64) 
 		return 0, err
 	}
 	return version.ProfileVersionId, nil
+}
+
+func (s *Service) AddProfileVersion(ctx context.Context, version *profileVersion.ProfileVersion) error {
+	if err := s.repo.AddProfileVersion(ctx, version); err != nil {
+		s.logger.Error("Failed to add profile version",
+			zap.String("layer", logctx.LogServiceLayer),
+			zap.String("function", logctx.LogAddProfileVersion),
+			zap.Int64("profileID", version.ProfileVersionId),
+			zap.Error(err),
+		)
+		return fmt.Errorf("failed to add profile version: %w", err)
+	}
+	return nil
 }
