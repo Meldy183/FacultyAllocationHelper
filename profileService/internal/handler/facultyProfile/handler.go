@@ -259,6 +259,7 @@ func (h *Handler) GetProfile(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusInternalServerError, "error getting position by id")
 		return
 	}
+	workload :=
 	resp := GetProfileResponse{
 		ProfileVersionID: version.ProfileVersionId,
 		NameEnglish:      profile.EnglishName,
@@ -267,7 +268,6 @@ func (h *Handler) GetProfile(w http.ResponseWriter, r *http.Request) {
 		Email:            profile.Email,
 		PositionName:     *positionName,
 		InstituteNames:   *institutes,
-		Workload:         version.Workload,
 		StudentType:      version.StudentType,
 		Degree:           version.Degree,
 		Fsro:             version.Fsro,

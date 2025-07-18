@@ -457,7 +457,6 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
     profile_version_id SERIAL PRIMARY KEY,
     profile_id INT,
     year INT,
-    workload FLOAT,
 	maxload INT,
 	position_id INT,
 	employment_type VARCHAR(128),
@@ -500,7 +499,30 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 	str.logger.Info("created log table",
 		zap.String("layer", logctx.LogDBInitLayer),
 		zap.String("function", logctx.LogInitSchema))
-
+	query = `CREATE TABLE IF NOT EXISTS workload (
+      workload_id SERIAL PRIMARY KEY,
+      profile_version_id INT NOT NULL,
+      semester_id INT NOT NULL,
+      lectures_count INT NOT NULL,
+      tutorials_count INT NOT NULL,
+      labs_count INT NOT NULL,
+      electives_count INT NOT NULL,
+      FOREIGN KEY (profile_version_id) REFERENCES profile_version (profile_version_id),
+	  FOREIGN KEY (semester_id) REFERENCES semester (semester_id)
+  )`
+	_, err = conn.Exec(ctx, query)
+	if err != nil {
+		str.logger.Error("Error creating lab_table",
+			zap.String("layer", logctx.LogDBInitLayer),
+			zap.String("function", logctx.LogInitSchema),
+			zap.Error(err),
+		)
+		return err
+	}
+	str.logger.Info("created lab_table",
+		zap.String("layer", logctx.LogDBInitLayer),
+		zap.String("function", logctx.LogInitSchema),
+	)
 	tx, err := pool.Begin(ctx)
 	if err != nil {
 		str.logger.Error("Error starting transaction",
