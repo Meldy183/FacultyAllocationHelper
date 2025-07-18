@@ -23,8 +23,8 @@ func NewUserInstituteRepo(pool *pgxpool.Pool, logger *zap.Logger) *UserInstitute
 
 const (
 	queryGetUserInstituteByID = `SELECT i.institute_id, i.name FROM user_institute ui JOIN institute i ON ui.institute_id = i.institute_id WHERE ui.profile_id = $1`
-	queryAddUserInstitute     = `INSERT INTO user_institute (profile_id, institute_id, is_repr)
-								 VALUES ($1, $2, $3)
+	queryAddUserInstitute     = `INSERT INTO user_institute (profile_id, institute_id)
+								 VALUES ($1, $2)
 								 RETURNING user_institute_id`
 )
 
@@ -53,8 +53,8 @@ func (r *UserInstituteRepo) GetUserInstituteByID(ctx context.Context, profileID 
 }
 
 func (r *UserInstituteRepo) AddUserInstitute(ctx context.Context, userInstitute *profileInstitute.UserInstitute) error {
-	err := r.pool.QueryRow(ctx, queryAddUserInstitute, userInstitute.ProfileID, userInstitute.InstituteID,
-		userInstitute.IsRepresentative).Scan(&userInstitute.UserInstituteID)
+	err := r.pool.QueryRow(ctx, queryAddUserInstitute,
+		userInstitute.ProfileID, userInstitute.InstituteID).Scan(&userInstitute.UserInstituteID)
 	if err != nil {
 		r.logger.Error("AddUserInstitute",
 			zap.String("layer", logctx.LogRepoLayer),

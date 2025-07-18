@@ -47,7 +47,6 @@ func (s *Service) GetUserInstituteByID(ctx context.Context, userID int64) (*inst
 }
 
 func (s *Service) AddUserInstitute(ctx context.Context, userInstitute *profileInstitute.UserInstitute) error {
-
 	err := s.repo.AddUserInstitute(ctx, userInstitute)
 	if err != nil {
 		s.logger.Error("Error adding Institute to DB",

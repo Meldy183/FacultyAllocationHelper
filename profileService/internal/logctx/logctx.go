@@ -25,7 +25,7 @@ const (
 	LogRepoLayer                   = "Repository"
 	LogDBInitLayer                 = "DB Initialization"
 	LogMainFuncLayer               = "MainFunctionAndConfiguration"
-	LogGetInstituteProfileByID     = "getInstituteProfileByID"
+	LogGetInstituteByID            = "getInstituteByID"
 	LogGetAllInstitutes            = "getAllInstitutes"
 	LogGetAllLabs                  = "getAllLabs"
 	LogGetLabsByInstituteID        = "getLabsByInstituteID"
@@ -54,5 +54,5 @@ const (
 	LogAddVersion                  = "addVersion"
 	LogGetVersionIDByProfileID     = "getVersionIDByProfileID"
 	LogAddProfileVersion           = "addProfileVersion"
-	LogGetLogpages                 = "getLogPages"
+	LogGetLogPages                 = "getLogPages"
 )

@@ -23,14 +23,14 @@ func (s *Service) GetInstituteByID(ctx context.Context, instituteID int64) (*ins
 	if instituteID <= 0 {
 		s.logger.Error("institute_id is invalid",
 			zap.String("layer", logctx.LogServiceLayer),
-			zap.String("function", logctx.LogGetInstituteProfileByID))
+			zap.String("function", logctx.LogGetInstituteByID))
 		return nil, fmt.Errorf("invalid institute_id: %d", instituteID)
 	}
 	instituteByID, err := s.repo.GetInstituteByID(ctx, instituteID)
 	if err != nil {
 		s.logger.Error("failed to retrieve institute by LabID",
 			zap.String("layer", logctx.LogServiceLayer),
-			zap.String("function", logctx.LogGetInstituteProfileByID),
+			zap.String("function", logctx.LogGetInstituteByID),
 			zap.Int64("institute_id", instituteID),
 			zap.Error(err),
 		)
@@ -38,7 +38,7 @@ func (s *Service) GetInstituteByID(ctx context.Context, instituteID int64) (*ins
 	}
 	s.logger.Info("Successfully retrieved institute: ",
 		zap.String("layer", logctx.LogServiceLayer),
-		zap.String("function", logctx.LogGetInstituteProfileByID),
+		zap.String("function", logctx.LogGetInstituteByID),
 		zap.Int64("institute_id:", instituteID),
 	)
 	return instituteByID, nil

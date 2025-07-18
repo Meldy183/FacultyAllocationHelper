@@ -34,7 +34,7 @@ func (h *Handler) GetLogpages(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		h.logger.Error("error converting to int the position",
 			zap.String("layer", logctx.LogHandlerLayer),
-			zap.String("function", logctx.LogGetLogpages),
+			zap.String("function", logctx.LogGetLogPages),
 			zap.Error(err),
 		)
 		writeError(w, http.StatusInternalServerError, "error institute id")

@@ -182,7 +182,6 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
       user_institute_id SERIAL PRIMARY KEY,
       profile_id INT NOT NULL,
       institute_id INT NOT NULL,
-      is_repr BOOL NOT NULL,
       FOREIGN KEY (profile_id) REFERENCES user_profile (profile_id),
       FOREIGN KEY (institute_id) REFERENCES institute (institute_id)
   )`

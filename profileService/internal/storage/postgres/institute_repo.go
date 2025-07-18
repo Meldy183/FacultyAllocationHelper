@@ -35,7 +35,7 @@ func (r *InstituteRepo) GetInstituteByID(ctx context.Context, instituteID int64)
 	if err != nil {
 		r.logger.Error("Error getting instituteByID",
 			zap.String("layer", logctx.LogRepoLayer),
-			zap.String("function", logctx.LogGetInstituteProfileByID),
+			zap.String("function", logctx.LogGetInstituteByID),
 			zap.Int64("instituteID", instituteID),
 			zap.Error(err),
 		)
@@ -43,7 +43,7 @@ func (r *InstituteRepo) GetInstituteByID(ctx context.Context, instituteID int64)
 	}
 	r.logger.Info("Successfully got instituteByID",
 		zap.String("layer", logctx.LogRepoLayer),
-		zap.String("function", logctx.LogGetInstituteProfileByID),
+		zap.String("function", logctx.LogGetInstituteByID),
 		zap.Int64("instituteID", instituteID),
 	)
 	return &instituteByID, nil

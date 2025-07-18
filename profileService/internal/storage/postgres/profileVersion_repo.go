@@ -27,9 +27,7 @@ const (
 		WHERE profile_id = $1
 	`
 	queryInsertVersion = `
-		INSERT INTO user_profile_version (
-			(position_id, profile_id, year)
-		)
+		INSERT INTO user_profile_version (position_id, profile_id, year)
 		VALUES ($1, $2, $3)
 		RETURNING profile_version_id
 	`

@@ -29,22 +29,25 @@ type Handler struct {
 	logger                *zap.Logger
 }
 
-func NewHandler(serviceUP *facultyProfile.Service,
+func NewHandler(
+	serviceUP *facultyProfile.Service,
 	serviceUI *userinstitute.Service,
 	serviceLang *profileLanguage.Service,
 	serviceCourse *profileCourseInstance.Service,
 	servicePosition *position.Service,
 	serviceInstitute *institute.Service,
+	serviceVersionProfile *profileVersion.Service,
 	logger *zap.Logger,
 ) *Handler {
 	return &Handler{
-		serviceUP:        serviceUP,
-		serviceUI:        serviceUI,
-		serviceLang:      serviceLang,
-		serviceCourse:    serviceCourse,
-		servicePosition:  servicePosition,
-		serviceInstitute: serviceInstitute,
-		logger:           logger.Named("userprofile_handler"),
+		serviceUP:             serviceUP,
+		serviceUI:             serviceUI,
+		serviceLang:           serviceLang,
+		serviceCourse:         serviceCourse,
+		servicePosition:       servicePosition,
+		serviceInstitute:      serviceInstitute,
+		serviceVersionProfile: serviceVersionProfile,
+		logger:                logger.Named("userprofile_handler"),
 	}
 }
 func (h *Handler) AddProfile(w http.ResponseWriter, r *http.Request) {
@@ -124,6 +127,7 @@ func (h *Handler) AddProfile(w http.ResponseWriter, r *http.Request) {
 				zap.Error(err),
 			)
 			writeError(w, http.StatusInternalServerError, "error getting institute")
+			return
 		}
 		institutesList = append(institutesList, inst.Name)
 	}
@@ -140,6 +144,7 @@ func (h *Handler) AddProfile(w http.ResponseWriter, r *http.Request) {
 			zap.Error(err),
 		)
 		writeError(w, http.StatusInternalServerError, "error adding profileVersion")
+		return
 	}
 	positionName, err := h.servicePosition.GetPositionByID(ctx, version.PositionID)
 	if err != nil {
@@ -149,6 +154,7 @@ func (h *Handler) AddProfile(w http.ResponseWriter, r *http.Request) {
 			zap.Error(err),
 		)
 		writeError(w, http.StatusInternalServerError, "error getting position")
+		return
 	}
 	resp := &AddProfileResponse{
 		ProfileVersionID: version.ProfileVersionId,
