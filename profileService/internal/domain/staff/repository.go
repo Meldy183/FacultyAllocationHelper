@@ -3,5 +3,7 @@ package staff
 import "context"
 
 type Repository interface {
-	GetCourseStaffInstanceByProfileCourseIDs(ctx context.Context, profileId int64, courseInstanceId int64) (*Staff, error)
+	GetStaffByInstanceID(ctx context.Context, instanceID int) ([]*Staff, error)
+	AddStaff(ctx context.Context, staff *Staff) error
+	UpdateStaff(ctx context.Context, staff *Staff) error
 }
