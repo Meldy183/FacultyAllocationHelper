@@ -1,9 +1,9 @@
 import React from "react";
 import Link from "next/link";
-import { UserDataInterface } from "shared/types/api/profile";
+import { GetSimpleUserDataInterface } from "shared/types/api/profile";
 import styles from "../styles.module.scss";
 
-const TeacherAssistance: React.FC<UserDataInterface> = (props: UserDataInterface) => {
+const TeacherAssistance: React.FC<GetSimpleUserDataInterface> = (props) => {
   return <Link href={ `/faculty/${ props.profile_id }` }>
     <li className={styles.row}>
       <div className={styles.colName}>
@@ -11,8 +11,8 @@ const TeacherAssistance: React.FC<UserDataInterface> = (props: UserDataInterface
         <div>{ props.alias }</div>
       </div>
       <div className={styles.colEmail}>{ props.email }</div>
-      <div className={styles.colInstitute}>{ props.institute }</div>
-      <div className={styles.colPosition}>{ props.position }</div>
+      <div className={styles.colInstitute}>{ props.institute_names?.map((name) => <span key={ name }> { name } </span>) }</div>
+      <div className={styles.colPosition}>{ props.position_name }</div>
     </li>
   </Link>
 }

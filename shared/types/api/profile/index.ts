@@ -44,6 +44,23 @@ export interface UserDataInterface {
   };
 }
 
+export type CreateSimpleUserDataInterface = {
+  year: number,
+  name_eng: string,
+  email: string,
+  alias: string,
+  institute_ids: number[],
+  position_id: number
+}
+
+export type GetSimpleUserDataInterface =  {
+  profile_id: 0,
+  name_eng: string,
+  alias: string,
+  email: string,
+  position_name: string,
+  institute_names: string[],
+}
 
 export type GetMemberProcessType = {
   requestQuery: {
@@ -60,13 +77,11 @@ export type GetFiltersType = {
 export type GetAllUsers = {
   requestQuery: { [key: string]: string[] }
   responseBody: {
-    profiles: UserDataInterface[]
+    profiles: GetSimpleUserDataInterface[];
   },
 }
 
 export type CreateMember = {
   requestBody: CreateMemberType,
-  responseBody: {
-    message: string
-  }
+  responseBody: CreateSimpleUserDataInterface
 }

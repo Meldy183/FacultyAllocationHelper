@@ -5,13 +5,12 @@ import {
   GetAllUsers,
   CreateMember,
   GetFiltersType,
-  UserDataInterface
+  GetSimpleUserDataInterface
 } from "shared/types/api/profile";
 import { transformRawFilters } from "@/shared/lib/transformFilter";
 import { RawFiltersResponse } from "shared/types/api/filters";
 import { buildQuery } from "@/shared/lib/buildQuery";
 import { ProfileTag } from "@/shared/configs/constants/dev/cache/tags/profile";
-import { instituteList, roleList } from "@/shared/configs/constants/ui";
 
 export const memberSlice = createApi({
   reducerPath: "api/profile",
@@ -34,21 +33,18 @@ export const memberSlice = createApi({
         url: `getProfile/${ id }`,
         method: "GET",
       }),
-      providesTags: [ProfileTag]
+      providesTags: (result, err, arg) => [{ type: ProfileTag, id: arg.id }]
     }),
     getMembersByParam: builder.query<GetAllUsers["responseBody"], GetAllUsers["requestQuery"]>({
       query: (query) => ({
         url: `getAllProfiles${ buildQuery(query) }`,
         method: "GET",
       }),
-      providesTags: (result = { profiles: [] }, error, arg) => {
-        console.log(result, error, arg)
-
-        return [
+      providesTags: (result = { profiles: [] }) =>
+        [
           ProfileTag,
-          ...result.profiles.map((profile: UserDataInterface) => ({ type: ProfileTag, id: profile.email }) as const)
+          ...result.profiles.map((profile: GetSimpleUserDataInterface) => ({ type: ProfileTag, id: profile.alias }) as const)
         ]
-      }
     }),
     createUser: builder.mutation<CreateMember["responseBody"], CreateMember["requestBody"]>({
       query: (body) => ({
@@ -56,38 +52,7 @@ export const memberSlice = createApi({
         method: "POST",
         body: body
       }),
-      invalidatesTags: (result, error, arg) => {
-        console.log(result)
-        console.log(error)
-        console.log(arg)
-
-        return  [{ type: ProfileTag, id: arg.alias }]
-      },
-      // async onQueryStarted(newUserBody, { dispatch, queryFulfilled, getState }) {
-      //   const patchResult = dispatch(
-      //     memberSlice.util.updateQueryData(
-      //       'getMembersByParam',
-      //       {},
-      //       (draft) => {
-      //         console.log(newUserBody);
-      //         console.log(draft);
-      //         console.log("<<--->>");
-      //         const newUser = {
-      //           institute: instituteList.find(item => item.id === newUserBody.institute_id)!.name,
-      //           position: roleList.find(item => item.id === newUserBody.position_id)!.name,
-      //           ...newUserBody
-      //         }
-      //         draft.profiles = [newUser, ...draft.profiles];
-      //       }
-      //     )
-      //   );
-      //
-      //   try {
-      //     await queryFulfilled; // Wait for the actual API call to complete
-      //   } catch {
-      //     patchResult.undo(); // If the API call fails, revert the optimistic update
-      //   }
-      // },
+      invalidatesTags: [ProfileTag],
     })
   })
 });
