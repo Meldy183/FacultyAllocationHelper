@@ -74,7 +74,7 @@ type AddProfileRequest struct {
 }
 
 type AddProfileResponse struct {
-	ProfileVersionID int64
+	ProfileVersionID int64    `json:"profile_id"`
 	NameEnglish      string   `json:"name_eng"`
 	Email            string   `json:"email"`
 	Alias            string   `json:"alias"`
