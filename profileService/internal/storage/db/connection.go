@@ -461,6 +461,10 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 	maxload INT,
 	position_id INT,
 	employment_type VARCHAR(128),
+	student_type VARCHAR(32),
+	fsro VARCHAR(128),
+	frontal_hours INT,
+	extra_activities FLOAT,
 	degree BOOLEAN,
 	mode VARCHAR(16),
     FOREIGN KEY (profile_id) REFERENCES user_profile (profile_id),
@@ -645,7 +649,6 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 		)
 		return fmt.Errorf("failed to commit transaction: %w", err)
 	}
-	//TODO: FSRO when will be more obvious what to do
 	str.logger.Info("committed transaction",
 		zap.String("layer", logctx.LogDBInitLayer),
 		zap.String("function", logctx.LogInitSchema),
