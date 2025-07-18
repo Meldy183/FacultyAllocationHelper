@@ -89,5 +89,5 @@ func (r *WorkloadRepo) AddSemesterWorkload(ctx context.Context, workload *worklo
 
 func (r *WorkloadRepo) UpdateSemesterWorkload(ctx context.Context, workload *workloadDomain.Workload) error {
 	return nil
-	// TODO : implement me
+	// TODO: implement me
 }
