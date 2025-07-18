@@ -206,7 +206,8 @@ func (h *Handler) GetProfile(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusInternalServerError, "error getting facultyProfile")
 		return
 	}
-	inst, err := h.serviceUI.GetUserInstitutesByProfileID(ctx, version.ProfileID)
+	instObjects, err := h.serviceUI.GetUserInstitutesByProfileID(ctx, version.ProfileID)
+	institutes := institute.ConvertInstitutesToString(instObjects)
 	if err != nil {
 		h.logger.Error("error getting institute",
 			zap.String("layer", logctx.LogHandlerLayer),
