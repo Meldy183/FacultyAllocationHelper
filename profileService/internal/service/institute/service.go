@@ -61,3 +61,12 @@ func (s *Service) GetAllInstitutes(ctx context.Context) ([]*institute.Institute,
 	)
 	return institutes, nil
 }
+
+func ConvertInstitutesToString(institutes []*institute.Institute) *[]string {
+	stringArray := make([]string, 0)
+	for _, instituteStruct := range institutes {
+		str := instituteStruct.Name
+		stringArray = append(stringArray, str)
+	}
+	return &stringArray
+}
