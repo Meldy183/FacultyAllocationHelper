@@ -1,7 +1,7 @@
 package profileCourseInstance
 
-type UserCourseInstance struct {
-	UserCourseID     int
-	ProfileID        int
+type ProfileCourseInstance struct {
+	ProfileCourseID  int
+	ProfileVersionID int
 	CourseInstanceID int
 }
