@@ -35,33 +35,33 @@ type GetCourseResponse struct {
 }
 
 type EditCourseRequest struct {
-	CourseInstanceID       int    `json:"course_id"`
-	BriefName              string `json:"brief_name"`
-	OfficialName           string `json:"official_name"`
-	ResponsibleInstituteID int    `json:"responsible_institute_id"`
-	StudyProgramIDS        []int  `json:"study_program_ids"`
-	TrackIDs               []int  `json:"track_ids"`
-	Mode                   string `json:"mode"`
-	StudyYearID            int    `json:"study_year_id"`
-	SemesterID             int    `json:"semester_id"`
-	Form                   string `json:"form"`
-	LectureHours           int    `json:"lecture_hours"`
-	LabHours               int    `json:"lab_hours"`
+	CourseInstanceID       int     `json:"course_id"`
+	BriefName              string  `json:"brief_name"`
+	OfficialName           *string `json:"official_name"`
+	ResponsibleInstituteID int     `json:"responsible_institute_id"`
+	StudyProgramIDS        []int   `json:"study_program_ids"`
+	TrackIDs               []int   `json:"track_ids"`
+	Mode                   *string `json:"mode"`
+	StudyYearID            int     `json:"study_year_id"`
+	SemesterID             int     `json:"semester_id"`
+	Form                   *string `json:"form"`
+	LectureHours           *int    `json:"lecture_hours"`
+	LabHours               *int    `json:"lab_hours"`
 }
 
 type EditCourseResponse struct {
 	CourseInstanceID         int      `json:"course_id"`
 	BriefName                string   `json:"brief_name"`
-	OfficialName             string   `json:"official_name"`
+	OfficialName             *string  `json:"official_name"`
 	ResponsibleInstituteName string   `json:"responsible_institute_name"`
 	StudyProgramNames        []string `json:"study_program_names"`
 	TrackNames               []string `json:"track_names"`
-	Mode                     string   `json:"mode"`
+	Mode                     *string  `json:"mode"`
 	StudyYearName            string   `json:"study_year_name"`
 	SemesterName             string   `json:"semester_name"`
-	Form                     string   `json:"form"`
-	LectureHours             int      `json:"lecture_hours"`
-	LabHours                 int      `json:"lab_hours"`
+	Form                     *string  `json:"form"`
+	LectureHours             *int     `json:"lecture_hours"`
+	LabHours                 *int     `json:"lab_hours"`
 }
 
 type AddProfileRequest struct {
@@ -78,8 +78,8 @@ type AddProfileResponse struct {
 	NameEnglish      string   `json:"name_eng"`
 	Email            string   `json:"email"`
 	Alias            string   `json:"alias"`
-	InstituteNames   []string `json:"institute_ids"`
-	PositionName     string   `json:"position_id"`
+	InstituteNames   []string `json:"institute_names"`
+	PositionName     string   `json:"position_name"`
 	Year             int      `json:"year"`
 }
 
@@ -102,7 +102,7 @@ type GetProfileResponse struct {
 	Mode             *string        `json:"mode"`
 	MaxLoad          *int           `json:"max_load"`
 	FrontalHours     *int           `json:"frontal_hours"`
-	ExtraActivity    *float64       `json:"extra_activity"`
+	ExtraActivity    *float64       `json:"extra_activities"`
 	WorkloadStats    *WorkloadStats `json:"workload_stats"`
 }
 
@@ -180,16 +180,16 @@ type FilterObj struct {
 }
 
 type GetFacultyFiltersResponse struct {
-	InstituteFilters []FilterObj `json:"institute"`
-	PositionFilters  []FilterObj `json:"position"`
+	InstituteFilters *[]FilterObj `json:"institute"`
+	PositionFilters  *[]FilterObj `json:"position"`
 }
 
 type GetCourseFiltersResponse struct {
-	AllocationStatus bool        `json:"allocaion_not_finished"`
-	YearOfStudy      []FilterObj `json:"year_of_study"`
-	Semester         []FilterObj `json:"semester"`
-	StudyProgram     []FilterObj `json:"position"`
-	InstituteFilters []FilterObj `json:"institute"`
+	AllocationStatus bool         `json:"allocaion_not_finished"`
+	YearOfStudy      *[]FilterObj `json:"year_of_study"`
+	Semester         *[]FilterObj `json:"semester"`
+	StudyProgram     *[]FilterObj `json:"position"`
+	InstituteFilters *[]FilterObj `json:"institute"`
 }
 
 type EditProfileRequest struct {
@@ -200,30 +200,30 @@ type EditProfileRequest struct {
 	Alias            string  `json:"alias"`
 	Email            string  `json:"email"`
 	PositionID       int     `json:"position_id"`
-	InstituteIDs     []int   `json:"institute_ids"`
-	StudentType      string  `json:"student_type"`
-	Degree           bool    `json:"degree"`
+	InstituteIDs     *[]int  `json:"institute_ids"`
+	StudentType      *string `json:"student_type"`
+	Degree           *bool   `json:"degree"`
 	Languages        *[]Lang `json:"languages"`
-	EmploymentType   string  `json:"employment_type"`
-	HiringStatus     string  `json:"hiring_status"`
-	FSRO             string  `json:"fsro"`
-	Mode             string  `json:"mode"`
+	EmploymentType   *string `json:"employment_type"`
+	HiringStatus     *string `json:"hiring_status"`
+	FSRO             *string `json:"fsro"`
+	Mode             *string `json:"mode"`
 }
 
 type EditProfileResponse struct {
-	ProfileVersionID int64    `json:"profile_id"`
-	Year             int      `json:"year"`
-	NameEng          string   `json:"name_eng"`
-	NameRu           string   `json:"name_ru"`
-	Alias            string   `json:"alias"`
-	Email            string   `json:"email"`
-	PositionName     string   `json:"position_name"`
-	InstituteNames   []string `json:"institute_names"`
-	StudentType      string   `json:"student_type"`
-	Degree           bool     `json:"degree"`
-	Languages        *[]Lang  `json:"languages"`
-	EmploymentType   string   `json:"employment_type"`
-	HiringStatus     string   `json:"hiring_status"`
-	FSRO             string   `json:"fsro"`
-	Mode             string   `json:"mode"`
+	ProfileVersionID int64     `json:"profile_id"`
+	Year             int       `json:"year"`
+	NameEng          string    `json:"name_eng"`
+	NameRu           string    `json:"name_ru"`
+	Alias            string    `json:"alias"`
+	Email            string    `json:"email"`
+	PositionName     *string   `json:"position_name"`
+	InstituteNames   *[]string `json:"institute_names"`
+	StudentType      *string   `json:"student_type"`
+	Degree           *bool     `json:"degree"`
+	Languages        *[]Lang   `json:"languages"`
+	EmploymentType   *string   `json:"employment_type"`
+	HiringStatus     *string   `json:"hiring_status"`
+	FSRO             *string   `json:"fsro"`
+	Mode             *string   `json:"mode"`
 }
