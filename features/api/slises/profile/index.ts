@@ -1,6 +1,12 @@
 import { createApi,  fetchBaseQuery, } from "@reduxjs/toolkit/query/react";
 import { API_PATH } from "@/shared/configs/constants/api/paths";
-import { GetMemberProcessType, GetAllUsers, CreateMember, GetFiltersType } from "shared/types/api/profile";
+import {
+  GetMemberProcessType,
+  GetAllUsers,
+  CreateMember,
+  GetFiltersType,
+  UserDataInterface
+} from "shared/types/api/profile";
 import { transformRawFilters } from "@/shared/lib/transformFilter";
 import { RawFiltersResponse } from "shared/types/api/filters";
 import { buildQuery } from "@/shared/lib/buildQuery";
@@ -34,7 +40,15 @@ export const memberSlice = createApi({
       query: (query) => ({
         url: `getAllProfiles${ buildQuery(query) }`,
         method: "GET",
-      })
+      }),
+      providesTags: (result = { profiles: [] }, error, arg) => {
+        console.log(result, error, arg)
+
+        return [
+          ProfileTag,
+          ...result.profiles.map((profile: UserDataInterface) => ({ type: ProfileTag, id: profile.email }) as const)
+        ]
+      }
     }),
     createUser: builder.mutation<CreateMember["responseBody"], CreateMember["requestBody"]>({
       query: (body) => ({
@@ -42,32 +56,38 @@ export const memberSlice = createApi({
         method: "POST",
         body: body
       }),
-      invalidatesTags: [ProfileTag],
-      async onQueryStarted(newUserBody, { dispatch, queryFulfilled, getState }) {
-        const patchResult = dispatch(
-          memberSlice.util.updateQueryData(
-            'getMembersByParam',
-            {},
-            (draft) => {
-              console.log(newUserBody);
-              console.log(draft);
-              console.log("<<--->>");
-              const newUser = {
-                institute: instituteList.find(item => item.id === newUserBody.institute_id)!.name,
-                position: roleList.find(item => item.id === newUserBody.position_id)!.name,
-                ...newUserBody
-              }
-              draft.profiles = [newUser, ...draft.profiles];
-            }
-          )
-        );
+      invalidatesTags: (result, error, arg) => {
+        console.log(result)
+        console.log(error)
+        console.log(arg)
 
-        try {
-          await queryFulfilled; // Wait for the actual API call to complete
-        } catch {
-          patchResult.undo(); // If the API call fails, revert the optimistic update
-        }
+        return  [{ type: ProfileTag, id: arg.alias }]
       },
+      // async onQueryStarted(newUserBody, { dispatch, queryFulfilled, getState }) {
+      //   const patchResult = dispatch(
+      //     memberSlice.util.updateQueryData(
+      //       'getMembersByParam',
+      //       {},
+      //       (draft) => {
+      //         console.log(newUserBody);
+      //         console.log(draft);
+      //         console.log("<<--->>");
+      //         const newUser = {
+      //           institute: instituteList.find(item => item.id === newUserBody.institute_id)!.name,
+      //           position: roleList.find(item => item.id === newUserBody.position_id)!.name,
+      //           ...newUserBody
+      //         }
+      //         draft.profiles = [newUser, ...draft.profiles];
+      //       }
+      //     )
+      //   );
+      //
+      //   try {
+      //     await queryFulfilled; // Wait for the actual API call to complete
+      //   } catch {
+      //     patchResult.undo(); // If the API call fails, revert the optimistic update
+      //   }
+      // },
     })
   })
 });
