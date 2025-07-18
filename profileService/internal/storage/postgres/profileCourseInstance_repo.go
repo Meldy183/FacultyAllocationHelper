@@ -26,13 +26,13 @@ const (
 	queryAddCourseInstance       = `INSERT INTO profile_course_instance (profile_version_id, profile_course_id) VALUES ($1, $2)`
 )
 
-func (r *ProfileCourseInstanceRepo) GetCourseInstancesByProfileID(ctx context.Context, profileID int64) ([]int64, error) {
-	rows, err := r.pool.Query(ctx, queryGetInstancesByProfileID, profileID)
+func (r *ProfileCourseInstanceRepo) GetCourseInstancesByVersionID(ctx context.Context, ProfileVersionID int64) ([]int64, error) {
+	rows, err := r.pool.Query(ctx, queryGetInstancesByProfileID, ProfileVersionID)
 	if err != nil {
 		r.logger.Error("GetCourseInstancesByProfileID",
 			zap.String("layer", logctx.LogRepoLayer),
 			zap.String("function", logctx.LogGetInstancesByProfileID),
-			zap.Int64("profileID", profileID),
+			zap.Int64("profileID", ProfileVersionID),
 			zap.Error(err),
 		)
 		return nil, fmt.Errorf("GetCourseInstancesByProfileID: %w", err)
@@ -44,7 +44,7 @@ func (r *ProfileCourseInstanceRepo) GetCourseInstancesByProfileID(ctx context.Co
 			r.logger.Error("GetCourseInstancesByProfileID",
 				zap.String("layer", logctx.LogRepoLayer),
 				zap.String("function", logctx.LogGetInstancesByProfileID),
-				zap.Int64("profileID", profileID),
+				zap.Int64("profileID", ProfileVersionID),
 				zap.Error(rows.Err()),
 			)
 			return nil, fmt.Errorf("GetCourseInstancesByProfileID: %w", rows.Err())
@@ -55,7 +55,7 @@ func (r *ProfileCourseInstanceRepo) GetCourseInstancesByProfileID(ctx context.Co
 			r.logger.Error("GetCourseInstancesByProfileID",
 				zap.String("layer", logctx.LogRepoLayer),
 				zap.String("function", logctx.LogGetInstancesByProfileID),
-				zap.Int64("profileID", profileID),
+				zap.Int64("profileID", ProfileVersionID),
 				zap.Error(err),
 			)
 			return nil, fmt.Errorf("GetCourseInstancesByProfileID: %w", err)
@@ -65,7 +65,7 @@ func (r *ProfileCourseInstanceRepo) GetCourseInstancesByProfileID(ctx context.Co
 	r.logger.Info("GetCourseInstancesByProfileID Success",
 		zap.String("layer", logctx.LogRepoLayer),
 		zap.String("function", logctx.LogGetInstancesByProfileID),
-		zap.Int64("profileID", profileID),
+		zap.Int64("profileID", ProfileVersionID),
 	)
 	return instances, nil
 }
