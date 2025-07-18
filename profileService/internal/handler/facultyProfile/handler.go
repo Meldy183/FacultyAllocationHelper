@@ -163,6 +163,9 @@ func (h *Handler) AddProfile(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusInternalServerError, "error getting position")
 		return
 	}
+	if h.AddWorkloadAddingProfileVersion(w, version, err, ctx) {
+		return
+	}
 	resp := &AddProfileResponse{
 		ProfileVersionID: version.ProfileVersionId,
 		NameEnglish:      req.NameEnglish,
@@ -177,6 +180,51 @@ func (h *Handler) AddProfile(w http.ResponseWriter, r *http.Request) {
 		zap.String("function", logctx.LogAddProfile),
 	)
 	writeJSON(w, http.StatusOK, resp)
+}
+
+func (h *Handler) AddWorkloadAddingProfileVersion(w http.ResponseWriter, version *profileVersionDomain.ProfileVersion, err error, ctx context.Context) bool {
+	wrklad := workloadDomain.Workload{
+		ProfileVersionID: version.ProfileVersionId,
+		SemesterID:       1,
+		LecturesCount:    0,
+		TutorialsCount:   0,
+		LabsCount:        0,
+		ElectivesCount:   0,
+		Rate:             0,
+	}
+	err = h.serviceWorkload.AddSemesterWorkload(ctx, &wrklad)
+	if err != nil {
+		h.logger.Error("error adding workload",
+			zap.String("layer", logctx.LogHandlerLayer),
+			zap.String("function", logctx.LogAddProfile),
+			zap.Error(err),
+		)
+		writeError(w, http.StatusInternalServerError, "error adding workload")
+		return true
+	}
+	wrklad.SemesterID = 2
+	err = h.serviceWorkload.AddSemesterWorkload(ctx, &wrklad)
+	if err != nil {
+		h.logger.Error("error adding workload",
+			zap.String("layer", logctx.LogHandlerLayer),
+			zap.String("function", logctx.LogAddProfile),
+			zap.Error(err),
+		)
+		writeError(w, http.StatusInternalServerError, "error adding workload")
+		return true
+	}
+	wrklad.SemesterID = 3
+	err = h.serviceWorkload.AddSemesterWorkload(ctx, &wrklad)
+	if err != nil {
+		h.logger.Error("error adding workload",
+			zap.String("layer", logctx.LogHandlerLayer),
+			zap.String("function", logctx.LogAddProfile),
+			zap.Error(err),
+		)
+		writeError(w, http.StatusInternalServerError, "error adding workload")
+		return true
+	}
+	return false
 }
 
 func (h *Handler) GetProfile(w http.ResponseWriter, r *http.Request) {
@@ -239,21 +287,21 @@ func (h *Handler) GetProfile(w http.ResponseWriter, r *http.Request) {
 			Language: l.LanguageName,
 		})
 	}
-	coursesID, err := h.serviceCourse.GetCourseInstancesByVersionID(ctx, version.ProfileVersionId)
-	if err != nil {
-		h.logger.Error("error getting course ids",
-			zap.String("layer", logctx.LogHandlerLayer),
-			zap.String("function", logctx.LogGetProfileByID),
-			zap.Error(err),
-		)
-		writeError(w, http.StatusInternalServerError, "error getting courses")
-		return
-	}
+	//coursesID, err := h.serviceCourse.GetCourseInstancesByVersionID(ctx, version.ProfileVersionId)
+	//if err != nil {
+	//	h.logger.Error("error getting course ids",
+	//		zap.String("layer", logctx.LogHandlerLayer),
+	//		zap.String("function", logctx.LogGetProfileByID),
+	//		zap.Error(err),
+	//	)
+	//	writeError(w, http.StatusInternalServerError, "error getting courses")
+	//	return
+	//}
 	courseEntries := make([]Course, 0)
-	for _, courseID := range coursesID {
-		entry := h.serviceCourse
-		courseEntries = append(courseEntries)
-	}
+	//for _, courseID := range coursesID {
+	//	entry := h.serviceCourse
+	//	courseEntries = append(courseEntries)
+	//}
 	positionName, err := h.servicePosition.GetPositionByID(ctx, version.PositionID)
 	if err != nil {
 		h.logger.Error("error getting position name by id",
@@ -542,7 +590,7 @@ func writeJSON(w http.ResponseWriter, status int, data interface{}) {
 func RegisterRoutes(router chi.Router, h *Handler) {
 	router.Route("/", func(r chi.Router) {
 		r.Post("/addProfile", h.AddProfile)
-		//r.Get("/getProfile/{id}", h.GetProfile)
+		r.Get("/getProfile/{id}", h.GetProfile)
 		r.Get("/getAllProfiles", h.GetAllFaculties)
 		r.Get("/filters", h.GetFacultyFilters)
 	})

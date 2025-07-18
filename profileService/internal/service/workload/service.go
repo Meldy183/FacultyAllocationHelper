@@ -12,10 +12,10 @@ var _ workload.Service = (*Service)(nil)
 
 type Service struct {
 	repo   workload.Repository
-	logger zap.Logger
+	logger *zap.Logger
 }
 
-func NewService(repo workload.Repository, logger zap.Logger) *Service {
+func NewService(repo workload.Repository, logger *zap.Logger) *Service {
 	return &Service{repo: repo, logger: logger}
 }
 

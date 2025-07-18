@@ -18,7 +18,7 @@ type WorkloadRepo struct {
 
 const (
 	queryGetSemesterWorkloadByVersionID = `SELECT workload_id, profile_version_id, semester_id, lectures_count, tutorials_count, labs_count, electives_count, rate
-FROM workloadDomain
+FROM workload
 WHERE profile_version_id = $1 AND semester_id = $2`
 	queryAddSemesterWorkload = `INSERT INTO workload
 	(profile_version_id, semester_id, lectures_count, tutorials_count, labs_count, electives_count, rate)
@@ -65,7 +65,7 @@ func (r *WorkloadRepo) GetSemesterWorkloadByVersionID(ctx context.Context, Versi
 }
 
 func (r *WorkloadRepo) AddSemesterWorkload(ctx context.Context, workload *workloadDomain.Workload) error {
-	err := r.pool.QueryRow(ctx, queryAddSemesterWorkload, workload.WorkloadID,
+	err := r.pool.QueryRow(ctx, queryAddSemesterWorkload,
 		workload.ProfileVersionID,
 		workload.SemesterID,
 		workload.LecturesCount,

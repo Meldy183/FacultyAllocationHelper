@@ -14,6 +14,7 @@ import (
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/profileInstitute"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/profileLanguage"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/profileVersion"
+	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/workload"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/storage/db"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/storage/postgres"
 	"go.uber.org/zap"
@@ -67,6 +68,7 @@ func main() {
 	positionRepo := postgres.NewPositionRepo(pool, logger)
 	instituteRepo := postgres.NewInstituteRepo(pool, logger)
 	profileVersionRepo := postgres.NewUserProfileVersionRepo(pool, logger)
+	workloadRepo := postgres.NewSemesterWorkloadRepo(pool, logger)
 	// Service layer inits
 	userProfileService := facultyProfile.NewService(userProfileRepo, logger)
 	userLanguageService := profileLanguage.NewService(userLanguageRepo, logger)
@@ -75,6 +77,7 @@ func main() {
 	positionService := position.NewService(positionRepo, logger)
 	instituteService := institute.NewService(instituteRepo, logger)
 	profileVersionService := profileVersion.NewService(profileVersionRepo, logger)
+	workloadService := workload.NewService(workloadRepo, logger)
 	handler := userprofile2.NewHandler(
 		userProfileService,
 		userInstituteService,
@@ -83,6 +86,7 @@ func main() {
 		positionService,
 		instituteService,
 		profileVersionService,
+		workloadService,
 		logger,
 	)
 	router := http.NewRouter(handler)
