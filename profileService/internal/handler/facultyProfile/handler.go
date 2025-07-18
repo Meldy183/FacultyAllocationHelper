@@ -173,113 +173,122 @@ func (h *Handler) AddProfile(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, resp)
 }
 
-//	func (h *Handler) GetProfile(w http.ResponseWriter, r *http.Request) {
-//		ctx := r.Context()
-//		idParam := chi.URLParam(r, "id")
-//		_profileID, err := strconv.ParseUint(idParam, 10, 64)
-//		profileID := int64(_profileID)
-//		if err != nil || profileID <= 0 {
-//			h.logger.Error("invalid profileID",
-//				zap.String("layer", logctx.LogHandlerLayer),
-//				zap.String("function", logctx.LogGetProfileByID),
-//				zap.Int64("id", profileID),
-//			)
-//			writeError(w, http.StatusBadRequest, "invalid profileID")
-//			return
-//		}
-//		profile, err := h.serviceUP.GetProfileByID(ctx, profileID)
-//		if err != nil {
-//			h.logger.Error("error getting facultyProfile",
-//				zap.String("layer", logctx.LogHandlerLayer),
-//				zap.String("function", logctx.LogGetProfileByID),
-//				zap.Error(err),
-//			)
-//			writeError(w, http.StatusInternalServerError, "error getting facultyProfile")
-//			return
-//		}
-//		inst, err := h.serviceUI.GetUserInstitutesByProfileID(ctx, profileID)
-//		if err != nil {
-//			h.logger.Error("error getting institute",
-//				zap.String("layer", logctx.LogHandlerLayer),
-//				zap.String("function", logctx.LogGetProfileByID),
-//				zap.Error(err),
-//			)
-//			writeError(w, http.StatusInternalServerError, "error getting facultyProfile")
-//			return
-//		}
-//		languages, err := h.serviceLang.GetUserLanguages(ctx, profileID)
-//		if err != nil {
-//			h.logger.Error("error getting languages",
-//				zap.String("layer", logctx.LogHandlerLayer),
-//				zap.String("function", logctx.LogGetProfileByID),
-//				zap.Error(err),
-//			)
-//			writeError(w, http.StatusInternalServerError, "error getting languages")
-//			return
-//		}
-//		var langEntries []Lang
-//		for _, l := range languages {
-//			langEntries = append(langEntries, Lang{
-//				Language: l.LanguageName,
-//			})
-//		}
-//		coursesID, err := h.serviceCourse.GetInstancesByProfileID(ctx, profileID)
-//		if err != nil {
-//			h.logger.Error("error getting course ids",
-//				zap.String("layer", logctx.LogHandlerLayer),
-//				zap.String("function", logctx.LogGetProfileByID),
-//				zap.Error(err),
-//			)
-//			writeError(w, http.StatusInternalServerError, "error getting courses")
-//			return
-//		}
-//		courseEntries := make([]Course, 0)
-//		for _, courseID := range coursesID {
-//			h.logger.Info("getting course entry",
-//				zap.String("layer", logctx.LogHandlerLayer),
-//				zap.String("function", logctx.LogGetProfileByID),
-//				zap.Int64("id", courseID),
-//			)
-//			courseEntries = append(courseEntries, Course{
-//				CourseInstanceID: courseID,
-//			})
-//		}
-//		positionName, err := h.servicePosition.GetPositionByID(ctx, profile.PositionID)
-//		if err != nil {
-//			h.logger.Error("error getting position name by id",
-//				zap.String("layer", logctx.LogHandlerLayer),
-//				zap.String("function", logctx.LogGetProfileByID),
-//				zap.Int("id", profile.PositionID),
-//				zap.Error(err),
-//			)
-//			writeError(w, http.StatusInternalServerError, "error getting position by id")
-//			return
-//		}
-//		resp := GetProfileResponse{
-//			ProfileID:      profileID,
-//			NameEnglish:    profile.EnglishName,
-//			NameRussian:    profile.RussianName,
-//			Alias:          profile.Alias,
-//			Email:          profile.Email,
-//			Position:       *positionName,
-//			Institute:      inst.Name,
-//			StudentType:    profile.StudentType,
-//			Degree:         profile.Degree,
-//			Languages:      &langEntries,
-//			Courses:        &courseEntries,
-//			EmploymentType: profile.EmploymentType,
-//			Mode:           (*string)(profile.Mode),
-//			MaxLoad:        profile.MaxLoad,
-//		}
-//		h.logger.Info("Successfully fetched facultyProfile",
-//			zap.String("layer", logctx.LogHandlerLayer),
-//			zap.String("function", logctx.LogGetProfileByID),
-//		)
-//		writeJSON(w, http.StatusOK, resp)
-//	}
+func (h *Handler) GetProfile(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	idParam := chi.URLParam(r, "id")
+	_profileVersionID, err := strconv.ParseUint(idParam, 10, 64)
+	versionID := int64(_profileVersionID)
+	version, err := h.serviceVersionProfile.GetVersionByVersionID(ctx, versionID)
+	if err != nil {
+		h.logger.Error("error getting version",
+			zap.String("layer", logctx.LogHandlerLayer),
+			zap.String("function", logctx.LogAddProfile),
+			zap.Error(err),
+		)
+		writeError(w, http.StatusInternalServerError, "error getting version")
+	}
+	if err != nil || versionID <= 0 {
+		h.logger.Error("invalid profileID",
+			zap.String("layer", logctx.LogHandlerLayer),
+			zap.String("function", logctx.LogGetProfileByID),
+			zap.Int64("id", versionID),
+		)
+		writeError(w, http.StatusBadRequest, "invalid profileID")
+		return
+	}
+	profile, err := h.serviceUP.GetProfileByID(ctx, version.ProfileID)
+	if err != nil {
+		h.logger.Error("error getting facultyProfile",
+			zap.String("layer", logctx.LogHandlerLayer),
+			zap.String("function", logctx.LogGetProfileByID),
+			zap.Error(err),
+		)
+		writeError(w, http.StatusInternalServerError, "error getting facultyProfile")
+		return
+	}
+	inst, err := h.serviceUI.GetUserInstitutesByProfileID(ctx, version.ProfileID)
+	if err != nil {
+		h.logger.Error("error getting institute",
+			zap.String("layer", logctx.LogHandlerLayer),
+			zap.String("function", logctx.LogGetProfileByID),
+			zap.Error(err),
+		)
+		writeError(w, http.StatusInternalServerError, "error getting facultyProfile")
+		return
+	}
+	languages, err := h.serviceLang.GetUserLanguages(ctx, version.ProfileID)
+	if err != nil {
+		h.logger.Error("error getting languages",
+			zap.String("layer", logctx.LogHandlerLayer),
+			zap.String("function", logctx.LogGetProfileByID),
+			zap.Error(err),
+		)
+		writeError(w, http.StatusInternalServerError, "error getting languages")
+		return
+	}
+	var langEntries []Lang
+	for _, l := range languages {
+		langEntries = append(langEntries, Lang{
+			Language: l.LanguageName,
+		})
+	}
+	coursesID, err := h.serviceCourse.GetInstancesByProfileID(ctx, profileID)
+	if err != nil {
+		h.logger.Error("error getting course ids",
+			zap.String("layer", logctx.LogHandlerLayer),
+			zap.String("function", logctx.LogGetProfileByID),
+			zap.Error(err),
+		)
+		writeError(w, http.StatusInternalServerError, "error getting courses")
+		return
+	}
+	courseEntries := make([]Course, 0)
+	for _, courseID := range coursesID {
+		h.logger.Info("getting course entry",
+			zap.String("layer", logctx.LogHandlerLayer),
+			zap.String("function", logctx.LogGetProfileByID),
+			zap.Int64("id", courseID),
+		)
+		courseEntries = append(courseEntries, Course{
+			CourseInstanceID: courseID,
+		})
+	}
+	positionName, err := h.servicePosition.GetPositionByID(ctx, profile.PositionID)
+	if err != nil {
+		h.logger.Error("error getting position name by id",
+			zap.String("layer", logctx.LogHandlerLayer),
+			zap.String("function", logctx.LogGetProfileByID),
+			zap.Int("id", profile.PositionID),
+			zap.Error(err),
+		)
+		writeError(w, http.StatusInternalServerError, "error getting position by id")
+		return
+	}
+	resp := GetProfileResponse{
+		ProfileID:      profileID,
+		NameEnglish:    profile.EnglishName,
+		NameRussian:    profile.RussianName,
+		Alias:          profile.Alias,
+		Email:          profile.Email,
+		Position:       *positionName,
+		Institute:      inst.Name,
+		StudentType:    profile.StudentType,
+		Degree:         profile.Degree,
+		Languages:      &langEntries,
+		Courses:        &courseEntries,
+		EmploymentType: profile.EmploymentType,
+		Mode:           (*string)(profile.Mode),
+		MaxLoad:        profile.MaxLoad,
+	}
+	h.logger.Info("Successfully fetched facultyProfile",
+		zap.String("layer", logctx.LogHandlerLayer),
+		zap.String("function", logctx.LogGetProfileByID),
+	)
+	writeJSON(w, http.StatusOK, resp)
+}
 func (h *Handler) GetAllFaculties(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	instQuery := r.URL.Query()["institute_id"]
+	instQuery := r.URL.Query()["institute_ids"]
 	year, err := strconv.Atoi(r.URL.Query().Get("year"))
 	if err != nil {
 		h.logger.Error("error parsing year",
@@ -305,7 +314,7 @@ func (h *Handler) GetAllFaculties(w http.ResponseWriter, r *http.Request) {
 		}
 		institutes = append(institutes, id)
 	}
-	posQuery := r.URL.Query()["position"]
+	posQuery := r.URL.Query()["positions"]
 	var positions []int
 	for _, elem := range posQuery {
 		pos, err := strconv.Atoi(elem)

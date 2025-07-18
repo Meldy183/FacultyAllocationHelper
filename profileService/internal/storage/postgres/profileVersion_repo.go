@@ -26,6 +26,11 @@ const (
 		FROM user_profile_version
 		WHERE profile_id = $1 AND year = $2
 	`
+	queryGetVersionByVersionID = `
+		SELECT profile_version_id, profile_id, year, workload, maxload, position_id, employment_type, degree, mode 
+		FROM user_profile_version
+		WHERE profile_version_id = $1
+	`
 	queryInsertVersion = `
 		INSERT INTO user_profile_version (position_id, profile_id, year)
 		VALUES ($1, $2, $3)
@@ -90,4 +95,35 @@ func (r *ProfileVersionRepo) AddProfileVersion(ctx context.Context, version *pro
 		zap.Int64("version_id", version.ProfileVersionId),
 	)
 	return nil
+}
+
+func (r *ProfileVersionRepo) GetVersionByVersionID(ctx context.Context, versionID int64) (*profileVersion.ProfileVersion, error) {
+	row := r.pool.QueryRow(ctx, queryGetVersionByVersionID, versionID)
+	var version profileVersion.ProfileVersion
+	err := row.Scan(
+		&version.ProfileVersionId,
+		&version.ProfileID,
+		&version.Year,
+		&version.Workload,
+		&version.MaxLoad,
+		&version.PositionID,
+		&version.EmploymentType,
+		&version.Degree,
+		&version.Mode,
+	)
+	if err != nil {
+		r.logger.Error("Failed to get version by profile ID",
+			zap.String("layer", logctx.LogRepoLayer),
+			zap.String("function", logctx.LogGetVersionByProfileID),
+			zap.Int64("profile_id", versionID),
+			zap.Error(err),
+		)
+		return nil, fmt.Errorf("failed to get version by profile ID: %w", err)
+	}
+	r.logger.Info("Succeeded to get version by profile ID",
+		zap.String("layer", logctx.LogRepoLayer),
+		zap.String("function", logctx.LogGetVersionByProfileID),
+		zap.Int64("profile_id", versionID),
+	)
+	return &version, nil
 }
