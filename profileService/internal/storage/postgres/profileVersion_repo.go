@@ -22,14 +22,14 @@ func NewUserProfileVersionRepo(pool *pgxpool.Pool, logger *zap.Logger) *ProfileV
 
 const (
 	queryGetVersionByProfileID = `
-		SELECT profile_version_id, profile_id, year, workload, maxload,
+		SELECT profile_version_id, profile_id, year, maxload,
 		position_id, employment_type, degree, mode, student_type, fsro, 
 		frontal_hours, extra_activities
 		FROM user_profile_version
 		WHERE profile_id = $1 AND year = $2
 	`
 	queryGetVersionByVersionID = `
-		SELECT profile_version_id, profile_id, year, workload, maxload,
+		SELECT profile_version_id, profile_id, year, maxload,
 		position_id, employment_type, degree, mode, student_type, fsro,
 		frontal_hours, extra_activities
 		FROM user_profile_version
@@ -51,7 +51,6 @@ func (r *ProfileVersionRepo) GetVersionByProfileID(ctx context.Context, profileI
 		&version.ProfileVersionId,
 		&version.ProfileID,
 		&version.Year,
-		&version.Workload,
 		&version.MaxLoad,
 		&version.PositionID,
 		&version.EmploymentType,
@@ -108,7 +107,6 @@ func (r *ProfileVersionRepo) GetVersionByVersionID(ctx context.Context, versionI
 		&version.ProfileVersionId,
 		&version.ProfileID,
 		&version.Year,
-		&version.Workload,
 		&version.MaxLoad,
 		&version.PositionID,
 		&version.EmploymentType,

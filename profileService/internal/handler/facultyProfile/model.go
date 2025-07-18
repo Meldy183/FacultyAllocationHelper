@@ -91,7 +91,6 @@ type GetProfileResponse struct {
 	Email            string         `json:"email"`
 	PositionName     string         `json:"position_name"`
 	InstituteNames   []string       `json:"institute_names"`
-	Workload         *float64       `json:"workload"`
 	StudentType      *string        `json:"student_type"`
 	Degree           *bool          `json:"degree"`
 	Fsro             *string        `json:"fsro"`
@@ -143,7 +142,6 @@ type Faculty struct {
 	Email          *string  `json:"email"`
 	PositionName   *string  `json:"position_name"`
 	InstituteNames []string `json:"institute_names"`
-	Workload       *float64 `json:"workload"`
 	Classes        []string `json:"classes"`
 }
 type WorkloadStats struct {
