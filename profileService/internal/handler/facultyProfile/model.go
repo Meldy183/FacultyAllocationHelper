@@ -1,5 +1,7 @@
 package facultyProfile
 
+import "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/handler/workload"
+
 type GetCourseListResponse struct {
 	Courses []Course `json:"courses"`
 }
@@ -102,7 +104,7 @@ type GetProfileResponse struct {
 	MaxLoad          *int           `json:"max_load"`
 	FrontalHours     *int           `json:"frontal_hours"`
 	ExtraActivity    *float64       `json:"extra_activities"`
-	WorkloadStats    *WorkloadStats `json:"workload_stats"`
+	WorkloadStats    *workload.WorkloadStats `json:"workload_stats"`
 }
 
 type Lang struct {
@@ -143,20 +145,6 @@ type Faculty struct {
 	PositionName   *string  `json:"position_name"`
 	InstituteNames []string `json:"institute_names"`
 	Classes        []string `json:"classes"`
-}
-type WorkloadStats struct {
-	T1    Classes `json:"t1"`
-	T2    Classes `json:"t2"`
-	T3    Classes `json:"t3"`
-	Total Classes `json:"total"`
-}
-
-type Classes struct {
-	Lec  int     `json:"lec_hours"`
-	Tut  int     `json:"tut_hours"`
-	Lab  int     `json:"lab_hours"`
-	Elec int     `json:"elective_hours"`
-	Rate float64 `json:"rate"`
 }
 
 type GetAllFacultiesResponse struct {
