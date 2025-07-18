@@ -8,6 +8,7 @@ import (
 	userinstituteDomain "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/profileInstitute"
 	profileVersionDomain "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/profileVersion"
 	workloadDomain "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/workload"
+	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/handler/sharedContent"
 	handlerWorkload "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/handler/workload"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/facultyProfile"
@@ -318,7 +319,7 @@ func (h *Handler) GetProfile(w http.ResponseWriter, r *http.Request) {
 	//	writeError(w, http.StatusInternalServerError, "error getting courses")
 	//	return
 	//}
-	courseEntries := make([]Course, 0)
+	courseEntries := make([]sharedContent.Course, 0)
 	//for _, courseID := range coursesID {
 	//	entry := h.serviceCourse
 	//	courseEntries = append(courseEntries)
