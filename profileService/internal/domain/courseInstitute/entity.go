@@ -1,6 +1,6 @@
 package courseInstitute
 
-type InstituteCourse struct {
+type InstituteCourseLink struct {
 	CourseInstituteID int
 	InstituteID       int
 	CourseID          int

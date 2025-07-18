@@ -1,6 +1,6 @@
 package courseStaff
 
-type UserProfile struct {
+type CourseStaff struct {
 	AssignmentID            int
 	InstanceID              int
 	ProfileVersionID        int
@@ -13,7 +13,7 @@ type UserProfile struct {
 	LecturesCount           *int
 }
 
-func NewUserProfile(
+func NewCourseStaff(
 	AssignmentID int,
 	InstanceID int,
 	ProfileVersionID int,
@@ -24,8 +24,8 @@ func NewUserProfile(
 	LabsCount *int,
 	TutorialsCount *int,
 	LecturesCount *int,
-) *UserProfile {
-	return &UserProfile{
+) *CourseStaff {
+	return &CourseStaff{
 		AssignmentID:            AssignmentID,
 		InstanceID:              InstanceID,
 		ProfileVersionID:        ProfileVersionID,
