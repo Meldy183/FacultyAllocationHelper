@@ -8,7 +8,6 @@ import (
 	userinstituteDomain "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/profileInstitute"
 	profileVersionDomain "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/profileVersion"
 	workloadDomain "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/workload"
-	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/handler/sharedContent"
 	handlerWorkload "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/handler/workload"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/facultyProfile"
@@ -309,21 +308,7 @@ func (h *Handler) GetProfile(w http.ResponseWriter, r *http.Request) {
 			Language: l.LanguageName,
 		})
 	}
-	//coursesID, err := h.serviceCourse.GetCourseInstancesByVersionID(ctx, version.ProfileVersionId)
-	//if err != nil {
-	//	h.logger.Error("error getting course ids",
-	//		zap.String("layer", logctx.LogHandlerLayer),
-	//		zap.String("function", logctx.LogGetProfileByID),
-	//		zap.Error(err),
-	//	)
-	//	writeError(w, http.StatusInternalServerError, "error getting courses")
-	//	return
-	//}
-	courseEntries := make([]sharedContent.Course, 0)
-	//for _, courseID := range coursesID {
-	//	entry := h.serviceCourse
-	//	courseEntries = append(courseEntries)
-	//}
+
 	positionName, err := h.servicePosition.GetPositionByID(ctx, version.PositionID)
 	if err != nil {
 		h.logger.Error("error getting position name by id",

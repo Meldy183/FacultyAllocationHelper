@@ -401,7 +401,7 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 		zap.String("layer", logctx.LogDBInitLayer),
 		zap.String("function", logctx.LogInitSchema),
 	)
-	query = `CREATE TABLE IF NOT EXISTS course_staff (
+	query = `CREATE TABLE IF NOT EXISTS staff (
     assignment_id SERIAL PRIMARY KEY,
     instance_id INT,
     profile_id INT,
@@ -417,14 +417,14 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 	_, err = conn.Exec(ctx, query)
 	if err != nil {
 
-		str.logger.Error("Error creating course_staff table",
+		str.logger.Error("Error creating staff table",
 			zap.String("layer", logctx.LogDBInitLayer),
 			zap.String("function", logctx.LogInitSchema),
 			zap.Error(err),
 		)
 		return err
 	}
-	str.logger.Info("created course_staff table",
+	str.logger.Info("created staff table",
 		zap.String("layer", logctx.LogDBInitLayer),
 		zap.String("function", logctx.LogInitSchema),
 	)
