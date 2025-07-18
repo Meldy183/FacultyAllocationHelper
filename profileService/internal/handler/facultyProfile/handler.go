@@ -1,12 +1,13 @@
 package facultyProfile
 
 import (
+	"context"
 	"encoding/json"
 	"github.com/go-chi/chi/v5"
 	userprofileDomain "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/facultyProfile"
 	userinstituteDomain "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/profileInstitute"
 	profileVersionDomain "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/profileVersion"
-	workload2 "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/workload"
+	workloadDomain "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/workload"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/facultyProfile"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/institute"
@@ -264,16 +265,11 @@ func (h *Handler) GetProfile(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusInternalServerError, "error getting position by id")
 		return
 	}
-	workloadUnpacked, err := h.serviceWorkload.GetYearWorkloadByVersionID(ctx, versionID)
-	if err != nil {
-		h.logger.Error("error getting workload by versionID",
-			zap.String("layer", logctx.LogHandlerLayer),
-			zap.String("function", logctx.LogGetProfileByID),
-			zap.Error(err),
-		)
-		writeError(w, http.StatusInternalServerError, "error getting workload by versionID")
+	sem1, sem2, sem3, notDone := getYearWorkload(w, err, h, ctx, versionID)
+	if notDone {
 		return
 	}
+	stats := h.workloadToClasses(sem1, sem2, sem3)
 	resp := GetProfileResponse{
 		ProfileVersionID: version.ProfileVersionId,
 		NameEnglish:      profile.EnglishName,
@@ -293,13 +289,77 @@ func (h *Handler) GetProfile(w http.ResponseWriter, r *http.Request) {
 		MaxLoad:          version.MaxLoad,
 		FrontalHours:     version.FrontalHours,
 		ExtraActivity:    version.ExtraActivities,
-		WorkloadStats:    workloadToClass(workloadUnpacked),
+		WorkloadStats:    stats,
 	}
 	h.logger.Info("Successfully fetched facultyProfile",
 		zap.String("layer", logctx.LogHandlerLayer),
 		zap.String("function", logctx.LogGetProfileByID),
 	)
 	writeJSON(w, http.StatusOK, resp)
+}
+
+func (h *Handler) workloadToClasses(sem1 *workloadDomain.Workload, sem2 *workloadDomain.Workload, sem3 *workloadDomain.Workload) *WorkloadStats {
+	class1 := &Classes{
+		Lec:  sem1.LecturesCount,
+		Tut:  sem1.TutorialsCount,
+		Lab:  sem1.LabsCount,
+		Elec: sem1.ElectivesCount,
+		Rate: sem1.Rate,
+	}
+	class2 := &Classes{
+		Lec:  sem2.LecturesCount,
+		Tut:  sem2.TutorialsCount,
+		Lab:  sem2.LecturesCount,
+		Elec: sem2.ElectivesCount,
+		Rate: sem2.Rate,
+	}
+	class3 := &Classes{
+		Lec:  sem3.LecturesCount,
+		Tut:  sem3.TutorialsCount,
+		Lab:  sem3.LecturesCount,
+		Elec: sem3.ElectivesCount,
+		Rate: sem3.Rate,
+	}
+	stats := &WorkloadStats{
+		T1: *class1,
+		T2: *class2,
+		T3: *class3,
+	}
+	return stats
+}
+
+func getYearWorkload(w http.ResponseWriter, err error, h *Handler, ctx context.Context, versionID int64) (*workloadDomain.Workload, *workloadDomain.Workload, *workloadDomain.Workload, bool) {
+	sem1, err := h.serviceWorkload.GetSemesterWorkloadByVersionID(ctx, versionID, 1)
+	if err != nil {
+		h.logger.Error(`GetSemesterWorkloadByVersionID failed`,
+			zap.String("layer", logctx.LogServiceLayer),
+			zap.String("function", logctx.LogGetYearWorkloadByVersionID),
+			zap.Error(err),
+		)
+		writeError(w, http.StatusInternalServerError, "error getting semester workload by version id")
+		return nil, nil, nil, true
+	}
+	sem2, err := h.serviceWorkload.GetSemesterWorkloadByVersionID(ctx, versionID, 2)
+	if err != nil {
+		h.logger.Error(`GetSemesterWorkloadByVersionID failed`,
+			zap.String("layer", logctx.LogServiceLayer),
+			zap.String("function", logctx.LogGetYearWorkloadByVersionID),
+			zap.Error(err),
+		)
+		writeError(w, http.StatusInternalServerError, "error getting semester workload by version id")
+		return nil, nil, nil, true
+	}
+	sem3, err := h.serviceWorkload.GetSemesterWorkloadByVersionID(ctx, versionID, 3)
+	if err != nil {
+		h.logger.Error(`GetSemesterWorkloadByVersionID failed`,
+			zap.String("layer", logctx.LogServiceLayer),
+			zap.String("function", logctx.LogGetYearWorkloadByVersionID),
+			zap.Error(err),
+		)
+		writeError(w, http.StatusInternalServerError, "error getting semester workload by version id")
+		return nil, nil, nil, true
+	}
+	return sem1, sem2, sem3, false
 }
 func (h *Handler) GetAllFaculties(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
