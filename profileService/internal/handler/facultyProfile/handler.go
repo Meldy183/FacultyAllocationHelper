@@ -6,6 +6,7 @@ import (
 	userprofileDomain "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/facultyProfile"
 	userinstituteDomain "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/profileInstitute"
 	profileVersionDomain "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/profileVersion"
+	workload2 "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/workload"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/facultyProfile"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/institute"
@@ -14,6 +15,7 @@ import (
 	userinstitute "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/profileInstitute"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/profileLanguage"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/profileVersion"
+	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/workload"
 	"go.uber.org/zap"
 	"net/http"
 	"strconv"
@@ -27,6 +29,7 @@ type Handler struct {
 	servicePosition       *position.Service
 	serviceInstitute      *institute.Service
 	serviceVersionProfile *profileVersion.Service
+	serviceWorkload       *workload.Service
 	logger                *zap.Logger
 }
 
@@ -38,6 +41,7 @@ func NewHandler(
 	servicePosition *position.Service,
 	serviceInstitute *institute.Service,
 	serviceVersionProfile *profileVersion.Service,
+	serviceWorkload *workload.Service,
 	logger *zap.Logger,
 ) *Handler {
 	return &Handler{
@@ -48,6 +52,7 @@ func NewHandler(
 		servicePosition:       servicePosition,
 		serviceInstitute:      serviceInstitute,
 		serviceVersionProfile: serviceVersionProfile,
+		serviceWorkload:       serviceWorkload,
 		logger:                logger.Named("userprofile_handler"),
 	}
 }
@@ -259,7 +264,16 @@ func (h *Handler) GetProfile(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusInternalServerError, "error getting position by id")
 		return
 	}
-	workload :=
+	workloadUnpacked, err := h.serviceWorkload.GetYearWorkloadByVersionID(ctx, versionID)
+	if err != nil {
+		h.logger.Error("error getting workload by versionID",
+			zap.String("layer", logctx.LogHandlerLayer),
+			zap.String("function", logctx.LogGetProfileByID),
+			zap.Error(err),
+		)
+		writeError(w, http.StatusInternalServerError, "error getting workload by versionID")
+		return
+	}
 	resp := GetProfileResponse{
 		ProfileVersionID: version.ProfileVersionId,
 		NameEnglish:      profile.EnglishName,
@@ -279,7 +293,7 @@ func (h *Handler) GetProfile(w http.ResponseWriter, r *http.Request) {
 		MaxLoad:          version.MaxLoad,
 		FrontalHours:     version.FrontalHours,
 		ExtraActivity:    version.ExtraActivities,
-		WorkloadStats:    workload,
+		WorkloadStats:    workloadToClass(workloadUnpacked),
 	}
 	h.logger.Info("Successfully fetched facultyProfile",
 		zap.String("layer", logctx.LogHandlerLayer),
@@ -472,4 +486,13 @@ func RegisterRoutes(router chi.Router, h *Handler) {
 		r.Get("/getAllProfiles", h.GetAllFaculties)
 		r.Get("/filters", h.GetFacultyFilters)
 	})
+}
+
+func workloadToClass(year []*Classes) *WorkloadStats {
+	w := &WorkloadStats{
+		T1: *year[0],
+		T2: *year[1],
+		T3: *year[2],
+	}
+	return w
 }
