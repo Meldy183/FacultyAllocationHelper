@@ -8,6 +8,10 @@ type ProfileVersion struct {
 	MaxLoad          *int
 	PositionID       int
 	EmploymentType   *string
+	StudentType      *string
+	Fsro             *string
 	Degree           *bool
 	Mode             *string
+	FrontalHours     *int
+	ExtraActivities  *float64
 }

@@ -20,7 +20,7 @@ func NewService(repo profileCourseInstance.Repository, logger *zap.Logger) *Serv
 	return &Service{repo: repo, logger: logger}
 }
 
-func (s *Service) GetCourseInstancesByProfileID(ctx context.Context, profileVersionID int64) ([]int64, error) {
+func (s *Service) GetCourseInstancesByVersionID(ctx context.Context, profileVersionID int64) ([]int64, error) {
 	if profileVersionID <= 0 {
 		s.logger.Error("profileID must be positive",
 			zap.String("layer", logctx.LogServiceLayer),
@@ -29,7 +29,7 @@ func (s *Service) GetCourseInstancesByProfileID(ctx context.Context, profileVers
 		)
 		return nil, fmt.Errorf("profileID must be positive. Id: %d", profileVersionID)
 	}
-	ids, err := s.repo.GetCourseInstancesByProfileID(ctx, profileVersionID)
+	ids, err := s.repo.GetCourseInstancesByVersionID(ctx, profileVersionID)
 	if err != nil {
 		s.logger.Error("Failed to get instances by profile_id",
 			zap.String("layer", logctx.LogServiceLayer),

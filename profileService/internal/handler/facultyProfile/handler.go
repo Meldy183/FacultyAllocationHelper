@@ -233,7 +233,7 @@ func (h *Handler) GetProfile(w http.ResponseWriter, r *http.Request) {
 			Language: l.LanguageName,
 		})
 	}
-	coursesID, err := h.serviceCourse.GetInstancesByProfileID(ctx, profileID)
+	coursesID, err := h.serviceCourse.GetCourseInstancesByVersionID(ctx, version.ProfileVersionId)
 	if err != nil {
 		h.logger.Error("error getting course ids",
 			zap.String("layer", logctx.LogHandlerLayer),
@@ -245,41 +245,41 @@ func (h *Handler) GetProfile(w http.ResponseWriter, r *http.Request) {
 	}
 	courseEntries := make([]Course, 0)
 	for _, courseID := range coursesID {
-		h.logger.Info("getting course entry",
-			zap.String("layer", logctx.LogHandlerLayer),
-			zap.String("function", logctx.LogGetProfileByID),
-			zap.Int64("id", courseID),
-		)
-		courseEntries = append(courseEntries, Course{
-			CourseInstanceID: courseID,
-		})
+		entry := h.serviceCourse
+		courseEntries = append(courseEntries)
 	}
-	positionName, err := h.servicePosition.GetPositionByID(ctx, profile.PositionID)
+	positionName, err := h.servicePosition.GetPositionByID(ctx, version.PositionID)
 	if err != nil {
 		h.logger.Error("error getting position name by id",
 			zap.String("layer", logctx.LogHandlerLayer),
 			zap.String("function", logctx.LogGetProfileByID),
-			zap.Int("id", profile.PositionID),
+			zap.Int("id", version.PositionID),
 			zap.Error(err),
 		)
 		writeError(w, http.StatusInternalServerError, "error getting position by id")
 		return
 	}
 	resp := GetProfileResponse{
-		ProfileID:      profileID,
-		NameEnglish:    profile.EnglishName,
-		NameRussian:    profile.RussianName,
-		Alias:          profile.Alias,
-		Email:          profile.Email,
-		Position:       *positionName,
-		Institute:      inst.Name,
-		StudentType:    profile.StudentType,
-		Degree:         profile.Degree,
-		Languages:      &langEntries,
-		Courses:        &courseEntries,
-		EmploymentType: profile.EmploymentType,
-		Mode:           (*string)(profile.Mode),
-		MaxLoad:        profile.MaxLoad,
+		ProfileVersionID: version.ProfileVersionId,
+		NameEnglish:      profile.EnglishName,
+		NameRussian:      profile.RussianName,
+		Alias:            profile.Alias,
+		Email:            profile.Email,
+		PositionName:     *positionName,
+		InstituteNames:   *institutes,
+		Workload:         version.Workload,
+		StudentType:      version.StudentType,
+		Degree:           version.Degree,
+		Fsro:             version.Fsro,
+		LanguageCodes:    &langEntries,
+		Courses:          &courseEntries,
+		EmploymentType:   version.EmploymentType,
+		HiringStatus:     profile.Status,
+		Mode:             version.Mode,
+		MaxLoad:          version.MaxLoad,
+		FrontalHours:     version.FrontalHours,
+		ExtraActivity:    version.ExtraActivities,
+		WorkloadStats:    workload,
 	}
 	h.logger.Info("Successfully fetched facultyProfile",
 		zap.String("layer", logctx.LogHandlerLayer),

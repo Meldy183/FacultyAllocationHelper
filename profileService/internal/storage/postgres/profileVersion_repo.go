@@ -22,12 +22,16 @@ func NewUserProfileVersionRepo(pool *pgxpool.Pool, logger *zap.Logger) *ProfileV
 
 const (
 	queryGetVersionByProfileID = `
-		SELECT profile_version_id, profile_id, year, workload, maxload, position_id, employment_type, degree, mode 
+		SELECT profile_version_id, profile_id, year, workload, maxload,
+		position_id, employment_type, degree, mode, student_type, fsro, 
+		frontal_hours, extra_activities
 		FROM user_profile_version
 		WHERE profile_id = $1 AND year = $2
 	`
 	queryGetVersionByVersionID = `
-		SELECT profile_version_id, profile_id, year, workload, maxload, position_id, employment_type, degree, mode 
+		SELECT profile_version_id, profile_id, year, workload, maxload,
+		position_id, employment_type, degree, mode, student_type, fsro,
+		frontal_hours, extra_activities
 		FROM user_profile_version
 		WHERE profile_version_id = $1
 	`
@@ -37,10 +41,6 @@ const (
 		RETURNING profile_version_id
 	`
 	queryUpdateVersion = `
-		UPDATE user_profile_version
-		SET profile_id = $1, year = $2, lectures_count = $3, tutorials_count = $4, labs_count = $5,
-		elective_count = $6, workload = $7, maxload = $8, position_id = $9, employment_type = $10, degree = $11, mode = $12
-		WHERE profile_version_id = $13
 `
 )
 
@@ -57,6 +57,10 @@ func (r *ProfileVersionRepo) GetVersionByProfileID(ctx context.Context, profileI
 		&version.EmploymentType,
 		&version.Degree,
 		&version.Mode,
+		&version.StudentType,
+		&version.Fsro,
+		&version.FrontalHours,
+		&version.ExtraActivities,
 	)
 	if err != nil {
 		r.logger.Error("Failed to get version by profile ID",
@@ -110,6 +114,10 @@ func (r *ProfileVersionRepo) GetVersionByVersionID(ctx context.Context, versionI
 		&version.EmploymentType,
 		&version.Degree,
 		&version.Mode,
+		&version.StudentType,
+		&version.Fsro,
+		&version.FrontalHours,
+		&version.ExtraActivities,
 	)
 	if err != nil {
 		r.logger.Error("Failed to get version by profile ID",
