@@ -60,7 +60,7 @@ func main() {
 	)
 
 	// Repository layer inits
-	userProfileRepo := postgres.NewUserProfileRepo(pool, logger)
+	userProfileRepo := postgres.NewFacultyProfileRepo(pool, logger)
 	userLanguageRepo := postgres.NewUserLanguageRepo(pool, logger)
 	userInstituteRepo := postgres.NewUserInstituteRepo(pool, logger)
 	userCourseInstanceRepo := postgres.NewUserCourseInstance(pool, logger)

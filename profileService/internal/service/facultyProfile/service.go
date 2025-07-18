@@ -95,6 +95,12 @@ func (s *Service) UpdateProfileByID(ctx context.Context, profile *facultyProfile
 }
 
 func (s *Service) GetProfilesByFilters(ctx context.Context, institutes []int, positions []int) ([]int64, error) {
+	if len(institutes) == 0 {
+		institutes = []int{1, 2, 3, 4, 5}
+	}
+	if len(positions) == 0 {
+		positions = []int{1, 2, 3, 4, 5, 6, 7}
+	}
 	profilesByInst, err := s.repo.GetProfileIDsByInstituteIDs(ctx, institutes)
 	if err != nil {
 		s.logger.Error("error getting facultyProfile",
@@ -105,6 +111,11 @@ func (s *Service) GetProfilesByFilters(ctx context.Context, institutes []int, po
 		)
 		return nil, fmt.Errorf("error getting facultyProfile %w", err)
 	}
+	s.logger.Debug("Check institutes by filters",
+		zap.Int64s("institutesProfileIDs", profilesByInst),
+		zap.String("layer", logctx.LogServiceLayer),
+		zap.String("function", logctx.LogGetProfileByID),
+	)
 	profilesByPosition, err := s.repo.GetProfileIDsByPositionIDs(ctx, positions)
 	if err != nil {
 		s.logger.Error("error getting facultyProfile",
@@ -114,6 +125,11 @@ func (s *Service) GetProfilesByFilters(ctx context.Context, institutes []int, po
 			zap.Error(err),
 		)
 	}
+	s.logger.Debug("Check institutes by filters",
+		zap.Int64s("PositionsProfileIDs", profilesByInst),
+		zap.String("layer", logctx.LogServiceLayer),
+		zap.String("function", logctx.LogGetProfileByID),
+	)
 	union := getUnion(profilesByInst, profilesByPosition)
 	return union, nil
 }
