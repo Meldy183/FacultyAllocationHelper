@@ -18,7 +18,7 @@ type FacultyProfileRepo struct {
 	logger *zap.Logger
 }
 
-func NewUserProfileRepo(pool *pgxpool.Pool, logger *zap.Logger) *FacultyProfileRepo {
+func NewFacultyProfileRepo(pool *pgxpool.Pool, logger *zap.Logger) *FacultyProfileRepo {
 	return &FacultyProfileRepo{pool: pool, logger: logger}
 }
 
@@ -75,7 +75,7 @@ func (r *FacultyProfileRepo) GetProfileByID(ctx context.Context, profileID int64
 		zap.String("function", logctx.LogGetProfileByID),
 		zap.Int64("profileID", profileID),
 	)
-	return &userProfile, err
+	return &userProfile, nil
 }
 
 func (r *FacultyProfileRepo) AddProfile(ctx context.Context, userProfile *facultyProfile.UserProfile) error {
@@ -154,6 +154,15 @@ func (r *FacultyProfileRepo) GetProfileIDsByInstituteIDs(ctx context.Context, in
 		}
 		ids = append(ids, id)
 	}
+	if err := rows.Err(); err != nil {
+		r.logger.Error("Error getting facultyProfile by instituteIDs",
+			zap.String("layer", logctx.LogRepoLayer),
+			zap.String("function", logctx.LogGetProfileIDsByInstituteIDs),
+			zap.String("instituteIDs", fmt.Sprintf("%v", instituteIDs)),
+			zap.Error(err),
+		)
+		return nil, fmt.Errorf("GetProfileIDsByInstituteIDs failed: %w", err)
+	}
 	r.logger.Info("facultyProfile by instituteIDs found",
 		zap.String("layer", logctx.LogRepoLayer),
 		zap.String("function", logctx.LogGetProfileIDsByInstituteIDs),
@@ -186,6 +195,15 @@ func (r *FacultyProfileRepo) GetProfileIDsByPositionIDs(ctx context.Context, pos
 			return nil, fmt.Errorf("GetProfileIDsByPositionIDs failed: %w", err)
 		}
 		ids = append(ids, id)
+	}
+	if err := rows.Err(); err != nil {
+		r.logger.Error("Error getting facultyProfile by positionIDs",
+			zap.String("layer", logctx.LogRepoLayer),
+			zap.String("function", logctx.LogGetProfileIDsByPositionIDs),
+			zap.String("positionIDs", fmt.Sprintf("%v", positionIDs)),
+			zap.Error(err),
+		)
+		return nil, fmt.Errorf("GetProfileIDsByPositionIDs failed: %w", err)
 	}
 	r.logger.Info("facultyProfile by positionIDs found",
 		zap.String("layer", logctx.LogRepoLayer),

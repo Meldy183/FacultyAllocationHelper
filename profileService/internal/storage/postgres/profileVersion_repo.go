@@ -43,7 +43,7 @@ func (r *ProfileVersionRepo) GetVersionByProfileID(ctx context.Context, profileI
 	row := r.pool.QueryRow(ctx, queryGetVersionByProfileID, profileID, year)
 	var version profileVersion.ProfileVersion
 	err := row.Scan(
-		&version.ProfileID,
+		&version.ProfileVersionId,
 		&version.ProfileID,
 		&version.Year,
 		&version.Workload,

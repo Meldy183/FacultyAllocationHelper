@@ -320,6 +320,12 @@ func (h *Handler) GetAllFaculties(w http.ResponseWriter, r *http.Request) {
 		}
 		positions = append(positions, pos)
 	}
+	h.logger.Warn("success getting all faculties",
+		zap.String("layer", logctx.LogHandlerLayer),
+		zap.String("function", logctx.LogGetAllFaculties),
+		zap.Any("institutes", institutes),
+		zap.Any("positions", positions),
+	)
 	profileIds, err := h.serviceUP.GetProfilesByFilters(ctx, institutes, positions)
 	if err != nil {
 		h.logger.Error("Error getting facultyProfile ids",
@@ -352,6 +358,11 @@ func (h *Handler) GetAllFaculties(w http.ResponseWriter, r *http.Request) {
 			)
 			return
 		}
+		h.logger.Warn("success getting facultyProfile by id",
+			zap.String("layer", logctx.LogHandlerLayer),
+			zap.String("function", logctx.LogGetAllFaculties),
+			zap.Any("version", version),
+		)
 		pos, err := h.servicePosition.GetPositionByID(ctx, version.PositionID)
 		if err != nil {
 			h.logger.Error("Error getting position by id",
@@ -386,53 +397,53 @@ func (h *Handler) GetAllFaculties(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, resp)
 }
 
-//func (h *Handler) GetFacultyFilters(w http.ResponseWriter, r *http.Request) {
-//	ctx := r.Context()
-//	positions, err := h.servicePosition.GetAllPositions(ctx)
-//	if err != nil {
-//		h.logger.Error("Error getting all positions",
-//			zap.String("layer", logctx.LogHandlerLayer),
-//			zap.String("function", logctx.LogGetFacultyFilters),
-//			zap.Error(err),
-//		)
-//		writeError(w, http.StatusInternalServerError, "error getting all positions")
-//		return
-//	}
-//
-//	institutes, err := h.serviceInstitute.GetAllInstitutes(ctx)
-//	if err != nil {
-//		h.logger.Error("Error getting all institutes",
-//			zap.String("layer", logctx.LogHandlerLayer),
-//			zap.String("function", logctx.LogGetFacultyFilters),
-//			zap.Error(err),
-//		)
-//		writeError(w, http.StatusInternalServerError, "error getting all institutes")
-//		return
-//	}
-//	instituteObjects := make([]InstituteObj, 0)
-//	for _, elem := range institutes {
-//		iobj := InstituteObj{
-//			ID:   elem.InstituteID,
-//			Name: elem.Name,
-//		}
-//		instituteObjects = append(instituteObjects, iobj)
-//	}
-//
-//	positionObjects := make([]PositionObj, 0)
-//	for _, elem := range positions {
-//		pobj := PositionObj{
-//			ID:   elem.PositionID,
-//			Name: elem.Name,
-//		}
-//		positionObjects = append(positionObjects, pobj)
-//	}
-//	responce := GetFacultyFiltersResponse{
-//		InstituteFilters: instituteObjects,
-//		PositionFilters:  positionObjects,
-//	}
-//
-//	writeJSON(w, http.StatusOK, responce)
-//}
+func (h *Handler) GetFacultyFilters(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	positions, err := h.servicePosition.GetAllPositions(ctx)
+	if err != nil {
+		h.logger.Error("Error getting all positions",
+			zap.String("layer", logctx.LogHandlerLayer),
+			zap.String("function", logctx.LogGetFacultyFilters),
+			zap.Error(err),
+		)
+		writeError(w, http.StatusInternalServerError, "error getting all positions")
+		return
+	}
+
+	institutes, err := h.serviceInstitute.GetAllInstitutes(ctx)
+	if err != nil {
+		h.logger.Error("Error getting all institutes",
+			zap.String("layer", logctx.LogHandlerLayer),
+			zap.String("function", logctx.LogGetFacultyFilters),
+			zap.Error(err),
+		)
+		writeError(w, http.StatusInternalServerError, "error getting all institutes")
+		return
+	}
+	instituteObjects := make([]FilterObj, 0)
+	for _, elem := range institutes {
+		instituteObject := &FilterObj{
+			ID:   elem.InstituteID,
+			Name: elem.Name,
+		}
+		instituteObjects = append(instituteObjects, *instituteObject)
+	}
+
+	positionObjects := make([]FilterObj, 0)
+	for _, elem := range positions {
+		positionObject := &FilterObj{
+			ID:   elem.PositionID,
+			Name: elem.Name,
+		}
+		positionObjects = append(positionObjects, *positionObject)
+	}
+	facultyFiltersResponse := GetFacultyFiltersResponse{
+		InstituteFilters: instituteObjects,
+		PositionFilters:  positionObjects,
+	}
+
+	writeJSON(w, http.StatusOK, facultyFiltersResponse)
+}
 
 func writeError(w http.ResponseWriter, status int, message string) {
 	writeJSON(w, status, map[string]string{"error": message})
@@ -449,6 +460,6 @@ func RegisterRoutes(router chi.Router, h *Handler) {
 		r.Post("/addProfile", h.AddProfile)
 		//r.Get("/getProfile/{id}", h.GetProfile)
 		r.Get("/getAllProfiles", h.GetAllFaculties)
-		//r.Get("/filters", h.GetFacultyFilters)
+		r.Get("/filters", h.GetFacultyFilters)
 	})
 }
