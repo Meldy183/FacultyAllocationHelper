@@ -20,7 +20,7 @@ func NewService(r profileInstitute.Repository, logger *zap.Logger) *Service {
 	return &Service{repo: r, logger: logger}
 }
 
-func (s *Service) GetUserInstituteByID(ctx context.Context, userID int64) (*institute.Institute, error) {
+func (s *Service) GetUserInstitutesByProfileID(ctx context.Context, userID int64) ([]*institute.Institute, error) {
 	if userID <= 0 {
 		s.logger.Error("userID must be positive",
 			zap.String("layer", logctx.LogServiceLayer),
@@ -28,7 +28,7 @@ func (s *Service) GetUserInstituteByID(ctx context.Context, userID int64) (*inst
 			zap.Int64("userID", userID))
 		return nil, fmt.Errorf("userID must be positive: %d", userID)
 	}
-	userInst, err := s.repo.GetUserInstituteByID(ctx, userID)
+	userInst, err := s.repo.GetUserInstitutesByProfileID(ctx, userID)
 	if err != nil {
 		s.logger.Error("Error getting Institute by ProfileID",
 			zap.String("layer", logctx.LogServiceLayer),
