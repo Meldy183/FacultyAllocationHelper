@@ -8,4 +8,5 @@ type Workload struct {
 	TutorialsCount   int
 	LabsCount        int
 	ElectivesCount   int
+	Rate             float64
 }

@@ -507,6 +507,7 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
       tutorials_count INT NOT NULL,
       labs_count INT NOT NULL,
       electives_count INT NOT NULL,
+	  rate FLOAT, 
       FOREIGN KEY (profile_version_id) REFERENCES profile_version (profile_version_id),
 	  FOREIGN KEY (semester_id) REFERENCES semester (semester_id)
   )`

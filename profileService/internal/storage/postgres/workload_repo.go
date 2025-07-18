@@ -17,12 +17,12 @@ type WorkloadRepo struct {
 }
 
 const (
-	queryGetSemesterWorkloadByVersionID = `SELECT workload_id, profile_version_id, semester_id, lectures_count, tutorials_count, labs_count, electives_count
+	queryGetSemesterWorkloadByVersionID = `SELECT workload_id, profile_version_id, semester_id, lectures_count, tutorials_count, labs_count, electives_count, rate
 FROM workloadDomain
 WHERE profile_version_id = $1 AND semester_id = $2`
 	queryAddSemesterWorkload = `INSERT INTO workload
-	(profile_version_id, semester_id, lectures_count, tutorials_count, labs_count, electives_count)
-	VALUES ($1, $2, $3, $4, $5, $6)
+	(profile_version_id, semester_id, lectures_count, tutorials_count, labs_count, electives_count, rate)
+	VALUES ($1, $2, $3, $4, $5, $6, $7)
 	RETURNING workload_id`
 	queryUpdateSemesterWorkload = ``
 )
@@ -42,6 +42,7 @@ func (r *WorkloadRepo) GetSemesterWorkloadByVersionID(ctx context.Context, Versi
 		&workload.TutorialsCount,
 		&workload.LabsCount,
 		&workload.ElectivesCount,
+		&workload.Rate,
 	)
 	if err != nil {
 		r.logger.Error("error getting workloadDomain from database",
@@ -71,6 +72,7 @@ func (r *WorkloadRepo) AddSemesterWorkload(ctx context.Context, workload *worklo
 		workload.TutorialsCount,
 		workload.LabsCount,
 		workload.ElectivesCount,
+		&workload.Rate,
 	).Scan(&workload.WorkloadID)
 	if err != nil {
 		r.logger.Error("error adding workloadDomain from database",
