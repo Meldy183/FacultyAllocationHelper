@@ -28,28 +28,39 @@ const (
 								 RETURNING user_institute_id`
 )
 
-func (r *UserInstituteRepo) GetUserInstituteByID(ctx context.Context, profileID int64) (*institute.Institute, error) {
-	row := r.pool.QueryRow(ctx, queryGetUserInstituteByID, profileID)
-	var instituteById institute.Institute
-	err := row.Scan(
-		&instituteById.InstituteID,
-		&instituteById.Name,
-	)
+func (r *UserInstituteRepo) GetUserInstitutesByProfileID(ctx context.Context, profileID int64) ([]*institute.Institute, error) {
+	row, err := r.pool.Query(ctx, queryGetUserInstituteByID, profileID)
 	if err != nil {
-		r.logger.Error("GetUserInstituteByID",
+		r.logger.Error("Error getting user institute by ID",
 			zap.String("layer", logctx.LogRepoLayer),
 			zap.String("function", logctx.LogGetUserInstitute),
-			zap.Int64("profileID", profileID),
 			zap.Error(err),
 		)
-		return nil, fmt.Errorf("GetUserInstituteByID: %w", err)
+		return nil, fmt.Errorf("error getting user institute by ID: %w", err)
 	}
-	r.logger.Info("GetUserInstituteByID Success",
+	var institutes []*institute.Institute
+	for row.Next() {
+		var institute institute.Institute
+		err := row.Scan(
+			&institute.InstituteID,
+			&institute.Name,
+		)
+		if err != nil {
+			r.logger.Error("Error getting user institute by ID",
+				zap.String("layer", logctx.LogRepoLayer),
+				zap.String("function", logctx.LogGetUserInstitute),
+				zap.Error(err),
+			)
+			return nil, fmt.Errorf("error getting user institute by ID: %w", err)
+		}
+		institutes = append(institutes, &institute)
+	}
+	r.logger.Info("GetUserInstitutesByProfileID Success",
 		zap.String("layer", logctx.LogRepoLayer),
 		zap.String("function", logctx.LogGetUserInstitute),
 		zap.Int64("profileID", profileID),
 	)
-	return &instituteById, nil
+	return institutes, nil
 }
 
 func (r *UserInstituteRepo) AddUserInstitute(ctx context.Context, userInstitute *profileInstitute.UserInstitute) error {

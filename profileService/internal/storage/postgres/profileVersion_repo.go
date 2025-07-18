@@ -24,7 +24,7 @@ const (
 	queryGetVersionByProfileID = `
 		SELECT profile_version_id, profile_id, year, workload, maxload, position_id, employment_type, degree, mode 
 		FROM user_profile_version
-		WHERE profile_id = $1
+		WHERE profile_id = $1 AND year = $2
 	`
 	queryInsertVersion = `
 		INSERT INTO user_profile_version (position_id, profile_id, year)
@@ -39,8 +39,8 @@ const (
 `
 )
 
-func (r *ProfileVersionRepo) GetVersionByProfileID(ctx context.Context, profileID int64) (*profileVersion.ProfileVersion, error) {
-	row := r.pool.QueryRow(ctx, queryGetVersionByProfileID, profileID)
+func (r *ProfileVersionRepo) GetVersionByProfileID(ctx context.Context, profileID int64, year int) (*profileVersion.ProfileVersion, error) {
+	row := r.pool.QueryRow(ctx, queryGetVersionByProfileID, profileID, year)
 	var version profileVersion.ProfileVersion
 	err := row.Scan(
 		&version.ProfileID,

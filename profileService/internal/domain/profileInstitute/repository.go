@@ -6,6 +6,6 @@ import (
 )
 
 type Repository interface {
-	GetUserInstituteByID(ctx context.Context, profileID int64) (*institute.Institute, error)
+	GetUserInstitutesByProfileID(ctx context.Context, profileID int64) ([]*institute.Institute, error)
 	AddUserInstitute(ctx context.Context, userInstitute *UserInstitute) error
 }
