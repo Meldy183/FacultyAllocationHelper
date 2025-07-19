@@ -15,25 +15,20 @@ type CourseInstance struct {
 	TIAllocationStatus  Status
 }
 
-type StatusState int
-
-const (
-	StatusNotAllocated StatusState = iota
-	StatusNotNeeded
-	StatusHasValue
-)
-
-type Status struct {
-	State StatusState
-	Value int
-}
-
 type Form string
 
 const (
 	FormBlock1 Form = "First Block"
 	FormBlock2 Form = "Second Block"
 	FormFull   Form = "Full"
+)
+
+type Status string
+
+const (
+	StatusAllocated    Status = "Allocated"
+	StatusNotAllocated Status = "Not allocated"
+	StatusNotNeeded    Status = "Not needed"
 )
 
 type Mode string
@@ -43,30 +38,3 @@ const (
 	ModeMixed  Mode = "Mixed"
 	ModeRemote Mode = "Remote"
 )
-
-func NewCourseInstance(
-	instanceId, courseId int64,
-	year, semesterId, academicYearId, groupsNeeded int,
-	hardnessCoefficient *float64,
-	groupsTaken *int,
-	form *Form,
-	mode *Mode,
-	piAllocStat Status,
-	tiAllocStatus Status,
-
-) (*CourseInstance, error) {
-	return &CourseInstance{
-		InstanceID:          instanceId,
-		Year:                year,
-		CourseID:            courseId,
-		SemesterID:          semesterId,
-		AcademicYearID:      academicYearId,
-		HardnessCoefficient: hardnessCoefficient,
-		Form:                form,
-		Mode:                mode,
-		GroupsNeeded:        groupsNeeded,
-		GroupsTaken:         groupsTaken,
-		PIAllocationStatus:  piAllocStat,
-		TIAllocationStatus:  tiAllocStatus,
-	}, nil
-}
