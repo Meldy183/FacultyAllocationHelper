@@ -21,12 +21,16 @@ func NewStaffRepo(pool *pgxpool.Pool, logger *zap.Logger) *StaffRepo {
 }
 
 const (
-	queryGetStaffByInstanceID = ``
-	queryAddStaff             = ``
-	queryUpdateStaff          = ``
+	queryGetStaffByInstanceID = `SELECT assignment_id, instance_id, profile_id, position_type,
+    contribution_coefficient, groups_assigned, is_confirmed, lectures_count, tutorials_count, labs_count,
+	FROM staff WHERE instance_id = $1`
+	queryAddStaff = `INSERT INTO staff (instance_id, profile_id, position_type,
+    contribution_coefficient, groups_assigned, is_confirmed, lectures_count, tutorials_count, labs_count)
+	VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`
+	queryUpdateStaff = ``
 )
 
-func (r *StaffRepo) GetStaffByInstanceID(ctx context.Context, instanceID int) ([]*staff.Staff, error) {
+func (r *StaffRepo) GetAllStaffByInstanceID(ctx context.Context, instanceID int) ([]*staff.Staff, error) {
 	rows, err := r.pool.Query(ctx, queryGetStaffByInstanceID, instanceID)
 	if err != nil {
 		r.logger.Error("failed to query staffs by instance id",
@@ -37,15 +41,73 @@ func (r *StaffRepo) GetStaffByInstanceID(ctx context.Context, instanceID int) ([
 		)
 		return nil, fmt.Errorf("failed to query staffs by instance id: %w", err)
 	}
+	defer rows.Close()
 	staffs := make([]*staff.Staff, 0)
 	for rows.Next() {
 		var staffInstance staff.Staff
-		
+		if rows.Err() != nil {
+			r.logger.Error("failed to query staffs by instance id",
+				zap.String("layer", logctx.LogRepoLayer),
+				zap.String("function", logctx.LogGetStaffByInstanceID),
+				zap.Int("instance", instanceID),
+				zap.Error(rows.Err()),
+			)
+			return nil, fmt.Errorf("failed to query staffs by instance id: %w", err)
+		}
+		err = rows.Scan(
+			&staffInstance.AssignmentID,
+			&staffInstance.InstanceID,
+			&staffInstance.ProfileVersionID,
+			&staffInstance.PositionType,
+			&staffInstance.ContributionCoefficient,
+			&staffInstance.GroupsAssigned,
+			&staffInstance.IsConfirmed,
+			&staffInstance.LecturesCount,
+			&staffInstance.TutorialsCount,
+			&staffInstance.LabsCount,
+		)
+		if err != nil {
+			r.logger.Error("failed to scan staffs by instance id",
+				zap.String("layer", logctx.LogRepoLayer),
+				zap.String("function", logctx.LogGetStaffByInstanceID),
+				zap.Int("instance", instanceID),
+				zap.Error(err),
+			)
+			return nil, fmt.Errorf("failed to scan staffs by instance id: %w", err)
+		}
+		staffs = append(staffs, &staffInstance)
 	}
+	r.logger.Info("successfully fetched staffs by instance id",
+		zap.String("layer", logctx.LogRepoLayer),
+		zap.String("function", logctx.LogGetStaffByInstanceID),
+		zap.Int("instance", instanceID),
+	)
+	return staffs, nil
 }
 func (r *StaffRepo) AddStaff(ctx context.Context, staff *staff.Staff) error {
-
+	err := r.pool.QueryRow(ctx, queryAddStaff,
+		staff.InstanceID,
+		staff.ProfileVersionID,
+		staff.PositionType,
+		staff.ContributionCoefficient,
+		staff.GroupsAssigned,
+		staff.IsConfirmed,
+		staff.LecturesCount,
+		staff.TutorialsCount,
+		staff.LabsCount,
+	).Scan(&staff.AssignmentID)
+	if err != nil {
+		r.logger.Error("failed to add staff",
+			zap.String("layer", logctx.LogRepoLayer),
+			zap.String("function", logctx.LogAddStaff),
+			zap.Int("instance", staff.InstanceID),
+			zap.Error(err),
+		)
+		return fmt.Errorf("failed to add staff: %w", err)
+	}
+	return nil
 }
 func (r *StaffRepo) UpdateStaff(ctx context.Context, staff *staff.Staff) error {
-
+	//TODO: implement me
+	return nil
 }

@@ -64,4 +64,5 @@ const (
 	LogGetCourseByID                  = "getCourseByID"
 	LogAddNewCourse                   = "addNewCourse"
 	LogUpdateCourseByID               = "updateCourseByID"
+	LogAddStaff                       = "addStaff"
 )
