@@ -69,6 +69,7 @@ func (h *Handler) GetCourse(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	academicYearName, err := h.academicYearService.GetAcademicYearNameByID(ctx, fullCourse.InstanceID)
+	semester, err := h.
 	course := &sharedContent.Course{
 		InstanceID:       &fullCourse.InstanceID,
 		BriefName:        &fullCourse.Name,
