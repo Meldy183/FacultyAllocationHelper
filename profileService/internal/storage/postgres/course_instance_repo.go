@@ -167,7 +167,7 @@ func (r *CourseInstanceRepo) UpdateCourseInstanceByID(ctx context.Context, cours
 	return nil
 }
 
-func (r *CourseInstanceRepo) GetInstancesByInstituteIDs(ctx context.Context, instituteIDs []int64) ([]*courseInstance.CourseInstance, error) {
+func (r *CourseInstanceRepo) GetInstancesIDsByInstituteIDs(ctx context.Context, instituteIDs []int64) ([]int64, error) {
 	rows, err := r.pool.Query(ctx, queryGetInstancesByInstituteIDs, instituteIDs)
 	if err != nil {
 		r.logger.Error("Error getting courseInstances by instituteIDs",
@@ -179,23 +179,10 @@ func (r *CourseInstanceRepo) GetInstancesByInstituteIDs(ctx context.Context, ins
 		return nil, fmt.Errorf("GetInstancesByInstituteIDs failed: %w", err)
 	}
 	defer rows.Close()
-	var instances []*courseInstance.CourseInstance
+	var instancesIDs []int64
 	for rows.Next() {
-		var courseInstance courseInstance.CourseInstance
-		err := rows.Scan(
-			&courseInstance.InstanceID,
-			&courseInstance.CourseID,
-			&courseInstance.SemesterID,
-			&courseInstance.Year,
-			&courseInstance.Mode,
-			&courseInstance.AcademicYearID,
-			&courseInstance.HardnessCoefficient,
-			&courseInstance.Form,
-			&courseInstance.GroupsNeeded,
-			&courseInstance.GroupsTaken,
-			&courseInstance.PIAllocationStatus,
-			&courseInstance.TIAllocationStatus,
-		)
+		var id int64
+		err := rows.Scan(&id)
 		if err != nil {
 			r.logger.Error("Error getting courseInstances by instituteIDs",
 				zap.String("layer", logctx.LogRepoLayer),
@@ -205,7 +192,7 @@ func (r *CourseInstanceRepo) GetInstancesByInstituteIDs(ctx context.Context, ins
 			)
 			return nil, fmt.Errorf("GetInstancesByInstituteIDs failed: %w", err)
 		}
-		instances = append(instances, &courseInstance)
+		instancesIDs = append(instancesIDs, id)
 	}
 
 	if err := rows.Err(); err != nil {
@@ -220,12 +207,12 @@ func (r *CourseInstanceRepo) GetInstancesByInstituteIDs(ctx context.Context, ins
 	r.logger.Info("CourseInstances found by instituteIDs",
 		zap.String("layer", logctx.LogRepoLayer),
 		zap.String("function", logctx.LogGetCourseInstanceByInstituteID),
-		zap.Int("instancesLen", len(instances)),
+		zap.Int("instancesLen", len(instancesIDs)),
 	)
-	return instances, nil
+	return instancesIDs, nil
 }
 
-func (r *CourseInstanceRepo) GetInstancesByAcademicYearIDs(ctx context.Context, academicYearIDs []int64) ([]*courseInstance.CourseInstance, error) {
+func (r *CourseInstanceRepo) GetInstancesIDsByAcademicYearIDs(ctx context.Context, academicYearIDs []int64) ([]int64, error) {
 	rows, err := r.pool.Query(ctx, queryGetInstancesByAcademicYearIDs, academicYearIDs)
 	if err != nil {
 		r.logger.Error("Error getting courseInstances by academicYearIDs",
@@ -237,23 +224,10 @@ func (r *CourseInstanceRepo) GetInstancesByAcademicYearIDs(ctx context.Context, 
 		return nil, fmt.Errorf("GetInstancesByAcademicYearIDs failed: %w", err)
 	}
 	defer rows.Close()
-	var instances []*courseInstance.CourseInstance
+	var instancesIDs []int64
 	for rows.Next() {
-		var courseInstance courseInstance.CourseInstance
-		err := rows.Scan(
-			&courseInstance.InstanceID,
-			&courseInstance.CourseID,
-			&courseInstance.SemesterID,
-			&courseInstance.Year,
-			&courseInstance.Mode,
-			&courseInstance.AcademicYearID,
-			&courseInstance.HardnessCoefficient,
-			&courseInstance.Form,
-			&courseInstance.GroupsNeeded,
-			&courseInstance.GroupsTaken,
-			&courseInstance.PIAllocationStatus,
-			&courseInstance.TIAllocationStatus,
-		)
+		var id int64
+		err := rows.Scan(&id)
 		if err != nil {
 			r.logger.Error("Error getting courseInstances by academicYearIDs",
 				zap.String("layer", logctx.LogRepoLayer),
@@ -263,7 +237,7 @@ func (r *CourseInstanceRepo) GetInstancesByAcademicYearIDs(ctx context.Context, 
 			)
 			return nil, fmt.Errorf("GetInstancesByAcademicYearIDs failed: %w", err)
 		}
-		instances = append(instances, &courseInstance)
+		instancesIDs = append(instancesIDs, id)
 	}
 
 	if err := rows.Err(); err != nil {
@@ -278,12 +252,12 @@ func (r *CourseInstanceRepo) GetInstancesByAcademicYearIDs(ctx context.Context, 
 	r.logger.Info("CourseInstances found by academicYearIDs",
 		zap.String("layer", logctx.LogRepoLayer),
 		zap.String("function", logctx.LogGetCourseInstanceByacademicYearID),
-		zap.Int("instancesLen", len(instances)),
+		zap.Int("instancesLen", len(instancesIDs)),
 	)
-	return instances, nil
+	return instancesIDs, nil
 }
 
-func (r *CourseInstanceRepo) GetInstancesBySemesterIDs(ctx context.Context, semesterIDs []int64) ([]*courseInstance.CourseInstance, error) {
+func (r *CourseInstanceRepo) GetInstancesIDsBySemesterIDs(ctx context.Context, semesterIDs []int64) ([]int64, error) {
 	rows, err := r.pool.Query(ctx, queryGetInstancesBySemesterIDs, semesterIDs)
 	if err != nil {
 		r.logger.Error("Error getting courseInstances by semesterIDs",
@@ -295,23 +269,10 @@ func (r *CourseInstanceRepo) GetInstancesBySemesterIDs(ctx context.Context, seme
 		return nil, fmt.Errorf("GetInstancesBySemesterIDs failed: %w", err)
 	}
 	defer rows.Close()
-	var instances []*courseInstance.CourseInstance
+	var instancesIDs []int64
 	for rows.Next() {
-		var courseInstance courseInstance.CourseInstance
-		err := rows.Scan(
-			&courseInstance.InstanceID,
-			&courseInstance.CourseID,
-			&courseInstance.SemesterID,
-			&courseInstance.Year,
-			&courseInstance.Mode,
-			&courseInstance.AcademicYearID,
-			&courseInstance.HardnessCoefficient,
-			&courseInstance.Form,
-			&courseInstance.GroupsNeeded,
-			&courseInstance.GroupsTaken,
-			&courseInstance.PIAllocationStatus,
-			&courseInstance.TIAllocationStatus,
-		)
+		var id int64
+		err := rows.Scan(&id)
 		if err != nil {
 			r.logger.Error("Error getting courseInstances by semesterIDs",
 				zap.String("layer", logctx.LogRepoLayer),
@@ -321,7 +282,7 @@ func (r *CourseInstanceRepo) GetInstancesBySemesterIDs(ctx context.Context, seme
 			)
 			return nil, fmt.Errorf("GetInstancesBySemesterIDs failed: %w", err)
 		}
-		instances = append(instances, &courseInstance)
+		instancesIDs = append(instancesIDs, id)
 	}
 
 	if err := rows.Err(); err != nil {
@@ -336,12 +297,12 @@ func (r *CourseInstanceRepo) GetInstancesBySemesterIDs(ctx context.Context, seme
 	r.logger.Info("CourseInstances found by semesterIDs",
 		zap.String("layer", logctx.LogRepoLayer),
 		zap.String("function", logctx.LogGetInstanceBySemesterID),
-		zap.Int("instancesLen", len(instances)),
+		zap.Int("instancesLen", len(instancesIDs)),
 	)
-	return instances, nil
+	return instancesIDs, nil
 }
 
-func (r *CourseInstanceRepo) GetInstancesByProgramIDs(ctx context.Context, programIDs []int64) ([]*courseInstance.CourseInstance, error) {
+func (r *CourseInstanceRepo) GetInstancesIDsByProgramIDs(ctx context.Context, programIDs []int64) ([]int64, error) {
 	rows, err := r.pool.Query(ctx, queryGetInstancesByProgramIDs, programIDs)
 	if err != nil {
 		r.logger.Error("Error getting courseInstances by programIDs",
@@ -353,23 +314,10 @@ func (r *CourseInstanceRepo) GetInstancesByProgramIDs(ctx context.Context, progr
 		return nil, fmt.Errorf("GetInstancesByProgramIDs failed: %w", err)
 	}
 	defer rows.Close()
-	var instances []*courseInstance.CourseInstance
+	var instancesIDs []int64
 	for rows.Next() {
-		var courseInstance courseInstance.CourseInstance
-		err := rows.Scan(
-			&courseInstance.InstanceID,
-			&courseInstance.CourseID,
-			&courseInstance.SemesterID,
-			&courseInstance.Year,
-			&courseInstance.Mode,
-			&courseInstance.AcademicYearID,
-			&courseInstance.HardnessCoefficient,
-			&courseInstance.Form,
-			&courseInstance.GroupsNeeded,
-			&courseInstance.GroupsTaken,
-			&courseInstance.PIAllocationStatus,
-			&courseInstance.TIAllocationStatus,
-		)
+		var id int64
+		err := rows.Scan(&id)
 		if err != nil {
 			r.logger.Error("Error getting courseInstances by programIDs",
 				zap.String("layer", logctx.LogRepoLayer),
@@ -379,7 +327,7 @@ func (r *CourseInstanceRepo) GetInstancesByProgramIDs(ctx context.Context, progr
 			)
 			return nil, fmt.Errorf("GetInstancesByProgramIDs failed: %w", err)
 		}
-		instances = append(instances, &courseInstance)
+		instancesIDs = append(instancesIDs, id)
 	}
 
 	if err := rows.Err(); err != nil {
@@ -394,7 +342,7 @@ func (r *CourseInstanceRepo) GetInstancesByProgramIDs(ctx context.Context, progr
 	r.logger.Info("CourseInstances found by programIDs",
 		zap.String("layer", logctx.LogRepoLayer),
 		zap.String("function", logctx.LogGetCourseInstanceByProgramID),
-		zap.Int("instancesLen", len(instances)),
+		zap.Int("instancesLen", len(instancesIDs)),
 	)
-	return instances, nil
+	return instancesIDs, nil
 }
