@@ -204,7 +204,7 @@ func (h *Handler) AddProfile(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) AddWorkloadAddingProfileVersion(w http.ResponseWriter, version *profileVersionDomain.ProfileVersion, err error, ctx context.Context) bool {
-	wrklad := workloadDomain.Workload{
+	wrkld := workloadDomain.Workload{
 		ProfileVersionID: version.ProfileVersionId,
 		SemesterID:       1,
 		LecturesCount:    0,
@@ -213,7 +213,7 @@ func (h *Handler) AddWorkloadAddingProfileVersion(w http.ResponseWriter, version
 		ElectivesCount:   0,
 		Rate:             0,
 	}
-	err = h.serviceWorkload.AddSemesterWorkload(ctx, &wrklad)
+	err = h.serviceWorkload.AddSemesterWorkload(ctx, &wrkld)
 	if err != nil {
 		h.logger.Error("error adding workload",
 			zap.String("layer", logctx.LogHandlerLayer),
@@ -223,8 +223,8 @@ func (h *Handler) AddWorkloadAddingProfileVersion(w http.ResponseWriter, version
 		writeError(w, http.StatusInternalServerError, "error adding workload")
 		return true
 	}
-	wrklad.SemesterID = 2
-	err = h.serviceWorkload.AddSemesterWorkload(ctx, &wrklad)
+	wrkld.SemesterID = 2
+	err = h.serviceWorkload.AddSemesterWorkload(ctx, &wrkld)
 	if err != nil {
 		h.logger.Error("error adding workload",
 			zap.String("layer", logctx.LogHandlerLayer),
@@ -234,8 +234,8 @@ func (h *Handler) AddWorkloadAddingProfileVersion(w http.ResponseWriter, version
 		writeError(w, http.StatusInternalServerError, "error adding workload")
 		return true
 	}
-	wrklad.SemesterID = 3
-	err = h.serviceWorkload.AddSemesterWorkload(ctx, &wrklad)
+	wrkld.SemesterID = 3
+	err = h.serviceWorkload.AddSemesterWorkload(ctx, &wrkld)
 	if err != nil {
 		h.logger.Error("error adding workload",
 			zap.String("layer", logctx.LogHandlerLayer),
