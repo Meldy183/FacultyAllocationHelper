@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"github.com/go-chi/chi/v5"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/CompleteCourse"
+	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/facultyProfile"
+	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/profileVersion"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/staff"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/handler/sharedContent"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
@@ -22,6 +24,7 @@ type Handler struct {
 	academicYearService academicYear.Service
 	semesterService     semester.Service
 	instituteService    institute.Service
+	profileService      profileVersion.Service
 }
 
 func NewHandler(logger *zap.Logger, fullCourseService CompleteCourse.Service,
@@ -68,7 +71,23 @@ func (h *Handler) GetCourse(w http.ResponseWriter, r *http.Request) {
 	}
 	staffs, err := h.staffService.GetAllStaffByInstanceID(ctx, id)
 	piStaff := h.staffService.GetPI(staffs)
+	piVersionID := piStaff.ProfileVersionID
+	piProfileVersion, err := h.profileService.GetVersionByProfileID(ctx, int64(piVersionID), fullCourse.Year)
+	if err != nil {
+		h.logger.Error("error getting version info",
+			zap.String("layer", logctx.LogHandlerLayer),
+			zap.String("function", logctx.LogGetCourseByID),
+			zap.Error(err),
+			)
+		writeError(w, http.StatusInternalServerError, "error getting version info")
+		return
+	}
+	piFaculty := &sharedContent.Faculty{
+		ProfileVersionID: int64(piStaff.ProfileVersionID),
+		NameEng:          piNameEng,
+	}
 	tiStaff := h.staffService.GetTI(staffs)
+	tiVersionID := tiStaff.ProfileVersionID
 	tasStaff := h.staffService.GetTAs(staffs)
 	if err != nil {
 		h.logger.Error("error getting staff",
@@ -85,6 +104,7 @@ func (h *Handler) GetCourse(w http.ResponseWriter, r *http.Request) {
 	isAllocDone := fullCourse.GroupsNeeded-*fullCourse.GroupsTaken == 0
 	pi := &sharedContent.PI{
 		AllocationStatus: (*string)(fullCourse.PIAllocationStatus),
+		ProfileData:,
 	}
 	ti := &sharedContent.PI{}
 	tas := make([]sharedContent.Faculty, 0)

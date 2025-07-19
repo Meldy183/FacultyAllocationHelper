@@ -27,12 +27,12 @@ type PI struct {
 	ProfileData      *Faculty `json:"profile_data"`
 }
 type Faculty struct {
-	ProfileVersionID *int64   `json:"profile_id"`
+	ProfileVersionID int64    `json:"profile_id"`
 	NameEng          *string  `json:"name_eng"`
 	Alias            *string  `json:"alias"`
 	Email            *string  `json:"email"`
 	PositionName     *string  `json:"position_name"`
 	InstituteNames   []string `json:"institute_names"`
 	Classes          []string `json:"classes"`
-	IsConfirmed      *bool    `json:"is_confirmed"`
+	IsConfirmed      bool     `json:"is_confirmed"`
 }
