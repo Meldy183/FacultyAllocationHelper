@@ -404,7 +404,7 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 	query = `CREATE TABLE IF NOT EXISTS staff (
     assignment_id SERIAL PRIMARY KEY,
     instance_id INT,
-    profile_id INT,
+    profile_version_id INT,
     position_type VARCHAR(3),
     contribution_coefficient FLOAT,
     groups_assigned INT,

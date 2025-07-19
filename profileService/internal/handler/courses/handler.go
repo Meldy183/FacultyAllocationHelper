@@ -1,6 +1,7 @@
 package courses
 
 import (
+	"context"
 	"encoding/json"
 	"github.com/go-chi/chi/v5"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/CompleteCourse"
@@ -18,24 +19,28 @@ import (
 )
 
 type Handler struct {
-	logger              *zap.Logger
-	fullCourseService   CompleteCourse.Service
-	staffService        staff.Service
-	academicYearService academicYear.Service
-	semesterService     semester.Service
-	instituteService    institute.Service
-	profileService      profileVersion.Service
+	logger                *zap.Logger
+	fullCourseService     CompleteCourse.Service
+	staffService          staff.Service
+	academicYearService   academicYear.Service
+	semesterService       semester.Service
+	instituteService      institute.Service
+	profileVersionService profileVersion.Service
+	profileService        facultyProfile.Service
 }
 
 func NewHandler(logger *zap.Logger, fullCourseService CompleteCourse.Service,
 	academicYearService academicYear.Service, semesterService semester.Service,
-	instituteService institute.Service) *Handler {
+	instituteService institute.Service, profileVersionService profileVersion.Service,
+	profileService facultyProfile.Service) *Handler {
 	return &Handler{
-		logger:              logger,
-		fullCourseService:   fullCourseService,
-		academicYearService: academicYearService,
-		semesterService:     semesterService,
-		instituteService:    instituteService,
+		logger:                logger,
+		fullCourseService:     fullCourseService,
+		academicYearService:   academicYearService,
+		semesterService:       semesterService,
+		instituteService:      instituteService,
+		profileVersionService: profileVersionService,
+		profileService:        profileService,
 	}
 }
 
@@ -78,7 +83,7 @@ func (h *Handler) GetCourse(w http.ResponseWriter, r *http.Request) {
 			zap.String("layer", logctx.LogHandlerLayer),
 			zap.String("function", logctx.LogGetCourseByID),
 			zap.Error(err),
-			)
+		)
 		writeError(w, http.StatusInternalServerError, "error getting version info")
 		return
 	}
@@ -106,7 +111,10 @@ func (h *Handler) GetCourse(w http.ResponseWriter, r *http.Request) {
 		AllocationStatus: (*string)(fullCourse.PIAllocationStatus),
 		ProfileData:,
 	}
-	ti := &sharedContent.PI{}
+	ti := &sharedContent.PI{
+		AllocationStatus: (*string)(fullCourse.PIAllocationStatus),
+		ProfileData:,
+	}
 	tas := make([]sharedContent.Faculty, 0)
 	course := &sharedContent.Course{
 		InstanceID:           &fullCourse.InstanceID,
@@ -171,4 +179,34 @@ func RegisterRoutes(router chi.Router, h *Handler) {
 	router.Route("/", func(r chi.Router) {
 		r.Get("/getCourse/{id}", h.GetCourse)
 	})
+}
+
+func (h *Handler) staffToFaculty(ctx context.Context, s *staff.Staff) *sharedContent.Faculty {
+	profileObj :=
+	fuck := &sharedContent.Faculty{
+		ProfileVersionID: s.ProfileVersionID,
+		NameEng:,
+	}
+}
+
+func (h *Handler) getProfileByVersionID(ctx context.Context, versionID int64) *facultyProfile.UserProfile {
+	version, err := h.profileVersionService.GetVersionByVersionID(ctx, versionID)
+	if err != nil {
+		h.logger.Error("getProfileByVersionID",
+			zap.String("layer", logctx.LogHandlerLayer),
+			zap.String("function", logctx.LogGetProfileByVersionID),
+			zap.Error(err),
+			)
+		return nil
+	}
+	profileObj, err := h.profileService.GetProfileByID(ctx, version.ProfileID)
+	if err != nil {
+		h.logger.Error("getProfileByVersionID",
+			zap.String("layer", logctx.LogHandlerLayer),
+			zap.String("function", logctx.LogGetProfileByVersionID),
+			zap.Error(err),
+			)
+		return nil
+	}
+	return profileObj
 }

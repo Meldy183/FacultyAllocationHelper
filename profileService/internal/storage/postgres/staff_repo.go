@@ -21,10 +21,10 @@ func NewStaffRepo(pool *pgxpool.Pool, logger *zap.Logger) *StaffRepo {
 }
 
 const (
-	queryGetStaffByInstanceID = `SELECT assignment_id, instance_id, profile_id, position_type,
+	queryGetStaffByInstanceID = `SELECT assignment_id, instance_id, profile_version_id, position_type,
     contribution_coefficient, groups_assigned, is_confirmed, lectures_count, tutorials_count, labs_count,
 	FROM staff WHERE instance_id = $1`
-	queryAddStaff = `INSERT INTO staff (instance_id, profile_id, position_type,
+	queryAddStaff = `INSERT INTO staff (instance_id, profile_version_id, position_type,
     contribution_coefficient, groups_assigned, is_confirmed, lectures_count, tutorials_count, labs_count)
 	VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`
 	queryUpdateStaff = ``
@@ -109,5 +109,6 @@ func (r *StaffRepo) AddStaff(ctx context.Context, staff *staff.Staff) error {
 }
 func (r *StaffRepo) UpdateStaff(ctx context.Context, staff *staff.Staff) error {
 	//TODO: implement me
+	panic("implement me")
 	return nil
 }

@@ -2,8 +2,8 @@ package staff
 
 type Staff struct {
 	AssignmentID            int
-	InstanceID              int
-	ProfileVersionID        int
+	InstanceID              int64
+	ProfileVersionID        int64
 	PositionType            *string
 	ContributionCoefficient *float64
 	GroupsAssigned          *int
