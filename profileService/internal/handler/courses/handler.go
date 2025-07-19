@@ -66,7 +66,10 @@ func (h *Handler) GetCourse(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusInternalServerError, "error getting full course")
 		return
 	}
-	staff, err := h.staffService.GetAllStaffByInstanceID(ctx, id)
+	staffs, err := h.staffService.GetAllStaffByInstanceID(ctx, id)
+	piStaff := h.staffService.GetPI(staffs)
+	tiStaff := h.staffService.GetTI(staffs)
+	tasStaff := h.staffService.GetTAs(staffs)
 	if err != nil {
 		h.logger.Error("error getting staff",
 			zap.String("layer", logctx.LogHandlerLayer),
@@ -79,17 +82,39 @@ func (h *Handler) GetCourse(w http.ResponseWriter, r *http.Request) {
 	academicYearName, err := h.academicYearService.GetAcademicYearNameByID(ctx, fullCourse.InstanceID)
 	semesterName, err := h.semesterService.GetSemesterNameByID(ctx, int64(fullCourse.SemesterID))
 	instituteObj, err := h.instituteService.GetInstituteByID(ctx, fullCourse.ResponsibleInstituteID)
-		course := &sharedContent.Course{
-		InstanceID:       &fullCourse.InstanceID,
-		BriefName:        &fullCourse.Name,
-		OfficialName:     fullCourse.OfficialName,
-		AcademicYearName: academicYearName,
-		SemesterName:     semesterName,
-		StudyPrograms:    fullCourse.StudyPrograms,
-		InstituteName:    &instituteObj.Name,
-		Tracks:
+	isAllocDone := fullCourse.GroupsNeeded-*fullCourse.GroupsTaken == 0
+	pi := &sharedContent.PI{
+		AllocationStatus: (*string)(fullCourse.PIAllocationStatus),
+	}
+	ti := &sharedContent.PI{}
+	tas := make([]sharedContent.Faculty, 0)
+	course := &sharedContent.Course{
+		InstanceID:           &fullCourse.InstanceID,
+		BriefName:            &fullCourse.Name,
+		OfficialName:         fullCourse.OfficialName,
+		AcademicYearName:     academicYearName,
+		SemesterName:         semesterName,
+		StudyPrograms:        fullCourse.StudyPrograms,
+		InstituteName:        &instituteObj.Name,
+		Tracks:               fullCourse.Tracks,
+		IsAllocationFinished: &isAllocDone,
+		Mode:                 (*string)(fullCourse.Mode),
+		StudyYear:            &fullCourse.Year,
+		Form:                 (*string)(fullCourse.Form),
+		LectureHours:         fullCourse.LecHours,
+		LabHours:             fullCourse.LabHours,
+		GroupsNeeded:         &fullCourse.GroupsNeeded,
+		GroupsTaken:          fullCourse.GroupsTaken,
+		PI:                   *pi,
+		TI:                   *ti,
+		TAs:                  tas,
 	}
 	resp := &GetCourseResponse{Course: *course}
+	h.logger.Info("GetCourse Success",
+		zap.String("layer", logctx.LogHandlerLayer),
+		zap.String("function", logctx.LogGetCourseByID),
+	)
+	writeJSON(w, http.StatusOK, resp)
 }
 
 func UniteIDs(a []int64, b []int64) *[]int64 {
