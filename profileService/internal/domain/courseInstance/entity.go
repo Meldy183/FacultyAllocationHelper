@@ -11,8 +11,8 @@ type CourseInstance struct {
 	Mode                *Mode
 	GroupsNeeded        int
 	GroupsTaken         *int
-	PIAllocationStatus  Status
-	TIAllocationStatus  Status
+	PIAllocationStatus  *Status
+	TIAllocationStatus  *Status
 }
 
 type Form string
