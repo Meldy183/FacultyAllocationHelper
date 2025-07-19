@@ -61,4 +61,7 @@ const (
 	LogUpdateSemesterWorkload         = "updateSemesterWorkload"
 	LogGetYearWorkloadByVersionID     = "getYearWorkloadByVersionID"
 	LogGetStaffByInstanceID           = "getStaffByInstanceID"
+	LogGetCourseByID                  = "getCourseByID"
+	LogAddNewCourse                   = "addNewCourse"
+	LogUpdateCourseByID               = "updateCourseByID"
 )
