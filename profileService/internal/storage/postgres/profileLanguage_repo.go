@@ -54,7 +54,7 @@ func (r *UserLanguageRepo) GetUserLanguages(ctx context.Context, profileID int64
 	defer rows.Close()
 	for rows.Next() {
 		var languageCode string
-		if err := rows.Scan(&languageCode); err != nil {
+		if err = rows.Scan(&languageCode); err != nil {
 			r.logger.Error("Error getting user-languages",
 				zap.String("layer", logctx.LogRepoLayer),
 				zap.String("function", logctx.LogGetUserLanguages),

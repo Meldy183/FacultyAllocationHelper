@@ -8,7 +8,7 @@ type Staff struct {
 	ContributionCoefficient *int
 	GroupsAssigned          *int
 	IsConfirmed             bool
-	LabsCount               *int
-	TutorialsCount          *int
 	LecturesCount           *int
+	TutorialsCount          *int
+	LabsCount               *int
 }
