@@ -19,6 +19,38 @@ func NewStaffService(repo staff.Repository, logger *zap.Logger) *Service {
 	return &Service{repo: repo, logger: logger}
 }
 
+func (s *Service) GetPI(staffs []*staff.Staff) *staff.Staff {
+	var pi *staff.Staff
+	for _, elem := range staffs {
+		if *elem.PositionType == "PI" {
+			pi = elem
+			break
+		}
+	}
+	return pi, nil
+}
+
+func (s *Service) GetTI(staffs []*staff.Staff) *staff.Staff {
+	var ti *staff.Staff
+	for _, elem := range staffs {
+		if *elem.PositionType == "TI" {
+			ti = elem
+			break
+		}
+	}
+	return ti, nil
+}
+
+func (s *Service) GetTAs(staffs []*staff.Staff) []*staff.Staff {
+	var ti []*staff.Staff
+	for _, elem := range staffs {
+		if *elem.PositionType == "TA" {
+			ti = append(ti, elem)
+		}
+	}
+	return ti, nil
+}
+
 func (s *Service) GetAllStaffByInstanceID(ctx context.Context, instanceID int64) ([]*staff.Staff, error) {
 	//TODO: validations that important field are not nil
 	if instanceID <= 0 {

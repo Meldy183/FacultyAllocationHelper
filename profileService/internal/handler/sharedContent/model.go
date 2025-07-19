@@ -8,7 +8,7 @@ type Course struct {
 	SemesterName         *string   `json:"semester_name"`
 	StudyPrograms        []*string `json:"study_program_names"`
 	InstituteName        *string   `json:"responsible_institute_name"`
-	Tracks               *[]string `json:"track_names"`
+	Tracks               []*string `json:"track_names"`
 	IsAllocationFinished *bool     `json:"allocation_finished"`
 	Mode                 *string   `json:"mode"`
 	StudyYear            *int      `json:"study_year"`
@@ -19,7 +19,7 @@ type Course struct {
 	GroupsTaken          *int      `json:"groups_taken"`
 	PI                   PI        `json:"pi"`
 	TI                   PI        `json:"ti"`
-	TAs                  Faculty   `json:"tas"`
+	TAs                  []Faculty `json:"tas"`
 }
 
 type PI struct {
