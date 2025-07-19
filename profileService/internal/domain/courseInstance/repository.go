@@ -9,4 +9,5 @@ type Repository interface {
 	GetInstancesByInstituteIDs(ctx context.Context, instituteIDs []int64) ([]*CourseInstance, error)
 	GetInstancesByAcademicYearIDs(ctx context.Context, academicYearIDs []int64) ([]*CourseInstance, error)
 	GetInstancesBySemesterIDs(ctx context.Context, semesterIDs []int64) ([]*CourseInstance, error)
+	GetInstancesByProgramIDs(ctx context.Context, proframIDs []int64) ([]*CourseInstance, error)
 }

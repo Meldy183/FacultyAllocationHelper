@@ -71,4 +71,5 @@ const (
 	LogGetCourseInstanceByInstituteID    = "getCourseInstanceByInstituteID"
 	LogGetCourseInstanceByacademicYearID = "getCourseInstanceByacademicYearID"
 	LogGetInstanceBySemesterID           = "getInstanceBySemesterID"
+	LogGetCourseInstanceByProgramID      = "getCourseInstanceByProgramID"
 )
