@@ -25,7 +25,7 @@ func NewService(trackRepo track.Repository, trackInstanceRepo trackcourseinstanc
 	}
 }
 
-func (s *Service) GetAllTracks(ctx context.Context) (*[]track.Track, error) {
+func (s *Service) GetAllTracks(ctx context.Context) (*[]*track.Track, error) {
 	tracks, err := s.trackRepo.GetAllTracks(ctx)
 	if err != nil {
 		s.logger.Error("Error getting all tracks",
@@ -35,7 +35,7 @@ func (s *Service) GetAllTracks(ctx context.Context) (*[]track.Track, error) {
 		)
 		return nil, fmt.Errorf("error getting all tracks: %w", err)
 	}
-	return tracks, nil
+	return &tracks, nil
 }
 func (s *Service) GetTrackNameByID(ctx context.Context, trackID int64) (*string, error) {
 	trackName, err := s.trackRepo.GetTrackNameByID(ctx, trackID)
@@ -50,7 +50,7 @@ func (s *Service) GetTrackNameByID(ctx context.Context, trackID int64) (*string,
 	return trackName, nil
 }
 func (s *Service) GetTracksOfCourseByInstanceID(ctx context.Context, instanceID int) ([]*trackcourseinstance.TrackCourseInstance, error) {
-	tracks, err := s.trackInstanceRepo.GetTracksOfCourseByInstanceID(ctx, instanceID)
+	tracks, err := s.trackInstanceRepo.GetTracksIDsOfCourseByInstanceID(ctx, instanceID)
 	if err != nil {
 		s.logger.Error("Error getting all tracks",
 			zap.String("layer", logctx.LogServiceLayer),

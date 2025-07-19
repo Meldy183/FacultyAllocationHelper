@@ -27,7 +27,7 @@ func (s *Service) GetPI(staffs []*staff.Staff) *staff.Staff {
 			break
 		}
 	}
-	return pi, nil
+	return pi
 }
 
 func (s *Service) GetTI(staffs []*staff.Staff) *staff.Staff {
@@ -38,7 +38,7 @@ func (s *Service) GetTI(staffs []*staff.Staff) *staff.Staff {
 			break
 		}
 	}
-	return ti, nil
+	return ti
 }
 
 func (s *Service) GetTAs(staffs []*staff.Staff) []*staff.Staff {
@@ -48,7 +48,7 @@ func (s *Service) GetTAs(staffs []*staff.Staff) []*staff.Staff {
 			ti = append(ti, elem)
 		}
 	}
-	return ti, nil
+	return ti
 }
 
 func (s *Service) GetAllStaffByInstanceID(ctx context.Context, instanceID int64) ([]*staff.Staff, error) {
