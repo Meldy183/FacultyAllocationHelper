@@ -3,5 +3,5 @@ package programcourseinstance
 import "context"
 
 type Repository interface {
-	GetPorgramCourseInstancesByID(ctx context.Context, code string) (*PorgramCourseInstance, error)
+	GetProgramCourseInstancesByID(ctx context.Context, code string) (*ProgramCourseInstance, error)
 }

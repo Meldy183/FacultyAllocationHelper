@@ -208,7 +208,7 @@ func (r *CourseInstanceRepo) GetInstancesByAcademicYearIDs(ctx context.Context, 
 	if err != nil {
 		r.logger.Error("Error getting courseInstance by instituteID",
 			zap.String("layer", logctx.LogRepoLayer),
-			zap.String("function", logctx.LogGetCourseInstanceByacademicYearID),
+			zap.String("function", logctx.LogGetCourseInstanceByAcademicYearID),
 			zap.Int64("academicYearID", academicYearID),
 			zap.Error(err),
 		)
@@ -216,7 +216,7 @@ func (r *CourseInstanceRepo) GetInstancesByAcademicYearIDs(ctx context.Context, 
 	}
 	r.logger.Info("CourseInstance found by instituteID",
 		zap.String("layer", logctx.LogRepoLayer),
-		zap.String("function", logctx.LogGetCourseInstanceByacademicYearID),
+		zap.String("function", logctx.LogGetCourseInstanceByAcademicYearID),
 		zap.Int64("academicYearID", academicYearID),
 	)
 	return &courseInstance, nil

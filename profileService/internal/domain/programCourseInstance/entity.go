@@ -1,6 +1,6 @@
 package programcourseinstance
 
-type PorgramCourseInstance struct {
+type ProgramCourseInstance struct {
 	ProgramCourseID  int
 	ProgramID        int
 	CourseInstanceID int
