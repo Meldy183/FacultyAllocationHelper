@@ -69,7 +69,7 @@ const (
 	LogAddNewCourseInstance              = "addNewCourseInstance"
 	LogUpdateCourseInstanceByID          = "updateCourseInstanceByID"
 	LogGetCourseInstanceByInstituteID    = "getCourseInstanceByInstituteID"
-	LogGetCourseInstanceByacademicYearID = "getCourseInstanceByacademicYearID"
+	LogGetCourseInstanceByAcademicYearID = "getCourseInstanceByAcademicYearID"
 	LogGetInstanceBySemesterID           = "getInstanceBySemesterID"
-	LogGetCourseInstanceByProgramID      = "getCourseInstanceByProgramID"
+	LogGetFullCourseInfoByID             = "getFullCourseInfoByID"
 )
