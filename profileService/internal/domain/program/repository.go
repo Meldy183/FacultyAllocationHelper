@@ -4,5 +4,5 @@ import "context"
 
 type Repository interface {
 	GetAllPrograms(ctx context.Context) ([]*Program, error)
-	GetProgramsByID(ctx context.Context, code string) (*Program, error)
+	GetProgramNameByID(ctx context.Context, id int) (*string, error)
 }
