@@ -75,4 +75,5 @@ const (
 	LogGetAllTracks                      = "GetAllTracks"
 	LogGetTrackNameByID                  = "getTrackNameByID"
 	LogGetTracksOfCourseByCourseID       = "getTracksOfCourseByCourseID"
+	LogGetCourseInstanceByProgramID      = "getCourseInstanceByProgramID"
 )
