@@ -1,4 +1,4 @@
-package CompleteCourse
+package completeCourse
 
 import (
 	"context"

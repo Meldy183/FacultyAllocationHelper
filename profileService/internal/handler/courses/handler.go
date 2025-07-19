@@ -3,18 +3,29 @@ package courses
 import (
 	"encoding/json"
 	"github.com/go-chi/chi/v5"
+	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/CompleteCourse"
+	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/staff"
+	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/handler/sharedContent"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
+	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/academicYear"
 	"go.uber.org/zap"
 	"net/http"
 	"strconv"
 )
 
 type Handler struct {
-	logger *zap.Logger
+	logger              *zap.Logger
+	fullCourseService   CompleteCourse.Service
+	staffService        staff.Service
+	academicYearService academicYear.Service
 }
 
-func NewHandler(logger *zap.Logger) *Handler {
-	return &Handler{logger}
+func NewHandler(logger *zap.Logger, fullCourseService CompleteCourse.Service, academicYearService academicYear.Service) *Handler {
+	return &Handler{
+		logger:              logger,
+		fullCourseService:   fullCourseService,
+		academicYearService: academicYearService,
+	}
 }
 
 func (h *Handler) GetAllCoursesByFilters(w http.ResponseWriter, r *http.Request) {
@@ -26,7 +37,8 @@ func (h *Handler) AddNewCourse(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) GetCourse(w http.ResponseWriter, r *http.Request) {
-	id, err := strconv.Atoi(chi.URLParam(r, "id"))
+	ctx := r.Context()
+	id, err := strconv.ParseInt(chi.URLParam(r, "id"), 10, 64)
 	if err != nil {
 		h.logger.Error("error getting course id",
 			zap.String("layer", logctx.LogHandlerLayer),
@@ -36,7 +48,35 @@ func (h *Handler) GetCourse(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusBadRequest, "Invalid course id")
 		return
 	}
-
+	fullCourse, err := h.fullCourseService.GetFullCourseInfoByID(ctx, id)
+	if err != nil {
+		h.logger.Error("error getting full course",
+			zap.String("layer", logctx.LogHandlerLayer),
+			zap.String("function", logctx.LogGetCourseByID),
+			zap.Error(err),
+		)
+		writeError(w, http.StatusInternalServerError, "error getting full course")
+		return
+	}
+	staff, err := h.staffService.GetAllStaffByInstanceID(ctx, id)
+	if err != nil {
+		h.logger.Error("error getting staff",
+			zap.String("layer", logctx.LogHandlerLayer),
+			zap.String("function", logctx.LogGetCourseByID),
+			zap.Error(err),
+		)
+		writeError(w, http.StatusInternalServerError, "error getting staff")
+		return
+	}
+	academicYearName, err := h.academicYearService.GetAcademicYearNameByID(ctx, fullCourse.InstanceID)
+	course := &sharedContent.Course{
+		InstanceID:       &fullCourse.InstanceID,
+		BriefName:        &fullCourse.Name,
+		OfficialName:     fullCourse.OfficialName,
+		AcademicYearName: academicYearName,
+		SemesterName:
+	}
+	resp := &GetCourseResponse{Course: *course}
 }
 
 func UniteIDs(a []int64, b []int64) *[]int64 {

@@ -1,7 +1,7 @@
 package sharedContent
 
 type Course struct {
-	CourseID             *int64    `json:"course_id"`
+	InstanceID           *int64    `json:"instance_id"`
 	BriefName            *string   `json:"brief_name"`
 	OfficialName         *string   `json:"official_name"`
 	AcademicYearName     *string   `json:"academic_year_name"`
