@@ -43,17 +43,17 @@ const (
 		WHERE course_instance_id = $6
 	`
 
-	queryGetInstanceByInstituteID = `
+	queryGetInstancesByInstituteIDs = `
 		SELECT instance_id, course_id, semester_id, year, mode, academic_year_id, hardness_coefficient, form, groups_needed, groups_taken, pi_allocation_status, ti_allocation_status
 		FROM institute_course_link icl JOIN course_instance ci ON icl.course_instance_id = ci.course_instance_id
 		WHERE icl.responsible_institute_id = $1
 	`
-	queryGetInstanceByAcademicYearID = `
+	queryGetInstancesByAcademicYearIDs = `
 		SELECT instance_id, course_id, semester_id, year, mode, academic_year_id, hardness_coefficient, form, groups_needed, groups_taken, pi_allocation_status, ti_allocation_status
 		FROM course_instance
 		WHERE academic_year_id = $1
 	`
-	queryGetInstanceBySemesterID = `
+	queryGetInstancesBySemesterIDs = `
 		SELECT instance_id, course_id, semester_id, year, mode, academic_year_id, hardness_coefficient, form, groups_needed, groups_taken, pi_allocation_status, ti_allocation_status
 		FROM course_instance
 		WHERE semester_id = $1
@@ -154,8 +154,8 @@ func (r *CourseInstanceRepo) UpdateCourseInstanceByID(ctx context.Context, cours
 	return nil
 }
 
-func (r *CourseInstanceRepo) GetInstancesByInstituteIDs(ctx context.Context, instituteID int64) (*courseInstance.CourseInstance, error) {
-	row := r.pool.QueryRow(ctx, queryGetInstanceByInstituteID, instituteID)
+func (r *CourseInstanceRepo) GetInstancesByInstituteIDs(ctx context.Context, instituteID []int64) ([]*courseInstance.CourseInstance, error) {
+	row := r.pool.QueryRow(ctx, queryGetInstancesByInstituteIDs, instituteID)
 	var courseInstance courseInstance.CourseInstance
 	err := row.Scan(
 		&courseInstance.InstanceID,
@@ -188,8 +188,8 @@ func (r *CourseInstanceRepo) GetInstancesByInstituteIDs(ctx context.Context, ins
 	return &courseInstance, nil
 }
 
-func (r *CourseInstanceRepo) GetInstancesByAcademicYearIDs(ctx context.Context, academicYearID int64) (*courseInstance.CourseInstance, error) {
-	row := r.pool.QueryRow(ctx, queryGetInstanceByAcademicYearID, academicYearID)
+func (r *CourseInstanceRepo) GetInstancesByAcademicYearIDs(ctx context.Context, academicYearID []int64) ([]*courseInstance.CourseInstance, error) {
+	row := r.pool.QueryRow(ctx, queryGetInstancesByAcademicYearIDs, academicYearID)
 	var courseInstance courseInstance.CourseInstance
 	err := row.Scan(
 		&courseInstance.InstanceID,
@@ -222,8 +222,8 @@ func (r *CourseInstanceRepo) GetInstancesByAcademicYearIDs(ctx context.Context, 
 	return &courseInstance, nil
 }
 
-func (r *CourseInstanceRepo) GetInstancesBySemesterIDs(ctx context.Context, semesterID int64) (*courseInstance.CourseInstance, error) {
-	row := r.pool.QueryRow(ctx, queryGetInstanceBySemesterID, semesterID)
+func (r *CourseInstanceRepo) GetInstancesBySemesterIDs(ctx context.Context, semesterID []int64) ([]*courseInstance.CourseInstance, error) {
+	row := r.pool.QueryRow(ctx, queryGetInstancesBySemesterIDs, semesterID)
 	var courseInstance courseInstance.CourseInstance
 	err := row.Scan(
 		&courseInstance.InstanceID,
