@@ -99,7 +99,7 @@ func (r *StaffRepo) AddStaff(ctx context.Context, staff *staff.Staff) error {
 	if err != nil {
 		r.logger.Error("failed to add staff",
 			zap.String("layer", logctx.LogRepoLayer),
-			zap.String("function", logctx.LogGetStaffByInstanceID),
+			zap.String("function", logctx.LogAddStaff),
 			zap.Int("instance", staff.InstanceID),
 			zap.Error(err),
 		)
