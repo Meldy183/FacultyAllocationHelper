@@ -37,7 +37,7 @@ func (r *ProgramRepo) GetProgramNameByID(ctx context.Context, id int) (*string, 
 			zap.Int("id", id),
 			zap.Error(err),
 		)
-		return nil, fmt.Errorf("GetLanguageByCode: %w", err)
+		return nil, fmt.Errorf("GetProgramNameByCode: %w", err)
 	}
 	r.logger.Info("successfully Got ProgramName By ID",
 		zap.String("layer", logctx.LogRepoLayer),
