@@ -8,6 +8,7 @@ import (
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/handler/sharedContent"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/academicYear"
+	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/semester"
 	"go.uber.org/zap"
 	"net/http"
 	"strconv"
@@ -18,6 +19,7 @@ type Handler struct {
 	fullCourseService   CompleteCourse.Service
 	staffService        staff.Service
 	academicYearService academicYear.Service
+	semesterService     semester.Service
 }
 
 func NewHandler(logger *zap.Logger, fullCourseService CompleteCourse.Service, academicYearService academicYear.Service) *Handler {
@@ -69,13 +71,14 @@ func (h *Handler) GetCourse(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	academicYearName, err := h.academicYearService.GetAcademicYearNameByID(ctx, fullCourse.InstanceID)
-	semester, err := h.
+	semesterName, err := h.semesterService.GetSemesterNameByID(ctx, int64(fullCourse.SemesterID))
 	course := &sharedContent.Course{
 		InstanceID:       &fullCourse.InstanceID,
 		BriefName:        &fullCourse.Name,
 		OfficialName:     fullCourse.OfficialName,
 		AcademicYearName: academicYearName,
-		SemesterName:
+		SemesterName:     semesterName,
+		StudyPrograms:    fullCourse.StudyPrograms,
 	}
 	resp := &GetCourseResponse{Course: *course}
 }

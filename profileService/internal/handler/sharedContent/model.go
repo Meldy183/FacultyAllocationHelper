@@ -6,7 +6,7 @@ type Course struct {
 	OfficialName         *string   `json:"official_name"`
 	AcademicYearName     *string   `json:"academic_year_name"`
 	SemesterName         *string   `json:"semester_name"`
-	StudyPrograms        *[]string `json:"study_program_names"`
+	StudyPrograms        []*string `json:"study_program_names"`
 	InstituteName        *string   `json:"responsible_institute_name"`
 	Tracks               *[]string `json:"track_names"`
 	IsAllocationFinished *bool     `json:"allocation_finished"`
