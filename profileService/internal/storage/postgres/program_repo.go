@@ -22,7 +22,7 @@ func NewProgramRepo(pool *pgxpool.Pool, logger *zap.Logger) *ProgramRepo {
 }
 
 const (
-	queryProgramByID    = `SELECT program_id, name FROM program WHERE code = $1`
+	queryProgramByID    = `SELECT program_id, name FROM program WHERE program_id = $1`
 	queryGetAllPrograms = `SELECT program_id, name FROM program`
 )
 
