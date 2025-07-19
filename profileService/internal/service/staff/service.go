@@ -19,7 +19,7 @@ func NewStaffService(repo staff.Repository, logger *zap.Logger) *Service {
 	return &Service{repo: repo, logger: logger}
 }
 
-func (s *Service) GetAllStaffByInstanceID(ctx context.Context, instanceID int) ([]*staff.Staff, error) {
+func (s *Service) GetAllStaffByInstanceID(ctx context.Context, instanceID int64) ([]*staff.Staff, error) {
 	//TODO: validations that important field are not nil
 	if instanceID <= 0 {
 		return nil, fmt.Errorf("invalid instance id: %d", instanceID)

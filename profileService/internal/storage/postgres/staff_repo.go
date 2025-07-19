@@ -30,13 +30,13 @@ const (
 	queryUpdateStaff = ``
 )
 
-func (r *StaffRepo) GetAllStaffByInstanceID(ctx context.Context, instanceID int) ([]*staff.Staff, error) {
+func (r *StaffRepo) GetAllStaffByInstanceID(ctx context.Context, instanceID int64) ([]*staff.Staff, error) {
 	rows, err := r.pool.Query(ctx, queryGetStaffByInstanceID, instanceID)
 	if err != nil {
 		r.logger.Error("failed to query staffs by instance id",
 			zap.String("layer", logctx.LogRepoLayer),
 			zap.String("function", logctx.LogGetStaffByInstanceID),
-			zap.Int("instance", instanceID),
+			zap.Int64("instance", instanceID),
 			zap.Error(err),
 		)
 		return nil, fmt.Errorf("failed to query staffs by instance id: %w", err)
@@ -49,7 +49,7 @@ func (r *StaffRepo) GetAllStaffByInstanceID(ctx context.Context, instanceID int)
 			r.logger.Error("failed to query staffs by instance id",
 				zap.String("layer", logctx.LogRepoLayer),
 				zap.String("function", logctx.LogGetStaffByInstanceID),
-				zap.Int("instance", instanceID),
+				zap.Int64("instance", instanceID),
 				zap.Error(rows.Err()),
 			)
 			return nil, fmt.Errorf("failed to query staffs by instance id: %w", err)
@@ -70,7 +70,7 @@ func (r *StaffRepo) GetAllStaffByInstanceID(ctx context.Context, instanceID int)
 			r.logger.Error("failed to scan staffs by instance id",
 				zap.String("layer", logctx.LogRepoLayer),
 				zap.String("function", logctx.LogGetStaffByInstanceID),
-				zap.Int("instance", instanceID),
+				zap.Int64("instance", instanceID),
 				zap.Error(err),
 			)
 			return nil, fmt.Errorf("failed to scan staffs by instance id: %w", err)
@@ -80,7 +80,7 @@ func (r *StaffRepo) GetAllStaffByInstanceID(ctx context.Context, instanceID int)
 	r.logger.Info("successfully fetched staffs by instance id",
 		zap.String("layer", logctx.LogRepoLayer),
 		zap.String("function", logctx.LogGetStaffByInstanceID),
-		zap.Int("instance", instanceID),
+		zap.Int64("instance", instanceID),
 	)
 	return staffs, nil
 }
