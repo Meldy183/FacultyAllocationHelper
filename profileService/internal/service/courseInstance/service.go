@@ -61,7 +61,7 @@ func (s *Service) AddCourseInstance(ctx context.Context, courseInstance *courseI
 		)
 		return fmt.Errorf("invalid mode: %v", courseInstance.Mode)
 	}
-	if statusValid(courseInstance.PIAllocationStatus) {
+	if statusValid(*courseInstance.PIAllocationStatus) {
 		s.logger.Error(
 			"Invalid PI allocation status",
 			zap.String("layer", logctx.LogServiceLayer),
@@ -69,7 +69,7 @@ func (s *Service) AddCourseInstance(ctx context.Context, courseInstance *courseI
 		)
 		return fmt.Errorf("invalid PI allocation status: %v", courseInstance.PIAllocationStatus)
 	}
-	if statusValid(courseInstance.TIAllocationStatus) {
+	if statusValid(*courseInstance.TIAllocationStatus) {
 		s.logger.Error(
 			"Invalid TI allocation status",
 			zap.String("layer", logctx.LogServiceLayer),

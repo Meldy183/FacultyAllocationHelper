@@ -3,6 +3,7 @@ package track
 import (
 	"context"
 	"fmt"
+
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/track"
 	trackcourseinstance "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/trackCourseInstance"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
@@ -25,7 +26,7 @@ func NewService(trackRepo track.Repository, trackInstanceRepo trackcourseinstanc
 	}
 }
 
-func (s *Service) GetAllTracks(ctx context.Context) (*[]track.Track, error) {
+func (s *Service) GetAllTracks(ctx context.Context) ([]*track.Track, error) {
 	tracks, err := s.trackRepo.GetAllTracks(ctx)
 	if err != nil {
 		s.logger.Error("Error getting all tracks",
