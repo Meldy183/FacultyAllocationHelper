@@ -1,17 +1,18 @@
 package courseInstance
 
 type CourseInstance struct {
-	InstanceID         int64
-	Year               int
-	CourseID           int64
-	SemesterID         int
-	AcademicYearID     int
-	Form               *Form
-	Mode               *Mode
-	GroupsNeeded       int
-	GroupsTaken        *int
-	PIAllocationStatus Status
-	TIAllocationStatus Status
+	InstanceID          int64
+	Year                int
+	CourseID            int64
+	SemesterID          int
+	AcademicYearID      int
+	HardnessCoefficient *float64
+	Form                *Form
+	Mode                *Mode
+	GroupsNeeded        int
+	GroupsTaken         *int
+	PIAllocationStatus  Status
+	TIAllocationStatus  Status
 }
 
 type StatusState int
@@ -46,6 +47,7 @@ const (
 func NewCourseInstance(
 	instanceId, courseId int64,
 	year, semesterId, academicYearId, groupsNeeded int,
+	hardnessCoefficient *float64,
 	groupsTaken *int,
 	form *Form,
 	mode *Mode,
@@ -54,16 +56,17 @@ func NewCourseInstance(
 
 ) (*CourseInstance, error) {
 	return &CourseInstance{
-		InstanceID:         instanceId,
-		Year:               year,
-		CourseID:           courseId,
-		SemesterID:         semesterId,
-		AcademicYearID:     academicYearId,
-		Form:               form,
-		Mode:               mode,
-		GroupsNeeded:       groupsNeeded,
-		GroupsTaken:        groupsTaken,
-		PIAllocationStatus: piAllocStat,
-		TIAllocationStatus: tiAllocStatus,
+		InstanceID:          instanceId,
+		Year:                year,
+		CourseID:            courseId,
+		SemesterID:          semesterId,
+		AcademicYearID:      academicYearId,
+		HardnessCoefficient: hardnessCoefficient,
+		Form:                form,
+		Mode:                mode,
+		GroupsNeeded:        groupsNeeded,
+		GroupsTaken:         groupsTaken,
+		PIAllocationStatus:  piAllocStat,
+		TIAllocationStatus:  tiAllocStatus,
 	}, nil
 }

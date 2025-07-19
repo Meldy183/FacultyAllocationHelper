@@ -5,7 +5,7 @@ type Staff struct {
 	InstanceID              int
 	ProfileVersionID        int
 	PositionType            *string
-	ContributionCoefficient *int
+	ContributionCoefficient *float64
 	GroupsAssigned          *int
 	IsConfirmed             bool
 	LecturesCount           *int
