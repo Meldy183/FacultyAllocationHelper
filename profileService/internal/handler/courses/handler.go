@@ -8,6 +8,7 @@ import (
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/handler/sharedContent"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/academicYear"
+	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/institute"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/semester"
 	"go.uber.org/zap"
 	"net/http"
@@ -20,13 +21,18 @@ type Handler struct {
 	staffService        staff.Service
 	academicYearService academicYear.Service
 	semesterService     semester.Service
+	instituteService    institute.Service
 }
 
-func NewHandler(logger *zap.Logger, fullCourseService CompleteCourse.Service, academicYearService academicYear.Service) *Handler {
+func NewHandler(logger *zap.Logger, fullCourseService CompleteCourse.Service,
+	academicYearService academicYear.Service, semesterService semester.Service,
+	instituteService institute.Service) *Handler {
 	return &Handler{
 		logger:              logger,
 		fullCourseService:   fullCourseService,
 		academicYearService: academicYearService,
+		semesterService:     semesterService,
+		instituteService:    instituteService,
 	}
 }
 
@@ -72,13 +78,16 @@ func (h *Handler) GetCourse(w http.ResponseWriter, r *http.Request) {
 	}
 	academicYearName, err := h.academicYearService.GetAcademicYearNameByID(ctx, fullCourse.InstanceID)
 	semesterName, err := h.semesterService.GetSemesterNameByID(ctx, int64(fullCourse.SemesterID))
-	course := &sharedContent.Course{
+	instituteObj, err := h.instituteService.GetInstituteByID(ctx, fullCourse.ResponsibleInstituteID)
+		course := &sharedContent.Course{
 		InstanceID:       &fullCourse.InstanceID,
 		BriefName:        &fullCourse.Name,
 		OfficialName:     fullCourse.OfficialName,
 		AcademicYearName: academicYearName,
 		SemesterName:     semesterName,
 		StudyPrograms:    fullCourse.StudyPrograms,
+		InstituteName:    &instituteObj.Name,
+		Tracks:
 	}
 	resp := &GetCourseResponse{Course: *course}
 }
