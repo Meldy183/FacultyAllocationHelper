@@ -8,6 +8,6 @@ import (
 type FullCourse struct {
 	course.Course
 	courseInstance.CourseInstance
-	StudyPrograms []int
-	Tracks        []int
+	StudyPrograms []*string
+	Tracks        []*string
 }

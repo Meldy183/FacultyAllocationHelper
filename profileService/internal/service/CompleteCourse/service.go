@@ -7,6 +7,7 @@ import (
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/course"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/courseInstance"
+	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/track"
 	"go.uber.org/zap"
 )
 
@@ -16,13 +17,14 @@ type Service struct {
 	logger          *zap.Logger
 	instanceService *courseInstance.Service
 	courseService   *course.Service
-	programsService *program
+	trackService *track.Service
 }
 
-func NewService(instance *courseInstance.Service, course *course.Service, logger *zap.Logger) *Service {
+func NewService(instance *courseInstance.Service, course *course.Service, track *track.Service, logger *zap.Logger) *Service {
 	return &Service{
 		instanceService: instance,
 		courseService:   course,
+		trackService:    track,
 		logger:          logger,
 	}
 }
@@ -48,9 +50,22 @@ func (s *Service) GetFullCourseInfoByID(ctx context.Context, instanceID int64) (
 		)
 		return nil, fmt.Errorf("failed to fetch courseObj: %w", err)
 	}
+	trackNames, err := s.trackService.GetTracksNamesOfCourseByCourseID(ctx, int(courseInstanceObj.CourseID))
+	if err != nil {
+		s.logger.Error("failed to fetch trackNames",
+			zap.String("layer", logctx.LogServiceLayer),
+			zap.String("function", logctx.LogGetFullCourseInfoByID),
+			zap.Int64("instanceID", instanceID),
+			zap.Error(err),
+			)
+		return nil, fmt.Errorf("failed to fetch trackNames: %w", err)
+	}
+	studyProgramNames :=
 	fullCourse := &CompleteCourse.FullCourse{
 		Course:         *courseObj,
 		CourseInstance: *courseInstanceObj,
+		Tracks: trackNames,
+		StudyPrograms: studyProgramNames,
 	}
 	s.logger.Info("successfully fetched full course",
 		zap.String("layer", logctx.LogServiceLayer),

@@ -72,4 +72,7 @@ const (
 	LogGetCourseInstanceByAcademicYearID = "getCourseInstanceByAcademicYearID"
 	LogGetInstanceBySemesterID           = "getInstanceBySemesterID"
 	LogGetFullCourseInfoByID             = "getFullCourseInfoByID"
+	LogGetAllTracks                      = "GetAllTracks"
+	LogGetTrackNameByID                  = "getTrackNameByID"
+	LogGetTracksOfCourseByCourseID       = "getTracksOfCourseByCourseID"
 )
