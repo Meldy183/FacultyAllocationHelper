@@ -49,8 +49,8 @@ func (s *Service) GetTrackNameByID(ctx context.Context, trackID int64) (*string,
 	}
 	return trackName, nil
 }
-func (s *Service) GetTracksOfCourseByCourseID(ctx context.Context, courseID int) ([]*trackcourseinstance.TrackCourseInstance, error) {
-	tracks, err := s.trackInstanceRepo.GetTracksOfCourseByCourseID(ctx, courseID)
+func (s *Service) GetTracksOfCourseByInstanceID(ctx context.Context, instanceID int) ([]*trackcourseinstance.TrackCourseInstance, error) {
+	tracks, err := s.trackInstanceRepo.GetTracksOfCourseByInstanceID(ctx, instanceID)
 	if err != nil {
 		s.logger.Error("Error getting all tracks",
 			zap.String("layer", logctx.LogServiceLayer),
@@ -78,8 +78,8 @@ func (s *Service) ConvertTrackCourseInstanceToTrackNames(ctx context.Context, li
 	return trackNames, nil
 }
 
-func (s *Service) GetTracksNamesOfCourseByCourseID(ctx context.Context, courseID int) ([]*string, error) {
-	trackIds, err := s.GetTracksOfCourseByCourseID(ctx, courseID)
+func (s *Service) GetTracksNamesOfCourseByCourseID(ctx context.Context, instanceID int) ([]*string, error) {
+	trackIds, err := s.GetTracksOfCourseByInstanceID(ctx, instanceID)
 	if err != nil {
 		s.logger.Error("Error getting all tracks",
 			zap.String("layer", logctx.LogServiceLayer),
