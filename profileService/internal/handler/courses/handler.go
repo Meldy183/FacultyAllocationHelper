@@ -3,15 +3,17 @@ package courses
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"github.com/go-chi/chi/v5"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/CompleteCourse"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/facultyProfile"
+	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/profileInstitute"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/profileVersion"
+	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/responsibleInstitute"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/staff"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/handler/sharedContent"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/academicYear"
-	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/institute"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/semester"
 	"go.uber.org/zap"
 	"net/http"
@@ -19,28 +21,29 @@ import (
 )
 
 type Handler struct {
-	logger                *zap.Logger
-	fullCourseService     CompleteCourse.Service
-	staffService          staff.Service
-	academicYearService   academicYear.Service
-	semesterService        semester.Service
-	courseInstituteService institute.Service
-	profileVersionService  profileVersion.Service
-	profileService        facultyProfile.Service
+	logger                      *zap.Logger
+	fullCourseService           CompleteCourse.Service
+	staffService                staff.Service
+	academicYearService         academicYear.Service
+	semesterService             semester.Service
+	responsibleInstituteService responsibleInstitute.Service
+	profileVersionService       profileVersion.Service
+	profileService              facultyProfile.Service
+	profileInstituteService     profileInstitute.Service
 }
 
 func NewHandler(logger *zap.Logger, fullCourseService CompleteCourse.Service,
 	academicYearService academicYear.Service, semesterService semester.Service,
-	instituteService institute.Service, profileVersionService profileVersion.Service,
+	responsibleInstituteService responsibleInstitute.Service, profileVersionService profileVersion.Service,
 	profileService facultyProfile.Service) *Handler {
 	return &Handler{
-		logger:                 logger,
-		fullCourseService:      fullCourseService,
-		academicYearService:    academicYearService,
-		semesterService:        semesterService,
-		courseInstituteService: instituteService,
-		profileVersionService:  profileVersionService,
-		profileService:         profileService,
+		logger:                      logger,
+		fullCourseService:           fullCourseService,
+		academicYearService:         academicYearService,
+		semesterService:             semesterService,
+		responsibleInstituteService: responsibleInstituteService,
+		profileVersionService:       profileVersionService,
+		profileService:              profileService,
 	}
 }
 
@@ -76,8 +79,6 @@ func (h *Handler) GetCourse(w http.ResponseWriter, r *http.Request) {
 	}
 	staffs, err := h.staffService.GetAllStaffByInstanceID(ctx, id)
 	piStaff := h.staffService.GetPI(staffs)
-	piVersionID := piStaff.ProfileVersionID
-	piProfileVersion, err := h.profileService.GetVersionByProfileID(ctx, int64(piVersionID), fullCourse.Year)
 	if err != nil {
 		h.logger.Error("error getting version info",
 			zap.String("layer", logctx.LogHandlerLayer),
@@ -87,10 +88,7 @@ func (h *Handler) GetCourse(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusInternalServerError, "error getting version info")
 		return
 	}
-	piFaculty := &sharedContent.Faculty{
-		ProfileVersionID: int64(piStaff.ProfileVersionID),
-		NameEng:          piNameEng,
-	}
+	piFaculty :=
 	tiStaff := h.staffService.GetTI(staffs)
 	tiVersionID := tiStaff.ProfileVersionID
 	tasStaff := h.staffService.GetTAs(staffs)
@@ -105,7 +103,7 @@ func (h *Handler) GetCourse(w http.ResponseWriter, r *http.Request) {
 	}
 	academicYearName, err := h.academicYearService.GetAcademicYearNameByID(ctx, fullCourse.InstanceID)
 	semesterName, err := h.semesterService.GetSemesterNameByID(ctx, int64(fullCourse.SemesterID))
-	instituteObj, err := h.courseInstituteService.GetInstituteByID(ctx, fullCourse.ResponsibleInstituteID)
+	instituteObj, err := h.responsibleInstituteService.GetResponsibleInstituteNameByID(ctx, fullCourse.ResponsibleInstituteID)
 	isAllocDone := fullCourse.GroupsNeeded-*fullCourse.GroupsTaken == 0
 	pi := &sharedContent.PI{
 		AllocationStatus: (*string)(fullCourse.PIAllocationStatus),
@@ -123,7 +121,7 @@ func (h *Handler) GetCourse(w http.ResponseWriter, r *http.Request) {
 		AcademicYearName:     academicYearName,
 		SemesterName:         semesterName,
 		StudyPrograms:        fullCourse.StudyPrograms,
-		InstituteName:        &instituteObj.Name,
+		InstituteName:        instituteObj,
 		Tracks:               fullCourse.Tracks,
 		IsAllocationFinished: &isAllocDone,
 		Mode:                 (*string)(fullCourse.Mode),
@@ -181,16 +179,32 @@ func RegisterRoutes(router chi.Router, h *Handler) {
 	})
 }
 
-func (h *Handler) staffToFaculty(ctx context.Context, s *staff.Staff) *sharedContent.Faculty {
+func (h *Handler) staffToFaculty(ctx context.Context, s *staff.Staff) (*sharedContent.Faculty, error) {
 	profileObj := h.getProfileByVersionID(ctx, s.ProfileVersionID)
+	institutes, err := h.profileInstituteService.GetUserInstitutesByProfileID(ctx, profileObj.ProfileID)
+	instNames := make([]string, 0)
+	for _, elem := range institutes {
+		instNames = append(instNames, elem.Name)
+	}
+	if err != nil {
+		h.logger.Error("GetInstitutesByProfileID",
+			zap.String("layer", logctx.LogHandlerLayer),
+			zap.String("function", logctx.LogStaffToFaculty),
+			zap.Error(err),
+			)
+		return nil, fmt.Errorf("error getting institutes by id: %v", err)
+	}
 	fuck := &sharedContent.Faculty{
 		ProfileVersionID: s.ProfileVersionID,
 		NameEng:          &profileObj.EnglishName,
 		Alias:            &profileObj.Alias,
 		Email:            &profileObj.Email,
 		PositionName:     s.PositionType,
-		InstituteNames:   h.courseInstituteService.
+		InstituteNames:   instNames,
+		Classes: nil, // TODO: implement me
+		IsConfirmed: s.IsConfirmed,
 	}
+	return fuck, nil
 }
 
 func (h *Handler) getProfileByVersionID(ctx context.Context, versionID int64) *facultyProfile.UserProfile {
