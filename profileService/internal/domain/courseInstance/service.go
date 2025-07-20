@@ -10,7 +10,7 @@ type Service interface {
 	GetInstancesByAcademicYearIDs(ctx context.Context, academicYearIDs []int64) ([]int64, error)
 	GetInstancesBySemesterIDs(ctx context.Context, semesterIDs []int64) ([]int64, error)
 	GetInstancesByProgramIDs(ctx context.Context, programIDs []int64) ([]int64, error)
-	GetInstancesByAllocationStatus(ctx context.Context, isAllocDone bool) ([]int64, error)
+	GetInstancesByAllocationStatus(ctx context.Context, allocNotFinished bool) ([]int64, error)
 	GetInstancesByYear(ctx context.Context, year int64) ([]int64, error)
 	GetInstancesByVersionID(ctx context.Context, versionID int64) ([]int64, error)
 }

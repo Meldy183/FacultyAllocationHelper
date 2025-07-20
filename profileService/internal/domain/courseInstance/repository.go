@@ -10,4 +10,7 @@ type Repository interface {
 	GetInstancesIDsByAcademicYearIDs(ctx context.Context, academicYearIDs []int64) ([]int64, error)
 	GetInstancesIDsBySemesterIDs(ctx context.Context, semesterIDs []int64) ([]int64, error)
 	GetInstancesIDsByProgramIDs(ctx context.Context, proframIDs []int64) ([]int64, error)
+	GetInstancesByAllocationStatus(ctx context.Context) ([]int64, error)
+	GetInstancesByYear(ctx context.Context, year int) ([]int64, error)
+	GetInstancesByVersionID(ctx context.Context, versionID int64) ([]int64, error)
 }
