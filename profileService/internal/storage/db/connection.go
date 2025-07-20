@@ -577,6 +577,41 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 	)
 
 	_, err = tx.Exec(ctx, `
+    INSERT INTO program (program_id, name)
+    VALUES (1, 'AI360'),
+           (2, 'МОИИ'),
+           (3, 'BS RO'),
+           (4, 'AIDE'),
+           (5, 'SE'),
+		   (6, 'SNE'),
+		   (7, 'ROCV'),
+		   (8, 'MSRO'),
+		   (9, 'TE'),
+           (10, 'УРКИ'),
+           (11, 'КБ'),
+           (12, 'УнОД'),
+           (13, 'УЦП'),
+		   (14, 'DS'),
+		   (15, 'R'),
+		   (16, 'ITE'),
+           (17, 'ИиВТ'),
+           (18, 'DSAI'),
+           (19 'CSE')
+    ON CONFLICT (program_id) DO NOTHING;
+  `)
+	if err != nil {
+		str.logger.Error("Error adding program manually",
+			zap.String("layer", logctx.LogDBInitLayer),
+			zap.String("function", logctx.LogInitSchema),
+			zap.Error(err),
+		)
+	}
+	str.logger.Info("added program SUCCESS",
+		zap.String("layer", logctx.LogDBInitLayer),
+		zap.String("function", logctx.LogInitSchema),
+	)
+
+	_, err = tx.Exec(ctx, `
     INSERT INTO position (position_id, name)
     VALUES (1, 'Professor'),
            (2, 'Docent'),

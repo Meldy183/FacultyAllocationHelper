@@ -157,77 +157,172 @@ func (s *Service) UpdateCourseInstanceByID(ctx context.Context, course *courseIn
 	return nil
 }
 
-func (s *Service) GetInstancesByInstitutes(ctx context.Context, instituteIDs []int64) ([]int64, error) {
-	CourseInstances, err := s.repo.GetInstancesIDsByInstituteIDs(ctx, instituteIDs)
+func (s *Service) GetInstancesByInstituteIDs(ctx context.Context, instituteIDs []int64) ([]int64, error) {
+	var actualIDs []int64
+	if len(instituteIDs) == 0 {
+		actualIDs = []int64{1, 2, 3, 4, 5, 6, 7, 8}
+	} else {
+		actualIDs = instituteIDs
+	}
+	CourseInstances, err := s.repo.GetInstancesIDsByInstituteIDs(ctx, actualIDs)
 	if err != nil {
 		s.logger.Error("error getting CourseInstances by InstituteIDs",
 			zap.String("layer", logctx.LogServiceLayer),
-			zap.String("function", logctx.LogGetCourseInstanceByID),
+			zap.String("function", logctx.LogGetInstancesByInstituteIDs),
 			zap.String("instituteIDs", fmt.Sprintf("%v", instituteIDs)),
+			zap.String("actualIDs", fmt.Sprintf("%v", actualIDs)),
 			zap.Error(err))
 		return nil, fmt.Errorf("error getting course instances %w", err)
 	}
 	s.logger.Info("CourseInstances found by InstituteIDs",
 		zap.String("layer", logctx.LogServiceLayer),
-		zap.String("function", logctx.LogGetCourseInstanceByID),
+		zap.String("function", logctx.LogGetInstancesByInstituteIDs),
 		zap.String("instituteIDs", fmt.Sprintf("%v", instituteIDs)),
+		zap.String("actualIDs", fmt.Sprintf("%v", actualIDs)),
 		zap.String("CourseInstancesIDs", fmt.Sprintf("%v", CourseInstances)),
 	)
 	return CourseInstances, nil
 }
 
-func (s *Service) GetInstancesByAcademicYears(ctx context.Context, academicYearIDs []int64) ([]int64, error) {
-	CourseInstances, err := s.repo.GetInstancesIDsByAcademicYearIDs(ctx, academicYearIDs)
+func (s *Service) GetInstancesByAcademicYearIDs(ctx context.Context, academicYearIDs []int64) ([]int64, error) {
+	var actualIDs []int64
+	if len(academicYearIDs) == 0 {
+		actualIDs = []int64{1, 2, 3, 4, 5, 6, 7, 8}
+	} else {
+		actualIDs = academicYearIDs
+	}
+	CourseInstances, err := s.repo.GetInstancesIDsByAcademicYearIDs(ctx, actualIDs)
 	if err != nil {
 		s.logger.Error("error getting CourseInstances by academicYearIDs",
 			zap.String("layer", logctx.LogServiceLayer),
-			zap.String("function", logctx.LogGetCourseInstanceByID),
+			zap.String("function", logctx.LogGetInstancesByAcademicYearIDs),
 			zap.String("academicYearIDs", fmt.Sprintf("%v", academicYearIDs)),
+			zap.String("actualIDs", fmt.Sprintf("%v", actualIDs)),
 			zap.Error(err))
 		return nil, fmt.Errorf("error getting course instances %w", err)
 	}
 	s.logger.Info("CourseInstances found by academicYearIDs",
 		zap.String("layer", logctx.LogServiceLayer),
-		zap.String("function", logctx.LogGetCourseInstanceByID),
+		zap.String("function", logctx.LogGetInstancesByAcademicYearIDs),
 		zap.String("academicYearIDs", fmt.Sprintf("%v", academicYearIDs)),
+		zap.String("actualIDs", fmt.Sprintf("%v", actualIDs)),
 		zap.String("CourseInstancesIDs", fmt.Sprintf("%v", CourseInstances)),
 	)
 	return CourseInstances, nil
 }
 
-func (s *Service) GetInstancesBySemesters(ctx context.Context, semesterIDs []int64) ([]int64, error) {
-	CourseInstances, err := s.repo.GetInstancesIDsBySemesterIDs(ctx, semesterIDs)
+func (s *Service) GetInstancesBySemesterIDs(ctx context.Context, semesterIDs []int64) ([]int64, error) {
+	var actualIDs []int64
+	if len(semesterIDs) == 0 {
+		actualIDs = []int64{1, 2, 3}
+	} else {
+		actualIDs = semesterIDs
+	}
+	CourseInstances, err := s.repo.GetInstancesIDsBySemesterIDs(ctx, actualIDs)
 	if err != nil {
 		s.logger.Error("error getting CourseInstances by semesterIDs",
 			zap.String("layer", logctx.LogServiceLayer),
-			zap.String("function", logctx.LogGetCourseInstanceByID),
+			zap.String("function", logctx.LogGetInstancesBySemesterIDs),
 			zap.String("semesterIDs", fmt.Sprintf("%v", semesterIDs)),
+			zap.String("actualIDs", fmt.Sprintf("%v", actualIDs)),
 			zap.Error(err))
 		return nil, fmt.Errorf("error getting course instances %w", err)
 	}
 	s.logger.Info("CourseInstances found by semesterIDs",
 		zap.String("layer", logctx.LogServiceLayer),
-		zap.String("function", logctx.LogGetCourseInstanceByID),
+		zap.String("function", logctx.LogGetInstancesBySemesterIDs),
 		zap.String("semesterIDs", fmt.Sprintf("%v", semesterIDs)),
+		zap.String("actualIDs", fmt.Sprintf("%v", actualIDs)),
 		zap.String("CourseInstancesIDs", fmt.Sprintf("%v", CourseInstances)),
 	)
 	return CourseInstances, nil
 }
 
-func (s *Service) GetInstancesByPrograms(ctx context.Context, proframIDs []int64) ([]int64, error) {
-	CourseInstances, err := s.repo.GetInstancesIDsByProgramIDs(ctx, proframIDs)
+func (s *Service) GetInstancesByProgramIDs(ctx context.Context, programIDs []int64) ([]int64, error) {
+	var actualIDs []int64
+	if len(programIDs) == 0 {
+		actualIDs = []int64{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19}
+	} else {
+		actualIDs = programIDs
+	}
+	CourseInstances, err := s.repo.GetInstancesIDsByProgramIDs(ctx, actualIDs)
 	if err != nil {
-		s.logger.Error("error getting CourseInstances by proframIDs",
+		s.logger.Error("error getting CourseInstances by programIDs",
 			zap.String("layer", logctx.LogServiceLayer),
-			zap.String("function", logctx.LogGetCourseInstanceByID),
-			zap.String("proframIDs", fmt.Sprintf("%v", proframIDs)),
+			zap.String("function", logctx.LogGetInstancesByProgramIDs),
+			zap.String("programIDs", fmt.Sprintf("%v", programIDs)),
+			zap.String("actualIDs", fmt.Sprintf("%v", actualIDs)),
 			zap.Error(err))
 		return nil, fmt.Errorf("error getting course instances %w", err)
 	}
-	s.logger.Info("CourseInstances found by proframIDs",
+	s.logger.Info("CourseInstances found by programIDs",
 		zap.String("layer", logctx.LogServiceLayer),
-		zap.String("function", logctx.LogGetCourseInstanceByID),
-		zap.String("proframIDs", fmt.Sprintf("%v", proframIDs)),
+		zap.String("function", logctx.LogGetInstancesByProgramIDs),
+		zap.String("programIDs", fmt.Sprintf("%v", programIDs)),
+		zap.String("actualIDs", fmt.Sprintf("%v", actualIDs)),
+		zap.String("CourseInstancesIDs", fmt.Sprintf("%v", CourseInstances)),
+	)
+	return CourseInstances, nil
+}
+
+func (s *Service) GetInstancesByAllocationStatus(ctx context.Context, allocNotFinished bool) ([]int64, error) {
+	var CourseInstances []int64
+	var err error
+	if allocNotFinished {
+		CourseInstances, err = s.repo.GetInstancesByAllocationStatus(ctx)
+	} else {
+		CourseInstances, err = s.repo.GetAllInstancesIDs(ctx)
+	}
+	if err != nil {
+		s.logger.Error("error getting CourseInstances by AllocationStatus",
+			zap.String("layer", logctx.LogServiceLayer),
+			zap.String("function", logctx.LogGetInstancesByAllocationStatus),
+			zap.String("allocNotFinished", fmt.Sprintf("%v", allocNotFinished)),
+			zap.Error(err))
+		return nil, fmt.Errorf("error getting course instances %w", err)
+	}
+	s.logger.Info("CourseInstances found by AllocationStatus",
+		zap.String("layer", logctx.LogServiceLayer),
+		zap.String("function", logctx.LogGetInstancesByAllocationStatus),
+		zap.String("allocNotFinished", fmt.Sprintf("%v", allocNotFinished)),
+		zap.String("CourseInstancesIDs", fmt.Sprintf("%v", CourseInstances)),
+	)
+	return CourseInstances, nil
+}
+
+func (s *Service) GetInstancesByYear(ctx context.Context, year int64) ([]int64, error) {
+	CourseInstances, err := s.repo.GetInstancesByYear(ctx, int(year))
+	if err != nil {
+		s.logger.Error("error getting CourseInstances by year",
+			zap.String("layer", logctx.LogServiceLayer),
+			zap.String("function", logctx.LogGetInstancesByYear),
+			zap.Int64("year", year),
+			zap.Error(err))
+		return nil, fmt.Errorf("error getting course instances %w", err)
+	}
+	s.logger.Info("CourseInstances found by year",
+		zap.String("layer", logctx.LogServiceLayer),
+		zap.String("function", logctx.LogGetInstancesByYear),
+		zap.Int64("year", year),
+		zap.String("CourseInstancesIDs", fmt.Sprintf("%v", CourseInstances)),
+	)
+	return CourseInstances, nil
+}
+
+func (s *Service) GetInstancesByVersionID(ctx context.Context, versionID int64) ([]int64, error) {
+	CourseInstances, err := s.repo.GetInstancesByVersionID(ctx, versionID)
+	if err != nil {
+		s.logger.Error("error getting CourseInstances by versionID",
+			zap.String("layer", logctx.LogServiceLayer),
+			zap.String("function", logctx.LogGetInstancesByVersionID),
+			zap.Int64("versionID", versionID),
+			zap.Error(err))
+		return nil, fmt.Errorf("error getting course instances %w", err)
+	}
+	s.logger.Info("CourseInstances found by versionID",
+		zap.String("layer", logctx.LogServiceLayer),
+		zap.String("function", logctx.LogGetInstancesByVersionID),
+		zap.Int64("versionID", versionID),
 		zap.String("CourseInstancesIDs", fmt.Sprintf("%v", CourseInstances)),
 	)
 	return CourseInstances, nil

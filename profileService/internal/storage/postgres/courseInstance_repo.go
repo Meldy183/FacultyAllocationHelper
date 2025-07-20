@@ -92,7 +92,54 @@ const (
 		WHERE ci.profile_version_id = $1 
 		ORDER BY instance_id
 	`
+	queryGetAllInstancesIDs = `
+		SELECT instance_id
+		FROM course_instance
+		ORDER BY instance_id
+	`
 )
+
+func (r *CourseInstanceRepo) GetAllInstancesIDs(ctx context.Context) ([]int64, error) {
+	rows, err := r.pool.Query(ctx, queryGetAllInstancesIDs)
+	if err != nil {
+		r.logger.Error("Error getting all courseInstances IDs",
+			zap.String("layer", logctx.LogRepoLayer),
+			zap.String("function", logctx.LogGetAllInstancesIDs),
+			zap.Error(err),
+		)
+		return nil, fmt.Errorf("GetAllInstancesIDs failed: %w", err)
+	}
+	defer rows.Close()
+	var instancesIDs []int64
+	for rows.Next() {
+		var id int64
+		err := rows.Scan(&id)
+		if err != nil {
+			r.logger.Error("Error getting all courseInstances",
+				zap.String("layer", logctx.LogRepoLayer),
+				zap.String("function", logctx.LogGetAllInstancesIDs),
+				zap.Error(err),
+			)
+			return nil, fmt.Errorf("GetAllInstancesIDs failed: %w", err)
+		}
+		instancesIDs = append(instancesIDs, id)
+	}
+
+	if err := rows.Err(); err != nil {
+		r.logger.Error("Error getting all courseInstances",
+			zap.String("layer", logctx.LogRepoLayer),
+			zap.String("function", logctx.LogGetAllInstancesIDs),
+			zap.Error(err),
+		)
+		return nil, fmt.Errorf("GetAllInstancesIDs failed: %w", err)
+	}
+	r.logger.Info("all CourseInstances found",
+		zap.String("layer", logctx.LogRepoLayer),
+		zap.String("function", logctx.LogGetAllInstancesIDs),
+		zap.Int("instancesLen", len(instancesIDs)),
+	)
+	return instancesIDs, nil
+}
 
 func (r *CourseInstanceRepo) GetCourseInstanceByID(ctx context.Context, courseInstanceID int64) (*courseInstance.CourseInstance, error) {
 	row := r.pool.QueryRow(ctx, queryGetCourseInstanceByID, courseInstanceID)

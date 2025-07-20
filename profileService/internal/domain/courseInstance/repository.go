@@ -13,4 +13,5 @@ type Repository interface {
 	GetInstancesByAllocationStatus(ctx context.Context) ([]int64, error)
 	GetInstancesByYear(ctx context.Context, year int) ([]int64, error)
 	GetInstancesByVersionID(ctx context.Context, versionID int64) ([]int64, error)
+	GetAllInstancesIDs(ctx context.Context) ([]int64, error)
 }
