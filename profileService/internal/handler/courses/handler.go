@@ -4,6 +4,9 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"net/http"
+	"strconv"
+
 	"github.com/go-chi/chi/v5"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/CompleteCourse"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/course"
@@ -20,8 +23,6 @@ import (
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/academicYear"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/semester"
 	"go.uber.org/zap"
-	"net/http"
-	"strconv"
 )
 
 type Handler struct {
@@ -454,10 +455,20 @@ func (h *Handler) CombineCourseCard(w http.ResponseWriter, err error, ctx contex
 		AllocationStatus: (*string)(fullCourse.PIAllocationStatus),
 		ProfileData:      tiFaculty,
 	}
+	var offname *string
+	if fullCourse.OfficialName == nil {
+		emptyStr := ""
+		offname = &emptyStr
+	} else {
+		offname = fullCourse.OfficialName
+	}
+	if fullCourse == nil {
+		h.logger.Error("FULLCOURSE IS NIL")
+	}
 	courseObj := &sharedContent.Course{
 		InstanceID:           &fullCourse.InstanceID,
 		BriefName:            &fullCourse.Name,
-		OfficialName:         fullCourse.OfficialName,
+		OfficialName:         offname,
 		AcademicYearName:     academicYearName,
 		SemesterName:         semesterName,
 		StudyPrograms:        fullCourse.StudyPrograms,

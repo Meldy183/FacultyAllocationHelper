@@ -30,9 +30,9 @@ const (
 
 	queryInsertCourse = `
 		INSERT INTO course (
-			name, responsible_institute_id, lec_hours, lab_hours, is_elective
+			name, official_name, responsible_institute_id, lec_hours, lab_hours, is_elective
 		)
-		VALUES ($1, $2, $3, $4, $5)
+		VALUES ($1, $2, $3, $4, $5, $6)
 		RETURNING course_id
 	`
 
@@ -40,7 +40,7 @@ const (
 		UPDATE course
 		SET name = $1, official_name = $2,
 		    responsible_institute_id = $3, lec_hours = $4, lab_hours = $5, is_elective = $6
-		WHERE course_id = $6
+		WHERE course_id = $7
 	`
 )
 
@@ -76,6 +76,7 @@ func (r *CourseRepo) GetCourseByID(ctx context.Context, courseID int64) (*course
 func (r *CourseRepo) AddNewCourse(ctx context.Context, course *course.Course) error {
 	err := r.pool.QueryRow(ctx, queryInsertCourse,
 		course.Name,
+		nil,
 		course.ResponsibleInstituteID,
 		course.LecHours,
 		course.LabHours,

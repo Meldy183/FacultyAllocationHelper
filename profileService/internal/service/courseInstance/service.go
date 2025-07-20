@@ -21,15 +21,16 @@ func NewService(repo courseInstance.Repository, logger *zap.Logger) *Service {
 }
 
 func (s *Service) AddCourseInstance(ctx context.Context, courseInstance *courseInstance.CourseInstance) error {
-	if yearValid(courseInstance.Year) {
+	if !yearValid(courseInstance.Year) {
 		s.logger.Error(
 			"Invalid year",
 			zap.String("layer", logctx.LogServiceLayer),
 			zap.String("function", logctx.LogAddNewCourseInstance),
+			zap.Int("year", courseInstance.Year),
 		)
 		return fmt.Errorf("invalid year: %v", courseInstance.Year)
 	}
-	if semesterIDValid(courseInstance.SemesterID) {
+	if !semesterIDValid(courseInstance.SemesterID) {
 		s.logger.Error(
 			"Invalid semester ID",
 			zap.String("layer", logctx.LogServiceLayer),
@@ -37,7 +38,7 @@ func (s *Service) AddCourseInstance(ctx context.Context, courseInstance *courseI
 		)
 		return fmt.Errorf("invalid year: %v", courseInstance.SemesterID)
 	}
-	if academicYearIDValid(courseInstance.AcademicYearID) {
+	if !academicYearIDValid(courseInstance.AcademicYearID) {
 		s.logger.Error(
 			"Invalid academic year ID",
 			zap.String("layer", logctx.LogServiceLayer),
@@ -45,7 +46,7 @@ func (s *Service) AddCourseInstance(ctx context.Context, courseInstance *courseI
 		)
 		return fmt.Errorf("invalid academic year: %v", courseInstance.AcademicYearID)
 	}
-	if formValid(*courseInstance.Form) {
+	if !formValid(*courseInstance.Form) {
 		s.logger.Error(
 			"Invalid form",
 			zap.String("layer", logctx.LogServiceLayer),
@@ -53,7 +54,7 @@ func (s *Service) AddCourseInstance(ctx context.Context, courseInstance *courseI
 		)
 		return fmt.Errorf("invalid form: %v", courseInstance.Form)
 	}
-	if modeValid(*courseInstance.Mode) {
+	if !modeValid(*courseInstance.Mode) {
 		s.logger.Error(
 			"Invalid mode",
 			zap.String("layer", logctx.LogServiceLayer),
@@ -61,7 +62,7 @@ func (s *Service) AddCourseInstance(ctx context.Context, courseInstance *courseI
 		)
 		return fmt.Errorf("invalid mode: %v", courseInstance.Mode)
 	}
-	if statusValid(*courseInstance.PIAllocationStatus) {
+	if !statusValid(*courseInstance.PIAllocationStatus) {
 		s.logger.Error(
 			"Invalid PI allocation status",
 			zap.String("layer", logctx.LogServiceLayer),
@@ -69,7 +70,7 @@ func (s *Service) AddCourseInstance(ctx context.Context, courseInstance *courseI
 		)
 		return fmt.Errorf("invalid PI allocation status: %v", courseInstance.PIAllocationStatus)
 	}
-	if statusValid(*courseInstance.TIAllocationStatus) {
+	if !statusValid(*courseInstance.TIAllocationStatus) {
 		s.logger.Error(
 			"Invalid TI allocation status",
 			zap.String("layer", logctx.LogServiceLayer),
