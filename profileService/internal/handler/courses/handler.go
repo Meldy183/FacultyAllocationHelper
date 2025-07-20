@@ -104,6 +104,10 @@ func (h *Handler) GetAllCoursesByFilters(w http.ResponseWriter, r *http.Request)
 		writeError(w, http.StatusBadRequest, "Error parsing year_Studies")
 		return
 	}
+	h.logger.Warn("meow",
+		zap.String("layer", logctx.LogHandlerLayer),
+		zap.String("function", logctx.LogGetAllCourses),
+		zap.String("academic_years", fmt.Sprintf("%v", academicYearsIDs)))
 	semesterIDs, err := convertStrToInt(r.URL.Query()["semester_ids"])
 	if err != nil {
 		h.logger.Error("Error parsing semester_id",
@@ -223,6 +227,14 @@ func (h *Handler) GetAllCoursesByFilters(w http.ResponseWriter, r *http.Request)
 		writeError(w, http.StatusBadRequest, "Error getting instances by version")
 		return
 	}
+	h.logger.Warn("meowmeowmeow",
+		zap.String("layer", logctx.LogHandlerLayer),
+		zap.String("function", logctx.LogGetAllCourses),
+		zap.Any("instances", instancesIDsByVersionID),
+		zap.Any("instances", instancesIDsByResponsibleInstituteIDs),
+		zap.Any("instances", instancesIdsByProgramIDs),
+		zap.Any("instances", instancesIDsByAcademicYearsIDs),
+	)
 	unitedIDs1 := UniteIDs(instancesIDsAllocationNotFinished, instancesIDsByYear)
 	unitedIDs2 := UniteIDs(instancesIDsByAcademicYearsIDs, instancesIDsBySemesterIDs)
 	unitedIDs3 := UniteIDs(instancesIdsByProgramIDs, instancesIDsByResponsibleInstituteIDs)
@@ -444,7 +456,6 @@ func (h *Handler) CombineCourseCard(w http.ResponseWriter, err error, ctx contex
 		writeError(w, http.StatusInternalServerError, "error getting full courseObj")
 		return nil, true
 	}
-	h.logger.Warn("1")
 	staffs, err := h.staffService.GetAllStaffByInstanceID(ctx, id)
 	piStaff := h.staffService.GetPI(staffs)
 	if err != nil {
@@ -456,9 +467,6 @@ func (h *Handler) CombineCourseCard(w http.ResponseWriter, err error, ctx contex
 		writeError(w, http.StatusInternalServerError, "error getting version info")
 		return nil, true
 	}
-	h.logger.Warn("2",
-		zap.Any("pistaff", piStaff),
-	)
 	piFaculty, err := h.staffToFaculty(ctx, piStaff)
 	if err != nil {
 		h.logger.Error("error getting faculty",
@@ -469,7 +477,6 @@ func (h *Handler) CombineCourseCard(w http.ResponseWriter, err error, ctx contex
 		writeError(w, http.StatusInternalServerError, "error getting faculty")
 		return nil, true
 	}
-	h.logger.Warn("3")
 	tiStaff := h.staffService.GetTI(staffs)
 	tiFaculty, err := h.staffToFaculty(ctx, tiStaff)
 	if err != nil {
@@ -481,7 +488,6 @@ func (h *Handler) CombineCourseCard(w http.ResponseWriter, err error, ctx contex
 		writeError(w, http.StatusInternalServerError, "error getting faculty")
 		return nil, true
 	}
-	h.logger.Warn("4")
 	tasStaff := h.staffService.GetTAs(staffs)
 	tas := make([]sharedContent.Faculty, 0)
 	for _, elem := range tasStaff {
@@ -497,8 +503,9 @@ func (h *Handler) CombineCourseCard(w http.ResponseWriter, err error, ctx contex
 		}
 		tas = append(tas, *facObj)
 	}
-	h.logger.Warn("5")
 	academicYearName, err := h.academicYearService.GetAcademicYearNameByID(ctx, fullCourse.InstanceID)
+	h.logger.Warn("year names",
+		zap.String("names", fmt.Sprintf("%v", academicYearName)))
 	semesterName, err := h.semesterService.GetSemesterNameByID(ctx, int64(fullCourse.SemesterID))
 	instituteObj, err := h.responsibleInstituteService.GetResponsibleInstituteNameByID(ctx, fullCourse.ResponsibleInstituteID)
 	isAllocDone := fullCourse.GroupsNeeded-*fullCourse.GroupsTaken == 0
@@ -611,9 +618,7 @@ func (h *Handler) staffToFaculty(ctx context.Context, s *staff.Staff) (*sharedCo
 }
 
 func (h *Handler) getProfileByVersionID(ctx context.Context, versionID int64) *facultyProfile.UserProfile {
-	h.logger.Warn("44")
 	version, err := h.profileVersionService.GetVersionByVersionID(ctx, versionID)
-	h.logger.Warn("55")
 	if err != nil {
 		h.logger.Error("getProfileByVersionID",
 			zap.String("layer", logctx.LogHandlerLayer),

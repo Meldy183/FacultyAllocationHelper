@@ -29,8 +29,12 @@ const (
 
 func (r *AcademicYearRepo) GetAcademicYearNameByID(ctx context.Context, yearID int64) (*string, error) {
 	var str string
+	r.logger.Info(queryGetAcademicYearByID, zap.Int64("year_id", yearID))
 	err := r.pool.QueryRow(ctx, queryGetAcademicYearByID, yearID).Scan(
 		&str,
+	)
+	r.logger.Info("mowekwor0",
+		zap.String("academic_year_name", str),
 	)
 	if err != nil {
 		r.logger.Error("Error getting academic year by id",

@@ -18,5 +18,6 @@ func NewService(repo academicYear.Repository, logger *zap.Logger) *Service {
 }
 
 func (s *Service) GetAcademicYearNameByID(ctx context.Context, yearID int64) (*string, error) {
+	s.logger.Warn("meow")
 	return s.repo.GetAcademicYearNameByID(ctx, yearID)
 }
