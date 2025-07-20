@@ -439,12 +439,12 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 		zap.String("layer", logctx.LogDBInitLayer),
 		zap.String("function", logctx.LogInitSchema))
 	query = `CREATE TABLE IF NOT EXISTS profile_course_instance (
-    profile_course_id SERIAL PRIMARY KEY,
-    profile_version_id INT NOT NULL,
-    instance_id INT NOT NULL,
-    FOREIGN KEY (profile_version_id) REFERENCES user_profile_version (profile_version_id),
-    FOREIGN KEY (instance_id) REFERENCES course_instance (instance_id)
-  )`
+		profile_course_id SERIAL PRIMARY KEY,
+		profile_version_id INT NOT NULL,
+		instance_id INT NOT NULL,
+		FOREIGN KEY (profile_version_id) REFERENCES user_profile_version (profile_version_id),
+		FOREIGN KEY (instance_id) REFERENCES course_instance (instance_id)
+	)`
 	_, err = conn.Exec(ctx, query)
 	if err != nil {
 		str.logger.Error("Error creating profile_course_instance",
@@ -596,7 +596,7 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 		   (16, 'ITE'),
            (17, 'ИиВТ'),
            (18, 'DSAI'),
-           (19 'CSE')
+           (19, 'CSE')
     ON CONFLICT (program_id) DO NOTHING;
   `)
 	if err != nil {
