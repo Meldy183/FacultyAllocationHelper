@@ -3,6 +3,7 @@ package postgres
 import (
 	"context"
 	"fmt"
+
 	"github.com/jackc/pgx/v5/pgxpool"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/staff"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
@@ -100,7 +101,7 @@ func (r *StaffRepo) AddStaff(ctx context.Context, staff *staff.Staff) error {
 		r.logger.Error("failed to add staff",
 			zap.String("layer", logctx.LogRepoLayer),
 			zap.String("function", logctx.LogAddStaff),
-			zap.Int("instance", staff.InstanceID),
+			zap.Int64("instance", staff.InstanceID),
 			zap.Error(err),
 		)
 		return fmt.Errorf("failed to add staff: %w", err)
