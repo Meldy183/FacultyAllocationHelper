@@ -134,7 +134,11 @@ func (h *Handler) GetAllCoursesByFilters(w http.ResponseWriter, r *http.Request)
 		writeError(w, http.StatusBadRequest, "Error parsing responsible_institute_ids")
 		return
 	}
-	profileVersionId, err := strconv.ParseInt(r.URL.Query().Get("profile_version_id"), 10, 64)
+	verse := r.URL.Query().Get("profile_version_id")
+	if verse == "" {
+		verse = "0"
+	}
+	profileVersionId, err := strconv.ParseInt(verse, 10, 64)
 	if err != nil {
 		h.logger.Error("Error parsing profile_version_id",
 			zap.String("layer", logctx.LogHandlerLayer),
@@ -204,7 +208,12 @@ func (h *Handler) GetAllCoursesByFilters(w http.ResponseWriter, r *http.Request)
 		writeError(w, http.StatusBadRequest, "Error getting instances by responsible_institute_ids")
 		return
 	}
-	instancesIDsByVersionID, err := h.courseInstanceService.GetInstancesByVersionID(ctx, profileVersionId)
+	var instancesIDsByVersionID []int64
+	if profileVersionId != 0 {
+		instancesIDsByVersionID, err = h.courseInstanceService.GetInstancesByVersionID(ctx, profileVersionId)
+	} else {
+		instancesIDsByVersionID = instancesIDsAllocationNotFinished
+	}
 	if err != nil {
 		h.logger.Error("Error getting instances by version",
 			zap.String("layer", logctx.LogHandlerLayer),
@@ -435,6 +444,7 @@ func (h *Handler) CombineCourseCard(w http.ResponseWriter, err error, ctx contex
 		writeError(w, http.StatusInternalServerError, "error getting full courseObj")
 		return nil, true
 	}
+	h.logger.Warn("1")
 	staffs, err := h.staffService.GetAllStaffByInstanceID(ctx, id)
 	piStaff := h.staffService.GetPI(staffs)
 	if err != nil {
@@ -446,6 +456,9 @@ func (h *Handler) CombineCourseCard(w http.ResponseWriter, err error, ctx contex
 		writeError(w, http.StatusInternalServerError, "error getting version info")
 		return nil, true
 	}
+	h.logger.Warn("2",
+		zap.Any("pistaff", piStaff),
+	)
 	piFaculty, err := h.staffToFaculty(ctx, piStaff)
 	if err != nil {
 		h.logger.Error("error getting faculty",
@@ -456,6 +469,7 @@ func (h *Handler) CombineCourseCard(w http.ResponseWriter, err error, ctx contex
 		writeError(w, http.StatusInternalServerError, "error getting faculty")
 		return nil, true
 	}
+	h.logger.Warn("3")
 	tiStaff := h.staffService.GetTI(staffs)
 	tiFaculty, err := h.staffToFaculty(ctx, tiStaff)
 	if err != nil {
@@ -467,6 +481,7 @@ func (h *Handler) CombineCourseCard(w http.ResponseWriter, err error, ctx contex
 		writeError(w, http.StatusInternalServerError, "error getting faculty")
 		return nil, true
 	}
+	h.logger.Warn("4")
 	tasStaff := h.staffService.GetTAs(staffs)
 	tas := make([]sharedContent.Faculty, 0)
 	for _, elem := range tasStaff {
@@ -482,6 +497,7 @@ func (h *Handler) CombineCourseCard(w http.ResponseWriter, err error, ctx contex
 		}
 		tas = append(tas, *facObj)
 	}
+	h.logger.Warn("5")
 	academicYearName, err := h.academicYearService.GetAcademicYearNameByID(ctx, fullCourse.InstanceID)
 	semesterName, err := h.semesterService.GetSemesterNameByID(ctx, int64(fullCourse.SemesterID))
 	instituteObj, err := h.responsibleInstituteService.GetResponsibleInstituteNameByID(ctx, fullCourse.ResponsibleInstituteID)
@@ -500,9 +516,6 @@ func (h *Handler) CombineCourseCard(w http.ResponseWriter, err error, ctx contex
 		offname = &emptyStr
 	} else {
 		offname = fullCourse.OfficialName
-	}
-	if fullCourse == nil {
-		h.logger.Error("FULLCOURSE IS NIL")
 	}
 	courseObj := &sharedContent.Course{
 		InstanceID:           &fullCourse.InstanceID,
@@ -567,6 +580,9 @@ func RegisterRoutes(router chi.Router, h *Handler) {
 }
 
 func (h *Handler) staffToFaculty(ctx context.Context, s *staff.Staff) (*sharedContent.Faculty, error) {
+	if s == nil {
+		return nil, nil
+	}
 	profileObj := h.getProfileByVersionID(ctx, s.ProfileVersionID)
 	institutes, err := h.profileInstituteService.GetUserInstitutesByProfileID(ctx, profileObj.ProfileID)
 	instNames := make([]string, 0)
@@ -595,7 +611,9 @@ func (h *Handler) staffToFaculty(ctx context.Context, s *staff.Staff) (*sharedCo
 }
 
 func (h *Handler) getProfileByVersionID(ctx context.Context, versionID int64) *facultyProfile.UserProfile {
+	h.logger.Warn("44")
 	version, err := h.profileVersionService.GetVersionByVersionID(ctx, versionID)
+	h.logger.Warn("55")
 	if err != nil {
 		h.logger.Error("getProfileByVersionID",
 			zap.String("layer", logctx.LogHandlerLayer),
@@ -604,6 +622,7 @@ func (h *Handler) getProfileByVersionID(ctx context.Context, versionID int64) *f
 		)
 		return nil
 	}
+	h.logger.Warn("66")
 	profileObj, err := h.profileService.GetProfileByID(ctx, version.ProfileID)
 	if err != nil {
 		h.logger.Error("getProfileByVersionID",

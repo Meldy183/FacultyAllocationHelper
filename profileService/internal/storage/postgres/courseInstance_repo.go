@@ -3,7 +3,6 @@ package postgres
 import (
 	"context"
 	"fmt"
-
 	"github.com/jackc/pgx/v5/pgxpool"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/courseInstance"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
@@ -67,7 +66,7 @@ const (
 	queryGetInstancesByProgramIDs = `
 		SELECT ci.instance_id
 		FROM program_course_instance pci JOIN course_instance ci ON pci.instance_id = ci.instance_id
-		WHERE pci.program_id = $1
+		WHERE pci.program_id = ANY($1)
 		ORDER BY ci.instance_id;
 	`
 
