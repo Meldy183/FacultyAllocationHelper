@@ -458,7 +458,7 @@ func (r *CourseInstanceRepo) GetInstancesByAllocationStatus(ctx context.Context)
 }
 
 func (r *CourseInstanceRepo) GetInstancesByYear(ctx context.Context, year int) ([]int64, error) {
-	rows, err := r.pool.Query(ctx, queryGetInstancesByProgramIDs, year)
+	rows, err := r.pool.Query(ctx, queryGetInstancesByYear, year)
 	if err != nil {
 		r.logger.Error("Error getting courseInstances by year",
 			zap.String("layer", logctx.LogRepoLayer),
