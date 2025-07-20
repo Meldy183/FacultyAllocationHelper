@@ -9,7 +9,7 @@ import (
 	"go.uber.org/zap"
 )
 
-var _ position.Repository = (*Service)(nil)
+var _ position.Service = (*Service)(nil)
 
 type Service struct {
 	repo   position.Repository

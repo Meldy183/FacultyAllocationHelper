@@ -9,7 +9,7 @@ import (
 	"go.uber.org/zap"
 )
 
-var _ profileCourseInstance.Repository = (*Service)(nil)
+var _ profileCourseInstance.Service = (*Service)(nil)
 
 type Service struct {
 	repo   profileCourseInstance.Repository

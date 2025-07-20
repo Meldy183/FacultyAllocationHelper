@@ -15,7 +15,7 @@ type Service struct {
 	repo   semester.Repository
 }
 
-func NewService(logger *zap.Logger, repo semester.Repository) *Service {
+func NewService(repo semester.Repository, logger *zap.Logger) *Service {
 	return &Service{logger: logger, repo: repo}
 }
 

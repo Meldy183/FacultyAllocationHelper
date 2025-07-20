@@ -17,6 +17,10 @@ type Service struct {
 	programCourseRepo programcourseinstance.Repository
 }
 
+func (s *Service) GetProgramNameByID(ctx context.Context, id int) (*string, error) {
+	return s.GetProgramNameByID(ctx, id)
+}
+
 func NewService(programRepo program.Repository, programCourseInstance programcourseinstance.Repository, logger *zap.Logger) *Service {
 	return &Service{
 		programRepo:       programRepo,
@@ -43,7 +47,7 @@ func (s *Service) GetProgramNamesByInstanceID(ctx context.Context, instanceID in
 				zap.String("layer", logctx.LogServiceLayer),
 				zap.String("function", logctx.LogGetProgramNamesByCourseID),
 				zap.Error(err),
-				)
+			)
 			return nil, fmt.Errorf("failed to retrieve program name: %w", err)
 		}
 		programNames = append(programNames, name)

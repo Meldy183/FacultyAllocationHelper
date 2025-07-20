@@ -25,7 +25,6 @@ import (
 )
 
 type Handler struct {
-	logger                      *zap.Logger
 	fullCourseService           CompleteCourse.Service
 	staffService                staff.Service
 	academicYearService         academicYear.Service
@@ -36,17 +35,25 @@ type Handler struct {
 	profileInstituteService     profileInstitute.Service
 	courseInstanceService       courseInstance.Service
 	courseService               course.Service
-	programService              program.Repository
+	programService              program.Service
 	trackService                track.Service
+	logger                      *zap.Logger
 }
 
-func NewHandler(logger *zap.Logger, fullCourseService CompleteCourse.Service,
-	staffService staff.Service, profileInstituteService profileInstitute.Service,
-	academicYearService academicYear.Service, semesterService semester.Service,
-	responsibleInstituteService responsibleInstitute.Service, profileVersionService profileVersion.Service,
-	profileService facultyProfile.Service, courseInstanceService courseInstance.Service,
-	courseService course.Service, programService program.Repository,
+func NewHandler(
+	fullCourseService CompleteCourse.Service,
+	staffService staff.Service,
+	profileInstituteService profileInstitute.Service,
+	academicYearService academicYear.Service,
+	semesterService semester.Service,
+	responsibleInstituteService responsibleInstitute.Service,
+	profileVersionService profileVersion.Service,
+	profileService facultyProfile.Service,
+	courseInstanceService courseInstance.Service,
+	courseService course.Service,
+	programService program.Service,
 	trackService track.Service,
+	logger *zap.Logger,
 ) *Handler {
 	return &Handler{
 		logger:                      logger,
@@ -503,7 +510,9 @@ func writeJSON(w http.ResponseWriter, status int, data interface{}) {
 
 func RegisterRoutes(router chi.Router, h *Handler) {
 	router.Route("/", func(r chi.Router) {
-		r.Get("/getCourse/{id}", h.GetCourse)
+		r.Get("/getCourse{id}", h.GetCourse)
+		r.Get("/getCourseList", h.GetAllCoursesByFilters)
+		r.Post("/addNewCourse", h.AddNewCourse)
 	})
 }
 

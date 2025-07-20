@@ -3,22 +3,34 @@ package filters
 import (
 	"encoding/json"
 	"github.com/go-chi/chi/v5"
+	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/institute"
+	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/position"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
-	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/institute"
-	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/position"
 	"go.uber.org/zap"
 	"net/http"
 )
 
 type Handler struct {
 	logger           *zap.Logger
-	servicePosition  *position.Service
-	serviceInstitute *institute.Service
+	positionService  position.Service
+	instituteService institute.Service
+}
+
+func NewHandler(
+	positionService position.Service,
+	instituteService institute.Service,
+	logger *zap.Logger,
+) *Handler {
+	return &Handler{
+		logger:           logger,
+		positionService:  positionService,
+		instituteService: instituteService,
+	}
 }
 
 func (h *Handler) GetFacultyFilters(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	positions, err := h.servicePosition.GetAllPositions(ctx)
+	positions, err := h.positionService.GetAllPositions(ctx)
 	if err != nil {
 		h.logger.Error("Error getting all positions",
 			zap.String("layer", logctx.LogHandlerLayer),
@@ -29,7 +41,7 @@ func (h *Handler) GetFacultyFilters(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	institutes, err := h.serviceInstitute.GetAllInstitutes(ctx)
+	institutes, err := h.instituteService.GetAllInstitutes(ctx)
 	if err != nil {
 		h.logger.Error("Error getting all institutes",
 			zap.String("layer", logctx.LogHandlerLayer),
@@ -76,6 +88,7 @@ func writeJSON(w http.ResponseWriter, status int, data interface{}) {
 
 func RegisterRoutes(router chi.Router, h *Handler) {
 	router.Route("/", func(r chi.Router) {
-		r.Get("/filters", h.GetFacultyFilters)
+		r.Get("/profile", h.GetFacultyFilters)
+		//r.Get("/course", h.GetCoursesFilters)
 	})
 }

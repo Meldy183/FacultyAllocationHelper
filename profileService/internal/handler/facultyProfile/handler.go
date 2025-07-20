@@ -4,19 +4,17 @@ import (
 	"context"
 	"encoding/json"
 	"github.com/go-chi/chi/v5"
-	userprofileDomain "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/facultyProfile"
+	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/facultyProfile"
+	institute2 "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/institute"
+	position2 "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/position"
+	profileCourseInstance2 "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/profileCourseInstance"
 	userinstituteDomain "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/profileInstitute"
+	profileLanguage2 "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/profileLanguage"
 	profileVersionDomain "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/profileVersion"
 	workloadDomain "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/workload"
 	handlerWorkload "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/handler/workload"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
-	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/facultyProfile"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/institute"
-	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/position"
-	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/profileCourseInstance"
-	userinstitute "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/profileInstitute"
-	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/profileLanguage"
-	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/profileVersion"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/workload"
 	"go.uber.org/zap"
 	"net/http"
@@ -24,26 +22,26 @@ import (
 )
 
 type Handler struct {
-	serviceUP             *facultyProfile.Service
-	serviceUI             *userinstitute.Service
-	serviceLang           *profileLanguage.Service
-	serviceCourse         *profileCourseInstance.Service
-	servicePosition       *position.Service
-	serviceInstitute      *institute.Service
-	serviceVersionProfile *profileVersion.Service
-	serviceWorkload       *workload.Service
+	serviceUP             facultyProfile.Service
+	serviceUI             userinstituteDomain.Service
+	serviceLang           profileLanguage2.Service
+	serviceCourse         profileCourseInstance2.Service
+	servicePosition       position2.Service
+	serviceInstitute      institute2.Service
+	serviceVersionProfile profileVersionDomain.Service
+	serviceWorkload       workload.Service
 	logger                *zap.Logger
 }
 
 func NewHandler(
-	serviceUP *facultyProfile.Service,
-	serviceUI *userinstitute.Service,
-	serviceLang *profileLanguage.Service,
-	serviceCourse *profileCourseInstance.Service,
-	servicePosition *position.Service,
-	serviceInstitute *institute.Service,
-	serviceVersionProfile *profileVersion.Service,
-	serviceWorkload *workload.Service,
+	serviceUP facultyProfile.Service,
+	serviceUI userinstituteDomain.Service,
+	serviceLang profileLanguage2.Service,
+	serviceCourse profileCourseInstance2.Service,
+	servicePosition position2.Service,
+	serviceInstitute institute2.Service,
+	serviceVersionProfile profileVersionDomain.Service,
+	workloadService workload.Service,
 	logger *zap.Logger,
 ) *Handler {
 	return &Handler{
@@ -54,8 +52,8 @@ func NewHandler(
 		servicePosition:       servicePosition,
 		serviceInstitute:      serviceInstitute,
 		serviceVersionProfile: serviceVersionProfile,
-		serviceWorkload:       serviceWorkload,
-		logger:                logger.Named("userprofile_handler"),
+		serviceWorkload:       workloadService,
+		logger:                logger,
 	}
 }
 func (h *Handler) AddProfile(w http.ResponseWriter, r *http.Request) {
@@ -120,7 +118,7 @@ func (h *Handler) AddProfile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	profile := &userprofileDomain.UserProfile{
+	profile := &facultyProfile.UserProfile{
 		EnglishName: req.NameEnglish,
 		Email:       req.Email,
 		Alias:       req.Alias,
@@ -204,7 +202,7 @@ func (h *Handler) AddProfile(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) AddWorkloadAddingProfileVersion(w http.ResponseWriter, version *profileVersionDomain.ProfileVersion, err error, ctx context.Context) bool {
-	wrkld := workloadDomain.Workload{
+	workloadStats := workloadDomain.Workload{
 		ProfileVersionID: version.ProfileVersionId,
 		SemesterID:       1,
 		LecturesCount:    0,
@@ -213,36 +211,36 @@ func (h *Handler) AddWorkloadAddingProfileVersion(w http.ResponseWriter, version
 		ElectivesCount:   0,
 		Rate:             0,
 	}
-	err = h.serviceWorkload.AddSemesterWorkload(ctx, &wrkld)
+	err = h.serviceWorkload.AddSemesterWorkload(ctx, &workloadStats)
 	if err != nil {
-		h.logger.Error("error adding workload",
+		h.logger.Error("error adding workloadStats",
 			zap.String("layer", logctx.LogHandlerLayer),
 			zap.String("function", logctx.LogAddProfile),
 			zap.Error(err),
 		)
-		writeError(w, http.StatusInternalServerError, "error adding workload")
+		writeError(w, http.StatusInternalServerError, "error adding workloadStats")
 		return true
 	}
-	wrkld.SemesterID = 2
-	err = h.serviceWorkload.AddSemesterWorkload(ctx, &wrkld)
+	workloadStats.SemesterID = 2
+	err = h.serviceWorkload.AddSemesterWorkload(ctx, &workloadStats)
 	if err != nil {
-		h.logger.Error("error adding workload",
+		h.logger.Error("error adding workloadStats",
 			zap.String("layer", logctx.LogHandlerLayer),
 			zap.String("function", logctx.LogAddProfile),
 			zap.Error(err),
 		)
-		writeError(w, http.StatusInternalServerError, "error adding workload")
+		writeError(w, http.StatusInternalServerError, "error adding workloadStats")
 		return true
 	}
-	wrkld.SemesterID = 3
-	err = h.serviceWorkload.AddSemesterWorkload(ctx, &wrkld)
+	workloadStats.SemesterID = 3
+	err = h.serviceWorkload.AddSemesterWorkload(ctx, &workloadStats)
 	if err != nil {
-		h.logger.Error("error adding workload",
+		h.logger.Error("error adding workloadStats",
 			zap.String("layer", logctx.LogHandlerLayer),
 			zap.String("function", logctx.LogAddProfile),
 			zap.Error(err),
 		)
-		writeError(w, http.StatusInternalServerError, "error adding workload")
+		writeError(w, http.StatusInternalServerError, "error adding workloadStats")
 		return true
 	}
 	return false
@@ -320,7 +318,7 @@ func (h *Handler) GetProfile(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusInternalServerError, "error getting position by id")
 		return
 	}
-	workloadHandler := handlerWorkload.NewWorkloadHandler(h.serviceWorkload, h.logger)
+	workloadHandler := handlerWorkload.NewWorkloadHandler(&h.serviceWorkload, h.logger)
 
 	sem1, sem2, sem3, notDone := workloadHandler.GetYearWorkload(w, err, ctx, versionID)
 	if notDone {
@@ -487,7 +485,7 @@ func writeJSON(w http.ResponseWriter, status int, data interface{}) {
 func RegisterRoutes(router chi.Router, h *Handler) {
 	router.Route("/", func(r chi.Router) {
 		r.Post("/addProfile", h.AddProfile)
-		r.Get("/getProfile/{id}", h.GetProfile)
+		r.Get("/getProfile{id}", h.GetProfile)
 		r.Get("/getAllProfiles", h.GetAllFaculties)
 	})
 }

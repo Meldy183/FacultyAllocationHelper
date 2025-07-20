@@ -15,7 +15,10 @@ type Handler struct {
 	serviceWorkload *workload.Service
 }
 
-func NewWorkloadHandler(serviceWorkload *workload.Service, logger *zap.Logger) *Handler {
+func NewWorkloadHandler(
+	serviceWorkload *workload.Service,
+	logger *zap.Logger,
+) *Handler {
 	return &Handler{serviceWorkload: serviceWorkload, logger: logger}
 }
 

@@ -13,7 +13,7 @@ type Service struct {
 	repo   academicYear.Repository
 }
 
-func NewService(logger *zap.Logger, repo academicYear.Repository) *Service {
+func NewService(repo academicYear.Repository, logger *zap.Logger) *Service {
 	return &Service{logger: logger, repo: repo}
 }
 
