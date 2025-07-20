@@ -68,7 +68,6 @@ func (h *Handler) AddProfile(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusBadRequest, "invalid request body")
 		return
 	}
-
 	if req.NameEnglish == "" {
 		h.logger.Error("invalid name_english",
 			zap.String("engName", req.NameEnglish),
@@ -250,8 +249,15 @@ func (h *Handler) AddWorkloadAddingProfileVersion(w http.ResponseWriter, version
 func (h *Handler) GetProfile(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	idParam := chi.URLParam(r, "id")
-	_profileVersionID, err := strconv.ParseUint(idParam, 10, 64)
-	versionID := int64(_profileVersionID)
+	versionID, err := strconv.ParseInt(idParam, 10, 64)
+	if err != nil {
+		h.logger.Error("error parsing id param",
+			zap.String("layer", logctx.LogHandlerLayer),
+			zap.String("function", logctx.LogAddProfile),
+			zap.String("id", idParam),
+			zap.Error(err),
+		)
+	}
 	version, err := h.serviceVersionProfile.GetVersionByVersionID(ctx, versionID)
 	if err != nil {
 		h.logger.Error("error getting version",
@@ -260,6 +266,7 @@ func (h *Handler) GetProfile(w http.ResponseWriter, r *http.Request) {
 			zap.Error(err),
 		)
 		writeError(w, http.StatusInternalServerError, "error getting version")
+		return
 	}
 	if err != nil || versionID <= 0 {
 		h.logger.Error("invalid profileID",
@@ -487,7 +494,7 @@ func writeJSON(w http.ResponseWriter, status int, data interface{}) {
 func RegisterRoutes(router chi.Router, h *Handler) {
 	router.Route("/", func(r chi.Router) {
 		r.Post("/addProfile", h.AddProfile)
-		r.Get("/getProfile{id}", h.GetProfile)
+		r.Get("/getProfile/{id}", h.GetProfile)
 		r.Get("/getAllProfiles", h.GetAllFaculties)
 	})
 }
