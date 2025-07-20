@@ -11,7 +11,7 @@ type Course struct {
 	Tracks               []*string `json:"track_names"`
 	IsAllocationFinished *bool     `json:"allocation_finished"`
 	Mode                 *string   `json:"mode"`
-	StudyYear            *int      `json:"study_year"`
+	Year                 *int      `json:"year"`
 	Form                 *string   `json:"form"`
 	LectureHours         *int      `json:"lecture_hours"`
 	LabHours             *int      `json:"lab_hours"`

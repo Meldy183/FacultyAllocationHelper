@@ -46,7 +46,7 @@ type EditCourseRequest struct {
 	StudyProgramIDS        []int   `json:"study_program_ids"`
 	TrackIDs               []int   `json:"track_ids"`
 	Mode                   *string `json:"mode"`
-	StudyYearID            int     `json:"study_year_id"`
+	AcademicYearID         int     `json:"academic_year_id"`
 	SemesterID             int     `json:"semester_id"`
 	Form                   *string `json:"form"`
 	LectureHours           *int    `json:"lecture_hours"`
@@ -61,7 +61,7 @@ type EditCourseResponse struct {
 	StudyProgramNames        []string `json:"study_program_names"`
 	TrackNames               []string `json:"track_names"`
 	Mode                     *string  `json:"mode"`
-	StudyYearName            string   `json:"study_year_name"`
+	AcademicYearName         string   `json:"academic_year_name"`
 	SemesterName             string   `json:"semester_name"`
 	Form                     *string  `json:"form"`
 	LectureHours             *int     `json:"lecture_hours"`

@@ -146,6 +146,26 @@ func (h *Handler) GetAllCoursesByFilters(w http.ResponseWriter, r *http.Request)
 		writeError(w, http.StatusBadRequest, "Error getting instances by academic years")
 		return
 	}
+	instancesIDsBySemesterIDs, err := h.courseInstanceService.GetInstancesBySemesterIDs(ctx, semesterIDs)
+	if err != nil {
+		h.logger.Error("Error getting instances by semester ids",
+			zap.String("layer", logctx.LogHandlerLayer),
+			zap.String("function", logctx.LogGetAllCourses),
+			zap.Error(err),
+		)
+		writeError(w, http.StatusBadRequest, "Error getting instances by semester ids")
+		return
+	}
+	instancesIdsByProgramIDs, err := h.courseInstanceService.GetInstancesByProgramIDs(ctx, programIDs)
+	if err != nil {
+		h.logger.Error("Error getting instances by programs",
+			zap.String("layer", logctx.LogHandlerLayer),
+			zap.String("function", logctx.LogGetAllCourses),
+			zap.Error(err),
+		)
+		writeError(w, http.StatusBadRequest, "Error getting instances by programs")
+		return
+	}
 }
 
 func (h *Handler) AddNewCourse(w http.ResponseWriter, r *http.Request) {
@@ -257,7 +277,7 @@ func (h *Handler) CombineCourseCard(w http.ResponseWriter, err error, ctx contex
 		Tracks:               fullCourse.Tracks,
 		IsAllocationFinished: &isAllocDone,
 		Mode:                 (*string)(fullCourse.Mode),
-		StudyYear:            &fullCourse.Year,
+		Year:                 &fullCourse.Year,
 		Form:                 (*string)(fullCourse.Form),
 		LectureHours:         fullCourse.LecHours,
 		LabHours:             fullCourse.LabHours,
