@@ -268,6 +268,8 @@ func (h *Handler) AddNewCourse(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusBadRequest, "Error adding course")
 		return
 	}
+	h.logger.Info("Added course successfully")
+
 	responsibleInstituteName, err := h.responsibleInstituteService.GetResponsibleInstituteNameByID(ctx, courseObj.ResponsibleInstituteID)
 	if err != nil {
 		h.logger.Error("Error getting responsible institute",

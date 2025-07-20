@@ -46,7 +46,8 @@ func (s *Service) AddCourseInstance(ctx context.Context, courseInstance *courseI
 		)
 		return fmt.Errorf("invalid academic year: %v", courseInstance.AcademicYearID)
 	}
-	if !formValid(*courseInstance.Form) {
+	s.logger.Info("academic year ok")
+	if courseInstance.Form != nil && !formValid(*courseInstance.Form) {
 		s.logger.Error(
 			"Invalid form",
 			zap.String("layer", logctx.LogServiceLayer),
@@ -54,7 +55,9 @@ func (s *Service) AddCourseInstance(ctx context.Context, courseInstance *courseI
 		)
 		return fmt.Errorf("invalid form: %v", courseInstance.Form)
 	}
-	if !modeValid(*courseInstance.Mode) {
+	s.logger.Info("form ok")
+
+	if courseInstance.Mode != nil && !modeValid(*courseInstance.Mode) {
 		s.logger.Error(
 			"Invalid mode",
 			zap.String("layer", logctx.LogServiceLayer),
@@ -62,7 +65,9 @@ func (s *Service) AddCourseInstance(ctx context.Context, courseInstance *courseI
 		)
 		return fmt.Errorf("invalid mode: %v", courseInstance.Mode)
 	}
-	if !statusValid(*courseInstance.PIAllocationStatus) {
+	s.logger.Info("mode ok")
+
+	if courseInstance.PIAllocationStatus != nil && !statusValid(*courseInstance.PIAllocationStatus) {
 		s.logger.Error(
 			"Invalid PI allocation status",
 			zap.String("layer", logctx.LogServiceLayer),
@@ -70,7 +75,9 @@ func (s *Service) AddCourseInstance(ctx context.Context, courseInstance *courseI
 		)
 		return fmt.Errorf("invalid PI allocation status: %v", courseInstance.PIAllocationStatus)
 	}
-	if !statusValid(*courseInstance.TIAllocationStatus) {
+	s.logger.Info("pi status ok")
+
+	if courseInstance.TIAllocationStatus != nil && !statusValid(*courseInstance.TIAllocationStatus) {
 		s.logger.Error(
 			"Invalid TI allocation status",
 			zap.String("layer", logctx.LogServiceLayer),
@@ -78,6 +85,8 @@ func (s *Service) AddCourseInstance(ctx context.Context, courseInstance *courseI
 		)
 		return fmt.Errorf("invalid TI allocation status: %v", courseInstance.TIAllocationStatus)
 	}
+	s.logger.Info("ti status ok")
+
 	err := s.repo.AddNewCourseInstance(ctx, courseInstance)
 	if err != nil {
 		s.logger.Error(
