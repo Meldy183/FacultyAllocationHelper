@@ -22,10 +22,10 @@ func NewStaffRepo(pool *pgxpool.Pool, logger *zap.Logger) *StaffRepo {
 
 const (
 	queryGetStaffByInstanceID = `SELECT assignment_id, instance_id, profile_version_id, position_type,
-    contribution_coefficient, groups_assigned, is_confirmed, lectures_count, tutorials_count, labs_count,
+    groups_assigned, is_confirmed, lectures_count, tutorials_count, labs_count,
 	FROM staff WHERE instance_id = $1`
 	queryAddStaff = `INSERT INTO staff (instance_id, profile_version_id, position_type,
-    contribution_coefficient, groups_assigned, is_confirmed, lectures_count, tutorials_count, labs_count)
+    groups_assigned, is_confirmed, lectures_count, tutorials_count, labs_count)
 	VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`
 	queryUpdateStaff = ``
 )
@@ -59,7 +59,6 @@ func (r *StaffRepo) GetAllStaffByInstanceID(ctx context.Context, instanceID int6
 			&staffInstance.InstanceID,
 			&staffInstance.ProfileVersionID,
 			&staffInstance.PositionType,
-			&staffInstance.ContributionCoefficient,
 			&staffInstance.GroupsAssigned,
 			&staffInstance.IsConfirmed,
 			&staffInstance.LecturesCount,
@@ -89,7 +88,6 @@ func (r *StaffRepo) AddStaff(ctx context.Context, staff *staff.Staff) error {
 		staff.InstanceID,
 		staff.ProfileVersionID,
 		staff.PositionType,
-		staff.ContributionCoefficient,
 		staff.GroupsAssigned,
 		staff.IsConfirmed,
 		staff.LecturesCount,
