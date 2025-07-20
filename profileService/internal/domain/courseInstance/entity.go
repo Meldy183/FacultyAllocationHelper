@@ -38,3 +38,17 @@ const (
 	ModeMixed  Mode = "Mixed"
 	ModeRemote Mode = "Remote"
 )
+
+func NewStatusDefault() *Status {
+	x := StatusNotAllocated
+	return &x
+}
+
+func NewModeDefault() *Mode {
+	x := ModeOnsite
+	return &x
+}
+func NewFormDefault() *Form {
+	x := FormFull
+	return &x
+}
