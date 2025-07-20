@@ -559,7 +559,7 @@ func writeJSON(w http.ResponseWriter, status int, data interface{}) {
 
 func RegisterRoutes(router chi.Router, h *Handler) {
 	router.Route("/", func(r chi.Router) {
-		r.Get("/getCourse{id}", h.GetCourse)
+		r.Get("/getCourse/{id}", h.GetCourse)
 		r.Get("/getCourseList", h.GetAllCoursesByFilters)
 		r.Post("/addNewCourse", h.AddNewCourse)
 	})
