@@ -18,7 +18,7 @@ type Service struct {
 }
 
 func (s *Service) GetProgramNameByID(ctx context.Context, id int) (*string, error) {
-	return s.GetProgramNameByID(ctx, id)
+	return s.programRepo.GetProgramNameByID(ctx, id)
 }
 
 func NewService(programRepo program.Repository, programCourseInstance programcourseinstance.Repository, logger *zap.Logger) *Service {
