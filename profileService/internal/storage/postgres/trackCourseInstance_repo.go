@@ -22,8 +22,22 @@ func NewTrackCourseRepo(pool *pgxpool.Pool, logger *zap.Logger) *TrackCourseRepo
 }
 
 const (
-	queryTrackCourseByID = `SELECT track_course_instance_id, track_id, instance_id FROM track_course_instance WHERE instance_id = $1`
+	queryTrackCourseByID           = `SELECT track_course_instance_id, track_id, instance_id FROM track_course_instance WHERE instance_id = $1`
+	queryAddTracksToCourseInstance = `INSERT INTO track_course_instance (track_id, instance_id) VALUES ($1, $2) RETURNING track_course_instance_id`
 )
+
+func (r *TrackCourseRepo) AddTracksToCourseInstance(ctx context.Context, instanceID int, trackIDs int) error {
+	err := r.pool.QueryRow(ctx, queryAddTracksToCourseInstance, trackIDs, instanceID).Scan(&instanceID)
+	if err != nil {
+		r.logger.Error("failed to add track to course instance",
+			zap.String("layer", logctx.LogRepoLayer),
+			zap.String("function", "AddTrackToCourseInstance"),
+			zap.Error(err),
+		)
+		return fmt.Errorf("failed to add track to course instance: %w", err)
+	}
+	return nil
+}
 
 func (r *TrackCourseRepo) GetTracksIDsOfCourseByInstanceID(ctx context.Context, id int) ([]*trackcourseinstance.TrackCourseInstance, error) {
 	rows, err := r.pool.Query(ctx, queryTrackCourseByID, id)

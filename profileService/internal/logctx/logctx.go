@@ -97,4 +97,5 @@ const (
 	LogGetInstancesByYear                = "getInstancesByYear"
 	LogGetInstancesByVersionID           = "getInstancesByVersionID"
 	LogGetAllInstancesIDs                = "getAllInstancesIDs"
+	LogAddNewProgram                     = "addNewProgram"
 )

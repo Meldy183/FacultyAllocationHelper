@@ -16,6 +16,10 @@ type Service struct {
 	trackInstanceRepo trackcourseinstance.Repository
 }
 
+func (s *Service) AddTracksToCourseInstance(ctx context.Context, instanceID int, trackIDs int) error {
+	return s.trackInstanceRepo.AddTracksToCourseInstance(ctx, instanceID, trackIDs)
+}
+
 func NewService(trackInstanceRepo trackcourseinstance.Repository, logger *zap.Logger) *Service {
 	return &Service{
 		logger:            logger,
