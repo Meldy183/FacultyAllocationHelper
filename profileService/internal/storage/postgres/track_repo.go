@@ -22,14 +22,14 @@ func NewTrackRepo(pool *pgxpool.Pool, logger *zap.Logger) *TrackRepo {
 }
 
 const (
-	queryGetTracNamekByID = `SELECT track_id, name, track_id FROM track WHERE track_id = $1`
-	queryGetAllTracks     = `SELECT track_id, name, track_id FROM track`
+	queryGetTracNameByID = `SELECT track_id, name FROM track WHERE track_id = $1`
+	queryGetAllTracks    = `SELECT track_id, name FROM track`
 )
 
 func (r *TrackRepo) GetTrackNameByID(ctx context.Context, id int64) (*string, error) {
-	row := r.pool.QueryRow(ctx, queryGetTracNamekByID, id)
-	var track track.Track
-	err := row.Scan(&track.TrackID, &track.Name)
+	row := r.pool.QueryRow(ctx, queryGetTracNameByID, id)
+	var trackObj track.Track
+	err := row.Scan(&trackObj.TrackID, &trackObj.Name)
 	if err != nil {
 		r.logger.Error("failed to Get Track Name By ID",
 			zap.String("layer", logctx.LogRepoLayer),
@@ -43,9 +43,9 @@ func (r *TrackRepo) GetTrackNameByID(ctx context.Context, id int64) (*string, er
 		zap.String("layer", logctx.LogRepoLayer),
 		zap.String("function", logctx.LogGetTrackNameByID),
 		zap.Int64("id", id),
-		zap.String("name", track.Name),
+		zap.String("name", trackObj.Name),
 	)
-	return &track.Name, nil
+	return &trackObj.Name, nil
 }
 func (r *TrackRepo) GetAllTracks(ctx context.Context) ([]*track.Track, error) {
 	rows, err := r.pool.Query(ctx, queryGetAllTracks)

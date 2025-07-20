@@ -304,7 +304,6 @@ func (h *Handler) AddNewCourse(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusBadRequest, "Error adding courseInstance")
 		return
 	}
-	h.logger.Warn("Successfully added course instance")
 	academicYearName, err := h.academicYearService.GetAcademicYearNameByID(ctx, int64(courseInstanceObj.AcademicYearID))
 	if err != nil {
 		h.logger.Error("Error getting academic year",
@@ -367,7 +366,6 @@ func (h *Handler) AddNewCourse(w http.ResponseWriter, r *http.Request) {
 		}
 		programs = append(programs, *programName)
 	}
-	h.logger.Warn("2")
 	resp.ProgramNames = programs
 	tracks := make([]string, 0)
 	for _, elem := range req.TrackIDs {
@@ -393,7 +391,6 @@ func (h *Handler) AddNewCourse(w http.ResponseWriter, r *http.Request) {
 		}
 		tracks = append(tracks, *trackName)
 	}
-	h.logger.Warn("3")
 	resp.TrackNames = tracks
 	h.logger.Info("Successfully added programs",
 		zap.String("layer", logctx.LogHandlerLayer),
