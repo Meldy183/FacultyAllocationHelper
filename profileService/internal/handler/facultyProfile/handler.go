@@ -420,6 +420,11 @@ func (h *Handler) GetAllFaculties(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusInternalServerError, "error getting profiles")
 		return
 	}
+	h.logger.Debug("Successfully fetched facultyProfiles",
+		zap.String("layer", logctx.LogHandlerLayer),
+		zap.String("function", logctx.LogGetAllFaculties),
+		zap.Any("ids", profileIds),
+	)
 	resp := make([]ShortProfile, 0)
 	for _, id := range profileIds {
 		profile, err := h.serviceUP.GetProfileByID(ctx, id)
@@ -430,6 +435,7 @@ func (h *Handler) GetAllFaculties(w http.ResponseWriter, r *http.Request) {
 				zap.Int64("LabID", id),
 				zap.Error(err),
 			)
+			writeError(w, http.StatusInternalServerError, "error getting facultyProfile")
 			return
 		}
 		version, err := h.serviceVersionProfile.GetVersionByProfileID(ctx, id, year)
@@ -440,6 +446,7 @@ func (h *Handler) GetAllFaculties(w http.ResponseWriter, r *http.Request) {
 				zap.Int64("LabID", id),
 				zap.Error(err),
 			)
+			writeError(w, http.StatusInternalServerError, "error getting facultyVersionProfile")
 			return
 		}
 		h.logger.Warn("success getting facultyProfile by id",
@@ -455,6 +462,8 @@ func (h *Handler) GetAllFaculties(w http.ResponseWriter, r *http.Request) {
 				zap.Int64("LabID", id),
 				zap.Error(err),
 			)
+			writeError(w, http.StatusInternalServerError, "error getting position by id")
+			return
 		}
 		institutesStruct, err := h.serviceUI.GetUserInstitutesByProfileID(ctx, profile.ProfileID)
 		if err != nil {
@@ -464,6 +473,9 @@ func (h *Handler) GetAllFaculties(w http.ResponseWriter, r *http.Request) {
 				zap.Int64("LabID", id),
 				zap.Error(err),
 			)
+			writeError(w, http.StatusInternalServerError, "error getting user institute by id")
+			return
+
 		}
 		instNames := make([]string, 0)
 		for _, inst := range institutesStruct {
