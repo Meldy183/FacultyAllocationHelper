@@ -275,7 +275,7 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 	)
 	query = `CREATE TABLE IF NOT EXISTS course_instance (
     instance_id SERIAL PRIMARY KEY,
-    course_id INT,
+    course_id INT NOT NULL,
     semester_id INT,
     year INT,
     mode VARCHAR(20),
