@@ -22,7 +22,7 @@ func NewStaffRepo(pool *pgxpool.Pool, logger *zap.Logger) *StaffRepo {
 
 const (
 	queryGetStaffByInstanceID = `SELECT assignment_id, instance_id, profile_version_id, position_type,
-    groups_assigned, is_confirmed, lectures_count, tutorials_count, labs_count,
+    groups_assigned, is_confirmed, lectures_count, tutorials_count, labs_count
 	FROM staff WHERE instance_id = $1`
 	queryAddStaff = `INSERT INTO staff (instance_id, profile_version_id, position_type,
     groups_assigned, is_confirmed, lectures_count, tutorials_count, labs_count)
