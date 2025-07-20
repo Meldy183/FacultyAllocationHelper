@@ -23,7 +23,7 @@ func NewCourseInstanceRepo(pool *pgxpool.Pool, logger *zap.Logger) *CourseInstan
 
 const (
 	queryGetCourseInstanceByID = `
-		SELECT instance_id, course_id, semester, year, mode, academic_year_id, hardness_coefficient, form, groups_needed, groups_taken, pi_allocation_status, ti_allocation_status
+		SELECT instance_id, course_id, semester_id, year, mode, academic_year_id, hardness_coefficient, form, groups_needed, groups_taken, pi_allocation_status, ti_allocation_status
 		FROM course_instance
 		WHERE instance_id = $1
 	`
