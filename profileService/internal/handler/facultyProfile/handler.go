@@ -339,7 +339,6 @@ func (h *Handler) GetProfile(w http.ResponseWriter, r *http.Request) {
 		Degree:           version.Degree,
 		Fsro:             version.Fsro,
 		LanguageCodes:    &langEntries,
-		Courses:          &courseEntries,
 		EmploymentType:   version.EmploymentType,
 		HiringStatus:     profile.Status,
 		Mode:             version.Mode,

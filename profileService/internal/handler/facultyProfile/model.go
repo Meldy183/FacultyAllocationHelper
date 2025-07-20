@@ -1,7 +1,6 @@
 package facultyProfile
 
 import (
-	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/handler/sharedContent"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/handler/workload"
 )
 
@@ -25,25 +24,24 @@ type AddProfileResponse struct {
 }
 
 type GetProfileResponse struct {
-	ProfileVersionID int64                   `json:"profile_id"`
-	NameEnglish      string                  `json:"name_eng"`
-	NameRussian      *string                 `json:"name_ru"`
-	Alias            string                  `json:"alias"`
-	Email            string                  `json:"email"`
-	PositionName     string                  `json:"position_name"`
-	InstituteNames   []string                `json:"institute_names"`
-	StudentType      *string                 `json:"student_type"`
-	Degree           *bool                   `json:"degree"`
-	Fsro             *string                 `json:"fsro"`
-	LanguageCodes    *[]Lang                 `json:"languages"`
-	Courses          *[]sharedContent.Course `json:"courses"`
-	EmploymentType   *string                 `json:"employment_type"`
-	HiringStatus     *string                 `json:"hiring_status"`
-	Mode             *string                 `json:"mode"`
-	MaxLoad          *int                    `json:"max_load"`
-	FrontalHours     *int                    `json:"frontal_hours"`
-	ExtraActivity    *float64                `json:"extra_activities"`
-	WorkloadStats    *workload.Stats         `json:"workload_stats"`
+	ProfileVersionID int64           `json:"profile_id"`
+	NameEnglish      string          `json:"name_eng"`
+	NameRussian      *string         `json:"name_ru"`
+	Alias            string          `json:"alias"`
+	Email            string          `json:"email"`
+	PositionName     string          `json:"position_name"`
+	InstituteNames   []string        `json:"institute_names"`
+	StudentType      *string         `json:"student_type"`
+	Degree           *bool           `json:"degree"`
+	Fsro             *string         `json:"fsro"`
+	LanguageCodes    *[]Lang         `json:"languages"`
+	EmploymentType   *string         `json:"employment_type"`
+	HiringStatus     *string         `json:"hiring_status"`
+	Mode             *string         `json:"mode"`
+	MaxLoad          *int            `json:"max_load"`
+	FrontalHours     *int            `json:"frontal_hours"`
+	ExtraActivity    *float64        `json:"extra_activities"`
+	WorkloadStats    *workload.Stats `json:"workload_stats"`
 }
 
 type Lang struct {
