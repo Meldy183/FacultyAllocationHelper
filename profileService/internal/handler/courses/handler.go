@@ -23,9 +23,9 @@ type Handler struct {
 	fullCourseService     CompleteCourse.Service
 	staffService          staff.Service
 	academicYearService   academicYear.Service
-	semesterService       semester.Service
-	instituteService      institute.Service
-	profileVersionService profileVersion.Service
+	semesterService        semester.Service
+	courseInstituteService institute.Service
+	profileVersionService  profileVersion.Service
 	profileService        facultyProfile.Service
 }
 
@@ -34,13 +34,13 @@ func NewHandler(logger *zap.Logger, fullCourseService CompleteCourse.Service,
 	instituteService institute.Service, profileVersionService profileVersion.Service,
 	profileService facultyProfile.Service) *Handler {
 	return &Handler{
-		logger:                logger,
-		fullCourseService:     fullCourseService,
-		academicYearService:   academicYearService,
-		semesterService:       semesterService,
-		instituteService:      instituteService,
-		profileVersionService: profileVersionService,
-		profileService:        profileService,
+		logger:                 logger,
+		fullCourseService:      fullCourseService,
+		academicYearService:    academicYearService,
+		semesterService:        semesterService,
+		courseInstituteService: instituteService,
+		profileVersionService:  profileVersionService,
+		profileService:         profileService,
 	}
 }
 
@@ -105,7 +105,7 @@ func (h *Handler) GetCourse(w http.ResponseWriter, r *http.Request) {
 	}
 	academicYearName, err := h.academicYearService.GetAcademicYearNameByID(ctx, fullCourse.InstanceID)
 	semesterName, err := h.semesterService.GetSemesterNameByID(ctx, int64(fullCourse.SemesterID))
-	instituteObj, err := h.instituteService.GetInstituteByID(ctx, fullCourse.ResponsibleInstituteID)
+	instituteObj, err := h.courseInstituteService.GetInstituteByID(ctx, fullCourse.ResponsibleInstituteID)
 	isAllocDone := fullCourse.GroupsNeeded-*fullCourse.GroupsTaken == 0
 	pi := &sharedContent.PI{
 		AllocationStatus: (*string)(fullCourse.PIAllocationStatus),
@@ -182,10 +182,14 @@ func RegisterRoutes(router chi.Router, h *Handler) {
 }
 
 func (h *Handler) staffToFaculty(ctx context.Context, s *staff.Staff) *sharedContent.Faculty {
-	profileObj :=
+	profileObj := h.getProfileByVersionID(ctx, s.ProfileVersionID)
 	fuck := &sharedContent.Faculty{
 		ProfileVersionID: s.ProfileVersionID,
-		NameEng:,
+		NameEng:          &profileObj.EnglishName,
+		Alias:            &profileObj.Alias,
+		Email:            &profileObj.Email,
+		PositionName:     s.PositionType,
+		InstituteNames:   h.courseInstituteService.
 	}
 }
 
@@ -196,7 +200,7 @@ func (h *Handler) getProfileByVersionID(ctx context.Context, versionID int64) *f
 			zap.String("layer", logctx.LogHandlerLayer),
 			zap.String("function", logctx.LogGetProfileByVersionID),
 			zap.Error(err),
-			)
+		)
 		return nil
 	}
 	profileObj, err := h.profileService.GetProfileByID(ctx, version.ProfileID)
@@ -205,7 +209,7 @@ func (h *Handler) getProfileByVersionID(ctx context.Context, versionID int64) *f
 			zap.String("layer", logctx.LogHandlerLayer),
 			zap.String("function", logctx.LogGetProfileByVersionID),
 			zap.Error(err),
-			)
+		)
 		return nil
 	}
 	return profileObj

@@ -24,23 +24,24 @@ func NewService(repo course.Repository, logger *zap.Logger) *Service {
 }
 
 func (s *Service) GetCourseByID(ctx context.Context, courseID int64) (*course.Course, error) {
-	course, err := s.repo.GetCourseByID(ctx, courseID)
+	courseObj, err := s.repo.GetCourseByID(ctx, courseID)
 	if err != nil {
-		s.logger.Error("error getting course by ID",
+		s.logger.Error("error getting courseObj by ID",
 			zap.String("layer", logctx.LogServiceLayer),
 			zap.String("function", logctx.LogGetCourseByID),
 			zap.Int64("courseID", courseID),
 			zap.Error(err))
-		return nil, fmt.Errorf("error getting course %w", err)
+		return nil, fmt.Errorf("error getting courseObj %w", err)
 	}
 	s.logger.Info("Course found",
 		zap.String("layer", logctx.LogServiceLayer),
 		zap.String("function", logctx.LogGetCourseByID),
 		zap.Int64("courseID", courseID),
-		zap.Any("course", course),
+		zap.Any("courseObj", courseObj),
 	)
-	return course, nil
+	return courseObj, nil
 }
+
 func (s *Service) AddCourse(ctx context.Context, course *course.Course) error {
 	if responsibleInstituteIDValid(course.ResponsibleInstituteID) {
 		s.logger.Error(
@@ -67,5 +68,5 @@ func (s *Service) AddCourse(ctx context.Context, course *course.Course) error {
 }
 
 func responsibleInstituteIDValid(id int64) bool {
-	return (id >= 1 && id <= 8)
+	return id >= 1 && id <= 8
 }

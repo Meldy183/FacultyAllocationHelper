@@ -100,7 +100,7 @@ func (r *StaffRepo) AddStaff(ctx context.Context, staff *staff.Staff) error {
 		r.logger.Error("failed to add staff",
 			zap.String("layer", logctx.LogRepoLayer),
 			zap.String("function", logctx.LogAddStaff),
-			zap.Int("instance", staff.InstanceID),
+			zap.Int64("instance", staff.InstanceID),
 			zap.Error(err),
 		)
 		return fmt.Errorf("failed to add staff: %w", err)
