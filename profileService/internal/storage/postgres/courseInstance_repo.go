@@ -30,9 +30,9 @@ const (
 
 	queryInsertCourseInstance = `
 		INSERT INTO course_instance (
-			semester_id, year, mode, academic_year_id, hardness_coefficient, form, groups_needed, groups_taken, pi_allocation_status, ti_allocation_status
+			course_id, semester_id, year, mode, academic_year_id, hardness_coefficient, form, groups_needed, groups_taken, pi_allocation_status, ti_allocation_status
 		)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
 		RETURNING instance_id
 	`
 
@@ -177,6 +177,7 @@ func (r *CourseInstanceRepo) GetCourseInstanceByID(ctx context.Context, courseIn
 
 func (r *CourseInstanceRepo) AddNewCourseInstance(ctx context.Context, courseInstance *courseInstance.CourseInstance) error {
 	err := r.pool.QueryRow(ctx, queryInsertCourseInstance,
+		courseInstance.CourseID,
 		courseInstance.SemesterID,
 		courseInstance.Year,
 		courseInstance.Mode,
@@ -207,6 +208,7 @@ func (r *CourseInstanceRepo) AddNewCourseInstance(ctx context.Context, courseIns
 
 func (r *CourseInstanceRepo) UpdateCourseInstanceByID(ctx context.Context, courseInstance *courseInstance.CourseInstance) error {
 	_, err := r.pool.Exec(ctx, queryUpdateCourseInstanceByID,
+		courseInstance.CourseID,
 		courseInstance.SemesterID,
 		courseInstance.Year,
 		courseInstance.Mode,
