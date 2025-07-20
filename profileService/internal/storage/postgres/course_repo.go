@@ -23,22 +23,22 @@ func NewCourseRepo(pool *pgxpool.Pool, logger *zap.Logger) *CourseRepo {
 
 const (
 	queryGetCourseByID = `
-		SELECT course_id, brief_name, official_name, responsible_institute_id, lec_hours, lab_hours, is_elective
+		SELECT course_id, name, official_name, responsible_institute_id, lec_hours, lab_hours, is_elective
 		FROM course
 		WHERE course_id = $1
 	`
 
 	queryInsertCourse = `
 		INSERT INTO course (
-			brief_name, official_name, responsible_institute_id, lec_hours, lab_hours, is_elective
+			name, responsible_institute_id, lec_hours, lab_hours, is_elective
 		)
-		VALUES ($1, $2, $3, $4, $5, $6)
+		VALUES ($1, $2, $3, $4, $5)
 		RETURNING course_id
 	`
 
 	queryUpdateCourseByID = `
 		UPDATE course
-		SET brief_name = $1, official_name = $2,
+		SET name = $1, official_name = $2,
 		    responsible_institute_id = $3, lec_hours = $4, lab_hours = $5, is_elective = $6
 		WHERE course_id = $6
 	`
@@ -76,7 +76,6 @@ func (r *CourseRepo) GetCourseByID(ctx context.Context, courseID int64) (*course
 func (r *CourseRepo) AddNewCourse(ctx context.Context, course *course.Course) error {
 	err := r.pool.QueryRow(ctx, queryInsertCourse,
 		course.Name,
-		course.OfficialName,
 		course.ResponsibleInstituteID,
 		course.LecHours,
 		course.LabHours,

@@ -194,30 +194,6 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 		)
 		return err
 	}
-	query = `CREATE TABLE IF NOT EXISTS course (
-    course_id SERIAL PRIMARY KEY,
-    code VARCHAR (50),
-    name VARCHAR (50),
-	is_elective BOOL,
-    officialName VARCHAR (100),
-    institute_id INTEGER,
-    lec_hours INTEGER,
-    lab_hours INTEGER
-  )`
-	_, err = conn.Exec(ctx, query)
-	if err != nil {
-
-		str.logger.Error("Error creating course table",
-			zap.String("layer", logctx.LogDBInitLayer),
-			zap.String("function", logctx.LogInitSchema),
-			zap.Error(err),
-		)
-		return err
-	}
-	str.logger.Info("created course table",
-		zap.String("layer", logctx.LogDBInitLayer),
-		zap.String("function", logctx.LogInitSchema),
-	)
 
 	query = `CREATE TABLE IF NOT EXISTS responsible_institute (
     responsible_institute_id SERIAL PRIMARY KEY,
@@ -234,6 +210,30 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 		return err
 	}
 	str.logger.Info("created responsible_institute table",
+		zap.String("layer", logctx.LogDBInitLayer),
+		zap.String("function", logctx.LogInitSchema),
+	)
+	query = `CREATE TABLE IF NOT EXISTS course (
+    course_id SERIAL PRIMARY KEY,
+    name VARCHAR (50),
+	official_name VARCHAR (100),
+	responsible_institute_id INTEGER,
+    lec_hours INTEGER,
+    lab_hours INTEGER,
+	is_elective BOOL,
+	FOREIGN KEY (responsible_institute_id) REFERENCES responsible_institute (responsible_institute_id)
+  )`
+	_, err = conn.Exec(ctx, query)
+	if err != nil {
+
+		str.logger.Error("Error creating course table",
+			zap.String("layer", logctx.LogDBInitLayer),
+			zap.String("function", logctx.LogInitSchema),
+			zap.Error(err),
+		)
+		return err
+	}
+	str.logger.Info("created course table",
 		zap.String("layer", logctx.LogDBInitLayer),
 		zap.String("function", logctx.LogInitSchema),
 	)

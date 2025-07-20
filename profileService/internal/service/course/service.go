@@ -3,6 +3,7 @@ package course
 import (
 	"context"
 	"fmt"
+
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/course"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
 	"go.uber.org/zap"
@@ -42,7 +43,7 @@ func (s *Service) GetCourseByID(ctx context.Context, courseID int64) (*course.Co
 }
 
 func (s *Service) AddCourse(ctx context.Context, course *course.Course) error {
-	if responsibleInstituteIDValid(course.ResponsibleInstituteID) {
+	if !responsibleInstituteIDValid(course.ResponsibleInstituteID) {
 		s.logger.Error(
 			"Invalid responsibleInstituteID",
 			zap.String("layer", logctx.LogServiceLayer),
