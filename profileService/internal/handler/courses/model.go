@@ -21,17 +21,17 @@ type AddNewCourseRequest struct {
 }
 
 type AddNewCourseResponse struct {
-	CourseInstanceID         int      `json:"course_id"`
-	BriefName                string   `json:"brief_name"`
-	AcademicYearName         string   `json:"academic_year_name"`
-	SemesterName             string   `json:"semester_name"`
-	ProgramNames             []string `json:"program_names"`
-	TrackNames               []string `json:"track_names"`
-	ResponsibleInstituteName string   `json:"responsible_institute_name"`
-	GroupsNeeded             int      `json:"groups_needed"`
-	Pi                       string   `json:"pi"`  // empty
-	Ti                       string   `json:"ti"`  // empty
-	TAs                      []string `json:"tas"` // empty
+	CourseInstanceID         int64                   `json:"course_id"`
+	BriefName                string                  `json:"brief_name"`
+	AcademicYearName         string                  `json:"academic_year_name"`
+	SemesterName             string                  `json:"semester_name"`
+	ProgramNames             []string                `json:"program_names"`
+	TrackNames               []string                `json:"track_names"`
+	ResponsibleInstituteName string                  `json:"responsible_institute_name"`
+	GroupsNeeded             int                     `json:"groups_needed"`
+	Pi                       sharedContent.PI        `json:"pi"`  // empty
+	Ti                       sharedContent.PI        `json:"ti"`  // empty
+	TAs                      []sharedContent.Faculty `json:"tas"` // empty
 }
 
 type GetCourseResponse struct {

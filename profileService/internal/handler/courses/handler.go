@@ -6,12 +6,15 @@ import (
 	"fmt"
 	"github.com/go-chi/chi/v5"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/CompleteCourse"
+	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/course"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/courseInstance"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/facultyProfile"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/profileInstitute"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/profileVersion"
+	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/program"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/responsibleInstitute"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/staff"
+	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/track"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/handler/sharedContent"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/academicYear"
@@ -32,13 +35,19 @@ type Handler struct {
 	profileService              facultyProfile.Service
 	profileInstituteService     profileInstitute.Service
 	courseInstanceService       courseInstance.Service
+	courseService               course.Service
+	programService              program.Repository
+	trackService                track.Service
 }
 
 func NewHandler(logger *zap.Logger, fullCourseService CompleteCourse.Service,
 	staffService staff.Service, profileInstituteService profileInstitute.Service,
 	academicYearService academicYear.Service, semesterService semester.Service,
 	responsibleInstituteService responsibleInstitute.Service, profileVersionService profileVersion.Service,
-	profileService facultyProfile.Service, courseInstanceService courseInstance.Service) *Handler {
+	profileService facultyProfile.Service, courseInstanceService courseInstance.Service,
+	courseService course.Service, programService program.Repository,
+	trackService track.Service,
+) *Handler {
 	return &Handler{
 		logger:                      logger,
 		fullCourseService:           fullCourseService,
@@ -50,6 +59,9 @@ func NewHandler(logger *zap.Logger, fullCourseService CompleteCourse.Service,
 		profileInstituteService:     profileInstituteService,
 		staffService:                staffService,
 		courseInstanceService:       courseInstanceService,
+		courseService:               courseService,
+		programService:              programService,
+		trackService:                trackService,
 	}
 }
 
@@ -192,29 +204,172 @@ func (h *Handler) GetAllCoursesByFilters(w http.ResponseWriter, r *http.Request)
 	unitedIDs4 := UniteIDs(instancesIDsByVersionID, *unitedIDs3)
 	unitedIDs5 := UniteIDs(*unitedIDs1, *unitedIDs2)
 	unitedAllIDs := UniteIDs(*unitedIDs4, *unitedIDs5)
+	coursesList := make([]sharedContent.Course, 0)
+	for _, elem := range *unitedAllIDs {
+		courseObj, notDone := h.CombineCourseCard(w, err, ctx, elem)
+		if notDone {
+			return
+		}
+		coursesList = append(coursesList, *courseObj)
+	}
+	resp := &GetCourseListResponse{
+		Courses: coursesList,
+	}
+	h.logger.Info("GetCourseList Success",
+		zap.String("layer", logctx.LogHandlerLayer),
+		zap.String("function", logctx.LogGetAllCourses),
+		zap.Int("groups", len(coursesList)),
+	)
+	writeJSON(w, http.StatusOK, resp)
 }
 
 func (h *Handler) AddNewCourse(w http.ResponseWriter, r *http.Request) {
-
+	ctx := r.Context()
+	var req AddNewCourseRequest
+	err := json.NewDecoder(r.Body).Decode(&req)
+	if err != nil {
+		h.logger.Error("Error decoding request",
+			zap.String("layer", logctx.LogHandlerLayer),
+			zap.String("function", logctx.LogAddNewCourse),
+			zap.Error(err),
+		)
+		writeError(w, http.StatusBadRequest, "Error decoding request")
+		return
+	}
+	var resp AddNewCourseResponse
+	courseObj := &course.Course{
+		Name:                   req.BriefName,
+		ResponsibleInstituteID: int64(req.ResponsibleInstituteID),
+		IsElective:             &req.IsElective,
+	}
+	err = h.courseService.AddCourse(ctx, courseObj)
+	if err != nil {
+		h.logger.Error("Error adding course",
+			zap.String("layer", logctx.LogHandlerLayer),
+			zap.String("function", logctx.LogAddNewCourse),
+			zap.Error(err),
+		)
+		writeError(w, http.StatusBadRequest, "Error adding course")
+		return
+	}
+	responsibleInstituteName, err := h.responsibleInstituteService.GetResponsibleInstituteNameByID(ctx, courseObj.ResponsibleInstituteID)
+	if err != nil {
+		h.logger.Error("Error getting responsible institute",
+			zap.String("layer", logctx.LogHandlerLayer),
+			zap.String("function", logctx.LogAddNewCourse),
+			zap.Error(err),
+		)
+		writeError(w, http.StatusBadRequest, "Error getting responsible institute")
+		return
+	}
+	groupsTakenByDefault := 0
+	resp.BriefName = courseObj.Name
+	resp.ResponsibleInstituteName = *responsibleInstituteName
+	courseInstanceObj := &courseInstance.CourseInstance{
+		AcademicYearID: req.AcademicYearID,
+		SemesterID:     req.SemesterID,
+		Year:           req.Year,
+		GroupsNeeded:   req.GroupsNeeded,
+		GroupsTaken:    &groupsTakenByDefault,
+	}
+	err = h.courseInstanceService.AddCourseInstance(ctx, courseInstanceObj)
+	if err != nil {
+		h.logger.Error("Error adding courseInstance",
+			zap.String("layer", logctx.LogHandlerLayer),
+			zap.String("function", logctx.LogAddNewCourse),
+			zap.Error(err),
+		)
+		writeError(w, http.StatusBadRequest, "Error adding courseInstance")
+		return
+	}
+	academicYearName, err := h.academicYearService.GetAcademicYearNameByID(ctx, int64(courseInstanceObj.AcademicYearID))
+	if err != nil {
+		h.logger.Error("Error getting academic year",
+			zap.String("layer", logctx.LogHandlerLayer),
+			zap.String("function", logctx.LogAddNewCourse),
+			zap.Error(err),
+		)
+		writeError(w, http.StatusBadRequest, "Error getting academic year")
+		return
+	}
+	resp.AcademicYearName = *academicYearName
+	resp.CourseInstanceID = courseInstanceObj.InstanceID
+	resp.GroupsNeeded = courseInstanceObj.GroupsNeeded
+	semesterName, err := h.semesterService.GetSemesterNameByID(ctx, int64(courseInstanceObj.SemesterID))
+	if err != nil {
+		h.logger.Error("Error getting semester name",
+			zap.String("layer", logctx.LogHandlerLayer),
+			zap.String("function", logctx.LogAddNewCourse),
+			zap.Error(err),
+		)
+		writeError(w, http.StatusBadRequest, "Error getting semester name")
+		return
+	}
+	resp.SemesterName = *semesterName
+	allocStatus := "Not Allocated"
+	resp.Pi = sharedContent.PI{
+		AllocationStatus: &allocStatus,
+		ProfileData:      &sharedContent.Faculty{},
+	}
+	resp.Ti = sharedContent.PI{
+		AllocationStatus: &allocStatus,
+		ProfileData:      &sharedContent.Faculty{},
+	}
+	resp.TAs = make([]sharedContent.Faculty, 0)
+	programs := make([]string, 0)
+	for _, elem := range req.ProgramIDs {
+		programName, err := h.programService.GetProgramNameByID(ctx, elem)
+		if err != nil {
+			h.logger.Error("Error getting program name",
+				zap.String("layer", logctx.LogHandlerLayer),
+				zap.String("function", logctx.LogAddNewCourse),
+				zap.Error(err),
+			)
+			writeError(w, http.StatusBadRequest, "Error getting program name")
+			return
+		}
+		programs = append(programs, *programName)
+	}
+	resp.ProgramNames = programs
+	tracks := make([]string, 0)
+	for _, elem := range req.TrackIDs {
+		trackName, err := h.trackService.GetTrackNameByID(ctx, int64(elem))
+		if err != nil {
+			h.logger.Error("Error getting track name",
+				zap.String("layer", logctx.LogHandlerLayer),
+				zap.String("function", logctx.LogAddNewCourse),
+				zap.Error(err),
+			)
+			writeError(w, http.StatusBadRequest, "Error getting track name")
+			return
+		}
+		tracks = append(tracks, *trackName)
+	}
+	resp.TrackNames = tracks
+	h.logger.Info("Successfully added programs",
+		zap.String("layer", logctx.LogHandlerLayer),
+		zap.String("function", logctx.LogAddNewCourse),
+	)
+	writeJSON(w, http.StatusOK, resp)
 }
 
 func (h *Handler) GetCourse(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	id, err := strconv.ParseInt(chi.URLParam(r, "id"), 10, 64)
 	if err != nil {
-		h.logger.Error("error getting course id",
+		h.logger.Error("error getting courseObj id",
 			zap.String("layer", logctx.LogHandlerLayer),
 			zap.String("function", logctx.LogGetCourseByID),
 			zap.Error(err),
 		)
-		writeError(w, http.StatusBadRequest, "Invalid course id")
+		writeError(w, http.StatusBadRequest, "Invalid courseObj id")
 		return
 	}
-	course, interrupted := h.CombineCourseCard(w, err, ctx, id)
+	courseObj, interrupted := h.CombineCourseCard(w, err, ctx, id)
 	if interrupted {
 		return
 	}
-	resp := &GetCourseResponse{Course: *course}
+	resp := &GetCourseResponse{Course: *courseObj}
 	h.logger.Info("GetCourse Success",
 		zap.String("layer", logctx.LogHandlerLayer),
 		zap.String("function", logctx.LogGetCourseByID),
@@ -225,12 +380,12 @@ func (h *Handler) GetCourse(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) CombineCourseCard(w http.ResponseWriter, err error, ctx context.Context, id int64) (*sharedContent.Course, bool) {
 	fullCourse, err := h.fullCourseService.GetFullCourseInfoByID(ctx, id)
 	if err != nil {
-		h.logger.Error("error getting full course",
+		h.logger.Error("error getting full courseObj",
 			zap.String("layer", logctx.LogHandlerLayer),
 			zap.String("function", logctx.LogGetCourseByID),
 			zap.Error(err),
 		)
-		writeError(w, http.StatusInternalServerError, "error getting full course")
+		writeError(w, http.StatusInternalServerError, "error getting full courseObj")
 		return nil, true
 	}
 	staffs, err := h.staffService.GetAllStaffByInstanceID(ctx, id)
@@ -292,7 +447,7 @@ func (h *Handler) CombineCourseCard(w http.ResponseWriter, err error, ctx contex
 		AllocationStatus: (*string)(fullCourse.PIAllocationStatus),
 		ProfileData:      tiFaculty,
 	}
-	course := &sharedContent.Course{
+	courseObj := &sharedContent.Course{
 		InstanceID:           &fullCourse.InstanceID,
 		BriefName:            &fullCourse.Name,
 		OfficialName:         fullCourse.OfficialName,
@@ -313,7 +468,7 @@ func (h *Handler) CombineCourseCard(w http.ResponseWriter, err error, ctx contex
 		TI:                   *ti,
 		TAs:                  tas,
 	}
-	return course, false
+	return courseObj, false
 }
 
 func UniteIDs(a []int64, b []int64) *[]int64 {
