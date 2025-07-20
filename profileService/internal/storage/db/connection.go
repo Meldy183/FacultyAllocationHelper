@@ -612,6 +612,33 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 	)
 
 	_, err = tx.Exec(ctx, `
+    INSERT INTO track (track_id, name)
+    VALUES (1, 'AAI'),
+           (2, 'AAIR'),
+           (3, 'CS'),
+           (4, 'CSDS'),
+           (5, 'DS'),
+		   (6, 'GD'),
+		   (7, 'ITE'),
+		   (8, 'R'),
+		   (9, 'SD'),
+           (10, 'SE'),
+           (11, 'SNE')
+    ON CONFLICT (track_id) DO NOTHING;
+  `)
+	if err != nil {
+		str.logger.Error("Error adding tracks manually",
+			zap.String("layer", logctx.LogDBInitLayer),
+			zap.String("function", logctx.LogInitSchema),
+			zap.Error(err),
+		)
+	}
+	str.logger.Info("added tracks SUCCESS",
+		zap.String("layer", logctx.LogDBInitLayer),
+		zap.String("function", logctx.LogInitSchema),
+	)
+
+	_, err = tx.Exec(ctx, `
     INSERT INTO position (position_id, name)
     VALUES (1, 'Professor'),
            (2, 'Docent'),
