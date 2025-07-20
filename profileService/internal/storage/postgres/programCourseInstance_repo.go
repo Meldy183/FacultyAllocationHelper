@@ -27,7 +27,6 @@ const (
 
 func (r *ProgramCourseRepo) GetProgramCourseInstancesByCourseID(ctx context.Context, id int64) ([]*programcourseinstance.ProgramCourseInstance, error) {
 	rows, err := r.pool.Query(ctx, queryProgramCourseByID, id)
-	var programCourseInstance programcourseinstance.ProgramCourseInstance
 	if err != nil {
 		r.logger.Error("failed to Get ProgramCourses By course ID",
 			zap.String("layer", logctx.LogRepoLayer),
@@ -42,7 +41,7 @@ func (r *ProgramCourseRepo) GetProgramCourseInstancesByCourseID(ctx context.Cont
 	var instances []*programcourseinstance.ProgramCourseInstance
 	for rows.Next() {
 		var instance programcourseinstance.ProgramCourseInstance
-		err := rows.Scan(&programCourseInstance.ProgramCourseID, &programCourseInstance.ProgramID, &programCourseInstance.CourseInstanceID)
+		err := rows.Scan(&instance.ProgramCourseID, &instance.ProgramID, &instance.CourseInstanceID)
 		if err != nil {
 			r.logger.Error("Error getting programCourses by courseIDs",
 				zap.String("layer", logctx.LogRepoLayer),
