@@ -143,23 +143,23 @@ func (r *CourseInstanceRepo) GetAllInstancesIDs(ctx context.Context) ([]int64, e
 
 func (r *CourseInstanceRepo) GetCourseInstanceByID(ctx context.Context, courseInstanceID int64) (*courseInstance.CourseInstance, error) {
 	row := r.pool.QueryRow(ctx, queryGetCourseInstanceByID, courseInstanceID)
-	var courseInstance courseInstance.CourseInstance
+	var courseInstanceObj courseInstance.CourseInstance
 	err := row.Scan(
-		&courseInstance.InstanceID,
-		&courseInstance.CourseID,
-		&courseInstance.SemesterID,
-		&courseInstance.Year,
-		&courseInstance.Mode,
-		&courseInstance.AcademicYearID,
-		&courseInstance.HardnessCoefficient,
-		&courseInstance.Form,
-		&courseInstance.GroupsNeeded,
-		&courseInstance.GroupsTaken,
-		&courseInstance.PIAllocationStatus,
-		&courseInstance.TIAllocationStatus,
+		&courseInstanceObj.InstanceID,
+		&courseInstanceObj.CourseID,
+		&courseInstanceObj.SemesterID,
+		&courseInstanceObj.Year,
+		&courseInstanceObj.Mode,
+		&courseInstanceObj.AcademicYearID,
+		&courseInstanceObj.HardnessCoefficient,
+		&courseInstanceObj.Form,
+		&courseInstanceObj.GroupsNeeded,
+		&courseInstanceObj.GroupsTaken,
+		&courseInstanceObj.PIAllocationStatus,
+		&courseInstanceObj.TIAllocationStatus,
 	)
 	if err != nil {
-		r.logger.Error("Error getting courseInstance",
+		r.logger.Error("Error getting courseInstanceObj",
 			zap.String("layer", logctx.LogRepoLayer),
 			zap.String("function", logctx.LogGetCourseInstanceByID),
 			zap.Int64("courseInstanceID", courseInstanceID),
@@ -172,7 +172,7 @@ func (r *CourseInstanceRepo) GetCourseInstanceByID(ctx context.Context, courseIn
 		zap.String("function", logctx.LogGetCourseInstanceByID),
 		zap.Int64("courseInstanceID", courseInstanceID),
 	)
-	return &courseInstance, nil
+	return &courseInstanceObj, nil
 }
 
 func (r *CourseInstanceRepo) AddNewCourseInstance(ctx context.Context, courseInstance *courseInstance.CourseInstance) error {
