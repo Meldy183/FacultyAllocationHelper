@@ -192,6 +192,23 @@ func (h *Handler) GetAllCoursesByFilters(w http.ResponseWriter, r *http.Request)
 	unitedIDs4 := UniteIDs(instancesIDsByVersionID, *unitedIDs3)
 	unitedIDs5 := UniteIDs(*unitedIDs1, *unitedIDs2)
 	unitedAllIDs := UniteIDs(*unitedIDs4, *unitedIDs5)
+	coursesList := make([]sharedContent.Course, 0)
+	for _, elem := range *unitedAllIDs {
+		courseObj, notDone := h.CombineCourseCard(w, err, ctx, elem)
+		if notDone {
+			return
+		}
+		coursesList = append(coursesList, *courseObj)
+	}
+	resp := &GetCourseListResponse{
+		Courses: coursesList,
+	}
+	h.logger.Info("GetCourseList Success",
+		zap.String("layer", logctx.LogHandlerLayer),
+		zap.String("function", logctx.LogGetAllCourses),
+		zap.Int("groups", len(coursesList)),
+	)
+	writeJSON(w, http.StatusOK, resp)
 }
 
 func (h *Handler) AddNewCourse(w http.ResponseWriter, r *http.Request) {
@@ -202,19 +219,19 @@ func (h *Handler) GetCourse(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	id, err := strconv.ParseInt(chi.URLParam(r, "id"), 10, 64)
 	if err != nil {
-		h.logger.Error("error getting course id",
+		h.logger.Error("error getting courseObj id",
 			zap.String("layer", logctx.LogHandlerLayer),
 			zap.String("function", logctx.LogGetCourseByID),
 			zap.Error(err),
 		)
-		writeError(w, http.StatusBadRequest, "Invalid course id")
+		writeError(w, http.StatusBadRequest, "Invalid courseObj id")
 		return
 	}
-	course, interrupted := h.CombineCourseCard(w, err, ctx, id)
+	courseObj, interrupted := h.CombineCourseCard(w, err, ctx, id)
 	if interrupted {
 		return
 	}
-	resp := &GetCourseResponse{Course: *course}
+	resp := &GetCourseResponse{Course: *courseObj}
 	h.logger.Info("GetCourse Success",
 		zap.String("layer", logctx.LogHandlerLayer),
 		zap.String("function", logctx.LogGetCourseByID),
