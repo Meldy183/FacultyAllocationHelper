@@ -82,4 +82,5 @@ const (
 	LogGetAllPrograms                    = "getAllPrograms"
 	LogGetProfileByVersionID             = "getProfileByVersionID"
 	LogGetProgramCourseByID              = "getProgramCourseByID"
+	LogGetResponsibleInstituteNameByID   = "getResponsibleInstituteNameByID"
 )

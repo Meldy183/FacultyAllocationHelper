@@ -237,26 +237,6 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 		zap.String("layer", logctx.LogDBInitLayer),
 		zap.String("function", logctx.LogInitSchema),
 	)
-	query = `CREATE TABLE IF NOT EXISTS institute_course_link (
-    institute_course_id SERIAL PRIMARY KEY,
-    course_id INT,
-    responsible_institute_id INT,
-    FOREIGN KEY (course_id) REFERENCES course (course_id),
-    FOREIGN KEY (responsible_institute_id) REFERENCES responsible_institute (responsible_institute_id)
-  )`
-	_, err = conn.Exec(ctx, query)
-	if err != nil {
-		str.logger.Error("Error creating institute_course_link table",
-			zap.String("layer", logctx.LogDBInitLayer),
-			zap.String("function", logctx.LogInitSchema),
-			zap.Error(err),
-		)
-		return err
-	}
-	str.logger.Info("created institute_course_link table",
-		zap.String("layer", logctx.LogDBInitLayer),
-		zap.String("function", logctx.LogInitSchema),
-	)
 	query = `CREATE TABLE IF NOT EXISTS semester (
     semester_id SERIAL PRIMARY KEY,
     semester_name VARCHAR(20)
