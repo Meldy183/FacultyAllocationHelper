@@ -386,7 +386,6 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
     instance_id INT,
     profile_version_id INT,
     position_type VARCHAR(3),
-    contribution_coefficient FLOAT,
     groups_assigned INT,
     is_confirmed BOOLEAN,
     labs_count INT,

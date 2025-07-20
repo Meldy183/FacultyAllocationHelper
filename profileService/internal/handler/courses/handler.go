@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/go-chi/chi/v5"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/CompleteCourse"
+	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/courseInstance"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/facultyProfile"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/profileInstitute"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/profileVersion"
@@ -30,12 +31,14 @@ type Handler struct {
 	profileVersionService       profileVersion.Service
 	profileService              facultyProfile.Service
 	profileInstituteService     profileInstitute.Service
+	courseInstanceService       courseInstance.Service
 }
 
 func NewHandler(logger *zap.Logger, fullCourseService CompleteCourse.Service,
+	staffService staff.Service, profileInstituteService profileInstitute.Service,
 	academicYearService academicYear.Service, semesterService semester.Service,
 	responsibleInstituteService responsibleInstitute.Service, profileVersionService profileVersion.Service,
-	profileService facultyProfile.Service) *Handler {
+	profileService facultyProfile.Service, courseInstanceService courseInstance.Service) *Handler {
 	return &Handler{
 		logger:                      logger,
 		fullCourseService:           fullCourseService,
@@ -44,11 +47,76 @@ func NewHandler(logger *zap.Logger, fullCourseService CompleteCourse.Service,
 		responsibleInstituteService: responsibleInstituteService,
 		profileVersionService:       profileVersionService,
 		profileService:              profileService,
+		profileInstituteService:     profileInstituteService,
+		staffService:                staffService,
+		courseInstanceService:       courseInstanceService,
 	}
 }
 
 func (h *Handler) GetAllCoursesByFilters(w http.ResponseWriter, r *http.Request) {
-
+	ctx := r.Context()
+	isAllocationFinished := r.URL.Query().Get("allocation_finished") == "true"
+	year, err := strconv.ParseInt(r.URL.Query().Get("year"), 10, 64)
+	if err != nil {
+		h.logger.Error("Error parsing year",
+			zap.String("layer", logctx.LogHandlerLayer),
+			zap.String("function", logctx.LogGetAllCourses),
+			zap.Error(err),
+		)
+		writeError(w, http.StatusBadRequest, "Error parsing year")
+		return
+	}
+	yearsOfStudyIDs, err := convertStrToInt(r.URL.Query()["academic_year"])
+	if err != nil {
+		h.logger.Error("Error parsing year_Studies",
+			zap.String("layer", logctx.LogHandlerLayer),
+			zap.String("function", logctx.LogGetAllCourses),
+			zap.Error(err),
+		)
+		writeError(w, http.StatusBadRequest, "Error parsing year_Studies")
+		return
+	}
+	semesterIDs, err := convertStrToInt(r.URL.Query()["semester_ids"])
+	if err != nil {
+		h.logger.Error("Error parsing semester_id",
+			zap.String("layer", logctx.LogHandlerLayer),
+			zap.String("function", logctx.LogGetAllCourses),
+			zap.Error(err),
+		)
+		writeError(w, http.StatusBadRequest, "Error parsing semester_id")
+		return
+	}
+	programIDs, err := convertStrToInt(r.URL.Query()["study_program_ids"])
+	if err != nil {
+		h.logger.Error("Error parsing study_program_ids",
+			zap.String("layer", logctx.LogHandlerLayer),
+			zap.String("function", logctx.LogGetAllCourses),
+			zap.Error(err),
+		)
+		writeError(w, http.StatusBadRequest, "Error parsing study_program_ids")
+		return
+	}
+	responsibleInstituteIDs, err := convertStrToInt(r.URL.Query()["responsible_institute_ids"])
+	if err != nil {
+		h.logger.Error("Error parsing responsible_institute_ids",
+			zap.String("layer", logctx.LogHandlerLayer),
+			zap.String("function", logctx.LogGetAllCourses),
+			zap.Error(err),
+		)
+		writeError(w, http.StatusBadRequest, "Error parsing responsible_institute_ids")
+		return
+	}
+	profile_version_id, err := strconv.ParseInt(r.URL.Query().Get("profile_version_id"), 10, 64)
+	if err != nil {
+		h.logger.Error("Error parsing profile_version_id",
+			zap.String("layer", logctx.LogHandlerLayer),
+			zap.String("function", logctx.LogGetAllCourses),
+			zap.Error(err),
+		)
+		writeError(w, http.StatusBadRequest, "Error parsing profile_version_id")
+		return
+	}
+	isAllocationFinishedIDs, err := h.courseInstanceService.
 }
 
 func (h *Handler) AddNewCourse(w http.ResponseWriter, r *http.Request) {
@@ -67,6 +135,19 @@ func (h *Handler) GetCourse(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusBadRequest, "Invalid course id")
 		return
 	}
+	course, interrupted := h.CombineCourseCard(w, err, ctx, id)
+	if interrupted {
+		return
+	}
+	resp := &GetCourseResponse{Course: *course}
+	h.logger.Info("GetCourse Success",
+		zap.String("layer", logctx.LogHandlerLayer),
+		zap.String("function", logctx.LogGetCourseByID),
+	)
+	writeJSON(w, http.StatusOK, resp)
+}
+
+func (h *Handler) CombineCourseCard(w http.ResponseWriter, err error, ctx context.Context, id int64) (*sharedContent.Course, bool) {
 	fullCourse, err := h.fullCourseService.GetFullCourseInfoByID(ctx, id)
 	if err != nil {
 		h.logger.Error("error getting full course",
@@ -75,7 +156,7 @@ func (h *Handler) GetCourse(w http.ResponseWriter, r *http.Request) {
 			zap.Error(err),
 		)
 		writeError(w, http.StatusInternalServerError, "error getting full course")
-		return
+		return nil, true
 	}
 	staffs, err := h.staffService.GetAllStaffByInstanceID(ctx, id)
 	piStaff := h.staffService.GetPI(staffs)
@@ -86,20 +167,43 @@ func (h *Handler) GetCourse(w http.ResponseWriter, r *http.Request) {
 			zap.Error(err),
 		)
 		writeError(w, http.StatusInternalServerError, "error getting version info")
-		return
+		return nil, true
 	}
-	piFaculty :=
-	tiStaff := h.staffService.GetTI(staffs)
-	tiVersionID := tiStaff.ProfileVersionID
-	tasStaff := h.staffService.GetTAs(staffs)
+	piFaculty, err := h.staffToFaculty(ctx, piStaff)
 	if err != nil {
-		h.logger.Error("error getting staff",
+		h.logger.Error("error getting faculty",
 			zap.String("layer", logctx.LogHandlerLayer),
 			zap.String("function", logctx.LogGetCourseByID),
 			zap.Error(err),
 		)
-		writeError(w, http.StatusInternalServerError, "error getting staff")
-		return
+		writeError(w, http.StatusInternalServerError, "error getting faculty")
+		return nil, true
+	}
+	tiStaff := h.staffService.GetTI(staffs)
+	tiFaculty, err := h.staffToFaculty(ctx, tiStaff)
+	if err != nil {
+		h.logger.Error("error getting faculty",
+			zap.String("layer", logctx.LogHandlerLayer),
+			zap.String("function", logctx.LogGetCourseByID),
+			zap.Error(err),
+		)
+		writeError(w, http.StatusInternalServerError, "error getting faculty")
+		return nil, true
+	}
+	tasStaff := h.staffService.GetTAs(staffs)
+	tas := make([]sharedContent.Faculty, 0)
+	for _, elem := range tasStaff {
+		facObj, err := h.staffToFaculty(ctx, elem)
+		if err != nil {
+			h.logger.Error("error getting faculty",
+				zap.String("layer", logctx.LogHandlerLayer),
+				zap.String("function", logctx.LogGetCourseByID),
+				zap.Error(err),
+			)
+			writeError(w, http.StatusInternalServerError, "error getting faculty")
+			return nil, true
+		}
+		tas = append(tas, *facObj)
 	}
 	academicYearName, err := h.academicYearService.GetAcademicYearNameByID(ctx, fullCourse.InstanceID)
 	semesterName, err := h.semesterService.GetSemesterNameByID(ctx, int64(fullCourse.SemesterID))
@@ -107,13 +211,12 @@ func (h *Handler) GetCourse(w http.ResponseWriter, r *http.Request) {
 	isAllocDone := fullCourse.GroupsNeeded-*fullCourse.GroupsTaken == 0
 	pi := &sharedContent.PI{
 		AllocationStatus: (*string)(fullCourse.PIAllocationStatus),
-		ProfileData:,
+		ProfileData:      piFaculty,
 	}
 	ti := &sharedContent.PI{
 		AllocationStatus: (*string)(fullCourse.PIAllocationStatus),
-		ProfileData:,
+		ProfileData:      tiFaculty,
 	}
-	tas := make([]sharedContent.Faculty, 0)
 	course := &sharedContent.Course{
 		InstanceID:           &fullCourse.InstanceID,
 		BriefName:            &fullCourse.Name,
@@ -135,12 +238,7 @@ func (h *Handler) GetCourse(w http.ResponseWriter, r *http.Request) {
 		TI:                   *ti,
 		TAs:                  tas,
 	}
-	resp := &GetCourseResponse{Course: *course}
-	h.logger.Info("GetCourse Success",
-		zap.String("layer", logctx.LogHandlerLayer),
-		zap.String("function", logctx.LogGetCourseByID),
-	)
-	writeJSON(w, http.StatusOK, resp)
+	return course, false
 }
 
 func UniteIDs(a []int64, b []int64) *[]int64 {
@@ -191,7 +289,7 @@ func (h *Handler) staffToFaculty(ctx context.Context, s *staff.Staff) (*sharedCo
 			zap.String("layer", logctx.LogHandlerLayer),
 			zap.String("function", logctx.LogStaffToFaculty),
 			zap.Error(err),
-			)
+		)
 		return nil, fmt.Errorf("error getting institutes by id: %v", err)
 	}
 	fuck := &sharedContent.Faculty{
@@ -201,8 +299,8 @@ func (h *Handler) staffToFaculty(ctx context.Context, s *staff.Staff) (*sharedCo
 		Email:            &profileObj.Email,
 		PositionName:     s.PositionType,
 		InstituteNames:   instNames,
-		Classes: nil, // TODO: implement me
-		IsConfirmed: s.IsConfirmed,
+		Classes:          nil, // TODO: implement me
+		IsConfirmed:      s.IsConfirmed,
 	}
 	return fuck, nil
 }
@@ -227,4 +325,16 @@ func (h *Handler) getProfileByVersionID(ctx context.Context, versionID int64) *f
 		return nil
 	}
 	return profileObj
+}
+
+func convertStrToInt(s []string) ([]int, error) {
+	ints := make([]int, 0)
+	for _, v := range s {
+		i, err := strconv.Atoi(v)
+		if err != nil {
+			return nil, err
+		}
+		ints = append(ints, i)
+	}
+	return ints, nil
 }
