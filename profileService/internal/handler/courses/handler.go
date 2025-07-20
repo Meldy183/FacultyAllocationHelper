@@ -66,7 +66,7 @@ func (h *Handler) GetAllCoursesByFilters(w http.ResponseWriter, r *http.Request)
 		writeError(w, http.StatusBadRequest, "Error parsing year")
 		return
 	}
-	yearsOfStudyIDs, err := convertStrToInt(r.URL.Query()["academic_year"])
+	academicYearsIDs, err := convertStrToInt(r.URL.Query()["academic_year"])
 	if err != nil {
 		h.logger.Error("Error parsing year_Studies",
 			zap.String("layer", logctx.LogHandlerLayer),
@@ -116,7 +116,36 @@ func (h *Handler) GetAllCoursesByFilters(w http.ResponseWriter, r *http.Request)
 		writeError(w, http.StatusBadRequest, "Error parsing profile_version_id")
 		return
 	}
-	isAllocationFinishedIDs, err := h.courseInstanceService.
+	instancesIDsByIsAllocationFinished, err := h.courseInstanceService.GetInstancesByAllocationStatus(ctx, isAllocationFinished)
+	if err != nil {
+		h.logger.Error("Error getting instances by allocation status",
+			zap.String("layer", logctx.LogHandlerLayer),
+			zap.String("function", logctx.LogGetAllCourses),
+			zap.Error(err),
+		)
+		writeError(w, http.StatusBadRequest, "Error getting instances by allocation status")
+		return
+	}
+	intsancesIDsByYear, err := h.courseInstanceService.GetInstancesByYear(ctx, year)
+	if err != nil {
+		h.logger.Error("Error getting instances by year",
+			zap.String("layer", logctx.LogHandlerLayer),
+			zap.String("function", logctx.LogGetAllCourses),
+			zap.Error(err),
+		)
+		writeError(w, http.StatusBadRequest, "Error getting instances by year")
+		return
+	}
+	instancesIDsByAcademicYearsIDs, err := h.courseInstanceService.GetInstancesByAcademicYearIDs(ctx, academicYearsIDs)
+	if err != nil {
+		h.logger.Error("Error getting instances by academic years",
+			zap.String("layer", logctx.LogHandlerLayer),
+			zap.String("function", logctx.LogGetAllCourses),
+			zap.Error(err),
+		)
+		writeError(w, http.StatusBadRequest, "Error getting instances by academic years")
+		return
+	}
 }
 
 func (h *Handler) AddNewCourse(w http.ResponseWriter, r *http.Request) {
@@ -327,10 +356,22 @@ func (h *Handler) getProfileByVersionID(ctx context.Context, versionID int64) *f
 	return profileObj
 }
 
-func convertStrToInt(s []string) ([]int, error) {
-	ints := make([]int, 0)
+func convertStrToInt64(s []string) ([]int64, error) {
+	ints := make([]int64, 0)
 	for _, v := range s {
-		i, err := strconv.Atoi(v)
+		i, err := strconv.ParseInt(v, 10, 64)
+		if err != nil {
+			return nil, err
+		}
+		ints = append(ints, i)
+	}
+	return ints, nil
+}
+
+func convertStrToInt(s []string) ([]int64, error) {
+	ints := make([]int64, 0)
+	for _, v := range s {
+		i, err := strconv.ParseInt(v, 10, 64)
 		if err != nil {
 			return nil, err
 		}
