@@ -25,6 +25,7 @@ type AddProfileResponse struct {
 
 type GetProfileResponse struct {
 	ProfileVersionID int64           `json:"profile_id"`
+	Year             int             `json:"year"`
 	NameEnglish      string          `json:"name_eng"`
 	NameRussian      *string         `json:"name_ru"`
 	Alias            string          `json:"alias"`

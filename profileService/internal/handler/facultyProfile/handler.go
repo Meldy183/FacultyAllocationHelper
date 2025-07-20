@@ -3,6 +3,9 @@ package facultyProfile
 import (
 	"context"
 	"encoding/json"
+	"net/http"
+	"strconv"
+
 	"github.com/go-chi/chi/v5"
 	userprofileDomain "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/facultyProfile"
 	userinstituteDomain "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/profileInstitute"
@@ -19,8 +22,6 @@ import (
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/profileVersion"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/workload"
 	"go.uber.org/zap"
-	"net/http"
-	"strconv"
 )
 
 type Handler struct {
@@ -329,6 +330,7 @@ func (h *Handler) GetProfile(w http.ResponseWriter, r *http.Request) {
 	stats := workloadHandler.WorkloadToClasses(sem1, sem2, sem3)
 	resp := GetProfileResponse{
 		ProfileVersionID: version.ProfileVersionId,
+		Year:             version.Year,
 		NameEnglish:      profile.EnglishName,
 		NameRussian:      profile.RussianName,
 		Alias:            profile.Alias,
