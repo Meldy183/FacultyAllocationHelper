@@ -44,7 +44,7 @@ const (
 	`
 
 	queryGetInstancesByInstituteIDs = `
-		SELECT ci.instance_id, ci.course_id, ci.semester_id, ci.year, ci.mode, ci.academic_year_id, ci.hardness_coefficient, ci.form, ci.groups_needed, ci.groups_taken, ci.pi_allocation_status, ci.ti_allocation_status
+		SELECT ci.instance_id
 		FROM institute_course_link icl
 		JOIN course c ON icl.course_id = c.course_id 
 		LEFT JOIN course_instance ci ON ci.course_id = c.course_id
@@ -52,24 +52,45 @@ const (
 		ORDER BY ci.instance_id
 	`
 	queryGetInstancesByAcademicYearIDs = `
-		SELECT instance_id, course_id, semester_id, year, mode, academic_year_id, hardness_coefficient, form, groups_needed, groups_taken, pi_allocation_status, ti_allocation_status
+		SELECT instance_id
 		FROM course_instance
 		WHERE academic_year_id = ANY ($1) 
 		ORDER BY instance_id
 	`
 	queryGetInstancesBySemesterIDs = `
-		SELECT instance_id, course_id, semester_id, year, mode, academic_year_id, hardness_coefficient, form, groups_needed, groups_taken, pi_allocation_status, ti_allocation_status
+		SELECT instance_id
 		FROM course_instance
 		WHERE semester_id = ANY ($1) 
 		ORDER BY instance_id
 	`
 
 	queryGetInstancesByProgramIDs = `
-		SELECT 
-			ci.instance_id, ci.course_id, ci.semester_id, ci.year, ci.mode, ci.academic_year_id, ci.hardness_coefficient, ci.form, ci.groups_needed, ci.groups_taken, ci.pi_allocation_status, ci.ti_allocation_status
+		SELECT ci.instance_id
 		FROM program_course_instance pci JOIN course_instance ci ON pci.instance_id = ci.instance_id
 		WHERE pci.program_id = $1
 		ORDER BY ci.instance_id;
+	`
+
+	queryGetInstancesByAllocationStatus = `
+		SELECT instance_id
+		FROM course_instance
+		WHERE groups_needed <> groups_taken
+		ORDER BY instance_id
+	`
+
+	queryGetInstancesByYear = `
+		SELECT instance_id
+		FROM course_instance
+		WHERE year = $1 
+		ORDER BY instance_id
+	`
+
+	queryGetInstancesByVersionID = `
+		SELECT ci.instance_id
+		FROM course_instance ci JOIN staff s ON ci.instance_id = s.instance_id
+		LEFT JOIN user_profile_version pv ON pv.profile_version_id = s.profile_version_id
+		WHERE ci.profile_version_id = $1 
+		ORDER BY instance_id
 	`
 )
 
@@ -342,6 +363,138 @@ func (r *CourseInstanceRepo) GetInstancesIDsByProgramIDs(ctx context.Context, pr
 	r.logger.Info("CourseInstances found by programIDs",
 		zap.String("layer", logctx.LogRepoLayer),
 		zap.String("function", logctx.LogGetCourseInstanceByProgramID),
+		zap.Int("instancesLen", len(instancesIDs)),
+	)
+	return instancesIDs, nil
+}
+
+func (r *CourseInstanceRepo) GetInstancesByAllocationStatus(ctx context.Context) ([]int64, error) {
+	rows, err := r.pool.Query(ctx, queryGetInstancesByAllocationStatus)
+	if err != nil {
+		r.logger.Error("Error getting courseInstances by allocation status",
+			zap.String("layer", logctx.LogRepoLayer),
+			zap.String("function", logctx.LogGetInstancesIDsByAllocationStatus),
+			zap.Error(err),
+		)
+		return nil, fmt.Errorf("GetInstancesByAllocationStatus failed: %w", err)
+	}
+	defer rows.Close()
+	var instancesIDs []int64
+	for rows.Next() {
+		var id int64
+		err := rows.Scan(&id)
+		if err != nil {
+			r.logger.Error("Error getting courseInstances by allocation status",
+				zap.String("layer", logctx.LogRepoLayer),
+				zap.String("function", logctx.LogGetInstancesIDsByAllocationStatus),
+				zap.Error(err),
+			)
+			return nil, fmt.Errorf("GetInstancesByAllocationStatus failed: %w", err)
+		}
+		instancesIDs = append(instancesIDs, id)
+	}
+
+	if err := rows.Err(); err != nil {
+		r.logger.Error("Error getting courseInstance by allocation status",
+			zap.String("layer", logctx.LogRepoLayer),
+			zap.String("function", logctx.LogGetInstancesIDsByAllocationStatus),
+			zap.Error(err),
+		)
+		return nil, fmt.Errorf("GetInstancesByAllocationStatus failed: %w", err)
+	}
+	r.logger.Info("CourseInstances found by allocation status",
+		zap.String("layer", logctx.LogRepoLayer),
+		zap.String("function", logctx.LogGetInstancesIDsByAllocationStatus),
+		zap.Int("instancesLen", len(instancesIDs)),
+	)
+	return instancesIDs, nil
+}
+
+func (r *CourseInstanceRepo) GetInstancesByYear(ctx context.Context, year int) ([]int64, error) {
+	rows, err := r.pool.Query(ctx, queryGetInstancesByProgramIDs, year)
+	if err != nil {
+		r.logger.Error("Error getting courseInstances by year",
+			zap.String("layer", logctx.LogRepoLayer),
+			zap.String("function", logctx.LogGetInstancesIDsByYear),
+			zap.Int("year", year),
+			zap.Error(err),
+		)
+		return nil, fmt.Errorf("GetInstancesIDsByYear failed: %w", err)
+	}
+	defer rows.Close()
+	var instancesIDs []int64
+	for rows.Next() {
+		var id int64
+		err := rows.Scan(&id)
+		if err != nil {
+			r.logger.Error("Error getting courseInstances by year",
+				zap.String("layer", logctx.LogRepoLayer),
+				zap.String("function", logctx.LogGetInstancesIDsByYear),
+				zap.Int("year", year),
+				zap.Error(err),
+			)
+			return nil, fmt.Errorf("GetInstancesIDsByYear failed: %w", err)
+		}
+		instancesIDs = append(instancesIDs, id)
+	}
+
+	if err := rows.Err(); err != nil {
+		r.logger.Error("Error getting courseInstance by year",
+			zap.String("layer", logctx.LogRepoLayer),
+			zap.String("function", logctx.LogGetInstancesIDsByYear),
+			zap.Int("year", year),
+			zap.Error(err),
+		)
+		return nil, fmt.Errorf("GetInstancesIDsByYear failed: %w", err)
+	}
+	r.logger.Info("CourseInstances found by year",
+		zap.String("layer", logctx.LogRepoLayer),
+		zap.String("function", logctx.LogGetInstancesIDsByYear),
+		zap.Int("instancesLen", len(instancesIDs)),
+	)
+	return instancesIDs, nil
+}
+
+func (r *CourseInstanceRepo) GetInstancesByVersionID(ctx context.Context, versionID int64) ([]int64, error) {
+	rows, err := r.pool.Query(ctx, queryGetInstancesByVersionID, versionID)
+	if err != nil {
+		r.logger.Error("Error getting courseInstances by versionID",
+			zap.String("layer", logctx.LogRepoLayer),
+			zap.String("function", logctx.LogGetCourseInstanceByVersionID),
+			zap.Int64("versionID", versionID),
+			zap.Error(err),
+		)
+		return nil, fmt.Errorf("GetInstancesIDsByYear failed: %w", err)
+	}
+	defer rows.Close()
+	var instancesIDs []int64
+	for rows.Next() {
+		var id int64
+		err := rows.Scan(&id)
+		if err != nil {
+			r.logger.Error("Error getting courseInstances by versionID",
+				zap.String("layer", logctx.LogRepoLayer),
+				zap.String("function", logctx.LogGetCourseInstanceByVersionID),
+				zap.Int64("versionID", versionID),
+				zap.Error(err),
+			)
+			return nil, fmt.Errorf("GetInstancesIDsByYear failed: %w", err)
+		}
+		instancesIDs = append(instancesIDs, id)
+	}
+
+	if err := rows.Err(); err != nil {
+		r.logger.Error("Error getting courseInstance by versionID",
+			zap.String("layer", logctx.LogRepoLayer),
+			zap.String("function", logctx.LogGetCourseInstanceByVersionID),
+			zap.Int64("versionID", versionID),
+			zap.Error(err),
+		)
+		return nil, fmt.Errorf("GetInstancesIDsByYear failed: %w", err)
+	}
+	r.logger.Info("CourseInstances found by versionID",
+		zap.String("layer", logctx.LogRepoLayer),
+		zap.String("function", logctx.LogGetCourseInstanceByVersionID),
 		zap.Int("instancesLen", len(instancesIDs)),
 	)
 	return instancesIDs, nil
