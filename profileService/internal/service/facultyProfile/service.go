@@ -111,12 +111,14 @@ func (s *Service) GetProfilesByFilters(ctx context.Context, institutes []int, po
 		)
 		return nil, fmt.Errorf("error getting facultyProfile %w", err)
 	}
+	profilesByInst = makeUnique(profilesByInst)
 	s.logger.Debug("Check institutes by filters",
 		zap.Int64s("institutesProfileIDs", profilesByInst),
 		zap.String("layer", logctx.LogServiceLayer),
 		zap.String("function", logctx.LogGetProfileByID),
 	)
 	profilesByPosition, err := s.repo.GetProfileIDsByPositionIDs(ctx, positions)
+	profilesByPosition = makeUnique(profilesByPosition)
 	if err != nil {
 		s.logger.Error("error getting facultyProfile",
 			zap.String("layer", logctx.LogServiceLayer),
@@ -125,8 +127,11 @@ func (s *Service) GetProfilesByFilters(ctx context.Context, institutes []int, po
 			zap.Error(err),
 		)
 	}
-	s.logger.Debug("Check institutes by filters",
-		zap.Int64s("PositionsProfileIDs", profilesByInst),
+	s.logger.Warn("Check positions by filters",
+		zap.Int64s("positionsProfileIDs", profilesByPosition),
+		zap.Ints("positions", positions),
+		zap.Int64s("institutesProfileIDs", profilesByInst),
+		zap.Ints("institutes", institutes),
 		zap.String("layer", logctx.LogServiceLayer),
 		zap.String("function", logctx.LogGetProfileByID),
 	)
@@ -157,6 +162,21 @@ func getUnion(arr1 []int64, arr2 []int64) []int64 {
 		ans = append(ans, arr1[cnt1])
 		cnt1++
 		cnt2++
+	}
+	return ans
+}
+
+func makeUnique(arr []int64) []int64 {
+	ans := make([]int64, 0)
+	if len(arr) == 0 {
+		return ans
+	}
+	ans = append(ans, arr[0])
+	for i := 1; i < len(arr); i++ {
+		if arr[i] == arr[i-1] {
+			continue
+		}
+		ans = append(ans, arr[i])
 	}
 	return ans
 }

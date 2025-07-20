@@ -404,12 +404,6 @@ func (h *Handler) GetAllFaculties(w http.ResponseWriter, r *http.Request) {
 		}
 		positions = append(positions, pos)
 	}
-	h.logger.Warn("success getting all faculties",
-		zap.String("layer", logctx.LogHandlerLayer),
-		zap.String("function", logctx.LogGetAllFaculties),
-		zap.Any("institutes", institutes),
-		zap.Any("positions", positions),
-	)
 	profileIds, err := h.serviceUP.GetProfilesByFilters(ctx, institutes, positions)
 	if err != nil {
 		h.logger.Error("Error getting facultyProfile ids",
@@ -420,11 +414,6 @@ func (h *Handler) GetAllFaculties(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusInternalServerError, "error getting profiles")
 		return
 	}
-	h.logger.Debug("Successfully fetched facultyProfiles",
-		zap.String("layer", logctx.LogHandlerLayer),
-		zap.String("function", logctx.LogGetAllFaculties),
-		zap.Any("ids", profileIds),
-	)
 	resp := make([]ShortProfile, 0)
 	for _, id := range profileIds {
 		profile, err := h.serviceUP.GetProfileByID(ctx, id)
@@ -446,14 +435,13 @@ func (h *Handler) GetAllFaculties(w http.ResponseWriter, r *http.Request) {
 				zap.Int64("LabID", id),
 				zap.Error(err),
 			)
-			writeError(w, http.StatusInternalServerError, "error getting facultyVersionProfile")
-			return
+			if err.Error() == "failed to get version by profile ID: no rows in result set" {
+				continue
+			} else {
+				writeError(w, http.StatusInternalServerError, "error getting facultyVersionProfile")
+				return
+			}
 		}
-		h.logger.Warn("success getting facultyProfile by id",
-			zap.String("layer", logctx.LogHandlerLayer),
-			zap.String("function", logctx.LogGetAllFaculties),
-			zap.Any("version", version),
-		)
 		pos, err := h.servicePosition.GetPositionByID(ctx, version.PositionID)
 		if err != nil {
 			h.logger.Error("Error getting position by id",
