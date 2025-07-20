@@ -88,18 +88,41 @@ func (h *Handler) GetCourse(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusInternalServerError, "error getting version info")
 		return
 	}
-	piFaculty :=
-	tiStaff := h.staffService.GetTI(staffs)
-	tiVersionID := tiStaff.ProfileVersionID
-	tasStaff := h.staffService.GetTAs(staffs)
+	piFaculty, err := h.staffToFaculty(ctx, piStaff)
 	if err != nil {
-		h.logger.Error("error getting staff",
+		h.logger.Error("error getting faculty",
 			zap.String("layer", logctx.LogHandlerLayer),
 			zap.String("function", logctx.LogGetCourseByID),
 			zap.Error(err),
 		)
-		writeError(w, http.StatusInternalServerError, "error getting staff")
+		writeError(w, http.StatusInternalServerError, "error getting faculty")
 		return
+	}
+	tiStaff := h.staffService.GetTI(staffs)
+	tiFaculty, err := h.staffToFaculty(ctx, tiStaff)
+	if err != nil {
+		h.logger.Error("error getting faculty",
+			zap.String("layer", logctx.LogHandlerLayer),
+			zap.String("function", logctx.LogGetCourseByID),
+			zap.Error(err),
+		)
+		writeError(w, http.StatusInternalServerError, "error getting faculty")
+		return
+	}
+	tasStaff := h.staffService.GetTAs(staffs)
+	tas := make([]sharedContent.Faculty, 0)
+	for _, elem := range tasStaff {
+		facObj, err := h.staffToFaculty(ctx, elem)
+		if err != nil {
+			h.logger.Error("error getting faculty",
+				zap.String("layer", logctx.LogHandlerLayer),
+				zap.String("function", logctx.LogGetCourseByID),
+				zap.Error(err),
+			)
+			writeError(w, http.StatusInternalServerError, "error getting faculty")
+			return
+		}
+		tas = append(tas, *facObj)
 	}
 	academicYearName, err := h.academicYearService.GetAcademicYearNameByID(ctx, fullCourse.InstanceID)
 	semesterName, err := h.semesterService.GetSemesterNameByID(ctx, int64(fullCourse.SemesterID))
@@ -107,13 +130,12 @@ func (h *Handler) GetCourse(w http.ResponseWriter, r *http.Request) {
 	isAllocDone := fullCourse.GroupsNeeded-*fullCourse.GroupsTaken == 0
 	pi := &sharedContent.PI{
 		AllocationStatus: (*string)(fullCourse.PIAllocationStatus),
-		ProfileData:,
+		ProfileData:      piFaculty,
 	}
 	ti := &sharedContent.PI{
 		AllocationStatus: (*string)(fullCourse.PIAllocationStatus),
-		ProfileData:,
+		ProfileData:      tiFaculty,
 	}
-	tas := make([]sharedContent.Faculty, 0)
 	course := &sharedContent.Course{
 		InstanceID:           &fullCourse.InstanceID,
 		BriefName:            &fullCourse.Name,
@@ -191,7 +213,7 @@ func (h *Handler) staffToFaculty(ctx context.Context, s *staff.Staff) (*sharedCo
 			zap.String("layer", logctx.LogHandlerLayer),
 			zap.String("function", logctx.LogStaffToFaculty),
 			zap.Error(err),
-			)
+		)
 		return nil, fmt.Errorf("error getting institutes by id: %v", err)
 	}
 	fuck := &sharedContent.Faculty{
@@ -201,8 +223,8 @@ func (h *Handler) staffToFaculty(ctx context.Context, s *staff.Staff) (*sharedCo
 		Email:            &profileObj.Email,
 		PositionName:     s.PositionType,
 		InstituteNames:   instNames,
-		Classes: nil, // TODO: implement me
-		IsConfirmed: s.IsConfirmed,
+		Classes:          nil, // TODO: implement me
+		IsConfirmed:      s.IsConfirmed,
 	}
 	return fuck, nil
 }
