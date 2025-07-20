@@ -44,10 +44,9 @@ const (
 
 	queryGetInstancesByInstituteIDs = `
 		SELECT ci.instance_id
-		FROM institute_course_link icl
-		JOIN course c ON icl.course_id = c.course_id 
-		LEFT JOIN course_instance ci ON ci.course_id = c.course_id
-		WHERE icl.responsible_institute_id = ANY ($1)
+		FROM course_instance ci
+		JOIN course c ON ci.course_id = c.course_id 
+		WHERE c.responsible_institute_id = ANY ($1)
 		ORDER BY ci.instance_id
 	`
 	queryGetInstancesByAcademicYearIDs = `
@@ -282,6 +281,11 @@ func (r *CourseInstanceRepo) GetInstancesIDsByInstituteIDs(ctx context.Context, 
 }
 
 func (r *CourseInstanceRepo) GetInstancesIDsByAcademicYearIDs(ctx context.Context, academicYearIDs []int64) ([]int64, error) {
+	r.logger.Warn("meow",
+		zap.String("layer", logctx.LogRepoLayer),
+		zap.String("function", logctx.LogGetCourseInstanceByAcademicYearID),
+		zap.String("academicYearIDs", fmt.Sprintf("%v", academicYearIDs)),
+	)
 	rows, err := r.pool.Query(ctx, queryGetInstancesByAcademicYearIDs, academicYearIDs)
 	if err != nil {
 		r.logger.Error("Error getting courseInstances by academicYearIDs",
@@ -308,7 +312,6 @@ func (r *CourseInstanceRepo) GetInstancesIDsByAcademicYearIDs(ctx context.Contex
 		}
 		instancesIDs = append(instancesIDs, id)
 	}
-
 	if err := rows.Err(); err != nil {
 		r.logger.Error("Error getting courseInstance by academicYearIDs",
 			zap.String("layer", logctx.LogRepoLayer),

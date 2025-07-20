@@ -501,6 +501,27 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 		zap.String("layer", logctx.LogDBInitLayer),
 		zap.String("function", logctx.LogInitSchema),
 	)
+	query = `CREATE TABLE IF NOT EXISTS institute_course_link (
+      profile_id SERIAL PRIMARY KEY,
+      email VARCHAR(50) UNIQUE NOT NULL,
+      english_name VARCHAR(255) NOT NULL,
+      russian_name VARCHAR(255),
+      alias VARCHAR(255) UNIQUE NOT NULL,
+      start_date DATE,
+      end_date DATE
+  )`
+	_, err = conn.Exec(ctx, query)
+	if err != nil {
+		str.logger.Error("Error creating user_table",
+			zap.String("layer", logctx.LogDBInitLayer),
+			zap.String("function", logctx.LogInitSchema),
+			zap.Error(err))
+		return err
+	}
+	str.logger.Info("created user_table",
+		zap.String("layer", logctx.LogDBInitLayer),
+		zap.String("function", logctx.LogInitSchema),
+	)
 	tx, err := pool.Begin(ctx)
 	if err != nil {
 		str.logger.Error("Error starting transaction",
