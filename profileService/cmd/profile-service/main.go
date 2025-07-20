@@ -21,10 +21,12 @@ import (
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/profileLanguage"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/profileVersion"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/program"
+	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/programCourseInstance"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/responsibleInstitute"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/semester"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/staff"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/track"
+	trackcourseinstance "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/trackCourseInstance"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/workload"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/storage/db"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/storage/postgres"
@@ -108,6 +110,8 @@ func main() {
 	academicYearService := academicYear.NewService(academicYearRepo, logger)
 	semesterService := semester.NewService(semesterRepo, logger)
 	responsibleInstituteService := responsibleInstitute.NewService(responsibleInstituteRepo, logger)
+	programCourseInstanceService := programCourseInstance.NewService(programCourseInstanceRepo, logger)
+	trackInstanceService := trackcourseinstance.NewService(trackInstanceRepo, logger)
 	facultyHandler := userprofile2.NewHandler(
 		profileService,
 		profileInstituteRepo,
@@ -132,6 +136,8 @@ func main() {
 		courseService,
 		programService,
 		trackService,
+		programCourseInstanceService,
+		trackInstanceService,
 		logger,
 	)
 	filtersHandler := filters.NewHandler(

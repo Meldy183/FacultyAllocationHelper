@@ -16,6 +16,10 @@ type Service struct {
 	programCourseInstanceRepo programcourseinstance.Repository
 }
 
+func (s *Service) AddProgramToCourseInstance(ctx context.Context, programCourseInstance *programcourseinstance.ProgramCourseInstance) error {
+	return s.programCourseInstanceRepo.AddProgramToCourseInstance(ctx, programCourseInstance)
+}
+
 func NewService(programCourseInstanceRepo programcourseinstance.Repository, logger *zap.Logger) *Service {
 	return &Service{
 		logger:                    logger,

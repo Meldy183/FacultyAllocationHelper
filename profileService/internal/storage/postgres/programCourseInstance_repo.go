@@ -3,7 +3,6 @@ package postgres
 import (
 	"context"
 	"fmt"
-
 	"github.com/jackc/pgx/v5/pgxpool"
 	programcourseinstance "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/programCourseInstance"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
@@ -22,8 +21,22 @@ func NewProgramCourseRepo(pool *pgxpool.Pool, logger *zap.Logger) *ProgramCourse
 }
 
 const (
-	queryProgramCourseByID = `SELECT program_course_instance_id, program_id, instance_id FROM program_course_instance WHERE instance_id = $1`
+	queryProgramCourseByID          = `SELECT program_course_instance_id, program_id, instance_id FROM program_course_instance WHERE instance_id = $1`
+	queryAddProgramToCourseInstance = `INSERT INTO program_course_instance (program_id, instance_id) VALUES ($1, $2) RETURNING program_course_instance_id`
 )
+
+func (r *ProgramCourseRepo) AddProgramToCourseInstance(ctx context.Context, programCourseInstance *programcourseinstance.ProgramCourseInstance) error {
+	err := r.pool.QueryRow(ctx, queryAddProgramToCourseInstance, programCourseInstance.ProgramID, programCourseInstance.CourseInstanceID).Scan(&programCourseInstance.ProgramCourseID)
+	if err != nil {
+		r.logger.Error("Error adding program to courseInstance",
+			zap.String("layer", logctx.LogHandlerLayer),
+			zap.String("function", logctx.LogAddNewProgram),
+			zap.Error(err),
+		)
+		return fmt.Errorf("error adding program to courseInstance: %v", err)
+	}
+	return nil
+}
 
 func (r *ProgramCourseRepo) GetProgramCourseInstancesByCourseID(ctx context.Context, id int64) ([]*programcourseinstance.ProgramCourseInstance, error) {
 	rows, err := r.pool.Query(ctx, queryProgramCourseByID, id)

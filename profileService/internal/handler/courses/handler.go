@@ -15,9 +15,11 @@ import (
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/profileInstitute"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/profileVersion"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/program"
+	programcourseinstance "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/programCourseInstance"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/responsibleInstitute"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/staff"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/track"
+	trackcourseinstance "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/trackCourseInstance"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/handler/sharedContent"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/academicYear"
@@ -38,6 +40,8 @@ type Handler struct {
 	courseService               course.Service
 	programService              program.Service
 	trackService                track.Service
+	programInstance             programcourseinstance.Service
+	trackInstance               trackcourseinstance.Service
 	logger                      *zap.Logger
 }
 
@@ -54,6 +58,8 @@ func NewHandler(
 	courseService course.Service,
 	programService program.Service,
 	trackService track.Service,
+	programInstance programcourseinstance.Service,
+	trackInstance trackcourseinstance.Service,
 	logger *zap.Logger,
 ) *Handler {
 	return &Handler{
@@ -70,6 +76,8 @@ func NewHandler(
 		courseService:               courseService,
 		programService:              programService,
 		trackService:                trackService,
+		programInstance:             programInstance,
+		trackInstance:               trackInstance,
 	}
 }
 
@@ -247,7 +255,7 @@ func (h *Handler) AddNewCourse(w http.ResponseWriter, r *http.Request) {
 	var resp AddNewCourseResponse
 	courseObj := &course.Course{
 		Name:                   req.BriefName,
-		ResponsibleInstituteID: int64(req.ResponsibleInstituteID),
+		ResponsibleInstituteID: req.ResponsibleInstituteID,
 		IsElective:             &req.IsElective,
 	}
 	err = h.courseService.AddCourse(ctx, courseObj)
@@ -290,6 +298,7 @@ func (h *Handler) AddNewCourse(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusBadRequest, "Error adding courseInstance")
 		return
 	}
+
 	academicYearName, err := h.academicYearService.GetAcademicYearNameByID(ctx, int64(courseInstanceObj.AcademicYearID))
 	if err != nil {
 		h.logger.Error("Error getting academic year",
@@ -326,6 +335,20 @@ func (h *Handler) AddNewCourse(w http.ResponseWriter, r *http.Request) {
 	resp.TAs = make([]sharedContent.Faculty, 0)
 	programs := make([]string, 0)
 	for _, elem := range req.ProgramIDs {
+		pr := &programcourseinstance.ProgramCourseInstance{
+			ProgramID:        elem,
+			CourseInstanceID: int(courseInstanceObj.InstanceID),
+		}
+		err := h.programInstance.AddProgramToCourseInstance(ctx, pr)
+		if err != nil {
+			h.logger.Error("Error adding program",
+				zap.String("layer", logctx.LogHandlerLayer),
+				zap.String("function", logctx.LogAddNewCourse),
+				zap.Error(err),
+			)
+			writeError(w, http.StatusBadRequest, "Error adding program")
+			return
+		}
 		programName, err := h.programService.GetProgramNameByID(ctx, elem)
 		if err != nil {
 			h.logger.Error("Error getting program name",
@@ -341,6 +364,16 @@ func (h *Handler) AddNewCourse(w http.ResponseWriter, r *http.Request) {
 	resp.ProgramNames = programs
 	tracks := make([]string, 0)
 	for _, elem := range req.TrackIDs {
+		err := h.trackInstance.AddTracksToCourseInstance(ctx, int(courseInstanceObj.InstanceID), elem)
+		if err != nil {
+			h.logger.Error("Error adding track",
+				zap.String("layer", logctx.LogHandlerLayer),
+				zap.String("function", logctx.LogAddNewCourse),
+				zap.Error(err),
+			)
+			writeError(w, http.StatusBadRequest, "Error adding track")
+			return
+		}
 		trackName, err := h.trackService.GetTrackNameByID(ctx, int64(elem))
 		if err != nil {
 			h.logger.Error("Error getting track name",
