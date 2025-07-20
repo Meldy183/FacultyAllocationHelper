@@ -284,6 +284,7 @@ func (h *Handler) AddNewCourse(w http.ResponseWriter, r *http.Request) {
 	resp.BriefName = courseObj.Name
 	resp.ResponsibleInstituteName = *responsibleInstituteName
 	courseInstanceObj := &courseInstance.CourseInstance{
+		CourseID:           courseObj.CourseID,
 		AcademicYearID:     req.AcademicYearID,
 		SemesterID:         req.SemesterID,
 		Year:               req.Year,
