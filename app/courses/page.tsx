@@ -7,22 +7,17 @@ import SideBarContent from "@/app/courses/SideBarContent";
 import styles from "./styles.module.scss";
 import { Button } from "@/shared/ui/button";
 import AddCourseMenu from "../../features/ui/course/CreateCourseMenu";
-
-const faculty = {
-	name: "Name",
-	surname: "Surname",
-	department: [],
-	role: "TA",
-	workload: 0.2
-}
-
-const courseMock = {
-	courseName: "CourseName 1",
-	PI: faculty,
-	faculties: [faculty, faculty, faculty, faculty, faculty, faculty, faculty, faculty, faculty],
-}
+import { useGetAllCoursesQuery } from "@/features/api/slises/courses/insex";
 
 const CoursesPage: React.FC = () => {
+	const { data, error } = useGetAllCoursesQuery({
+		allocation_finished: false
+	});
+
+	React.useEffect(() => {
+		console.log(data);
+	}, [data])
+
 	return (
 		<Wrapper>
 			<SideBar hiddenText={ "Filters" }>
@@ -34,12 +29,14 @@ const CoursesPage: React.FC = () => {
 			</div>
 			<div className={ styles.container }>
 				<div className={ styles.courses }>
-					<div className={ styles.field }><CourseField { ...courseMock } /></div>
-					<div className={ styles.field }><CourseField { ...courseMock } /></div>
-					<div className={ styles.field }><CourseField { ...courseMock } /></div>
-					<div className={ styles.field }><CourseField { ...courseMock } /></div>
-					<div className={ styles.field }><CourseField { ...courseMock } /></div>
-					<div className={ styles.field }><CourseField { ...courseMock } /></div>
+					{
+						error && <span>smth went wrong. cant load courses</span>
+					}
+					{
+						data?.courses.map((course) => (
+							<div key={ course.course_id } className={ styles.field }><CourseField { ...course } /></div>
+						))
+					}
 				</div>
 			</div>
 		</Wrapper>

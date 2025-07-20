@@ -8,7 +8,7 @@ import SideBarContent from "@/app/faculty/SideBarContent";
 import TeacherAssistance from "@/app/faculty/teacherAssistantField";
 import CreateFacultyMenu from "@/features/ui/faculty/CreateNewFaculty";
 import { useLazyGetMembersByParamQuery } from "@/features/api/slises/profile";
-import { GetSimpleUserDataInterface, UserDataInterface } from "shared/types/api/profile";
+import { GetSimpleUserDataInterface } from "@/shared/types/ui/faculties";
 import { useAppSelector } from "@/features/store/hooks";
 import { FilterGroup } from "shared/types/api/filters";
 import { transformWorkingFilters } from "@/shared/lib/transformFilter";

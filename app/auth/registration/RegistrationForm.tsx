@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { useRegisterMutation } from "@/features/api/slises/authSlice";
+import { useRegisterMutation } from "@/features/api/slises/auth";
 import { Form, FormField } from "@/shared/ui/form";
 import { Button } from "@/shared/ui/button";
 import { registerResolver } from "@/shared/types/resolvers/auth";

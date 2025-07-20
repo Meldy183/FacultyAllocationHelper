@@ -1,9 +1,9 @@
 import { combineReducers, Middleware } from "redux";
-import { authSlice } from "@/features/api/slises/authSlice";
+import { index } from "@/features/api/slises/auth";
 
 //try add reducers to combiner and add it in configureStore
 export const apiSliceCombiner = combineReducers({
-	[authSlice.reducerPath]: authSlice.reducer,
+	[index.reducerPath]: index.reducer,
 });
 
-export const apiMiddlewares: Middleware[] = [authSlice.middleware];
+export const apiMiddlewares: Middleware[] = [index.middleware];

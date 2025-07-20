@@ -16,30 +16,20 @@ import CourseDialogMenuContent from "@/entities/course/ui/CourseDialogMenuConten
 import ManageCourseDialogMenu from "@/entities/course/ui/ManageCourseDialogMenu";
 import TAElement from "@/features/ui/course/FacultyMemberBlock";
 import AssignNewMember from "@/features/ui/course/AssignNewMember";
+import { CourseType } from "@/shared/types/ui/courses";
 
-interface Course {
-	courseName: string;
-	PI: Faculty;
-	tutor?: Faculty;
-	faculties: Faculty[];
-}
+type Props = CourseType & {}
 
-interface Faculty {
-	name: string;
-	surname: string;
-	department: string[];
-	role: string;
-	workload: number;
-}
+const CourseField: React.FC<Props> = (props) => {
+	console.log(props.ti)
 
-const CourseField: React.FC<Course> = ({ courseName, PI, tutor, faculties }) => {
 	return <div className={ styles.card }>
 		<div className={ styles.header }>
 			<div className={ styles.information }>
 				<div className={ styles.courseName }>
 					<Dialog>
 						<DialogTrigger className={ "cursor-pointer" }>
-							<div className={ styles.name }>{ courseName }</div>
+							<div className={ styles.name }>{ props.brief_name }</div>
 						</DialogTrigger>
 						<DialogContent className={ styles.dialogMenu }>
 							<VisuallyHidden>
@@ -78,11 +68,15 @@ const CourseField: React.FC<Course> = ({ courseName, PI, tutor, faculties }) => 
 			<div className={ styles.instructors }>
 				<div className={ styles.instructor }>
 					<div className={ styles.title }>PI</div>
-					<TAElement { ...PI } />
+					{
+						props.pi?.allocation_status === "assigned" ? <TAElement { ...props.pi } /> : <span>not allocated</span>
+					}
 				</div>
 				<div className={ styles.instructor }>
 					<div className={ styles.title }>Tutor</div>
-					<TAElement { ...PI } />
+					{
+						props.ti?.allocation_status === "assigned" ? <TAElement { ...props.ti } /> : <span>not allocated</span>
+					}
 				</div>
 			</div>
 		</div>
@@ -90,7 +84,7 @@ const CourseField: React.FC<Course> = ({ courseName, PI, tutor, faculties }) => 
 			<div className={ styles.title }>Teaching assistants</div>
 			<div className={ styles.assistance }>
 				<AssignNewMember />
-				{ faculties.map((faculty, i) => <TAElement { ...faculty } key={ i }/>) }
+				{ props.tas?.map(ta => <TAElement { ...ta } key={ ta.profile_data.profile_id } />) }
 			</div>
 		</div>
 	</div>
