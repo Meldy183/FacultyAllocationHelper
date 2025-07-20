@@ -55,7 +55,7 @@ func NewHandler(logger *zap.Logger, fullCourseService CompleteCourse.Service,
 
 func (h *Handler) GetAllCoursesByFilters(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	isAllocationFinished := r.URL.Query().Get("allocation_finished") == "true"
+	isAllocationNotFinished := r.URL.Query().Get("allocation_not_finished") == "true"
 	year, err := strconv.ParseInt(r.URL.Query().Get("year"), 10, 64)
 	if err != nil {
 		h.logger.Error("Error parsing year",
@@ -106,7 +106,7 @@ func (h *Handler) GetAllCoursesByFilters(w http.ResponseWriter, r *http.Request)
 		writeError(w, http.StatusBadRequest, "Error parsing responsible_institute_ids")
 		return
 	}
-	profile_version_id, err := strconv.ParseInt(r.URL.Query().Get("profile_version_id"), 10, 64)
+	profileVersionId, err := strconv.ParseInt(r.URL.Query().Get("profile_version_id"), 10, 64)
 	if err != nil {
 		h.logger.Error("Error parsing profile_version_id",
 			zap.String("layer", logctx.LogHandlerLayer),
@@ -116,7 +116,7 @@ func (h *Handler) GetAllCoursesByFilters(w http.ResponseWriter, r *http.Request)
 		writeError(w, http.StatusBadRequest, "Error parsing profile_version_id")
 		return
 	}
-	instancesIDsByIsAllocationFinished, err := h.courseInstanceService.GetInstancesByAllocationStatus(ctx, isAllocationFinished)
+	instancesIDsAllocationNotFinished, err := h.courseInstanceService.GetInstancesByAllocationStatus(ctx, isAllocationNotFinished)
 	if err != nil {
 		h.logger.Error("Error getting instances by allocation status",
 			zap.String("layer", logctx.LogHandlerLayer),
@@ -126,7 +126,7 @@ func (h *Handler) GetAllCoursesByFilters(w http.ResponseWriter, r *http.Request)
 		writeError(w, http.StatusBadRequest, "Error getting instances by allocation status")
 		return
 	}
-	intsancesIDsByYear, err := h.courseInstanceService.GetInstancesByYear(ctx, year)
+	instancesIDsByYear, err := h.courseInstanceService.GetInstancesByYear(ctx, year)
 	if err != nil {
 		h.logger.Error("Error getting instances by year",
 			zap.String("layer", logctx.LogHandlerLayer),
@@ -166,6 +166,32 @@ func (h *Handler) GetAllCoursesByFilters(w http.ResponseWriter, r *http.Request)
 		writeError(w, http.StatusBadRequest, "Error getting instances by programs")
 		return
 	}
+	instancesIDsByResponsibleInstituteIDs, err := h.courseInstanceService.GetInstancesByInstituteIDs(ctx, responsibleInstituteIDs)
+	if err != nil {
+		h.logger.Error("Error getting instances by responsible_institute_ids",
+			zap.String("layer", logctx.LogHandlerLayer),
+			zap.String("function", logctx.LogGetAllCourses),
+			zap.Error(err),
+		)
+		writeError(w, http.StatusBadRequest, "Error getting instances by responsible_institute_ids")
+		return
+	}
+	instancesIDsByVersionID, err := h.courseInstanceService.GetInstancesByVersionID(ctx, profileVersionId)
+	if err != nil {
+		h.logger.Error("Error getting instances by version",
+			zap.String("layer", logctx.LogHandlerLayer),
+			zap.String("function", logctx.LogGetAllCourses),
+			zap.Error(err),
+		)
+		writeError(w, http.StatusBadRequest, "Error getting instances by version")
+		return
+	}
+	unitedIDs1 := UniteIDs(instancesIDsAllocationNotFinished, instancesIDsByYear)
+	unitedIDs2 := UniteIDs(instancesIDsByAcademicYearsIDs, instancesIDsBySemesterIDs)
+	unitedIDs3 := UniteIDs(instancesIdsByProgramIDs, instancesIDsByResponsibleInstituteIDs)
+	unitedIDs4 := UniteIDs(instancesIDsByVersionID, *unitedIDs3)
+	unitedIDs5 := UniteIDs(*unitedIDs1, *unitedIDs2)
+	unitedAllIDs := UniteIDs(*unitedIDs4, *unitedIDs5)
 }
 
 func (h *Handler) AddNewCourse(w http.ResponseWriter, r *http.Request) {

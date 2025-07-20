@@ -1,6 +1,6 @@
 package workload
 
-type WorkloadStats struct {
+type Stats struct {
 	T1    Classes `json:"t1"`
 	T2    Classes `json:"t2"`
 	T3    Classes `json:"t3"`

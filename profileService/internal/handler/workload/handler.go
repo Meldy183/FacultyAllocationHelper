@@ -19,7 +19,7 @@ func NewWorkloadHandler(serviceWorkload *workload.Service, logger *zap.Logger) *
 	return &Handler{serviceWorkload: serviceWorkload, logger: logger}
 }
 
-func (h *Handler) WorkloadToClasses(sem1 *workloadDomain.Workload, sem2 *workloadDomain.Workload, sem3 *workloadDomain.Workload) *WorkloadStats {
+func (h *Handler) WorkloadToClasses(sem1 *workloadDomain.Workload, sem2 *workloadDomain.Workload, sem3 *workloadDomain.Workload) *Stats {
 	class1 := &Classes{
 		Lec:  sem1.LecturesCount,
 		Tut:  sem1.TutorialsCount,
@@ -41,7 +41,7 @@ func (h *Handler) WorkloadToClasses(sem1 *workloadDomain.Workload, sem2 *workloa
 		Elec: sem3.ElectivesCount,
 		Rate: sem3.Rate,
 	}
-	stats := &WorkloadStats{
+	stats := &Stats{
 		T1: *class1,
 		T2: *class2,
 		T3: *class3,

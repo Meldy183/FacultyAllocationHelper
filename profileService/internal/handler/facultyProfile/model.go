@@ -43,7 +43,7 @@ type GetProfileResponse struct {
 	MaxLoad          *int                    `json:"max_load"`
 	FrontalHours     *int                    `json:"frontal_hours"`
 	ExtraActivity    *float64                `json:"extra_activities"`
-	WorkloadStats    *workload.WorkloadStats `json:"workload_stats"`
+	WorkloadStats    *workload.Stats         `json:"workload_stats"`
 }
 
 type Lang struct {
