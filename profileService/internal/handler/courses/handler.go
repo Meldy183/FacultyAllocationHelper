@@ -284,11 +284,15 @@ func (h *Handler) AddNewCourse(w http.ResponseWriter, r *http.Request) {
 	resp.BriefName = courseObj.Name
 	resp.ResponsibleInstituteName = *responsibleInstituteName
 	courseInstanceObj := &courseInstance.CourseInstance{
-		AcademicYearID: req.AcademicYearID,
-		SemesterID:     req.SemesterID,
-		Year:           req.Year,
-		GroupsNeeded:   req.GroupsNeeded,
-		GroupsTaken:    &groupsTakenByDefault,
+		AcademicYearID:     req.AcademicYearID,
+		SemesterID:         req.SemesterID,
+		Year:               req.Year,
+		GroupsNeeded:       req.GroupsNeeded,
+		GroupsTaken:        &groupsTakenByDefault,
+		PIAllocationStatus: courseInstance.NewStatusDefault(),
+		TIAllocationStatus: courseInstance.NewStatusDefault(),
+		Form:               courseInstance.NewFormDefault(),
+		Mode:               courseInstance.NewModeDefault(),
 	}
 	err = h.courseInstanceService.AddCourseInstance(ctx, courseInstanceObj)
 	if err != nil {
@@ -300,7 +304,6 @@ func (h *Handler) AddNewCourse(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusBadRequest, "Error adding courseInstance")
 		return
 	}
-
 	academicYearName, err := h.academicYearService.GetAcademicYearNameByID(ctx, int64(courseInstanceObj.AcademicYearID))
 	if err != nil {
 		h.logger.Error("Error getting academic year",
