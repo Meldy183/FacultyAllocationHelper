@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/programcourseinstance"
+	programcourseinstance "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/programCourseInstance"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
 	"go.uber.org/zap"
 )
