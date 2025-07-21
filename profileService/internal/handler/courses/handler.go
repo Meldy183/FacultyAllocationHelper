@@ -508,9 +508,7 @@ func (h *Handler) CombineCourseCard(w http.ResponseWriter, err error, ctx contex
 		}
 		tas = append(tas, *facObj)
 	}
-	academicYearName, err := h.academicYearService.GetAcademicYearNameByID(ctx, fullCourse.InstanceID)
-	h.logger.Warn("year names",
-		zap.String("names", fmt.Sprintf("%v", academicYearName)))
+	academicYearName, err := h.academicYearService.GetAcademicYearNameByID(ctx, int64(fullCourse.AcademicYearID))
 	semesterName, err := h.semesterService.GetSemesterNameByID(ctx, int64(fullCourse.SemesterID))
 	instituteObj, err := h.responsibleInstituteService.GetResponsibleInstituteNameByID(ctx, fullCourse.ResponsibleInstituteID)
 	isAllocDone := fullCourse.GroupsNeeded-*fullCourse.GroupsTaken == 0

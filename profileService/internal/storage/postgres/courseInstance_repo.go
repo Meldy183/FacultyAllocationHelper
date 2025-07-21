@@ -281,11 +281,6 @@ func (r *CourseInstanceRepo) GetInstancesIDsByInstituteIDs(ctx context.Context, 
 }
 
 func (r *CourseInstanceRepo) GetInstancesIDsByAcademicYearIDs(ctx context.Context, academicYearIDs []int64) ([]int64, error) {
-	r.logger.Warn("meow",
-		zap.String("layer", logctx.LogRepoLayer),
-		zap.String("function", logctx.LogGetCourseInstanceByAcademicYearID),
-		zap.String("academicYearIDs", fmt.Sprintf("%v", academicYearIDs)),
-	)
 	rows, err := r.pool.Query(ctx, queryGetInstancesByAcademicYearIDs, academicYearIDs)
 	if err != nil {
 		r.logger.Error("Error getting courseInstances by academicYearIDs",
