@@ -8,7 +8,7 @@ type AddProfileRequest struct {
 	NameEnglish  string `json:"name_eng"`
 	Email        string `json:"email"`
 	Alias        string `json:"alias"`
-	InstituteIDs []int  `json:"institute_ids"`
+	InstituteIDs []int  `json:"institute_id"`
 	PositionID   int    `json:"position_id"`
 	Year         int    `json:"year"`
 }
@@ -69,7 +69,7 @@ type EditProfileRequest struct {
 	Alias            string  `json:"alias"`
 	Email            string  `json:"email"`
 	PositionID       int     `json:"position_id"`
-	InstituteIDs     *[]int  `json:"institute_ids"`
+	InstituteIDs     *[]int  `json:"institute_id"`
 	StudentType      *string `json:"student_type"`
 	Degree           *bool   `json:"degree"`
 	Languages        *[]Lang `json:"languages"`
