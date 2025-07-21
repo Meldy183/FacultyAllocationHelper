@@ -9,7 +9,7 @@ type GetCourseListResponse struct {
 }
 
 type AddNewCourseRequest struct {
-	BriefName              string `json:"name"`
+	BriefName              string `json:"brief_name"`
 	OfficialName           string `json:"official_name"`
 	AcademicYearID         int    `json:"academic_year_id"`
 	SemesterID             int    `json:"semester_id"`
@@ -23,7 +23,7 @@ type AddNewCourseRequest struct {
 
 type AddNewCourseResponse struct {
 	CourseInstanceID         int64                   `json:"course_id"`
-	BriefName                string                  `json:"name"`
+	BriefName                string                  `json:"brief_name"`
 	OfficialName             string                  `json:"official_name"`
 	AcademicYearName         string                  `json:"academic_year_name"`
 	SemesterName             string                  `json:"semester_name"`
