@@ -1,27 +1,27 @@
 export type InstituteType = {
-  name: string,
-  id: number
+  label: string,
+  value: number
 }
 
 export const instituteList: InstituteType[] = [
-  { id: 1, name: 'Институт анализа данных и Искусственного Интеллекта' },
-  { id: 2, name: 'Институт разработки ПО и программной инженерии' },
-  { id: 3, name: 'Институт робототехники и компьютерного зрения' },
-  { id: 4, name: 'Институт информационной безопасности' },
-  { id: 5, name: 'Институт гуманитарных и социальных наук' }
+  { value: 1, label: 'Институт анализа данных и Искусственного Интеллекта' },
+  { value: 2, label: 'Институт разработки ПО и программной инженерии' },
+  { value: 3, label: 'Институт робототехники и компьютерного зрения' },
+  { value: 4, label: 'Институт информационной безопасности' },
+  { value: 5, label: 'Институт гуманитарных и социальных наук' }
 ]
 
 export type RoleType = {
-  id: number,
-  name: string
+  value: number,
+  label: string
 }
 
 export const roleList: RoleType[] = [
-  { id: 1, name: 'Professor' },
-  { id: 2, name: 'Docent' },
-  { id: 3, name: 'Senior Instructor' },
-  { id: 4, name: 'Instructor' },
-  { id: 5, name: 'TA' },
-  { id: 6, name: 'TA intern' },
-  { id: 7, name: 'Visiting' }
+  { value: 1, label: 'Professor' },
+  { value: 2, label: 'Docent' },
+  { value: 3, label: 'Senior Instructor' },
+  { value: 4, label: 'Instructor' },
+  { value: 5, label: 'TA' },
+  { value: 6, label: 'TA intern' },
+  { value: 7, label: 'Visiting' }
 ]

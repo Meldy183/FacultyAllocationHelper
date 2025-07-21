@@ -8,7 +8,7 @@ import SideBarContent from "@/app/faculty/SideBarContent";
 import TeacherAssistance from "@/app/faculty/teacherAssistantField";
 import CreateFacultyMenu from "@/features/ui/faculty/CreateNewFaculty";
 import { useLazyGetMembersByParamQuery } from "@/features/api/slises/profile";
-import { UserDataInterface } from "shared/types/api/profile";
+import { GetSimpleUserDataInterface } from "@/shared/types/ui/faculties";
 import { useAppSelector } from "@/features/store/hooks";
 import { FilterGroup } from "shared/types/api/filters";
 import { transformWorkingFilters } from "@/shared/lib/transformFilter";
@@ -21,7 +21,7 @@ import styles from "./styles.module.scss";
 const AssistantsPage: React.FC = () => {
 	const filters: FilterGroup[] = useAppSelector(state => state.facultyFilters.filters);
 	const [getUsers, { data, error, isError, isLoading }] = useLazyGetMembersByParamQuery();
-	const [users, setUsers] = useState<UserDataInterface[]>([]);
+	const [users, setUsers] = useState<GetSimpleUserDataInterface[]>([]);
 
 	const debouncedFilters = useDebounce(filters, debounceTime);
 
@@ -31,8 +31,8 @@ const AssistantsPage: React.FC = () => {
 	}, [debouncedFilters, getUsers]);
 
 	useEffect(() => {
-		if (data) setUsers(data?.profiles || []);
-	}, [data, error, isLoading]);
+		if (data && data.profiles) setUsers(data.profiles);
+	}, [data]);
 
 	return <Wrapper>
 		<SideBar hiddenText={ "Filters" }><SideBarContent/></SideBar>
@@ -57,7 +57,7 @@ const AssistantsPage: React.FC = () => {
 						{
 							isLoading ?
 								<><Image className={ styles.loadingImage } src={ loaderSvg } alt={ "loading" } /></>
-								: users.map((item, i) => <TeacherAssistance {...item} key={ i } />)
+								: (users && users.map((item, i) => <TeacherAssistance {...item} key={ i } />))
 						}
 					</ul>
 			}

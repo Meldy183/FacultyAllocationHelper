@@ -1,96 +1,140 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React from "react";
+// import CourseField from "@/shared/ui/CourseField";
 import Image from "next/image";
+import userIcon from "@/public/icons/faculty/faculty-member/faculty-member-icon.svg"
 import Wrapper from "@/shared/ui/wrapper";
-import SideBar from "@/shared/ui/wrapper/sidebar";
-import SideBarContent from "@/app/faculty/SideBarContent";
-import TeacherAssistance from "@/app/faculty/teacherAssistantField";
-import CreateFacultyMenu from "@/features/ui/faculty/CreateNewFaculty";
-import { useLazyGetMembersByParamQuery } from "@/features/api/slises/profile";
-import { UserDataInterface } from "shared/types/api/profile";
-import { useAppSelector } from "@/features/store/hooks";
-import { FilterGroup } from "shared/types/api/filters";
-import { transformWorkingFilters } from "@/shared/lib/transformFilter";
-import { useDebounce } from "@/shared/hooks/useDebounce";
-import { debounceTime } from "@/shared/configs/constants/dev/debounceTime";
-import loaderSvg from "@/public/icons/svg/loader.svg";
-import wrongSvg from "@/public/icons/svg/wrong.svg";
+import { useGetUserQuery } from "@/features/api/slises/profile";
 import styles from "./styles.module.scss";
+import { useParams } from "next/navigation";
 
-const AssistantsPage: React.FC = () => {
-  const filters: FilterGroup[] = useAppSelector(state => state.facultyFilters.filters);
-  const [getUsers, { data, error, isError, isLoading }] = useLazyGetMembersByParamQuery();
-  const [users, setUsers] = useState<number[]>([]);
+export default function ProfileDashboard() {
+	const params = useParams();
 
-  //@ts-ignore
-  const [_users, _setUsers] = useState<UserDataInterface[]>();
+	const id = params.id as string;
 
-  const debouncedFilters = useDebounce(filters, debounceTime);
+	const { data, error, isLoading } = useGetUserQuery({ id });
 
-  const getAllUsers = async () => {
-	const promises = users.faculty_ids.map((userId) =>
-		fetch(`/api/profile/getProfile/${userId.toString()}`)
+	if (error) return <>smth went wrong (error)</>
+
+	if (isLoading) return <>wating</>
+
+	if (!data) return <>smth went wrong (no data)</>;
+
+	return (
+		<Wrapper>
+			<div className={styles.container}>
+				<div className={styles.card}>
+					<div className={styles.header}>
+						<div className={styles.userInfo}>
+							<Image src={ userIcon } alt={ "user icon" } className={ styles.avatar } />
+							<div>
+								<h1 className={styles.name}>{ data.name_eng }</h1>
+								<p className={styles.subName}>{ data.name_ru }</p>
+							</div>
+						</div>
+
+					</div>
+
+					{/* Profile Info */}
+					<div className={styles.section}>
+						<div className={styles.row}><strong>Position:</strong> { data.position_name }</div>
+						<div className={styles.row}><strong>Institutes:</strong> { data.institute_names.map(institute => <span key={ institute }>{ institute }</span>) }</div>
+					</div>
+
+					<div className={styles.section}>
+						<h2 className={styles.title}>Personal Information</h2>
+						<div className={styles.grid}>
+							<div>Email: { data.email }</div>
+							<div>Telegram alias: { data.alias }</div>
+							<div>Student? { data.student_type }</div>
+							<div>Responsible from FSRO: { data.fsro }</div>
+							<div>Degree: { data.degree }</div>
+							<div>Languages: { data.languages.map(({ language_code }) => <span key={ language_code }>{ language_code }</span>) }</div>
+						</div>
+					</div>
+
+					<div className={styles.section}>
+						<h2 className={styles.title}>Employment</h2>
+						<div className={styles.grid}>
+							<div>Type of employment: { data.employnment_type }</div>
+							<div>Start date: </div>
+							<div>Hiring status: { data.hiring_status }</div>
+							<div>End date: 00.00.0000</div>
+							<div>Mode: { data.mode }</div>
+						</div>
+					</div>
+				</div>
+
+				{/* Workload */}
+				<div className={styles.card}>
+					<div className={styles.sectionCardWhite}>
+						<h2 className={styles.name}>Workload</h2>
+						<div className={styles.workloadGrid}>
+							<div className={ styles.table }>
+								<div className={ `${ styles.row } ${ styles.title}` }>
+									<div className={ `${ styles.block } ${ styles.designationBlock }` }></div>
+									<div className={ styles.block }>LEC</div>
+									<div className={ styles.block }>TUT</div>
+									<div className={ styles.block }>LAB</div>
+									<div className={ styles.block }>ELECTIVE</div>
+									<div className={ `${ styles.block } bg-[#40BA2180]` }>RATE</div>
+								</div>
+								<div className={ `${ styles.row }` }>
+									<div className={ `${ styles.block } ${ styles.designationBlock }` }>T1</div>
+									<div className={ styles.block }>{ data.workload_stats.t1?.lec_hours }</div>
+									<div className={ styles.block }>{ data.workload_stats.t1?.tut_hours }</div>
+									<div className={ styles.block }>{ data.workload_stats.t1?.lab_hours }</div>
+									<div className={ styles.block }>{ data.workload_stats.t1?.elective_hours }</div>
+									<div className={ styles.block }>{ data.workload_stats.t1?.rate }</div>
+								</div>
+								<div className={ `${ styles.row }` }>
+									<div className={ `${ styles.block } ${ styles.designationBlock }` }>T2</div>
+									<div className={ styles.block }>{ data.workload_stats.t2?.lec_hours }</div>
+									<div className={ styles.block }>{ data.workload_stats.t2?.tut_hours }</div>
+									<div className={ styles.block }>{ data.workload_stats.t2?.lab_hours }</div>
+									<div className={ styles.block }>{ data.workload_stats.t2?.elective_hours }</div>
+									<div className={ styles.block }>{ data.workload_stats.t2?.rate }</div>
+								</div>
+								<div className={ `${ styles.row }` }>
+									<div className={ `${ styles.block } ${ styles.designationBlock }` }>T3</div>
+									<div className={ styles.block }>{ data.workload_stats.t3?.lec_hours }</div>
+									<div className={ styles.block }>{ data.workload_stats.t3?.tut_hours }</div>
+									<div className={ styles.block }>{ data.workload_stats.t3?.lab_hours }</div>
+									<div className={ styles.block }>{ data.workload_stats.t3?.elective_hours }</div>
+									<div className={ styles.block }>{ data.workload_stats.t3?.rate }</div>
+								</div>
+								<div className={ `${ styles.row }` }>
+									<div className={ `${ styles.block } ${ styles.designationBlock }` }>Total</div>
+									<div className={ styles.block }>{ data.workload_stats.total.lec_hours }</div>
+									<div className={ styles.block }>{ data.workload_stats.total.tut_hours }</div>
+									<div className={ styles.block }>{ data.workload_stats.total.lab_hours }</div>
+									<div className={ styles.block }>{ data.workload_stats.total.elective_hours }</div>
+									<div className={ styles.block }>{ data.workload_stats.total.rate }</div>
+								</div>
+							</div>
+							<div className={styles.metrics}>
+								<div><span>Max load:</span><span>{ data.max_load }</span></div>
+								<div><span>Frontal Hours:</span><span>{ data.frontal_hours }</span></div>
+								<div><span>Extra activities:</span><span>{ data.extra_activities }</span></div>
+							</div>
+						</div>
+					</div>
+
+				</div>
+				{/* Teaching Courses */}
+				<div className={styles.card}>
+					<h2 className={styles.name}>Teaching courses:</h2>
+
+					<div className={ styles.items }>
+						{/*<div className={ styles.field }><CourseField { ...courseMock } /></div>*/}
+						{/*<div className={ styles.field }><CourseField { ...courseMock } /></div>*/}
+						{/*<div className={ styles.field }><CourseField { ...courseMock } /></div>*/}
+						{/*<div className={ styles.field }><CourseField { ...courseMock } /></div>*/}
+					</div>
+				</div>
+			</div>
+		</Wrapper>
 	);
-
-	const responses = await Promise.all(promises);
-
-	const jsonData = await Promise.all(responses.map((res) => res.json()));
-
-	console.log(jsonData);
-	_setUsers(jsonData);
-	return jsonData;
-	};
-
-
-  useEffect(() => {
-	console.log(users);
-	getAllUsers();
-	}, [users]);
-
-  useEffect(() => {
-    const transformedFilters = transformWorkingFilters(debouncedFilters);
-    getUsers(transformedFilters);
-  }, [debouncedFilters, getUsers]);
-
-  useEffect(() => {
-    //@ts-ignore
-    if (data && data.faculty_ids) setUsers(data.faculty_ids);
-  }, [data, error, isLoading]);
-
-  return <Wrapper>
-    <SideBar hiddenText={ "Filters" }><SideBarContent/></SideBar>
-    <div className={ styles.headerContainer }>
-      <div className={styles.name}>Faculty list</div>
-      <CreateFacultyMenu />
-    </div>
-    <div className={ styles.assistance }>
-      {
-        isError
-          ? <div className={ styles.wrongMessage }>
-            <div className={ styles.wrongText }>something went wrong: <>{ error && 'data' in error ? (error.data! as { message: string }).message : 'An error occurred' }</></div>
-            <Image className={ styles.wrongImage } src={ wrongSvg } alt={ "something went wrong" } />
-          </div>
-          : <ul className={styles.list}>
-            <li className={styles.header}>
-              <div className={styles.colName}>Name, alias</div>
-              <div className={styles.colEmail}>Email</div>
-              <div className={styles.colInstitute}>Institute</div>
-              <div className={styles.colPosition}>Position</div>
-            </li>
-            {
-              isLoading ?
-                <><Image className={ styles.loadingImage } src={ loaderSvg } alt={ "loading" } /></>
-                : (_users && _users.map((item, i) =>{
-					console.log(item);
-					
-					return  <TeacherAssistance {...item} key={ i } />
-				}))
-            }
-          </ul>
-      }
-    </div>
-  </Wrapper>
 }
-
-export default AssistantsPage;

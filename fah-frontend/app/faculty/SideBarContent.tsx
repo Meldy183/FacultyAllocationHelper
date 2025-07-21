@@ -2,22 +2,18 @@
 import styles from "./styles.module.scss";
 import React from "react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/shared/ui/accordion";
-import { useGetFiltersQuery } from "@/features/api/slises/profile";
 import { FilterGroup, FilterItem } from "shared/types/api/filters";
 import { Label } from "@/shared/ui/label";
 import { Checkbox } from "@/shared/ui/checkbox";
 import { useAppDispatch, useAppSelector } from "@/features/store/hooks";
 import { toggleFilter } from "@/features/store/slices/filters/faculty";
+import { useGetFiltersQuery } from "@/features/api/slises/filters";
 
 const SideBarContent: React.FC = () => {
 	const filters = useAppSelector(state => state.facultyFilters.filters);
 	const dispatcher = useAppDispatch();
 
 	const { data, isError } = useGetFiltersQuery({});
-
-	React.useEffect(() => {
-		console.log(data);
-	}, [data])
 
 	const toggleFilters = (filterGroupName: string, filter: FilterItem) => {
 		dispatcher(toggleFilter({

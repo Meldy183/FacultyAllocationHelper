@@ -7,8 +7,8 @@ import type {
 } from "@/shared/types/api/auth";
 import { API_PATH } from "@/shared/configs/constants/api/paths";
 
-export const authSlice = createApi({
-	reducerPath: "api/auth",
+export const index = createApi({
+	reducerPath: "api/index",
 	baseQuery: fetchBaseQuery({
 		baseUrl: `${ API_PATH }/auth`,
 		credentials: "include"
@@ -62,4 +62,4 @@ export const {
 	useRefreshMutation,
 	useLogoutMutation,
 	useSessionQuery
-} = authSlice;
+} = index;
