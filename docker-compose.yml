@@ -13,6 +13,9 @@ services:
     depends_on:
       - profile-service
       - fah_frontend
+      - auth-server
+      - parsing_service
+      - certbot
 
     networks:
       - fah
@@ -47,6 +50,8 @@ services:
 
     depends_on:
       - profile-service
+      - auth-server
+      - parsing_service
     
     env_file:
       - .env
@@ -108,6 +113,7 @@ services:
       - "8083:8083"
     depends_on:
       - db
+      - parsing_service
     env_file:
       - db.env
     networks:
