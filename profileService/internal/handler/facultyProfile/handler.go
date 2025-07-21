@@ -478,7 +478,10 @@ func (h *Handler) GetAllFaculties(w http.ResponseWriter, r *http.Request) {
 			Institutes:       instNames,
 		})
 	}
-	writeJSON(w, http.StatusOK, resp)
+	respFull := GetAllFacultiesResponse{
+		Profiles: resp,
+	}
+	writeJSON(w, http.StatusOK, respFull)
 }
 
 func writeError(w http.ResponseWriter, status int, message string) {
