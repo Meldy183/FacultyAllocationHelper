@@ -31,5 +31,6 @@ export const coursesSlice = createApi({
 
 export const {
   useGetAllCoursesQuery,
-  useLazyGetAllCoursesQuery
+  useLazyGetAllCoursesQuery,
+  useCreateNewMutation
 } = coursesSlice;
