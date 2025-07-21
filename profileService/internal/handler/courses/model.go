@@ -42,7 +42,7 @@ type GetCourseResponse struct {
 
 type EditCourseRequest struct {
 	CourseInstanceID       int     `json:"course_id"`
-	BriefName              string  `json:"name"`
+	BriefName              string  `json:"brief_name"`
 	OfficialName           *string `json:"official_name"`
 	ResponsibleInstituteID int64   `json:"responsible_institute_id"`
 	StudyProgramIDS        []int   `json:"study_program_ids"`
@@ -57,7 +57,7 @@ type EditCourseRequest struct {
 
 type EditCourseResponse struct {
 	CourseInstanceID         int      `json:"course_id"`
-	BriefName                string   `json:"name"`
+	BriefName                string   `json:"brief_name"`
 	OfficialName             *string  `json:"official_name"`
 	ResponsibleInstituteName string   `json:"responsible_institute_name"`
 	StudyProgramNames        []string `json:"study_program_names"`

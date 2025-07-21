@@ -59,10 +59,10 @@ const CourseField: React.FC<Props> = (props) => {
 					</Dialog>
 				</div>
 				<ul>
-					<li>Study year:</li>
+					<li>Study year: {  }</li>
 					<li>Semester:</li>
-					<li>Study program:</li>
-					<li>Institute:</li>
+					<li>Study program: </li>
+					<li>Institute: { props.responsible_institute_name } </li>
 				</ul>
 			</div>
 			<div className={ styles.instructors }>

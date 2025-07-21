@@ -28,11 +28,13 @@ const SideBarContent: React.FC = () => {
 		}));
 	}
 
-	const { data, error } = useGetCourseFiltersQuery({});
+	const { data, isLoading, error } = useGetCourseFiltersQuery({});
 
 	React.useEffect(() => {
 		console.log(data)
-	}, [data])
+	}, [data]);
+
+	if (isLoading) return <div>load filters</div>
 
 	if (error || !data) return <div>cant load filers</div>;
 
