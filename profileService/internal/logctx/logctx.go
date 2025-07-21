@@ -98,4 +98,6 @@ const (
 	LogGetInstancesByVersionID           = "getInstancesByVersionID"
 	LogGetAllInstancesIDs                = "getAllInstancesIDs"
 	LogAddNewProgram                     = "addNewProgram"
+	LogGetAllAcademicYears               = "allAcademicYears"
+	LogGetAllSemesters                   = "GetAllSemesters"
 )

@@ -11,7 +11,7 @@ type GetFacultyFiltersResponse struct {
 }
 
 type GetCourseFiltersResponse struct {
-	AllocationStatus bool        `json:"allocaion_not_finished"`
+	AllocationStatus []bool      `json:"allocation_not_finished"`
 	YearOfStudy      []FilterObj `json:"academic_year"`
 	Semester         []FilterObj `json:"semester"`
 	StudyProgram     []FilterObj `json:"position"`

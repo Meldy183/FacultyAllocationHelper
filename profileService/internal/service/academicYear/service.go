@@ -13,6 +13,10 @@ type Service struct {
 	repo   academicYear.Repository
 }
 
+func (s *Service) GetAllAcademicYears(ctx context.Context) ([]academicYear.AcademicYear, error) {
+	return s.repo.GetAllAcademicYears(ctx)
+}
+
 func NewService(repo academicYear.Repository, logger *zap.Logger) *Service {
 	return &Service{logger: logger, repo: repo}
 }

@@ -143,6 +143,10 @@ func main() {
 	filtersHandler := filters.NewHandler(
 		positionService,
 		instituteService,
+		academicYearService,
+		programService,
+		semesterService,
+		responsibleInstituteService,
 		logger,
 	)
 	router := http.NewRouter(facultyHandler, courseHandler, filtersHandler)

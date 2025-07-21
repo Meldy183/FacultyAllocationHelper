@@ -28,8 +28,8 @@ const (
 
 func (r *ProgramRepo) GetProgramNameByID(ctx context.Context, id int) (*string, error) {
 	row := r.pool.QueryRow(ctx, queryProgramByID, id)
-	var program program.Program
-	err := row.Scan(&program.ProgramID, &program.Name)
+	var progr program.Program
+	err := row.Scan(&progr.ProgramID, &progr.Name)
 	if err != nil {
 		r.logger.Error("failed to Get Program Name By ID",
 			zap.String("layer", logctx.LogRepoLayer),
@@ -43,9 +43,9 @@ func (r *ProgramRepo) GetProgramNameByID(ctx context.Context, id int) (*string, 
 		zap.String("layer", logctx.LogRepoLayer),
 		zap.String("function", logctx.LogGetProgramNameByID),
 		zap.Int("id", id),
-		zap.String("name", program.Name),
+		zap.String("name", progr.Name),
 	)
-	return &program.Name, nil
+	return &progr.Name, nil
 }
 func (r *ProgramRepo) GetAllPrograms(ctx context.Context) ([]*program.Program, error) {
 	rows, err := r.pool.Query(ctx, queryGetAllPrograms)

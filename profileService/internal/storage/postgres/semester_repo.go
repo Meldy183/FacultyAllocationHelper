@@ -25,7 +25,35 @@ func NewSemesterRepo(pool *pgxpool.Pool, logger *zap.Logger) *SemesterRepo {
 
 const (
 	queryGetSemesterNameByID = `SELECT semester_name FROM semester WHERE semester_id = $1`
+	queryGetAllSemesters     = `SELECT semester_id, semester_name FROM semester`
 )
+
+func (r *SemesterRepo) GetAllSemesters(ctx context.Context) ([]semester.Semester, error) {
+	rows, err := r.pool.Query(ctx, queryGetAllSemesters)
+	if err != nil {
+		r.logger.Error("Failed to get all semesters",
+			zap.String("layer", logctx.LogRepoLayer),
+			zap.String("function", logctx.LogGetAllSemesters),
+			zap.Error(err),
+		)
+		return nil, fmt.Errorf("failed to get all semesters: %w", err)
+	}
+	defer rows.Close()
+	var semesters []semester.Semester
+	for rows.Next() {
+		var sem semester.Semester
+		if err := rows.Scan(&sem.SemesterID, &sem.Name); err != nil {
+			r.logger.Error("Failed to get all semesters",
+				zap.String("layer", logctx.LogRepoLayer),
+				zap.String("function", logctx.LogGetAllSemesters),
+				zap.Error(err),
+			)
+			return nil, fmt.Errorf("failed to get all semesters: %w", err)
+		}
+		semesters = append(semesters, sem)
+	}
+	return semesters, nil
+}
 
 func (r *SemesterRepo) GetSemesterNameByID(ctx context.Context, semesterID int64) (*string, error) {
 	var str string

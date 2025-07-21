@@ -15,6 +15,10 @@ type Service struct {
 	repo   semester.Repository
 }
 
+func (s *Service) GetAllSemesters(ctx context.Context) ([]semester.Semester, error) {
+	return s.repo.GetAllSemesters(ctx)
+}
+
 func NewService(repo semester.Repository, logger *zap.Logger) *Service {
 	return &Service{logger: logger, repo: repo}
 }

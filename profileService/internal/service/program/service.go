@@ -17,6 +17,10 @@ type Service struct {
 	programCourseRepo programcourseinstance.Repository
 }
 
+func (s *Service) GetAllPrograms(ctx context.Context) ([]*program.Program, error) {
+	return s.programRepo.GetAllPrograms(ctx)
+}
+
 func (s *Service) GetProgramNameByID(ctx context.Context, id int) (*string, error) {
 	return s.programRepo.GetProgramNameByID(ctx, id)
 }

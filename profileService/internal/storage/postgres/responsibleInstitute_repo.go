@@ -28,6 +28,37 @@ const (
 responsible_institute WHERE responsible_institute_id = $1`
 )
 
+func (r *ResponsibleInstituteRepo) GetAllInstitutes(ctx context.Context) ([]responsibleInstitute.ResponsibleInstitute, error) {
+	rows, err := r.pool.Query(ctx, "SELECT * FROM responsible_institute")
+	if err != nil {
+		r.logger.Error("Error during query",
+			zap.String("layer", logctx.LogRepoLayer),
+			zap.String("layer", logctx.LogGetAllInstitutes),
+			zap.Error(err),
+		)
+		return nil, fmt.Errorf("error during query: %w", err)
+	}
+	defer rows.Close()
+	var res []responsibleInstitute.ResponsibleInstitute
+	for rows.Next() {
+		var resp responsibleInstitute.ResponsibleInstitute
+		err = rows.Scan(
+			&resp.ResponsibleInstituteID,
+			&resp.Name,
+		)
+		if err != nil {
+			r.logger.Error("Error during scan",
+				zap.String("layer", logctx.LogRepoLayer),
+				zap.String("layer", logctx.LogGetAllInstitutes),
+				zap.Error(err),
+			)
+			return nil, fmt.Errorf("error during scan: %w", err)
+		}
+		res = append(res, resp)
+	}
+	return res, nil
+}
+
 func (r *ResponsibleInstituteRepo) GetResponsibleInstituteNameByID(ctx context.Context, responsibleInstituteID int64) (*string, error) {
 	str := r.pool.QueryRow(ctx, queryGetResponsibleInstituteNameByID, responsibleInstituteID)
 	var responsibleInstituteName string
