@@ -89,20 +89,79 @@
   gap: 1rem;
 }
 
-.table {
-  width: 100%;
-  text-align: center;
-  border-collapse: collapse;
-   thead {
-    background-color: #DBF2D5;
-    color: #666666; 
-    font-weight: 600;
-    }
+.card {
+  width: 800px;
+  margin: 0 auto;
+  background: white;
+  border-radius: 1rem;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+  padding: 30px;
+
+  .items {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
 }
 
-.table th, .table td {
-  border: 1px solid #8CD67A;
-  padding: 0.25rem;
+.table {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  margin-right: 25px;
+  border: 1px solid #666666;
+
+  .row {
+    display: flex;
+    //background-color: #EAEAEA;
+    border-top: 1px solid #DDDDDD;
+    margin-bottom: 0;
+  }
+
+  .title {
+    background-color: #40BA2133;
+    border: none;
+
+    .block {
+      padding: 16px 49px 8px 12px;
+    }
+
+    .designationBlock {
+      padding: 12px;
+    }
+  }
+
+  .block {
+    min-width: 48px;
+    width: 85px;
+    height: 40px;
+    line-height: 141%;
+    vertical-align: middle;
+    padding: 12px;
+    border-right: 1px solid #DDDDDD;
+  }
+
+  .designationBlock {
+    padding: 12px;
+    width: 48px;
+  }
+}
+
+.workloadGrid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 1rem;
+}
+
+.metrics {
+  background: #ECF8E9;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  margin-top: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  gap: 0.6rem;
 }
 
 .metrics {

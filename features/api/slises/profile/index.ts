@@ -1,10 +1,8 @@
 import { createApi,  fetchBaseQuery, } from "@reduxjs/toolkit/query/react";
 import { API_PATH } from "@/shared/configs/constants/api/paths";
-import { transformRawFilters } from "@/shared/lib/transformFilter";
-import { RawFiltersResponse } from "shared/types/api/filters";
 import { buildQuery } from "@/shared/lib/buildQuery";
 import { ProfileTag } from "@/shared/configs/constants/dev/cache/tags/profile";
-import { CreateMember, GetAllUsers, GetFiltersType, GetMemberProcessType } from "@/shared/types/api/profile";
+import { CreateMember, GetAllUsers, GetMemberProcessType } from "@/shared/types/api/profile";
 import { GetSimpleUserDataInterface } from "@/shared/types/ui/faculties";
 
 export const memberSlice = createApi({
@@ -16,13 +14,6 @@ export const memberSlice = createApi({
   tagTypes: [ProfileTag],
   refetchOnReconnect: true,
   endpoints: (builder) => ({
-    getFilters: builder.query<GetFiltersType["responseBody"], GetFiltersType["requestQuery"]>({
-      query: () => ({
-        url: "filters",
-        method: "GET",
-      }),
-      transformResponse: (response: RawFiltersResponse) => transformRawFilters(response)
-    }),
     getUser: builder.query<GetMemberProcessType["responseBody"], GetMemberProcessType["requestQuery"]>({
       query: ({ id }) => ({
         url: `getProfile/${ id }`,
@@ -59,5 +50,4 @@ export const {
   useGetUserQuery,
   useLazyGetMembersByParamQuery,
   useCreateUserMutation,
-  useGetFiltersQuery
 } = memberSlice;

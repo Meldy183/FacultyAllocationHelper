@@ -1,12 +1,12 @@
 "use client";
 
 import React from "react";
-import CourseField from "@/shared/ui/CourseField";
+// import CourseField from "@/shared/ui/CourseField";
 import Image from "next/image";
-import styles from "./styles.module.scss";
 import userIcon from "@/public/icons/faculty/faculty-member/faculty-member-icon.svg"
 import Wrapper from "@/shared/ui/wrapper";
 import { useGetUserQuery } from "@/features/api/slises/profile";
+import styles from "./styles.module.scss";
 import { useParams } from "next/navigation";
 
 export default function ProfileDashboard() {

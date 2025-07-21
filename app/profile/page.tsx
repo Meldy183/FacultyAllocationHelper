@@ -1,25 +1,11 @@
 import React from "react";
-import CourseField from "@/shared/ui/CourseField";
+// import CourseField from "@/shared/ui/CourseField";
 import Image from "next/image";
 import styles from "./ProfileDashboard.module.scss";
 import userIcon from "@/public/icons/faculty/faculty-member/faculty-member-icon.svg"
 import { Button } from "@/shared/ui/button";
 import Link from "next/link";
 import Wrapper from "@/shared/ui/wrapper";
-
-const faculty = {
-	name: "Name",
-	surname: "Surname",
-	department: [],
-	role: "TA",
-	workload: 0.2
-}
-
-const courseMock = {
-	courseName: "CourseName 1",
-	PI: faculty,
-	faculties: [faculty, faculty, faculty, faculty, faculty, faculty, faculty, faculty, faculty],
-}
 
 export default function ProfileDashboard() {
 	return (
@@ -136,10 +122,10 @@ export default function ProfileDashboard() {
 					<h2 className={styles.name}>Teaching courses:</h2>
 
 					<div className={ styles.items }>
-						<div className={ styles.field }><CourseField { ...courseMock } /></div>
-						<div className={ styles.field }><CourseField { ...courseMock } /></div>
-						<div className={ styles.field }><CourseField { ...courseMock } /></div>
-						<div className={ styles.field }><CourseField { ...courseMock } /></div>
+						{/*<div className={ styles.field }><CourseField { ...courseMock } /></div>*/}
+						{/*<div className={ styles.field }><CourseField { ...courseMock } /></div>*/}
+						{/*<div className={ styles.field }><CourseField { ...courseMock } /></div>*/}
+						{/*<div className={ styles.field }><CourseField { ...courseMock } /></div>*/}
 					</div>
 				</div>
 			</div>

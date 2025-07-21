@@ -25,7 +25,6 @@ const AssistantsPage: React.FC = () => {
 
 	const debouncedFilters = useDebounce(filters, debounceTime);
 
-
 	useEffect(() => {
 		const transformedFilters = transformWorkingFilters(debouncedFilters);
 		getUsers(transformedFilters);
