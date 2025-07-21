@@ -40,7 +40,7 @@ export default function ProfileDashboard() {
 					{/* Profile Info */}
 					<div className={styles.section}>
 						<div className={styles.row}><strong>Position:</strong> { data.position_name }</div>
-						<div className={styles.row}><strong>Institutes:</strong> { data.institute_names.map(institute => <span key={ institute }>{ institute }</span>) }</div>
+						<div className={styles.row}><strong>Institutes:</strong> { data.institute_names?.map(institute => <span key={ institute }>{ institute }</span>) }</div>
 					</div>
 
 					<div className={styles.section}>
@@ -51,7 +51,7 @@ export default function ProfileDashboard() {
 							<div>Student? { data.student_type }</div>
 							<div>Responsible from FSRO: { data.fsro }</div>
 							<div>Degree: { data.degree }</div>
-							<div>Languages: { data.languages.map(({ language_code }) => <span key={ language_code }>{ language_code }</span>) }</div>
+							<div>Languages: { data.languages?.map(({ language_code }) => <span key={ language_code }>{ language_code }</span>) }</div>
 						</div>
 					</div>
 

@@ -3,6 +3,8 @@ package filters
 import (
 	"encoding/json"
 	"fmt"
+	"net/http"
+
 	"github.com/go-chi/chi/v5"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/academicYear"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/institute"
@@ -12,7 +14,6 @@ import (
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/semester"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
 	"go.uber.org/zap"
-	"net/http"
 )
 
 type Handler struct {
