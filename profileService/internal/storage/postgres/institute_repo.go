@@ -3,6 +3,7 @@ package postgres
 import (
 	"context"
 	"fmt"
+	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/institute"
@@ -21,13 +22,11 @@ func NewInstituteRepo(pool *pgxpool.Pool, logger *zap.Logger) *InstituteRepo {
 }
 
 const (
-	queryGetByID        = `SELECT institute_id, name FROM institute WHERE institute_id = $1`
-	queryGetAll         = `SELECT institute_id, name FROM institute`
-	logGetInstituteByID = "GetInstituteByID"
-	logGetAllInstitutes = "GetAllInstitutes"
+	queryGetByID = `SELECT institute_id, name FROM institute WHERE institute_id = $1`
+	queryGetAll  = `SELECT institute_id, name FROM institute`
 )
 
-func (r *InstituteRepo) GetByID(ctx context.Context, instituteID int64) (*institute.Institute, error) {
+func (r *InstituteRepo) GetInstituteByID(ctx context.Context, instituteID int64) (*institute.Institute, error) {
 	row := r.pool.QueryRow(ctx, queryGetByID, instituteID)
 	var instituteByID institute.Institute
 	err := row.Scan(
@@ -35,27 +34,27 @@ func (r *InstituteRepo) GetByID(ctx context.Context, instituteID int64) (*instit
 		&instituteByID.Name)
 	if err != nil {
 		r.logger.Error("Error getting instituteByID",
-			zap.String("layer", logLayer),
-			zap.String("function", logGetInstituteByID),
+			zap.String("layer", logctx.LogRepoLayer),
+			zap.String("function", logctx.LogGetInstituteByID),
 			zap.Int64("instituteID", instituteID),
 			zap.Error(err),
 		)
 		return nil, fmt.Errorf("error getting instituteByID: %w", err)
 	}
 	r.logger.Info("Successfully got instituteByID",
-		zap.String("layer", logLayer),
-		zap.String("function", logGetInstituteByID),
+		zap.String("layer", logctx.LogRepoLayer),
+		zap.String("function", logctx.LogGetInstituteByID),
 		zap.Int64("instituteID", instituteID),
 	)
 	return &instituteByID, nil
 }
 
-func (r *InstituteRepo) GetAll(ctx context.Context) ([]*institute.Institute, error) {
+func (r *InstituteRepo) GetAllInstitutes(ctx context.Context) ([]*institute.Institute, error) {
 	rows, err := r.pool.Query(ctx, queryGetAll)
 	if err != nil {
 		r.logger.Error("Error getting all institutes",
-			zap.String("layer", logLayer),
-			zap.String("function", logGetAll),
+			zap.String("layer", logctx.LogRepoLayer),
+			zap.String("function", logctx.LogGetAllInstitutes),
 			zap.Error(err),
 		)
 		return nil, fmt.Errorf("error getting all institutes: %w", err)
@@ -69,8 +68,8 @@ func (r *InstituteRepo) GetAll(ctx context.Context) ([]*institute.Institute, err
 			&iterThroughInstitutes.Name)
 		if err != nil {
 			r.logger.Error("Error getting all institutes",
-				zap.String("layer", logLayer),
-				zap.String("function", logGetAll),
+				zap.String("layer", logctx.LogRepoLayer),
+				zap.String("function", logctx.LogGetAllInstitutes),
 				zap.Error(err),
 			)
 			return nil, fmt.Errorf("error getting all institutes: %w", err)
@@ -78,8 +77,8 @@ func (r *InstituteRepo) GetAll(ctx context.Context) ([]*institute.Institute, err
 		institutes = append(institutes, &iterThroughInstitutes)
 	}
 	r.logger.Info("Finished getting all institutes",
-		zap.String("layer", logLayer),
-		zap.String("function", logGetAll),
+		zap.String("layer", logctx.LogRepoLayer),
+		zap.String("function", logctx.LogGetAllInstitutes),
 		zap.Int64("institutes", int64(len(institutes))),
 	)
 	return institutes, nil
