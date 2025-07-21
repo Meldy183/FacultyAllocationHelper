@@ -11,6 +11,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Label } from "@/shared/ui/label";
 import { Switch } from "@/shared/ui/switch";
 import { Checkbox } from "@/shared/ui/checkbox";
+import { useCreateNewMutation } from "@/features/api/slises/courses";
+import { handleErrorForm } from "@/shared/hooks/hadleErrorForm";
 
 interface Props {
 	children: React.ReactNode;
@@ -211,22 +213,18 @@ export const TRACKS = [
 // 	</Dialog>
 // }
 
-const defaultData = {
-	brief_name: "",
-	academic_year_id: undefined, // Changed to undefined for select default
-	semester_id: undefined, // Changed to undefined for select default
-	year: 0,
-	program_ids: [],
-	track_ids: [],
-	responsible_institute_id: undefined, // Changed to undefined for select default
-	groups_needed: 0,
-	is_elective: false,
-}
-
 const AddCourseMenu: React.FC<Props> = ({ children }) => {
 	const [isOpen, setIsOpen] = useState<boolean>(false);
+	const [createCourse, { isLoading }] = useCreateNewMutation();
 
-	const submitHandler = (formData: CreateCourseType) => {
+	const submitHandler = async (formData: CreateCourseType) => {
+		try {
+			const { data, error } = await createCourse(formData);
+			if (error) throw error;
+		} catch (e) {
+			handleErrorForm(e, form.setError);
+		}
+
 		console.log(formData);
 		setIsOpen(false);
 		form.reset();
