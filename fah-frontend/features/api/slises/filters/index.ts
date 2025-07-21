@@ -7,7 +7,7 @@ import { transformRawFilters } from "@/shared/lib/transformFilter";
 export const filterSlice = createApi({
   reducerPath: "api/filters",
   baseQuery: fetchBaseQuery({
-    baseUrl: `${ API_PATH }/filters`,
+    baseUrl: `${ API_PATH }/filter`,
     credentials: "include"
   }),
   endpoints: (builder) => ({
