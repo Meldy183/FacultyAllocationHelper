@@ -104,10 +104,6 @@ func (h *Handler) GetAllCoursesByFilters(w http.ResponseWriter, r *http.Request)
 		writeError(w, http.StatusBadRequest, "Error parsing year_Studies")
 		return
 	}
-	h.logger.Warn("meow",
-		zap.String("layer", logctx.LogHandlerLayer),
-		zap.String("function", logctx.LogGetAllCourses),
-		zap.String("academic_years", fmt.Sprintf("%v", academicYearsIDs)))
 	semesterIDs, err := convertStrToInt(r.URL.Query()["semester_ids"])
 	if err != nil {
 		h.logger.Error("Error parsing semester_id",
@@ -142,6 +138,15 @@ func (h *Handler) GetAllCoursesByFilters(w http.ResponseWriter, r *http.Request)
 	if verse == "" {
 		verse = "0"
 	}
+	h.logger.Warn("Debug",
+		zap.Any("year", year),
+		zap.Any("semester_id", semesterIDs),
+		zap.Any("program_id", programIDs),
+		zap.Any("responsible_institute_id", responsibleInstituteIDs),
+		zap.Any("study_program_id", programIDs),
+		zap.Any("profile_version_id", verse),
+		zap.Any("academic_year", academicYearsIDs),
+	)
 	profileVersionId, err := strconv.ParseInt(verse, 10, 64)
 	if err != nil {
 		h.logger.Error("Error parsing profile_version_id",
