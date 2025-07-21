@@ -89,8 +89,10 @@ func (h *Handler) GetFacultyFilters(w http.ResponseWriter, r *http.Request) {
 		InstituteFilters: instituteObjects,
 		PositionFilters:  positionObjects,
 	}
-
-	writeJSON(w, http.StatusOK, facultyFiltersResponse)
+	resp2 := FiltersFaculty{
+		Filters: facultyFiltersResponse,
+	}
+	writeJSON(w, http.StatusOK, resp2)
 }
 
 func (h *Handler) GetCoursesFilters(w http.ResponseWriter, r *http.Request) {
@@ -174,7 +176,10 @@ func (h *Handler) GetCoursesFilters(w http.ResponseWriter, r *http.Request) {
 		StudyProgram:     studyProgram,
 		InstituteFilters: institutes,
 	}
-	writeJSON(w, http.StatusOK, resp)
+	resp2 := FiltersCourse{
+		Filters: resp,
+	}
+	writeJSON(w, http.StatusOK, resp2)
 	h.logger.Info(fmt.Sprintf("Filter Response %v", resp))
 }
 
