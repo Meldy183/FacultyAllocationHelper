@@ -5,7 +5,7 @@ import { GetCourseFilterProcess, RawFiltersResponse } from "@/shared/types/api/f
 import { transformRawFilters } from "@/shared/lib/transformFilter";
 
 export const filterSlice = createApi({
-  reducerPath: "api/filters",
+  reducerPath: "api/filter",
   baseQuery: fetchBaseQuery({
     baseUrl: `${ API_PATH }/filters`,
     credentials: "include"

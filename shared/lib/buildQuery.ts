@@ -7,5 +7,7 @@ export const buildQuery = (queryArgs: { [key: string]: string[] }) => {
     });
   });
 
+  searchParams.append("year", "2026");
+
   return "?" + searchParams.toString();
 }
