@@ -31,9 +31,9 @@ type AddNewCourseResponse struct {
 	TrackNames               []string                `json:"track_names"`
 	ResponsibleInstituteName string                  `json:"responsible_institute_name"`
 	GroupsNeeded             int                     `json:"groups_needed"`
-	Pi                       sharedContent.PI        `json:"pi"`  // empty
-	Ti                       sharedContent.PI        `json:"ti"`  // empty
-	TAs                      []sharedContent.Faculty `json:"tas"` // empty
+	Pi                       sharedContent.PI        `json:"pi"`
+	Ti                       sharedContent.PI        `json:"ti"`
+	TAs                      []sharedContent.Faculty `json:"tas"`
 }
 
 type GetCourseResponse struct {

@@ -100,4 +100,5 @@ const (
 	LogAddNewProgram                     = "addNewProgram"
 	LogGetAllAcademicYears               = "allAcademicYears"
 	LogGetAllSemesters                   = "GetAllSemesters"
+	LogGetLabByID                        = "getLabByID"
 )
