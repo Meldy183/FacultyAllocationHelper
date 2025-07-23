@@ -3,10 +3,9 @@ package postgres
 import (
 	"context"
 	"fmt"
-	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
-
 	"github.com/jackc/pgx/v5/pgxpool"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/position"
+	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
 	"go.uber.org/zap"
 )
 

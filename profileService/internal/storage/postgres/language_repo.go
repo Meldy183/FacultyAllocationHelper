@@ -22,10 +22,10 @@ func NewLanguageRepo(pool *pgxpool.Pool, logger *zap.Logger) *LanguageRepo {
 
 const (
 	queryGetLangByCode = `SELECT code, language_name FROM language WHERE code = $1`
-	queryGetAllLang    = `SELECT code, language_name FROM language`
+	queryGetAllLang    = `SELECT code FROM language`
 )
 
-func (r *LanguageRepo) GetAllLanguages(ctx context.Context) ([]*language.Language, error) {
+func (r *LanguageRepo) GetAllLanguages(ctx context.Context) ([]string, error) {
 	rows, err := r.pool.Query(ctx, queryGetAllLang)
 	if err != nil {
 		r.logger.Error("failed to query all languages",
@@ -36,7 +36,7 @@ func (r *LanguageRepo) GetAllLanguages(ctx context.Context) ([]*language.Languag
 		return nil, fmt.Errorf("get all languages: %w", err)
 	}
 	defer rows.Close()
-	var languages []*language.Language
+	var languages []string
 	for rows.Next() {
 		if rows.Err() != nil {
 			r.logger.Error("failed to query all languages",
@@ -46,10 +46,10 @@ func (r *LanguageRepo) GetAllLanguages(ctx context.Context) ([]*language.Languag
 			)
 			return nil, fmt.Errorf("get all languages: %w", rows.Err())
 		}
-		var lang language.Language
+		var lang string
 		err := rows.Scan(
-			&lang.LanguageCode,
-			&lang.LanguageName)
+			&lang,
+		)
 		if err != nil {
 			r.logger.Error("failed to query all languages",
 				zap.String("layer", logctx.LogRepoLayer),
@@ -58,9 +58,10 @@ func (r *LanguageRepo) GetAllLanguages(ctx context.Context) ([]*language.Languag
 			)
 			return nil, fmt.Errorf("get all languages: %w", err)
 		}
-		languages = append(languages, &lang)
+		languages = append(languages, lang)
 	}
-	r.logger.Info("all languages returned",
+	r.logger.Info("all languages returned successfully",
+		zap.Strings("languages", languages),
 		zap.String("layer", logctx.LogRepoLayer),
 		zap.String("function", logctx.LogGetAllLanguages),
 		zap.Int("count", len(languages)),
@@ -80,7 +81,7 @@ func (r *LanguageRepo) GetLanguageByCode(ctx context.Context, code string) (*lan
 		)
 		return nil, fmt.Errorf("GetLanguageByCode: %w", err)
 	}
-	r.logger.Info("GetLanguageByCode",
+	r.logger.Info("GetLanguageByCode successfully retrieved",
 		zap.String("layer", logctx.LogRepoLayer),
 		zap.String("function", logctx.LogGetLanguageByCode),
 		zap.String("code", code),
