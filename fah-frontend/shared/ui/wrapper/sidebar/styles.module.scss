@@ -1,0 +1,107 @@
+.sideBar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: #FFFFFF;
+  z-index: 3;
+  max-width: 230px;
+  box-shadow: 4px 0 6px rgba(0, 0, 0, 0.25);
+  min-height: 100vh;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 10px;
+}
+
+.header.open {
+  justify-content: flex-end;
+}
+
+.toggleButton {
+  background: none;
+  border: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  //height: 18px;
+}
+
+.toggleButton span {
+  display: block;
+  width: 20px;
+  height: 2px;
+  background-color: #333333;
+  margin: 3px 0;
+  transition: transform 0.3s ease;
+}
+
+.toggleButton.open span:nth-child(1) {
+  transform: translateY(0) rotate(0);
+}
+
+.toggleButton.open span:nth-child(2) {
+  opacity: 1;
+}
+
+.toggleButton.open span:nth-child(3) {
+  transform: translateY(0) rotate(0);
+}
+
+//.toggleButton.closed span:nth-child(1) {
+//  transform: translateY(6px) rotate(45deg);
+//}
+//
+//.toggleButton.closed span:nth-child(2) {
+//  opacity: 0;
+//}
+//
+//.toggleButton.closed span:nth-child(3) {
+//  transform: translateY(-6px) rotate(-45deg);
+//}
+
+.contentWrapper {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  position: relative;
+}
+
+.hiddenText {
+  writing-mode: vertical-lr;
+  text-align: center;
+  height: 100%;
+  font-weight: 400;
+  font-size: 32px;
+  line-height: 28px;
+  color: #000000;
+  padding: 0 5px;
+  position: absolute;
+  overflow: hidden;
+  top: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  span {
+    transform: rotate(180deg);
+  }
+}
+
+.content {
+  overflow-y: auto;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+}

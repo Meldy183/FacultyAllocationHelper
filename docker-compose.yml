@@ -5,13 +5,27 @@ services:
     image: nginx:stable-alpine
     ports:
       - 80:80
+      - 443:443
     volumes:
-      - './nginx.conf:/etc/nginx/nginx.conf'
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
     depends_on:
-      - auth-server
+      - profile-service
       - fah_frontend
+      - auth-server
+      - parsing_service
+      - certbot
+
     networks:
       - fah
+  certbot:
+    image: certbot/certbot
+    volumes:
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+
   auth-server:
     build:
       context: ./FAH-auth-service
@@ -35,13 +49,24 @@ services:
       - "3000:3000"
 
     depends_on:
+      - profile-service
       - auth-server
+      - parsing_service
     
     env_file:
       - profileService/.env
     networks:
       - fah
- 
+  parsing_service:
+    build:
+      context: ./FAH_parsing_service
+      dockerfile: Dockerfile
+    ports:
+      - "8082:8082"
+    depends_on:
+      - auth-server
+    networks:
+      - fah
   auth-db:
     container_name: auth_db
     image: postgres:latest
@@ -58,6 +83,39 @@ services:
       retries: 5
       start_period: 10s
     restart: unless-stopped
+    networks:
+      - fah
+  db:
+    image: postgres:15
+    container_name: db
+    env_file:
+      - db.env
+    ports:
+      - "5433:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+    networks:
+      - fah
+
+  profile-service:
+    build:
+      context: ./profileService
+      dockerfile: Dockerfile
+    container_name: profile-service
+    ports:
+      - "8083:8083"
+    depends_on:
+      - db
+      - parsing_service
+    env_file:
+      - db.env
     networks:
       - fah
 volumes:

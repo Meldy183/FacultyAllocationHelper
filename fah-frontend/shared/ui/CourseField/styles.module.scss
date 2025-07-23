@@ -1,0 +1,221 @@
+.card {
+  display: inline-block;
+  max-width: 345px;
+  border: 2px solid #40BA21;
+  border-radius: 8px;
+  background-color: #F5FBF4;
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #40BA21;
+    .information {
+      padding: 11px;
+      .courseName {
+        display: flex;
+        align-items: center;
+        .name {
+          //font-family: Poppins;
+          font-weight: 500;
+          font-size: 16px;
+          line-height: 100%;
+          letter-spacing: -1%;
+          color: #292D32;
+          display: inline-block;
+          margin-right: 9px;
+          margin-bottom: 10px;
+        }
+
+        .icon {
+          padding: 2px;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: 5px;
+          background-color: #40BA2199;
+        }
+      }
+
+      ul {
+        li {
+          //font-family: Poppins;
+          font-weight: 500;
+          font-size: 14px;
+          line-height: 100%;
+          letter-spacing: -1%;
+          color: #666666;
+        }
+      }
+    }
+    .instructors {
+      padding: 0px 10px 10px 10px;
+      border-left: 1px solid #40BA21;
+      .instructor {
+        margin-top: 10px;
+
+        .title {
+          //font-family: Poppins;
+          font-weight: 500;
+          font-size: 14px;
+          line-height: 100%;
+          letter-spacing: -1%;
+          color: #000000;
+          margin-bottom: 4px;
+        }
+      }
+    }
+  }
+
+  .body {
+    padding: 12px;
+    .title {
+      //font-family: Poppins;
+      font-weight: 500;
+      font-size: 14px;
+      line-height: 100%;
+      letter-spacing: -1%;
+      color: #000000;
+      margin-bottom: 10px;
+    }
+    .assistance {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      column-gap: 10px;
+      row-gap: 10px;
+
+      .addNewMember {
+        border: 2px solid #FFFB00;
+        border-radius: 2px;
+        padding: 5px 10px;
+        background-color: #FFFFFF;
+        font-weight: 500;
+        font-size: 14px;
+        line-height: 100%;
+        letter-spacing: -1%;
+        color: #292D32;
+        cursor: pointer;
+      }
+    }
+  }
+}
+
+.dialogMenu {
+  min-width: 800px;
+  padding: 0;
+  overflow: hidden;
+
+  .description {
+    height: 80vh;
+    overflow-y: scroll;
+    background: transparent;
+  }
+
+  .header {
+    height: 100%;
+  }
+
+  .container {
+    min-height: 100vh;
+    background-color: #D5E2D2;
+    padding: 1.5rem;
+    font-size: 16px;
+    color: #333;
+    gap: 10px;
+    display: grid;
+
+    .card {
+      min-width: 730px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 1rem;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+      padding: 30px;
+      //max-height: 550px;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 100px;
+      padding-bottom: 15px;
+    }
+
+    .userInfo {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .avatar {
+      width: 98px;
+      height: auto;
+    }
+
+    .name {
+      font-size: 24px;
+      font-weight: 600;
+    }
+
+    .subName {
+      font-size: 20px;
+      color: #666;
+    }
+
+    .section {
+      background: #ECF8E9;
+      border-radius: 0.75rem;
+      padding: 1rem;
+      margin-top: 0.5rem;
+    }
+
+    .row {
+      margin-bottom: 0.5rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.1rem;
+    }
+
+    .title {
+      font-weight: 600;
+      font-size: 16px;
+      margin-bottom: 0.5rem;
+    }
+
+    .workloadGrid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 1rem;
+    }
+
+    .table {
+      width: 100%;
+      text-align: center;
+      border-collapse: collapse;
+      thead {
+        background-color: #DBF2D5;
+        color: #666666;
+        font-weight: 600;
+      }
+    }
+
+    .table th, .table td {
+      border: 1px solid #8CD67A;
+      padding: 0.25rem;
+    }
+
+    .metrics {
+      background: #ECF8E9;
+      border-radius: 0.75rem;
+      padding: 1rem;
+      margin-top: 0.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+  }
+}
+

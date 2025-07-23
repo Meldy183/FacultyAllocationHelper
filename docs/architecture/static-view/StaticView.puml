@@ -1,0 +1,19 @@
+@startuml
+package "Client" {
+  [Web App]
+}
+
+package "Backend" {
+  [Monolith Service]
+}
+
+database "PostgreSQL DB" as DB
+
+rectangle "External Systems" {
+  [SSO Provider]
+}
+
+[Web App] --> [Monolith Service] : HTTP(S) requests
+[Monolith Service] --> DB             : SQL
+[Monolith Service] --> [SSO Provider] : OAuth2 / SAML
+@enduml

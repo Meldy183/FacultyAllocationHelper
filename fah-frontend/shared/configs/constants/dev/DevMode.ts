@@ -1,0 +1,1 @@
+export const DevMode = process.env.DEV_MODE;

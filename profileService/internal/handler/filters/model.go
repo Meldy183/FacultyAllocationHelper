@@ -17,3 +17,11 @@ type GetCourseFiltersResponse struct {
 	StudyProgram     []FilterObj `json:"position"`
 	InstituteFilters []FilterObj `json:"institute"`
 }
+
+type FiltersCourse struct {
+	Filters GetCourseFiltersResponse `json:"filters"`
+}
+
+type FiltersFaculty struct {
+	Filters GetFacultyFiltersResponse `json:"filters"`
+}

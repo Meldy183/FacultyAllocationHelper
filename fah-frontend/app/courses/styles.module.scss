@@ -1,29 +1,60 @@
+.wrapper {
+  overflow-y: scroll;
+  max-height: calc(100vh - 60px);
+}
+
 .container {
   background-color: #ffffff;
-  min-width: 1200px;
+  width: 750px;
   display: flex;
   align-items: center;
   flex-direction: column;
-  padding: 15px 0;
+  padding: 20px 0;
+  border-radius: 15px;
+
+  .courses {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    max-width: 750px;
+    gap: 20px;
+  }
 }
 
-.head {
-
+.headerContainer {
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  width: 750px;
+  background-color:#ffffff;
+  border-radius: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-.field {
-  margin-bottom: 15px;
+.name {
+  font-size: 24px;
+  font-weight: 400;
 }
+
 
 .sideBar {
   padding: 18px;
   .menu {
+    .accordionItem {
+      border: none;
+    }
+
     .button {
       display: flex;
       align-items: center;
       padding: 13px;
       background-color: #EFEFEF;
-      border-radius: 8px;
+      border-radius: 30px;
+      width: 190px;
       margin-top: 5px;
       span {
         margin-right: 25px;
@@ -46,4 +77,8 @@
       }
     }
   }
+}
+
+.leftMenu {
+  overflow-y: scroll;
 }

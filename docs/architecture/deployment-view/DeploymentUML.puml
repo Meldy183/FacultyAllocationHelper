@@ -1,0 +1,20 @@
+@startuml
+node "Remote Server" {
+  node "Docker Container: Frontend" {
+    component "Web App"
+  }
+  node "Docker Container: Backend" {
+    component "Monolith Service"
+  }
+  node "Docker Container: PostgreSQL" {
+    database "PostgreSQL DB"
+  }
+}
+actor User
+actor "SSO Provider" as SSO
+
+User --> "Web App"
+"Web App" --> "Monolith Service" : HTTP(S)
+"Monolith Service" --> "PostgreSQL DB" : SQL
+"Monolith Service" --> SSO               : OAuth2 / SAML
+@enduml

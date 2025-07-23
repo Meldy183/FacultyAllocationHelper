@@ -256,7 +256,7 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 		zap.String("function", logctx.LogInitSchema),
 	)
 	query = `CREATE TABLE IF NOT EXISTS academic_year (
-    academic_year_id SERIAL PRIMARY KEY,
+    academic_year_id INT PRIMARY KEY,
     academic_year_name VARCHAR(20)
   )`
 	_, err = conn.Exec(ctx, query)

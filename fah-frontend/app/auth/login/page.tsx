@@ -1,6 +1,6 @@
 import React from "react";
-import { Button } from "@/components/ui/button";
-import Wrapper from "@/components/ui/wrapper";
+import { Button } from "@/shared/ui/button";
+import Wrapper from "@/shared/ui/wrapper";
 import styles from "./styles.module.scss";
 import Link from "next/link";
 import LoginForm from "@/app/auth/login/LoginForm";

@@ -1,0 +1,63 @@
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  min-width: 100%;
+  background-color: #FAFAFA;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 20px;
+  z-index: 1;
+
+  .ul {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    max-width: 480px;
+    // width: 80%;
+
+    .li {
+      font-weight: 400;
+      font-size: 18px;
+      line-height: 24px;
+      letter-spacing: 0.15px;
+      color: #333333;
+      margin: 16px 20px;
+    }
+
+    .active {
+      border-bottom: 2px solid #333333;
+    }
+  }
+}
+
+.profileWrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+}
+
+.profileName {
+  font-size: 16px;
+  color: #333333;
+  font-weight: 500;
+}
+
+.avatar {
+  height: 40px;
+  width: 40px;
+  object-fit: cover;
+  border-radius: 50%;
+  margin-right: 20px;
+}
+
+.container{
+  justify-content: space-between;
+  display: flex;
+  align-items: center;
+}

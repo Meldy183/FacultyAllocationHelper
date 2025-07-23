@@ -21,6 +21,12 @@ type User struct {
 	RoleID       int    `json:"role_id"`
 }
 
+func NewRepository(pool *pgxpool.Pool) *Repository {
+	return &Repository{
+		pool: pool,
+	}
+}
+
 func NewUser(email string, role_ID int, passhash []byte) *User {
 	return &User{
 		ID:           uuid.New().String(),
@@ -43,9 +49,7 @@ func NewRepo(ctx context.Context, config *config.Config) *Repository {
 			return nil
 		}
 	}
-	return &Repository{
-		pool: pg,
-	}
+	return NewRepository(pg)
 }
 func (r *Repository) CloseConn() {
 	r.pool.Close()
