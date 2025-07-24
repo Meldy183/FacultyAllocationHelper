@@ -3,6 +3,8 @@ package filters
 import (
 	"encoding/json"
 	"fmt"
+	"net/http"
+
 	"github.com/go-chi/chi/v5"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/academicYear"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/institute"
@@ -12,7 +14,6 @@ import (
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/semester"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
 	"go.uber.org/zap"
-	"net/http"
 )
 
 type Handler struct {
@@ -78,9 +79,19 @@ func (h *Handler) GetFacultyFilters(w http.ResponseWriter, r *http.Request) {
 
 	positionObjects := make([]FilterObj, 0)
 	for _, elem := range positions {
+		name, err := h.positionService.GetPositionByID(ctx, elem)
+		if err != nil {
+			h.logger.Error("Error getting position name by ID",
+				zap.String("layer", logctx.LogHandlerLayer),
+				zap.String("function", logctx.LogGetFacultyFilters),
+				zap.Error(err),
+			)
+			writeError(w, http.StatusInternalServerError, "error getting all institutes")
+			return
+		}
 		positionObject := &FilterObj{
-			ID:   elem.PositionID,
-			Name: elem.Name,
+			ID:   elem,
+			Name: *name,
 		}
 		positionObjects = append(positionObjects, *positionObject)
 	}
@@ -88,10 +99,7 @@ func (h *Handler) GetFacultyFilters(w http.ResponseWriter, r *http.Request) {
 		InstituteFilters: instituteObjects,
 		PositionFilters:  positionObjects,
 	}
-	resp2 := FiltersFaculty{
-		Filters: facultyFiltersResponse,
-	}
-	writeJSON(w, http.StatusOK, resp2)
+	writeJSON(w, http.StatusOK, facultyFiltersResponse)
 }
 
 func (h *Handler) GetCoursesFilters(w http.ResponseWriter, r *http.Request) {
@@ -175,10 +183,7 @@ func (h *Handler) GetCoursesFilters(w http.ResponseWriter, r *http.Request) {
 		StudyProgram:     studyProgram,
 		InstituteFilters: institutes,
 	}
-	resp2 := FiltersCourse{
-		Filters: resp,
-	}
-	writeJSON(w, http.StatusOK, resp2)
+	writeJSON(w, http.StatusOK, resp)
 	h.logger.Info(fmt.Sprintf("Filter Response %v", resp))
 }
 
