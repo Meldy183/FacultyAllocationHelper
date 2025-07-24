@@ -168,7 +168,7 @@ func main() {
 
 func initLogger() (*zap.Logger, error) {
 	cfg := zap.NewProductionConfig()
-	cfg.OutputPaths = []string{"stdout"} // redirect logs to stdout
+	cfg.OutputPaths = []string{"stdout"}
 	logger, err := cfg.Build()
 	if err != nil {
 		return nil, err
