@@ -306,7 +306,7 @@ func (h *Handler) AddNewCourse(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusBadRequest, "Error getting responsible institute")
 		return
 	}
-	groupsTakenByDefault := 0
+	groupsTakenByDefault := int64(0)
 	resp.BriefName = courseObj.Name
 	resp.ResponsibleInstituteName = *responsibleInstituteName
 	courseInstanceObj := &courseInstance.CourseInstance{
@@ -369,7 +369,7 @@ func (h *Handler) AddNewCourse(w http.ResponseWriter, r *http.Request) {
 	for _, elem := range req.ProgramIDs {
 		pr := &programcourseinstance.ProgramCourseInstance{
 			ProgramID:        elem,
-			CourseInstanceID: int(courseInstanceObj.InstanceID),
+			CourseInstanceID: courseInstanceObj.InstanceID,
 		}
 		err := h.programInstance.AddProgramToCourseInstance(ctx, pr)
 		if err != nil {
@@ -396,7 +396,7 @@ func (h *Handler) AddNewCourse(w http.ResponseWriter, r *http.Request) {
 	resp.ProgramNames = programs
 	tracks := make([]string, 0)
 	for _, elem := range req.TrackIDs {
-		err := h.trackInstance.AddTracksToCourseInstance(ctx, int(courseInstanceObj.InstanceID), elem)
+		err := h.trackInstance.AddTracksToCourseInstance(ctx, courseInstanceObj.InstanceID, elem)
 		if err != nil {
 			h.logger.Error("Error adding track",
 				zap.String("layer", logctx.LogHandlerLayer),
