@@ -106,7 +106,7 @@ func ParseUsers(users [][]string, ctx context.Context) (*[]entities.Person, erro
 func IfSemester(cell string) bool {
 	return (cell == "T1" || cell == "T2" || cell == "T3")
 }
-func ParseElectives(electives [][]string, ctx context.Context, studyyear int) (*[]entities.Course, error) {
+func ParseElectives(electives [][]string, ctx context.Context, studyyear int, persons *[]entities.Person) (*[]entities.Course, error) {
 	lg := logger.GetFromContext(ctx)
 	elecs := make([]entities.Course, 0)
 	var semester string
@@ -162,19 +162,39 @@ func ParseElectives(electives [][]string, ctx context.Context, studyyear int) (*
 				case 8:
 					elective1.TI = "Not Nedeed"
 					if cells != "" {
-						elective1.TA = append(elective1.TA, cells)
+						for _, person := range *persons {
+							if cells == person.Name {
+								elective1.TA = append(elective1.TA, cells)
+								break
+							}
+						}
 					}
 				case 9:
 					if cells != "" {
-						elective1.TA = append(elective1.TA, cells)
+						for _, person := range *persons {
+							if cells == person.Name {
+								elective1.TA = append(elective1.TA, cells)
+								break
+							}
+						}
 					}
 				case 10:
 					if cells != "" {
-						elective1.TA = append(elective1.TA, cells)
+						for _, person := range *persons {
+							if cells == person.Name {
+								elective1.TA = append(elective1.TA, cells)
+								break
+							}
+						}
 					}
 				case 11:
 					if cells != "" {
-						elective1.TA = append(elective1.TA, cells)
+						for _, person := range *persons {
+							if cells == person.Name {
+								elective1.TA = append(elective1.TA, cells)
+								break
+							}
+						}
 					}
 				case 12:
 					lechours, err := strconv.Atoi(cells)
@@ -214,7 +234,7 @@ func ParseElectives(electives [][]string, ctx context.Context, studyyear int) (*
 	return &elecs, nil
 }
 
-func ParseCourses(courses [][]string, ctx context.Context, studyyear int) (*[]entities.Course, error) {
+func ParseCourses(courses [][]string, ctx context.Context, studyyear int, persons *[]entities.Person) (*[]entities.Course, error) {
 	lg := logger.GetFromContext(ctx)
 	cours := make([]entities.Course, 0)
 	var semester string
@@ -283,7 +303,12 @@ func ParseCourses(courses [][]string, ctx context.Context, studyyear int) (*[]en
 					if cells == "Not Needed" || cells == "" {
 						continue
 					} else {
-						course.TA = append(course.TA, cells)
+						for _, person := range *persons {
+							if cells == person.Name {
+								course.TA = append(course.TA, cells)
+								break
+							}
+						}
 					}
 				}
 

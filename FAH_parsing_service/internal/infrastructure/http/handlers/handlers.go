@@ -60,22 +60,22 @@ func Parse(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Warn(r.Context(), "unable to parse year", zap.Error(err))
 	}
-	electives, err := application.ParseElectives(rowsElectives, r.Context(), yearnum)
+	persons, err := application.ParseUsers(rowsPersons, r.Context())
+	if err != nil {
+		log.Error(r.Context(), "Error while parsing persons",
+			zap.Error(err))
+		return
+	}
+	electives, err := application.ParseElectives(rowsElectives, r.Context(), yearnum, persons)
 	if err != nil {
 		log.Error(r.Context(), "Error while parsing electives",
 			zap.Error(err))
 		return
 	}
 
-	courses, err := application.ParseCourses(rowsCourses, r.Context(), yearnum)
+	courses, err := application.ParseCourses(rowsCourses, r.Context(), yearnum, persons)
 	if err != nil {
 		log.Error(r.Context(), "Error while parsing courses",
-			zap.Error(err))
-		return
-	}
-	persons, err := application.ParseUsers(rowsPersons, r.Context())
-	if err != nil {
-		log.Error(r.Context(), "Error while parsing persons",
 			zap.Error(err))
 		return
 	}
