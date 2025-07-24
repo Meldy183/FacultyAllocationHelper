@@ -3,7 +3,6 @@ package postgres
 import (
 	"context"
 	"fmt"
-
 	"github.com/jackc/pgx/v5/pgxpool"
 	trackcourseinstance "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/trackCourseInstance"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
@@ -22,12 +21,12 @@ func NewTrackCourseRepo(pool *pgxpool.Pool, logger *zap.Logger) *TrackCourseRepo
 }
 
 const (
-	queryTrackCourseByID           = `SELECT track_course_instance_id, track_id, instance_id FROM track_course_instance WHERE instance_id = $1`
-	queryAddTracksToCourseInstance = `INSERT INTO track_course_instance (track_id, instance_id) VALUES ($1, $2) RETURNING track_course_instance_id`
+	queryTrackCourseInstanceByInstanceID = `SELECT track_id FROM track_course_instance WHERE instance_id = $1`
+	queryAddTracksToCourseInstance       = `INSERT INTO track_course_instance (track_id, instance_id) VALUES ($1, $2) RETURNING track_course_instance_id`
 )
 
-func (r *TrackCourseRepo) AddTracksToCourseInstance(ctx context.Context, instanceID int, trackIDs int) error {
-	err := r.pool.QueryRow(ctx, queryAddTracksToCourseInstance, trackIDs, instanceID).Scan(&instanceID)
+func (r *TrackCourseRepo) AddTracksToCourseInstance(ctx context.Context, instanceID int64, tracksIDs int64) error {
+	err := r.pool.QueryRow(ctx, queryAddTracksToCourseInstance, tracksIDs, instanceID).Scan(&instanceID)
 	if err != nil {
 		r.logger.Error("failed to add track to course instance",
 			zap.String("layer", logctx.LogRepoLayer),
@@ -39,23 +38,24 @@ func (r *TrackCourseRepo) AddTracksToCourseInstance(ctx context.Context, instanc
 	return nil
 }
 
-func (r *TrackCourseRepo) GetTracksIDsOfCourseByInstanceID(ctx context.Context, id int) ([]*trackcourseinstance.TrackCourseInstance, error) {
-	rows, err := r.pool.Query(ctx, queryTrackCourseByID, id)
+func (r *TrackCourseRepo) GetTracksIDsOfCourseByInstanceID(ctx context.Context, id int64) ([]int64, error) {
+	rows, err := r.pool.Query(ctx, queryTrackCourseInstanceByInstanceID, id)
 	if err != nil {
 		r.logger.Error("failed to Get trackCourses By course ID",
 			zap.String("layer", logctx.LogRepoLayer),
 			zap.String("function", logctx.LogGetTrackCourseByCourseID),
-			zap.Int("id", id),
+			zap.Int64("id", id),
 			zap.Error(err),
 		)
 		return nil, fmt.Errorf("GetTracksIDsOfCourseByInstanceID: %w", err)
 	}
-
 	defer rows.Close()
-	var instances []*trackcourseinstance.TrackCourseInstance
+	var instances []int64
 	for rows.Next() {
-		var instance trackcourseinstance.TrackCourseInstance
-		err := rows.Scan(&instance.TrackCourseInstanceID, &instance.TrackID, &instance.CourseInstanceID)
+		var trackID int64
+		err := rows.Scan(
+			&trackID,
+		)
 		if err != nil {
 			r.logger.Error("Error getting trackCourses by courseIDs",
 				zap.String("layer", logctx.LogRepoLayer),
@@ -65,7 +65,7 @@ func (r *TrackCourseRepo) GetTracksIDsOfCourseByInstanceID(ctx context.Context, 
 			)
 			return nil, fmt.Errorf("GetTracksIDsOfCourseByInstanceID failed: %w", err)
 		}
-		instances = append(instances, &instance)
+		instances = append(instances, trackID)
 	}
 
 	if err := rows.Err(); err != nil {

@@ -6,6 +6,6 @@ type Course struct {
 	IsElective             *bool
 	OfficialName           *string
 	ResponsibleInstituteID int64
-	LecHours               *int
-	LabHours               *int
+	LecHours               *int64
+	LabHours               *int64
 }

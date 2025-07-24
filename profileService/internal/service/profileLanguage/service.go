@@ -3,7 +3,6 @@ package profileLanguage
 import (
 	"context"
 	"fmt"
-	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/language"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/profileLanguage"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
 	"go.uber.org/zap"
@@ -20,7 +19,7 @@ func NewService(repo profileLanguage.Repository, logger *zap.Logger) *Service {
 	return &Service{repo: repo, logger: logger}
 }
 
-func (s *Service) AddUserLanguage(ctx context.Context, userLanguage *profileLanguage.UserLanguage) error {
+func (s *Service) AddUserLanguage(ctx context.Context, userLanguage *profileLanguage.ProfileLanguage) error {
 	err := s.repo.AddUserLanguage(ctx, userLanguage)
 	if err != nil {
 		s.logger.Error("User Institute Added to DB",
@@ -35,7 +34,7 @@ func (s *Service) AddUserLanguage(ctx context.Context, userLanguage *profileLang
 	)
 	return nil
 }
-func (s *Service) GetUserLanguages(ctx context.Context, profileID int64) ([]*language.Language, error) {
+func (s *Service) GetProfileLanguages(ctx context.Context, profileID int64) ([]string, error) {
 	if profileID <= 0 {
 		s.logger.Error("profileID must be positive",
 			zap.String("layer", logctx.LogServiceLayer),
@@ -43,7 +42,7 @@ func (s *Service) GetUserLanguages(ctx context.Context, profileID int64) ([]*lan
 		)
 		return nil, fmt.Errorf("profileID must be positive: %d", profileID)
 	}
-	languages, err := s.repo.GetUserLanguages(ctx, profileID)
+	languages, err := s.repo.GetProfileLanguages(ctx, profileID)
 	if err != nil {
 		s.logger.Error("failed to get user languages",
 			zap.String("layer", logctx.LogServiceLayer),

@@ -1,6 +1,6 @@
 package program
 
 type Program struct {
-	ProgramID int
+	ProgramID int64
 	Name      string
 }

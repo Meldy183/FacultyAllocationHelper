@@ -94,19 +94,19 @@ func (s *Service) UpdateProfileByID(ctx context.Context, profile *facultyProfile
 	return nil
 }
 
-func (s *Service) GetProfilesByFilters(ctx context.Context, institutes []int, positions []int) ([]int64, error) {
+func (s *Service) GetProfilesByFilters(ctx context.Context, institutes []int64, positions []int64) ([]int64, error) {
 	if len(institutes) == 0 {
-		institutes = []int{1, 2, 3, 4, 5}
+		institutes = []int64{1, 2, 3, 4, 5}
 	}
 	if len(positions) == 0 {
-		positions = []int{1, 2, 3, 4, 5, 6, 7}
+		positions = []int64{1, 2, 3, 4, 5, 6, 7}
 	}
 	profilesByInst, err := s.repo.GetProfileIDsByInstituteIDs(ctx, institutes)
 	if err != nil {
 		s.logger.Error("error getting facultyProfile",
 			zap.String("layer", logctx.LogServiceLayer),
-			zap.Ints("institutes", institutes),
-			zap.Ints("positions", positions),
+			zap.Int64s("institutes", institutes),
+			zap.Int64s("positions", positions),
 			zap.Error(err),
 		)
 		return nil, fmt.Errorf("error getting facultyProfile %w", err)
@@ -122,16 +122,16 @@ func (s *Service) GetProfilesByFilters(ctx context.Context, institutes []int, po
 	if err != nil {
 		s.logger.Error("error getting facultyProfile",
 			zap.String("layer", logctx.LogServiceLayer),
-			zap.Ints("positions", positions),
-			zap.Ints("institutes", institutes),
+			zap.Int64s("positions", positions),
+			zap.Int64s("institutes", institutes),
 			zap.Error(err),
 		)
 	}
 	s.logger.Warn("Check positions by filters",
 		zap.Int64s("positionsProfileIDs", profilesByPosition),
-		zap.Ints("positions", positions),
+		zap.Int64s("positions", positions),
 		zap.Int64s("institutesProfileIDs", profilesByInst),
-		zap.Ints("institutes", institutes),
+		zap.Int64s("institutes", institutes),
 		zap.String("layer", logctx.LogServiceLayer),
 		zap.String("function", logctx.LogGetProfileByID),
 	)

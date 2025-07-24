@@ -26,7 +26,7 @@ func (s *Service) AddCourseInstance(ctx context.Context, courseInstance *courseI
 			"Invalid year",
 			zap.String("layer", logctx.LogServiceLayer),
 			zap.String("function", logctx.LogAddNewCourseInstance),
-			zap.Int("year", courseInstance.Year),
+			zap.Int64("year", courseInstance.Year),
 		)
 		return fmt.Errorf("invalid year: %v", courseInstance.Year)
 	}
@@ -103,16 +103,16 @@ func (s *Service) AddCourseInstance(ctx context.Context, courseInstance *courseI
 	return nil
 }
 
-func yearValid(year int) bool {
-	return (year >= 2015)
+func yearValid(year int64) bool {
+	return year >= 2015
 }
 
-func semesterIDValid(id int) bool {
-	return (id >= 1 && id <= 3)
+func semesterIDValid(id int64) bool {
+	return id >= 1 && id <= 3
 }
 
-func academicYearIDValid(id int) bool {
-	return (id >= 1 && id <= 8)
+func academicYearIDValid(id int64) bool {
+	return id >= 1 && id <= 8
 }
 
 func formValid(form courseInstance.Form) bool {
@@ -301,7 +301,7 @@ func (s *Service) GetInstancesByAllocationStatus(ctx context.Context, allocNotFi
 }
 
 func (s *Service) GetInstancesByYear(ctx context.Context, year int64) ([]int64, error) {
-	CourseInstances, err := s.repo.GetInstancesByYear(ctx, int(year))
+	CourseInstances, err := s.repo.GetInstancesByYear(ctx, year)
 	if err != nil {
 		s.logger.Error("error getting CourseInstances by year",
 			zap.String("layer", logctx.LogServiceLayer),

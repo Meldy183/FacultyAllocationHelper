@@ -1,7 +1,7 @@
 package profileLanguage
 
-type UserLanguage struct {
-	UserLanguageID int
-	ProfileID      int
-	LanguageCode   string
+type ProfileLanguage struct {
+	ProfileLanguageID int64
+	ProfileID         int64
+	LanguageCode      string
 }

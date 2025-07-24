@@ -21,7 +21,7 @@ func (s *Service) GetAllPrograms(ctx context.Context) ([]*program.Program, error
 	return s.programRepo.GetAllPrograms(ctx)
 }
 
-func (s *Service) GetProgramNameByID(ctx context.Context, id int) (*string, error) {
+func (s *Service) GetProgramNameByID(ctx context.Context, id int64) (*string, error) {
 	return s.programRepo.GetProgramNameByID(ctx, id)
 }
 

@@ -1,7 +1,7 @@
 package track
 
 type Track struct {
-	TrackID   int
+	TrackID   int64
 	Name      string
-	ProgramID int
+	ProgramID int64
 }

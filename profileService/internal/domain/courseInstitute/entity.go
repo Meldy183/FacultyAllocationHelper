@@ -1,7 +1,7 @@
 package courseInstitute
 
 type InstituteCourseLink struct {
-	CourseInstituteID int
-	InstituteID       int
-	CourseID          int
+	CourseInstituteID int64
+	InstituteID       int64
+	CourseID          int64
 }

@@ -298,7 +298,7 @@ func (h *Handler) GetProfile(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusInternalServerError, "error getting facultyProfile")
 		return
 	}
-	languages, err := h.serviceLang.GetUserLanguages(ctx, version.ProfileID)
+	languages, err := h.serviceLang.GetProfileLanguages(ctx, version.ProfileID)
 	if err != nil {
 		h.logger.Error("error getting languages",
 			zap.String("layer", logctx.LogHandlerLayer),

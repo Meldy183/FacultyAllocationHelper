@@ -456,13 +456,13 @@ func (r *CourseInstanceRepo) GetInstancesByAllocationStatus(ctx context.Context)
 	return instancesIDs, nil
 }
 
-func (r *CourseInstanceRepo) GetInstancesByYear(ctx context.Context, year int) ([]int64, error) {
+func (r *CourseInstanceRepo) GetInstancesByYear(ctx context.Context, year int64) ([]int64, error) {
 	rows, err := r.pool.Query(ctx, queryGetInstancesByYear, year)
 	if err != nil {
 		r.logger.Error("Error getting courseInstances by year",
 			zap.String("layer", logctx.LogRepoLayer),
 			zap.String("function", logctx.LogGetInstancesIDsByYear),
-			zap.Int("year", year),
+			zap.Int64("year", year),
 			zap.Error(err),
 		)
 		return nil, fmt.Errorf("GetInstancesIDsByYear failed: %w", err)
@@ -476,7 +476,7 @@ func (r *CourseInstanceRepo) GetInstancesByYear(ctx context.Context, year int) (
 			r.logger.Error("Error getting courseInstances by year",
 				zap.String("layer", logctx.LogRepoLayer),
 				zap.String("function", logctx.LogGetInstancesIDsByYear),
-				zap.Int("year", year),
+				zap.Int64("year", year),
 				zap.Error(err),
 			)
 			return nil, fmt.Errorf("GetInstancesIDsByYear failed: %w", err)
@@ -488,7 +488,7 @@ func (r *CourseInstanceRepo) GetInstancesByYear(ctx context.Context, year int) (
 		r.logger.Error("Error getting courseInstance by year",
 			zap.String("layer", logctx.LogRepoLayer),
 			zap.String("function", logctx.LogGetInstancesIDsByYear),
-			zap.Int("year", year),
+			zap.Int64("year", year),
 			zap.Error(err),
 		)
 		return nil, fmt.Errorf("GetInstancesIDsByYear failed: %w", err)

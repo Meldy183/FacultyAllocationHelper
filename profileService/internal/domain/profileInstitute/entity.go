@@ -1,7 +1,7 @@
 package profileInstitute
 
 type UserInstitute struct {
-	UserInstituteID int
-	InstituteID     int
+	UserInstituteID int64
+	InstituteID     int64
 	ProfileID       int64
 }

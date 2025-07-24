@@ -1,7 +1,7 @@
 package trackcourseinstance
 
-type TrackCourseInstance struct {
-	TrackCourseInstanceID int
-	TrackID               int
-	CourseInstanceID      int
+type TrackToCourseInstance struct {
+	TrackCourseInstanceID int64
+	TrackID               int64
+	CourseInstanceID      int64
 }

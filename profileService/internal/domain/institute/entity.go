@@ -1,6 +1,6 @@
 package institute
 
 type Institute struct {
-	InstituteID int
+	InstituteID int64
 	Name        string
 }

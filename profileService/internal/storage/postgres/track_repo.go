@@ -68,10 +68,10 @@ func (r *TrackRepo) GetAllTracks(ctx context.Context) ([]*track.Track, error) {
 			)
 			return nil, fmt.Errorf("get all tracks: %w", rows.Err())
 		}
-		var track track.Track
+		var trackObj track.Track
 		err := rows.Scan(
-			&track.TrackID,
-			&track.Name)
+			&trackObj.TrackID,
+			&trackObj.Name)
 		if err != nil {
 			r.logger.Error("failed to query all tracks",
 				zap.String("layer", logctx.LogRepoLayer),
@@ -80,7 +80,7 @@ func (r *TrackRepo) GetAllTracks(ctx context.Context) ([]*track.Track, error) {
 			)
 			return nil, fmt.Errorf("get all tracks: %w", err)
 		}
-		tracks = append(tracks, &track)
+		tracks = append(tracks, &trackObj)
 	}
 	r.logger.Info("all tracks returned",
 		zap.String("layer", logctx.LogRepoLayer),

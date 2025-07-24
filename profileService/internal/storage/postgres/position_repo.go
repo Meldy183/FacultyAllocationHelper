@@ -21,32 +21,31 @@ func NewPositionRepo(pool *pgxpool.Pool, logger *zap.Logger) *PositionRepo {
 }
 
 const (
-	queryGetPositionByID = `SELECT position_id, name FROM position WHERE position_id = $1`
+	queryGetPositionByID = `SELECT name FROM position WHERE position_id = $1`
 	queryGetAllPositions = `SELECT position_id FROM position`
 )
 
-func (r *PositionRepo) GetPositionByID(ctx context.Context, positionID int) (*position.Position, error) {
+func (r *PositionRepo) GetPositionByID(ctx context.Context, positionID int64) (*string, error) {
 	row := r.pool.QueryRow(ctx, queryGetPositionByID, positionID)
-	var positionByID position.Position
+	var posName string
 	err := row.Scan(
-		&positionByID.PositionID,
-		&positionByID.Name,
+		&posName,
 	)
 	if err != nil {
-		r.logger.Error("Error getting positionByID",
+		r.logger.Error("Error getting posName",
 			zap.String("layer", logctx.LogRepoLayer),
 			zap.String("function", logctx.LogGetPositionByID),
-			zap.Int("positionID", positionID),
+			zap.Int64("positionID", positionID),
 			zap.Error(err),
 		)
-		return nil, fmt.Errorf("error getting positionByID: %w", err)
+		return nil, fmt.Errorf("error getting posName: %w", err)
 	}
 	r.logger.Info("Successfully got position by ID",
 		zap.String("layer", logctx.LogRepoLayer),
 		zap.String("function", logctx.LogGetPositionByID),
-		zap.Int("positionID", positionID),
+		zap.Int64("positionID", positionID),
 	)
-	return &positionByID, nil
+	return &posName, nil
 }
 
 func (r *PositionRepo) GetAllPositions(ctx context.Context) ([]int64, error) {

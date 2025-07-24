@@ -19,7 +19,7 @@ func NewService(repo language.Repository, logger *zap.Logger) *Service {
 	return &Service{repo: repo, logger: logger}
 }
 
-func (s *Service) GetAllLanguages(ctx context.Context) ([]*language.Language, error) {
+func (s *Service) GetAllLanguages(ctx context.Context) ([]string, error) {
 	languages, err := s.repo.GetAllLanguages(ctx)
 	if err != nil {
 		s.logger.Error("Failed to get all languages",

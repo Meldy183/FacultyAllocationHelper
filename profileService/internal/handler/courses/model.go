@@ -9,16 +9,16 @@ type GetCourseListResponse struct {
 }
 
 type AddNewCourseRequest struct {
-	BriefName              string `json:"brief_name"`
-	OfficialName           string `json:"official_name"`
-	AcademicYearID         int    `json:"academic_year_id"`
-	SemesterID             int    `json:"semester_id"`
-	Year                   int    `json:"year"`
-	ProgramIDs             []int  `json:"program_ids"`
-	TrackIDs               []int  `json:"track_ids"`
-	ResponsibleInstituteID int64  `json:"responsible_institute_id"`
-	GroupsNeeded           int    `json:"groups_needed"`
-	IsElective             bool   `json:"is_elective"`
+	BriefName              string  `json:"brief_name"`
+	OfficialName           string  `json:"official_name"`
+	AcademicYearID         int64   `json:"academic_year_id"`
+	SemesterID             int64   `json:"semester_id"`
+	Year                   int64   `json:"year"`
+	ProgramIDs             []int64 `json:"program_ids"`
+	TrackIDs               []int64 `json:"track_ids"`
+	ResponsibleInstituteID int64   `json:"responsible_institute_id"`
+	GroupsNeeded           int64   `json:"groups_needed"`
+	IsElective             bool    `json:"is_elective"`
 }
 
 type AddNewCourseResponse struct {
@@ -30,7 +30,7 @@ type AddNewCourseResponse struct {
 	ProgramNames             []string                `json:"program_names"`
 	TrackNames               []string                `json:"track_names"`
 	ResponsibleInstituteName string                  `json:"responsible_institute_name"`
-	GroupsNeeded             int                     `json:"groups_needed"`
+	GroupsNeeded             int64                   `json:"groups_needed"`
 	Pi                       sharedContent.PI        `json:"pi"`
 	Ti                       sharedContent.PI        `json:"ti"`
 	TAs                      []sharedContent.Faculty `json:"tas"`
@@ -41,22 +41,22 @@ type GetCourseResponse struct {
 }
 
 type EditCourseRequest struct {
-	CourseInstanceID       int     `json:"course_id"`
+	CourseInstanceID       int64   `json:"course_id"`
 	BriefName              string  `json:"brief_name"`
 	OfficialName           *string `json:"official_name"`
 	ResponsibleInstituteID int64   `json:"responsible_institute_id"`
 	StudyProgramIDS        []int   `json:"study_program_ids"`
 	TrackIDs               []int   `json:"track_ids"`
 	Mode                   *string `json:"mode"`
-	AcademicYearID         int     `json:"academic_year_id"`
-	SemesterID             int     `json:"semester_id"`
+	AcademicYearID         int64   `json:"academic_year_id"`
+	SemesterID             int64   `json:"semester_id"`
 	Form                   *string `json:"form"`
-	LectureHours           *int    `json:"lecture_hours"`
-	LabHours               *int    `json:"lab_hours"`
+	LectureHours           *int64  `json:"lecture_hours"`
+	LabHours               *int64  `json:"lab_hours"`
 }
 
 type EditCourseResponse struct {
-	CourseInstanceID         int      `json:"course_id"`
+	CourseInstanceID         int64    `json:"course_id"`
 	BriefName                string   `json:"brief_name"`
 	OfficialName             *string  `json:"official_name"`
 	ResponsibleInstituteName string   `json:"responsible_institute_name"`
@@ -66,6 +66,6 @@ type EditCourseResponse struct {
 	AcademicYearName         string   `json:"academic_year_name"`
 	SemesterName             string   `json:"semester_name"`
 	Form                     *string  `json:"form"`
-	LectureHours             *int     `json:"lecture_hours"`
-	LabHours                 *int     `json:"lab_hours"`
+	LectureHours             *int64   `json:"lecture_hours"`
+	LabHours                 *int64   `json:"lab_hours"`
 }

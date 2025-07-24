@@ -24,14 +24,14 @@ WHERE profile_version_id = $1 AND semester_id = $2`
 	(profile_version_id, semester_id, lectures_count, tutorials_count, labs_count, electives_count, rate)
 	VALUES ($1, $2, $3, $4, $5, $6, $7)
 	RETURNING workload_id`
-	queryUpdateSemesterWorkload = ``
+	// queryUpdateSemesterWorkload = ``
 )
 
 func NewSemesterWorkloadRepo(pool *pgxpool.Pool, log *zap.Logger) *WorkloadRepo {
 	return &WorkloadRepo{pool: pool, logger: log}
 }
 
-func (r *WorkloadRepo) GetSemesterWorkloadByVersionID(ctx context.Context, VersionID int64, semID int) (*workloadDomain.Workload, error) {
+func (r *WorkloadRepo) GetSemesterWorkloadByVersionID(ctx context.Context, VersionID int64, semID int64) (*workloadDomain.Workload, error) {
 	row := r.pool.QueryRow(ctx, queryGetSemesterWorkloadByVersionID, VersionID, semID)
 	var workload workloadDomain.Workload
 	err := row.Scan(
@@ -55,11 +55,11 @@ func (r *WorkloadRepo) GetSemesterWorkloadByVersionID(ctx context.Context, Versi
 	r.logger.Info("workloadDomain successfully retrieved from database",
 		zap.String("layer", logctx.LogRepoLayer),
 		zap.String("function", logctx.LogGetSemesterWorkloadByVersionID),
-		zap.Int("semester_id", semID),
-		zap.Int("lectures_count", workload.LecturesCount),
-		zap.Int("tutorials_count", workload.TutorialsCount),
-		zap.Int("labs_count", workload.LabsCount),
-		zap.Int("electives_count", workload.ElectivesCount),
+		zap.Int64("semester_id", semID),
+		zap.Int64("lectures_count", workload.LecturesCount),
+		zap.Int64("tutorials_count", workload.TutorialsCount),
+		zap.Int64("labs_count", workload.LabsCount),
+		zap.Int64("electives_count", workload.ElectivesCount),
 	)
 	return &workload, nil
 }

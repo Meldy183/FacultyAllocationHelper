@@ -71,8 +71,8 @@ func (r *ProfileCourseInstanceRepo) GetCourseInstancesByVersionID(ctx context.Co
 }
 
 func (r *ProfileCourseInstanceRepo) AddCourseInstance(ctx context.Context,
-	userCourseInstance *profileCourseInstance.ProfileCourseInstance) error {
-	_, err := r.pool.Exec(ctx, queryAddCourseInstance, userCourseInstance.ProfileCourseID, userCourseInstance.CourseInstanceID)
+	profileVersionCourseInstance *profileCourseInstance.ProfileVersionCourseInstance) error {
+	_, err := r.pool.Exec(ctx, queryAddCourseInstance, profileVersionCourseInstance.ProfileCourseID, profileVersionCourseInstance.CourseInstanceID)
 	if err != nil {
 		r.logger.Error("AddCourseInstance",
 			zap.String("layer", logctx.LogRepoLayer),
@@ -84,7 +84,7 @@ func (r *ProfileCourseInstanceRepo) AddCourseInstance(ctx context.Context,
 	r.logger.Info("AddCourseInstance Success",
 		zap.String("layer", logctx.LogRepoLayer),
 		zap.String("function", logctx.LogAddCourseInstance),
-		zap.Int("profileID", userCourseInstance.ProfileCourseID),
+		zap.Int64("profileID", profileVersionCourseInstance.ProfileCourseID),
 	)
 	return nil
 }

@@ -49,7 +49,7 @@ func (s *Service) GetTrackNameByID(ctx context.Context, trackID int64) (*string,
 	}
 	return trackName, nil
 }
-func (s *Service) GetTracksOfCourseByInstanceID(ctx context.Context, instanceID int) ([]*trackcourseinstance.TrackCourseInstance, error) {
+func (s *Service) GetTracksOfCourseByInstanceID(ctx context.Context, instanceID int64) ([]int64, error) {
 	tracks, err := s.trackInstanceRepo.GetTracksIDsOfCourseByInstanceID(ctx, instanceID)
 	if err != nil {
 		s.logger.Error("Error getting all tracks",
@@ -61,24 +61,8 @@ func (s *Service) GetTracksOfCourseByInstanceID(ctx context.Context, instanceID 
 	}
 	return tracks, nil
 }
-func (s *Service) ConvertTrackCourseInstanceToTrackNames(ctx context.Context, linkArray []*trackcourseinstance.TrackCourseInstance) ([]*string, error) {
-	trackNames := make([]*string, 0)
-	for _, elem := range linkArray {
-		name, err := s.GetTrackNameByID(ctx, int64(elem.TrackID))
-		if err != nil {
-			s.logger.Error("Error getting track name",
-				zap.String("layer", logctx.LogServiceLayer),
-				zap.String("function", logctx.LogGetTrackNameByID),
-				zap.Error(err),
-			)
-			return nil, fmt.Errorf("error getting track name: %w", err)
-		}
-		trackNames = append(trackNames, name)
-	}
-	return trackNames, nil
-}
 
-func (s *Service) GetTracksNamesOfCourseByCourseID(ctx context.Context, instanceID int) ([]*string, error) {
+func (s *Service) GetTracksNamesOfCourseByCourseInstanceID(ctx context.Context, instanceID int64) ([]*string, error) {
 	trackIds, err := s.GetTracksOfCourseByInstanceID(ctx, instanceID)
 	if err != nil {
 		s.logger.Error("Error getting all tracks",
@@ -88,14 +72,23 @@ func (s *Service) GetTracksNamesOfCourseByCourseID(ctx context.Context, instance
 		)
 		return nil, fmt.Errorf("error getting all tracks: %w", err)
 	}
-	names, err := s.ConvertTrackCourseInstanceToTrackNames(ctx, trackIds)
-	if err != nil {
-		s.logger.Error("Error converting track course instance to track names",
-			zap.String("layer", logctx.LogServiceLayer),
-			zap.String("function", logctx.LogGetTracksOfCourseByCourseID),
-			zap.Error(err),
-		)
-		return nil, fmt.Errorf("error converting track course instance to track names: %w", err)
+	tracksNames := make([]*string, 0)
+	for _, trackId := range trackIds {
+		trackName, err := s.trackRepo.GetTrackNameByID(ctx, trackId)
+		if err != nil {
+			s.logger.Error("Error getting track name",
+				zap.String("layer", logctx.LogServiceLayer),
+				zap.String("function", logctx.LogGetTracksOfCourseByCourseID),
+				zap.Error(err),
+			)
+			return nil, fmt.Errorf("error getting track name: %w", err)
+		}
+		tracksNames = append(tracksNames, trackName)
 	}
-	return names, nil
+	s.logger.Info("Successfully got all tracks",
+		zap.String("layer", logctx.LogServiceLayer),
+		zap.String("function", logctx.LogGetTracksOfCourseByCourseID),
+		zap.Any("tracks", tracksNames),
+	)
+	return tracksNames, nil
 }
