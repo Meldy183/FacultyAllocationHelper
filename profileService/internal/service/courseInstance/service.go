@@ -161,9 +161,78 @@ func (s *Service) GetCourseInstanceByID(ctx context.Context, id int64) (*courseI
 	return CourseInstance, nil
 }
 
-func (s *Service) UpdateCourseInstanceByID(ctx context.Context, course *courseInstance.CourseInstance) error {
-	//TODO: implement me
-	panic("implement me")
+func (s *Service) UpdateCourseInstanceByID(ctx context.Context, id int64, courseInstance *courseInstance.CourseInstance) error {
+	if !semesterIDValid(courseInstance.SemesterID) {
+		s.logger.Error(
+			"Invalid semester ID",
+			zap.String("layer", logctx.LogServiceLayer),
+			zap.String("function", logctx.LogUpdateCourseInstanceByID),
+		)
+		return fmt.Errorf("invalid year: %v", courseInstance.SemesterID)
+	}
+	if !academicYearIDValid(courseInstance.AcademicYearID) {
+		s.logger.Error(
+			"Invalid academic year ID",
+			zap.String("layer", logctx.LogServiceLayer),
+			zap.String("function", logctx.LogUpdateCourseInstanceByID),
+		)
+		return fmt.Errorf("invalid academic year: %v", courseInstance.AcademicYearID)
+	}
+	s.logger.Info("academic year ok")
+	if courseInstance.Form != nil && !formValid(*courseInstance.Form) {
+		s.logger.Error(
+			"Invalid form",
+			zap.String("layer", logctx.LogServiceLayer),
+			zap.String("function", logctx.LogUpdateCourseInstanceByID),
+		)
+		return fmt.Errorf("invalid form: %v", courseInstance.Form)
+	}
+	s.logger.Info("form ok")
+
+	if courseInstance.Mode != nil && !modeValid(*courseInstance.Mode) {
+		s.logger.Error(
+			"Invalid mode",
+			zap.String("layer", logctx.LogServiceLayer),
+			zap.String("function", logctx.LogUpdateCourseInstanceByID),
+		)
+		return fmt.Errorf("invalid mode: %v", courseInstance.Mode)
+	}
+	s.logger.Info("mode ok")
+
+	if courseInstance.PIAllocationStatus != nil && !statusValid(*courseInstance.PIAllocationStatus) {
+		s.logger.Error(
+			"Invalid PI allocation status",
+			zap.String("layer", logctx.LogServiceLayer),
+			zap.String("function", logctx.LogUpdateCourseInstanceByID),
+		)
+		return fmt.Errorf("invalid PI allocation status: %v", courseInstance.PIAllocationStatus)
+	}
+	s.logger.Info("pi status ok")
+
+	if courseInstance.TIAllocationStatus != nil && !statusValid(*courseInstance.TIAllocationStatus) {
+		s.logger.Error(
+			"Invalid TI allocation status",
+			zap.String("layer", logctx.LogServiceLayer),
+			zap.String("function", logctx.LogUpdateCourseInstanceByID),
+		)
+		return fmt.Errorf("invalid TI allocation status: %v", courseInstance.TIAllocationStatus)
+	}
+	s.logger.Info("ti status ok")
+
+	err := s.repo.UpdateCourseInstanceByID(ctx, id, courseInstance)
+	if err != nil {
+		s.logger.Error(
+			"could not update course instance by id",
+			zap.String("layer", logctx.LogServiceLayer),
+			zap.String("function", logctx.LogUpdateCourseInstanceByID),
+		)
+		return fmt.Errorf("error updating course instance: %v", err)
+	}
+	s.logger.Info("course updated",
+		zap.String("layer", logctx.LogServiceLayer),
+		zap.String("function", logctx.LogUpdateCourseInstanceByID),
+		zap.Int64("id", id),
+	)
 	return nil
 }
 
