@@ -8,7 +8,7 @@ type AddProfileRequest struct {
 	NameEnglish  string `json:"name_eng"`
 	Email        string `json:"email"`
 	Alias        string `json:"alias"`
-	InstituteIDs []int  `json:"institute_id"`
+	InstituteIDs []int  `json:"institute_ids"`
 	PositionID   int64  `json:"position_id"`
 	Year         int64  `json:"year"`
 }
