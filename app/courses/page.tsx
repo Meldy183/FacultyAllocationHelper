@@ -26,7 +26,7 @@ const transformFilters = (filters: rawFilters) => {
 
 	searchQueries.append("profile_version_id", "");
 	searchQueries.append("year", "2026");
-	searchQueries.append("allocation_finished", filters.allocaion_not_finished.toString());
+	searchQueries.append("allocation_not_finished", filters.allocaion_not_finished.toString());
 	filters.academic_year.forEach((academicYear) => {
 		searchQueries.append("academic_year_id", academicYear.value.toString());
 	})

@@ -49,7 +49,7 @@ const SideBarContent: React.FC = () => {
 							<AccordionTrigger className={ styles.button }>academic year</AccordionTrigger>
 							<AccordionContent>
 								{
-									data.filters.academic_year.map(filter => (
+									data.academic_year.map(filter => (
 										<Label key={ filter.name }>
 											<Checkbox checked={ isChecked("academic_year", filter.name) } onCheckedChange={ () => changeFilters("academic_year", { name: filter.name, value: filter.id }) } />
 											<span className={ styles.text }>{ filter.name }</span>
@@ -62,7 +62,7 @@ const SideBarContent: React.FC = () => {
 							<AccordionTrigger className={ styles.button }>semester</AccordionTrigger>
 							<AccordionContent>
 								{
-									data.filters.academic_year.map(filter => (
+									data.semester.map(filter => (
 										<Label key={ filter.name }>
 											<Checkbox checked={ isChecked("semester", filter.name) } onCheckedChange={ () => changeFilters("semester", { name: filter.name, value: filter.id }) } />
 											<span className={ styles.text }>{ filter.name }</span>
@@ -75,7 +75,7 @@ const SideBarContent: React.FC = () => {
 							<AccordionTrigger className={ styles.button }>study program</AccordionTrigger>
 							<AccordionContent>
 								{
-									data.filters.academic_year.map(filter => (
+									data.study_program.map(filter => (
 										<Label key={ filter.name }>
 											<Checkbox checked={ isChecked("study_program", filter.name) } onCheckedChange={ () => changeFilters("study_program", { name: filter.name, value: filter.id }) } />
 											<span className={ styles.text }>{ filter.name }</span>
@@ -88,7 +88,7 @@ const SideBarContent: React.FC = () => {
 							<AccordionTrigger className={ styles.button }>institute</AccordionTrigger>
 							<AccordionContent>
 								{
-									data.filters.academic_year.map(filter => (
+									data.institute.map(filter => (
 										<Label key={ filter.name }>
 											<Checkbox checked={ isChecked("institute", filter.name) } onCheckedChange={ () => changeFilters("institute", { name: filter.name, value: filter.id }) } />
 											<span className={ styles.text }>{ filter.name }</span>

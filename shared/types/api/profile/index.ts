@@ -13,7 +13,7 @@ export type GetMemberProcessType = {
   responseBody: UserDataInterface,
 }
 
-export type GetFiltersType = {
+export type GetFacultyFiltersProcessType = {
   responseBody: FilterGroup[],
   requestQuery: {}
 }

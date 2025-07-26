@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { API_PATH } from "@/shared/configs/constants/api/paths";
-import { GetFiltersType } from "@/shared/types/api/profile";
+import { GetFacultyFiltersProcessType } from "@/shared/types/api/profile";
 import { GetCourseFilterProcess, RawFiltersResponse } from "@/shared/types/api/filters";
 import { transformRawFilters } from "@/shared/lib/transformFilter";
 
@@ -17,7 +17,7 @@ export const filterSlice = createApi({
         method: "GET"
       })
     }),
-    getFilters: builder.query<GetFiltersType["responseBody"], GetFiltersType["requestQuery"]>({
+    getProfileFilters: builder.query<GetFacultyFiltersProcessType["responseBody"], GetFacultyFiltersProcessType["requestQuery"]>({
       query: () => ({
         url: "/profile",
         method: "GET",
@@ -29,5 +29,5 @@ export const filterSlice = createApi({
 
 export const {
   useGetCourseFiltersQuery,
-  useGetFiltersQuery
+  useGetProfileFiltersQuery
 } = filterSlice;
