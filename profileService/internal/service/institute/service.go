@@ -3,6 +3,7 @@ package institute
 import (
 	"context"
 	"fmt"
+
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/institute"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
 	"go.uber.org/zap"
@@ -18,7 +19,24 @@ type Service struct {
 func NewService(repo institute.Repository, logger *zap.Logger) *Service {
 	return &Service{repo: repo, logger: logger}
 }
-
+func (s *Service) GetInstituteIDByName(ctx context.Context, instituteName string) (*int64, error) {
+	instituteID, err := s.repo.GetInstituteIDByName(ctx, instituteName)
+	if err != nil {
+		s.logger.Error("failed to retrieve institute by LabID",
+			zap.String("layer", logctx.LogServiceLayer),
+			zap.String("function", logctx.LogGetInstituteByID),
+			zap.String("instituteName", instituteName),
+			zap.Error(err),
+		)
+		return nil, err
+	}
+	s.logger.Info("Successfully retrieved institute: ",
+		zap.String("layer", logctx.LogServiceLayer),
+		zap.String("function", logctx.LogGetInstituteByID),
+		zap.String("instituteName:", instituteName),
+	)
+	return instituteID, nil
+}
 func (s *Service) GetInstituteByID(ctx context.Context, instituteID int64) (*institute.Institute, error) {
 	if instituteID <= 0 {
 		s.logger.Error("institute_id is invalid",

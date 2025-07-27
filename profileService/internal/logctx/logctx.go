@@ -105,4 +105,7 @@ const (
 	LogGetTrackIDByName                  = "getTrackIDByName"
 	LogGetResponsibleInstituteIDByName   = "getResponsibleInstituteIDByName"
 	LogAddFullCourse                     = "addFullCourse"
+	LogAddFullUser                       = "addFullUser"
+	LogGetInstituteIDByName              = "getInstituteIDByName"
+	LogGetCodeByLanguageName             = "getCodeByLanguageName"
 )

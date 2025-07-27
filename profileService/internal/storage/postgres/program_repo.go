@@ -28,7 +28,7 @@ const (
 )
 
 func (r *ProgramRepo) GetProgramIDByName(ctx context.Context, name string) (*int64, error) {
-	ID := r.pool.QueryRow(ctx, queryProgramByID, name)
+	ID := r.pool.QueryRow(ctx, queryProgramIDByName, name)
 	var ProgramID int64
 	err := ID.Scan(&ProgramID)
 	if err != nil {

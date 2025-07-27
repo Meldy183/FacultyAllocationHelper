@@ -5,14 +5,14 @@ import (
 	"fmt"
 
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/CompleteCourse"
+	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/course"
+	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/courseInstance"
+	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/program"
 	programcourseinstance "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/programCourseInstance"
+	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/track"
+	trackcourseinstance "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/trackCourseInstance"
+
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
-	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/course"
-	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/courseInstance"
-	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/program"
-	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/programCourseInstance"
-	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/track"
-	trackcourseinstance "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/trackCourseInstance"
 	"go.uber.org/zap"
 )
 
@@ -20,21 +20,21 @@ var _ CompleteCourse.Service = (*Service)(nil)
 
 type Service struct {
 	logger                *zap.Logger
-	instanceService       *courseInstance.Service
-	courseService         *course.Service
-	trackService          *track.Service
-	program               *program.Service
-	trackCourseInstance   *trackcourseinstance.Service
-	programCourseInstance *programCourseInstance.Service
+	instanceService       courseInstance.Service
+	courseService         course.Service
+	trackService          track.Service
+	program               program.Service
+	trackCourseInstance   trackcourseinstance.Service
+	programCourseInstance programcourseinstance.Service
 }
 
-func NewService(instance *courseInstance.Service,
-	course *course.Service,
-	track *track.Service,
-	program *program.Service,
+func NewService(instance courseInstance.Service,
+	course course.Service,
+	track track.Service,
+	program program.Service,
 	logger *zap.Logger,
-	trackInstance *trackcourseinstance.Service,
-	programInstance *programCourseInstance.Service) *Service {
+	trackInstance trackcourseinstance.Service,
+	programInstance programcourseinstance.Service) *Service {
 	return &Service{
 		instanceService:       instance,
 		courseService:         course,
