@@ -4,7 +4,7 @@ import "context"
 
 type Service interface {
 	GetCourseInstanceByID(ctx context.Context, courseID int64) (*CourseInstance, error)
-	AddCourseInstance(ctx context.Context, course *CourseInstance) (int64, error)
+	AddCourseInstance(ctx context.Context, course *CourseInstance) error
 	UpdateCourseInstanceByID(ctx context.Context, id int64, course *CourseInstance) error
 	GetInstancesByInstituteIDs(ctx context.Context, instituteIDs []int64) ([]int64, error)
 	GetInstancesByAcademicYearIDs(ctx context.Context, academicYearIDs []int64) ([]int64, error)

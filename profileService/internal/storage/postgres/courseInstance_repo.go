@@ -174,7 +174,7 @@ func (r *CourseInstanceRepo) GetCourseInstanceByID(ctx context.Context, courseIn
 	return &courseInstanceObj, nil
 }
 
-func (r *CourseInstanceRepo) AddNewCourseInstance(ctx context.Context, courseInstance *courseInstance.CourseInstance) (int64, error) {
+func (r *CourseInstanceRepo) AddNewCourseInstance(ctx context.Context, courseInstance *courseInstance.CourseInstance) error {
 	err := r.pool.QueryRow(ctx, queryInsertCourseInstance,
 		courseInstance.CourseID,
 		courseInstance.SemesterID,
@@ -195,14 +195,14 @@ func (r *CourseInstanceRepo) AddNewCourseInstance(ctx context.Context, courseIns
 			zap.Int64("courseInstanceeID", courseInstance.InstanceID),
 			zap.Error(err),
 		)
-		return -1, fmt.Errorf("AddNewCourseInstance failed: %w", err)
+		return fmt.Errorf("AddNewCourseInstance failed: %w", err)
 	}
 	r.logger.Info("CourseInstance created",
 		zap.String("layer", logctx.LogRepoLayer),
 		zap.String("function", logctx.LogAddNewCourseInstance),
 		zap.Int64("courseInstanceID", courseInstance.InstanceID),
 	)
-	return courseInstance.InstanceID, nil
+	return nil
 }
 
 func (r *CourseInstanceRepo) UpdateCourseInstanceByID(ctx context.Context, id int64, courseInstance *courseInstance.CourseInstance) error {

@@ -73,7 +73,7 @@ func (r *CourseRepo) GetCourseByID(ctx context.Context, courseID int64) (*course
 	return &course, nil
 }
 
-func (r *CourseRepo) AddNewCourse(ctx context.Context, course *course.Course) (int64, error) {
+func (r *CourseRepo) AddNewCourse(ctx context.Context, course *course.Course) error {
 	err := r.pool.QueryRow(ctx, queryInsertCourse,
 		course.Name,
 		"",
@@ -89,14 +89,14 @@ func (r *CourseRepo) AddNewCourse(ctx context.Context, course *course.Course) (i
 			zap.Int64("courseID", course.CourseID),
 			zap.Error(err),
 		)
-		return -1, fmt.Errorf("AddNewCourse failed: %w", err)
+		return fmt.Errorf("AddNewCourse failed: %w", err)
 	}
 	r.logger.Info("Course profile created",
 		zap.String("layer", logctx.LogRepoLayer),
 		zap.String("function", logctx.LogAddNewCourse),
 		zap.Int64("courseID", course.CourseID),
 	)
-	return course.CourseID, nil
+	return nil
 }
 
 func (r *CourseRepo) UpdateCourseByID(ctx context.Context, id int64, course *course.Course) error {
