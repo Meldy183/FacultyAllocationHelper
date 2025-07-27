@@ -20,7 +20,7 @@ func NewService(repo courseInstance.Repository, logger *zap.Logger) *Service {
 	return &Service{repo: repo, logger: logger}
 }
 
-func (s *Service) AddCourseInstance(ctx context.Context, courseInstance *courseInstance.CourseInstance) error {
+func (s *Service) AddCourseInstance(ctx context.Context, courseInstance *courseInstance.CourseInstance) (int64, error) {
 	if !yearValid(courseInstance.Year) {
 		s.logger.Error(
 			"Invalid year",
@@ -28,7 +28,7 @@ func (s *Service) AddCourseInstance(ctx context.Context, courseInstance *courseI
 			zap.String("function", logctx.LogAddNewCourseInstance),
 			zap.Int64("year", courseInstance.Year),
 		)
-		return fmt.Errorf("invalid year: %v", courseInstance.Year)
+		return -1, fmt.Errorf("invalid year: %v", courseInstance.Year)
 	}
 	if !semesterIDValid(courseInstance.SemesterID) {
 		s.logger.Error(
@@ -36,7 +36,7 @@ func (s *Service) AddCourseInstance(ctx context.Context, courseInstance *courseI
 			zap.String("layer", logctx.LogServiceLayer),
 			zap.String("function", logctx.LogAddNewCourseInstance),
 		)
-		return fmt.Errorf("invalid year: %v", courseInstance.SemesterID)
+		return -1, fmt.Errorf("invalid year: %v", courseInstance.SemesterID)
 	}
 	if !academicYearIDValid(courseInstance.AcademicYearID) {
 		s.logger.Error(
@@ -44,7 +44,7 @@ func (s *Service) AddCourseInstance(ctx context.Context, courseInstance *courseI
 			zap.String("layer", logctx.LogServiceLayer),
 			zap.String("function", logctx.LogAddNewCourseInstance),
 		)
-		return fmt.Errorf("invalid academic year: %v", courseInstance.AcademicYearID)
+		return -1, fmt.Errorf("invalid academic year: %v", courseInstance.AcademicYearID)
 	}
 	s.logger.Info("academic year ok")
 	if courseInstance.Form != nil && !formValid(*courseInstance.Form) {
@@ -53,7 +53,7 @@ func (s *Service) AddCourseInstance(ctx context.Context, courseInstance *courseI
 			zap.String("layer", logctx.LogServiceLayer),
 			zap.String("function", logctx.LogAddNewCourseInstance),
 		)
-		return fmt.Errorf("invalid form: %v", courseInstance.Form)
+		return -1, fmt.Errorf("invalid form: %v", courseInstance.Form)
 	}
 	s.logger.Info("form ok")
 
@@ -63,7 +63,7 @@ func (s *Service) AddCourseInstance(ctx context.Context, courseInstance *courseI
 			zap.String("layer", logctx.LogServiceLayer),
 			zap.String("function", logctx.LogAddNewCourseInstance),
 		)
-		return fmt.Errorf("invalid mode: %v", courseInstance.Mode)
+		return -1, fmt.Errorf("invalid mode: %v", courseInstance.Mode)
 	}
 	s.logger.Info("mode ok")
 
@@ -73,7 +73,7 @@ func (s *Service) AddCourseInstance(ctx context.Context, courseInstance *courseI
 			zap.String("layer", logctx.LogServiceLayer),
 			zap.String("function", logctx.LogAddNewCourseInstance),
 		)
-		return fmt.Errorf("invalid PI allocation status: %v", courseInstance.PIAllocationStatus)
+		return -1, fmt.Errorf("invalid PI allocation status: %v", courseInstance.PIAllocationStatus)
 	}
 	s.logger.Info("pi status ok")
 
@@ -83,24 +83,24 @@ func (s *Service) AddCourseInstance(ctx context.Context, courseInstance *courseI
 			zap.String("layer", logctx.LogServiceLayer),
 			zap.String("function", logctx.LogAddNewCourseInstance),
 		)
-		return fmt.Errorf("invalid TI allocation status: %v", courseInstance.TIAllocationStatus)
+		return -1, fmt.Errorf("invalid TI allocation status: %v", courseInstance.TIAllocationStatus)
 	}
 	s.logger.Info("ti status ok")
 
-	err := s.repo.AddNewCourseInstance(ctx, courseInstance)
+	id, err := s.repo.AddNewCourseInstance(ctx, courseInstance)
 	if err != nil {
 		s.logger.Error(
 			"Invalid responsibleInstituteID",
 			zap.String("layer", logctx.LogServiceLayer),
 			zap.String("function", logctx.LogAddNewCourse),
 		)
-		return fmt.Errorf("error creating new course: %v", err)
+		return -1, fmt.Errorf("error creating new course: %v", err)
 	}
 	s.logger.Info("new course created",
 		zap.String("layer", logctx.LogServiceLayer),
 		zap.String("function", logctx.LogAddNewCourse),
 	)
-	return nil
+	return id, nil
 }
 
 func yearValid(year int64) bool {
