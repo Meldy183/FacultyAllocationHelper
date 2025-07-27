@@ -22,10 +22,30 @@ func NewProgramRepo(pool *pgxpool.Pool, logger *zap.Logger) *ProgramRepo {
 }
 
 const (
-	queryProgramByID    = `SELECT program_id, name FROM program WHERE program_id = $1`
-	queryGetAllPrograms = `SELECT program_id, name FROM program`
+	queryProgramByID     = `SELECT program_id, name FROM program WHERE program_id = $1`
+	queryGetAllPrograms  = `SELECT program_id, name FROM program`
+	queryProgramIDByName = `SELECT program_id FROM program WHERE name = $1`
 )
 
+func (r *ProgramRepo) GetProgramIDByName(ctx context.Context, name string) (*int64, error) {
+	ID := r.pool.QueryRow(ctx, queryProgramByID, name)
+	var ProgramID int64
+	err := ID.Scan(&ProgramID)
+	if err != nil {
+		r.logger.Error("Error getting responsible institute name",
+			zap.String("layer", logctx.LogRepoLayer),
+			zap.String("function", logctx.LogGetProgramIDByName),
+			zap.Error(err),
+		)
+		return nil, fmt.Errorf("error getting responsible institute name: %w", err)
+	}
+	r.logger.Info("successfully Got ProgramName By ID",
+		zap.String("layer", logctx.LogRepoLayer),
+		zap.String("function", logctx.LogGetProgramIDByName),
+		zap.String("name", name),
+	)
+	return &ProgramID, nil
+}
 func (r *ProgramRepo) GetProgramNameByID(ctx context.Context, id int64) (*string, error) {
 	row := r.pool.QueryRow(ctx, queryProgramByID, id)
 	var programObj program.Program
