@@ -5,31 +5,44 @@ import (
 	"fmt"
 
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/CompleteCourse"
+	programcourseinstance "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/programCourseInstance"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/course"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/courseInstance"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/program"
+	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/programCourseInstance"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/track"
+	trackcourseinstance "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/trackCourseInstance"
 	"go.uber.org/zap"
 )
 
 var _ CompleteCourse.Service = (*Service)(nil)
 
 type Service struct {
-	logger          *zap.Logger
-	instanceService *courseInstance.Service
-	courseService   *course.Service
-	trackService    *track.Service
-	program         *program.Service
+	logger                *zap.Logger
+	instanceService       *courseInstance.Service
+	courseService         *course.Service
+	trackService          *track.Service
+	program               *program.Service
+	trackCourseInstance   *trackcourseinstance.Service
+	programCourseInstance *programCourseInstance.Service
 }
 
-func NewService(instance *courseInstance.Service, course *course.Service, track *track.Service, program *program.Service, logger *zap.Logger) *Service {
+func NewService(instance *courseInstance.Service,
+	course *course.Service,
+	track *track.Service,
+	program *program.Service,
+	logger *zap.Logger,
+	trackInstance *trackcourseinstance.Service,
+	programInstance *programCourseInstance.Service) *Service {
 	return &Service{
-		instanceService: instance,
-		courseService:   course,
-		trackService:    track,
-		program:         program,
-		logger:          logger,
+		instanceService:       instance,
+		courseService:         course,
+		trackService:          track,
+		program:               program,
+		logger:                logger,
+		trackCourseInstance:   trackInstance,
+		programCourseInstance: programInstance,
 	}
 }
 
@@ -111,7 +124,7 @@ func (s *Service) AddFullCourse(ctx context.Context, fullcourse *CompleteCourse.
 	}
 	s.logger.Info("Added course instance successfully")
 	for _, track := range fullcourse.Tracks {
-		ID, err := s.trackService.GetTrackIDByName(ctx, *track)
+		trackID, err := s.trackService.GetTrackIDByName(ctx, *track)
 		if err != nil {
 			s.logger.Error("error seeking track by name",
 				zap.String("layer", logctx.LogServiceLayer),
@@ -119,5 +132,31 @@ func (s *Service) AddFullCourse(ctx context.Context, fullcourse *CompleteCourse.
 				zap.Error(err))
 			continue
 		}
+		err = s.trackCourseInstance.AddTracksToCourseInstance(ctx, fullcourse.CourseInstance.InstanceID, *trackID)
+		if err != nil {
+			s.logger.Error("error adding track to course instance",
+				zap.String("layer", logctx.LogServiceLayer),
+				zap.String("function", logctx.LogAddFullCourse),
+				zap.Error(err))
+		}
 	}
+	for _, program := range fullcourse.StudyPrograms {
+		programID, err := s.program.GetProgramIDByName(ctx, *program)
+		if err != nil {
+			s.logger.Error("error seeking program by name",
+				zap.String("layer", logctx.LogServiceLayer),
+				zap.String("function", logctx.LogAddFullCourse),
+				zap.Error(err))
+			continue
+		}
+		err = s.programCourseInstance.AddProgramToCourseInstance(ctx, &programcourseinstance.ProgramCourseInstance{ProgramID: *programID,
+			CourseInstanceID: fullcourse.CourseInstance.InstanceID})
+		if err != nil {
+			s.logger.Error("error adding program to course instance",
+				zap.String("layer", logctx.LogServiceLayer),
+				zap.String("function", logctx.LogAddFullCourse),
+				zap.Error(err))
+		}
+	}
+	return nil
 }
