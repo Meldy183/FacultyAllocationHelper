@@ -508,28 +508,28 @@ func (h *Handler) CombineCourseCard(w http.ResponseWriter, err error, ctx contex
 		}
 		tas = append(tas, *facObj)
 	}
-	academicYearName, err := h.academicYearService.GetAcademicYearNameByID(ctx, int64(fullCourse.AcademicYearID))
-	semesterName, err := h.semesterService.GetSemesterNameByID(ctx, int64(fullCourse.SemesterID))
-	instituteObj, err := h.responsibleInstituteService.GetResponsibleInstituteNameByID(ctx, fullCourse.ResponsibleInstituteID)
-	isAllocDone := fullCourse.GroupsNeeded-*fullCourse.GroupsTaken == 0
+	academicYearName, err := h.academicYearService.GetAcademicYearNameByID(ctx, int64(fullCourse.Instance.AcademicYearID))
+	semesterName, err := h.semesterService.GetSemesterNameByID(ctx, int64(fullCourse.Instance.SemesterID))
+	instituteObj, err := h.responsibleInstituteService.GetResponsibleInstituteNameByID(ctx, fullCourse.Cours.ResponsibleInstituteID)
+	isAllocDone := fullCourse.Instance.GroupsNeeded-*fullCourse.Instance.GroupsTaken == 0
 	pi := &sharedContent.PI{
-		AllocationStatus: (*string)(fullCourse.PIAllocationStatus),
+		AllocationStatus: (*string)(fullCourse.Instance.PIAllocationStatus),
 		ProfileData:      piFaculty,
 	}
 	ti := &sharedContent.PI{
-		AllocationStatus: (*string)(fullCourse.PIAllocationStatus),
+		AllocationStatus: (*string)(fullCourse.Instance.PIAllocationStatus),
 		ProfileData:      tiFaculty,
 	}
 	var offname *string
-	if fullCourse.OfficialName == nil {
+	if fullCourse.Cours.OfficialName == nil {
 		emptyStr := ""
 		offname = &emptyStr
 	} else {
-		offname = fullCourse.OfficialName
+		offname = fullCourse.Cours.OfficialName
 	}
 	courseObj := &sharedContent.Course{
-		InstanceID:           &fullCourse.InstanceID,
-		BriefName:            &fullCourse.Name,
+		InstanceID:           &fullCourse.Instance.InstanceID,
+		BriefName:            &fullCourse.Cours.Name,
 		OfficialName:         offname,
 		AcademicYearName:     academicYearName,
 		SemesterName:         semesterName,
@@ -537,13 +537,13 @@ func (h *Handler) CombineCourseCard(w http.ResponseWriter, err error, ctx contex
 		InstituteName:        instituteObj,
 		Tracks:               fullCourse.Tracks,
 		IsAllocationFinished: &isAllocDone,
-		Mode:                 (*string)(fullCourse.Mode),
-		Year:                 &fullCourse.Year,
-		Form:                 (*string)(fullCourse.Form),
-		LectureHours:         fullCourse.LecHours,
-		LabHours:             fullCourse.LabHours,
-		GroupsNeeded:         &fullCourse.GroupsNeeded,
-		GroupsTaken:          fullCourse.GroupsTaken,
+		Mode:                 (*string)(fullCourse.Instance.Mode),
+		Year:                 &fullCourse.Instance.Year,
+		Form:                 (*string)(fullCourse.Instance.Form),
+		LectureHours:         fullCourse.Cours.LecHours,
+		LabHours:             fullCourse.Cours.LabHours,
+		GroupsNeeded:         &fullCourse.Instance.GroupsNeeded,
+		GroupsTaken:          fullCourse.Instance.GroupsTaken,
 		PI:                   *pi,
 		TI:                   *ti,
 		TAs:                  tas,

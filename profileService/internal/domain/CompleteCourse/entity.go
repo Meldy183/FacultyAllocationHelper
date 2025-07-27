@@ -6,8 +6,8 @@ import (
 )
 
 type FullCourse struct {
-	course.Course
-	courseInstance.CourseInstance
+	Cours         course.Course
+	Instance      courseInstance.CourseInstance
 	StudyPrograms []*string
 	Tracks        []*string
 }
