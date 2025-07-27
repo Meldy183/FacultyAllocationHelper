@@ -3,8 +3,7 @@ package courseInstance
 import "context"
 
 type Repository interface {
-	AddNewCourseInstance(ctx context.Context, course *CourseInstance) error
-	AddNewCourseInstanceIDReturned(ctx context.Context, course *CourseInstance) (int64, error)
+	AddNewCourseInstance(ctx context.Context, course *CourseInstance) (int64, error)
 	GetCourseInstanceByID(ctx context.Context, courseID int64) (*CourseInstance, error)
 	UpdateCourseInstanceByID(ctx context.Context, id int64, course *CourseInstance) error
 	GetInstancesIDsByInstituteIDs(ctx context.Context, instituteIDs []int64) ([]int64, error)
