@@ -508,28 +508,28 @@ func (h *Handler) CombineCourseCard(w http.ResponseWriter, err error, ctx contex
 		}
 		tas = append(tas, *facObj)
 	}
-	academicYearName, err := h.academicYearService.GetAcademicYearNameByID(ctx, int64(fullCourse.Instance.AcademicYearID))
-	semesterName, err := h.semesterService.GetSemesterNameByID(ctx, int64(fullCourse.Instance.SemesterID))
-	instituteObj, err := h.responsibleInstituteService.GetResponsibleInstituteNameByID(ctx, fullCourse.Cours.ResponsibleInstituteID)
-	isAllocDone := fullCourse.Instance.GroupsNeeded-*fullCourse.Instance.GroupsTaken == 0
+	academicYearName, err := h.academicYearService.GetAcademicYearNameByID(ctx, int64(fullCourse.CourseInstance.AcademicYearID))
+	semesterName, err := h.semesterService.GetSemesterNameByID(ctx, int64(fullCourse.CourseInstance.SemesterID))
+	instituteObj, err := h.responsibleInstituteService.GetResponsibleInstituteNameByID(ctx, fullCourse.Course.ResponsibleInstituteID)
+	isAllocDone := fullCourse.CourseInstance.GroupsNeeded-*fullCourse.CourseInstance.GroupsTaken == 0
 	pi := &sharedContent.PI{
-		AllocationStatus: (*string)(fullCourse.Instance.PIAllocationStatus),
+		AllocationStatus: (*string)(fullCourse.CourseInstance.PIAllocationStatus),
 		ProfileData:      piFaculty,
 	}
 	ti := &sharedContent.PI{
-		AllocationStatus: (*string)(fullCourse.Instance.PIAllocationStatus),
+		AllocationStatus: (*string)(fullCourse.CourseInstance.PIAllocationStatus),
 		ProfileData:      tiFaculty,
 	}
 	var offname *string
-	if fullCourse.Cours.OfficialName == nil {
+	if fullCourse.Course.OfficialName == nil {
 		emptyStr := ""
 		offname = &emptyStr
 	} else {
-		offname = fullCourse.Cours.OfficialName
+		offname = fullCourse.Course.OfficialName
 	}
 	courseObj := &sharedContent.Course{
-		InstanceID:           &fullCourse.Instance.InstanceID,
-		BriefName:            &fullCourse.Cours.Name,
+		InstanceID:           &fullCourse.CourseInstance.InstanceID,
+		BriefName:            &fullCourse.Course.Name,
 		OfficialName:         offname,
 		AcademicYearName:     academicYearName,
 		SemesterName:         semesterName,
@@ -537,13 +537,13 @@ func (h *Handler) CombineCourseCard(w http.ResponseWriter, err error, ctx contex
 		InstituteName:        instituteObj,
 		Tracks:               fullCourse.Tracks,
 		IsAllocationFinished: &isAllocDone,
-		Mode:                 (*string)(fullCourse.Instance.Mode),
-		Year:                 &fullCourse.Instance.Year,
-		Form:                 (*string)(fullCourse.Instance.Form),
-		LectureHours:         fullCourse.Cours.LecHours,
-		LabHours:             fullCourse.Cours.LabHours,
-		GroupsNeeded:         &fullCourse.Instance.GroupsNeeded,
-		GroupsTaken:          fullCourse.Instance.GroupsTaken,
+		Mode:                 (*string)(fullCourse.CourseInstance.Mode),
+		Year:                 &fullCourse.CourseInstance.Year,
+		Form:                 (*string)(fullCourse.CourseInstance.Form),
+		LectureHours:         fullCourse.Course.LecHours,
+		LabHours:             fullCourse.Course.LabHours,
+		GroupsNeeded:         &fullCourse.CourseInstance.GroupsNeeded,
+		GroupsTaken:          fullCourse.CourseInstance.GroupsTaken,
 		PI:                   *pi,
 		TI:                   *ti,
 		TAs:                  tas,

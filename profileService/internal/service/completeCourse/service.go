@@ -89,3 +89,35 @@ func (s *Service) GetFullCourseInfoByID(ctx context.Context, instanceID int64) (
 	)
 	return fullCourse, nil
 }
+func (s *Service) AddFullCourse(ctx context.Context, fullcourse *CompleteCourse.FullCourse) error {
+	err := s.courseService.AddCourse(ctx, &fullcourse.Course)
+	if err != nil {
+		s.logger.Error("Error adding course",
+			zap.String("layer", logctx.LogServiceLayer),
+			zap.String("function", logctx.LogAddFullCourse),
+			zap.Error(err),
+		)
+		return err
+	}
+	s.logger.Info("Added course successfully")
+	err = s.instanceService.AddCourseInstance(ctx, &fullcourse.CourseInstance)
+	if err != nil {
+		s.logger.Error("Error adding courseInstance",
+			zap.String("layer", logctx.LogServiceLayer),
+			zap.String("function", logctx.LogAddFullCourse),
+			zap.Error(err),
+		)
+		return err
+	}
+	s.logger.Info("Added course instance successfully")
+	for _, track := range fullcourse.Tracks {
+		ID, err := s.trackService.GetTrackIDByName(ctx, *track)
+		if err != nil {
+			s.logger.Error("error seeking track by name",
+				zap.String("layer", logctx.LogServiceLayer),
+				zap.String("function", logctx.LogAddFullCourse),
+				zap.Error(err))
+			continue
+		}
+	}
+}

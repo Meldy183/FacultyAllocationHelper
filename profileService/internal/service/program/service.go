@@ -3,6 +3,7 @@ package program
 import (
 	"context"
 	"fmt"
+
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/program"
 	programcourseinstance "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/programCourseInstance"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
@@ -24,7 +25,9 @@ func (s *Service) GetAllPrograms(ctx context.Context) ([]*program.Program, error
 func (s *Service) GetProgramNameByID(ctx context.Context, id int64) (*string, error) {
 	return s.programRepo.GetProgramNameByID(ctx, id)
 }
-
+func (s *Service) GetProgramIDByName(ctx context.Context, name string) (*int64, error) {
+	return s.programRepo.GetProgramIDByName(ctx, name)
+}
 func NewService(programRepo program.Repository, programCourseInstance programcourseinstance.Repository, logger *zap.Logger) *Service {
 	return &Service{
 		programRepo:       programRepo,

@@ -3,6 +3,7 @@ package responsibleInstitute
 import (
 	"context"
 	"fmt"
+
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/responsibleInstitute"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
 	"go.uber.org/zap"
@@ -17,6 +18,19 @@ type Service struct {
 
 func NewService(respInstRepo responsibleInstitute.Repository, logger *zap.Logger) *Service {
 	return &Service{respInstRepo: respInstRepo, logger: logger}
+}
+func (s *Service) GetResponsibleInstituteIDByName(ctx context.Context, name string) (*int64, error) {
+	id, err := s.respInstRepo.GetResponsibleInstituteIDByName(ctx, name)
+	if err != nil {
+		s.logger.Error("Error getting responsible_institute name",
+			zap.String("layer", logctx.LogServiceLayer),
+			zap.String("function", logctx.LogGetResponsibleInstituteIDByName),
+			zap.String("instituteName", name),
+			zap.Error(err),
+		)
+		return nil, fmt.Errorf("error getting responsible_institute name: %v", err)
+	}
+	return id, err
 }
 
 func (s *Service) GetResponsibleInstituteNameByID(ctx context.Context, instituteID int64) (*string, error) {
