@@ -56,6 +56,7 @@ func (s *Service) AddFullUser(ctx context.Context, fulluser *CompleteUser.FullUs
 		return err
 	}
 	s.logger.Info("Added user successfully")
+	fulluser.UserProfileVersion.ProfileID = fulluser.UserProfile.ProfileID
 	err = s.profileVersionService.AddProfileVersion(ctx, &fulluser.UserProfileVersion)
 	if err != nil {
 		s.logger.Error("Error adding user profile version",
@@ -65,7 +66,6 @@ func (s *Service) AddFullUser(ctx context.Context, fulluser *CompleteUser.FullUs
 		)
 		return err
 	}
-	fulluser.UserProfileVersion.ProfileID = fulluser.UserProfile.ProfileID
 	s.logger.Info("Added user version successfully")
 	for _, institute := range fulluser.Institutes {
 		instituteID, err := s.instituteService.GetInstituteIDByName(ctx, *institute)
