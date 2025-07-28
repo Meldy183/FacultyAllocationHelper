@@ -12,6 +12,5 @@ type UserProfile struct {
 	Alias       string
 	StartDate   *time.Time
 	EndDate     *time.Time
-	Fsro        *string
 	Status      *string
 }
