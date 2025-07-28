@@ -113,6 +113,7 @@ func (s *Service) AddFullCourse(ctx context.Context, fullcourse *CompleteCourse.
 		return err
 	}
 	s.logger.Info("Added course successfully")
+	fullcourse.CourseInstance.CourseID = fullcourse.Course.CourseID
 	err = s.instanceService.AddCourseInstance(ctx, &fullcourse.CourseInstance)
 	if err != nil {
 		s.logger.Error("Error adding courseInstance",
