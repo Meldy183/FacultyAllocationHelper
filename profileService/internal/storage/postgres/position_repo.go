@@ -3,6 +3,7 @@ package postgres
 import (
 	"context"
 	"fmt"
+
 	"github.com/jackc/pgx/v5/pgxpool"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/position"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
@@ -21,10 +22,33 @@ func NewPositionRepo(pool *pgxpool.Pool, logger *zap.Logger) *PositionRepo {
 }
 
 const (
-	queryGetPositionByID = `SELECT name FROM position WHERE position_id = $1`
-	queryGetAllPositions = `SELECT position_id FROM position`
+	queryGetPositionByID     = `SELECT name FROM position WHERE position_id = $1`
+	queryGetAllPositions     = `SELECT position_id FROM position`
+	queryGetPositionIDByName = `SELECT position_id FROM position WHERE name = $1`
 )
 
+func (r *PositionRepo) GetPositionIDByName(ctx context.Context, name string) (*int64, error) {
+	row := r.pool.QueryRow(ctx, queryGetPositionIDByName, name)
+	var posID int64
+	err := row.Scan(
+		&posID,
+	)
+	if err != nil {
+		r.logger.Error("Error getting posName",
+			zap.String("layer", logctx.LogRepoLayer),
+			zap.String("function", logctx.LogGetPositionByID),
+			zap.String("position name", name),
+			zap.Error(err),
+		)
+		return nil, fmt.Errorf("error getting posName: %w", err)
+	}
+	r.logger.Info("Successfully got position ID by name",
+		zap.String("layer", logctx.LogRepoLayer),
+		zap.String("function", logctx.LogGetPositionByID),
+		zap.String("position name", name),
+	)
+	return &posID, nil
+}
 func (r *PositionRepo) GetPositionByID(ctx context.Context, positionID int64) (*string, error) {
 	row := r.pool.QueryRow(ctx, queryGetPositionByID, positionID)
 	var posName string

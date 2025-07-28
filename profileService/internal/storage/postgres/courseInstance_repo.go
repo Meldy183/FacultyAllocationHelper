@@ -3,6 +3,7 @@ package postgres
 import (
 	"context"
 	"fmt"
+
 	"github.com/jackc/pgx/v5/pgxpool"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/courseInstance"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
@@ -37,9 +38,8 @@ const (
 
 	queryUpdateCourseInstanceByID = `
 		UPDATE course_instance
-		SET brief_name = $1, official_name = $2,
-		    responsible_institute_id = $3, lec_hours = $4, lab_hours = $5
-		WHERE course_instance_id = $6
+		SET semester_id = $1, academic_year_id = $2, mode = $3, hardness_coefficient = $4, form = $5, groups_needed = $6
+		WHERE course_instance_id = $7
 	`
 
 	queryGetInstancesByInstituteIDs = `
@@ -64,7 +64,8 @@ const (
 
 	queryGetInstancesByProgramIDs = `
 		SELECT ci.instance_id
-		FROM program_course_instance pci JOIN course_instance ci ON pci.instance_id = ci.instance_id
+		FROM program_course_instance pci 
+		JOIN course_instance ci ON pci.instance_id = ci.instance_id
 		WHERE pci.program_id = ANY($1)
 		ORDER BY ci.instance_id;
 	`
@@ -204,19 +205,15 @@ func (r *CourseInstanceRepo) AddNewCourseInstance(ctx context.Context, courseIns
 	return nil
 }
 
-func (r *CourseInstanceRepo) UpdateCourseInstanceByID(ctx context.Context, courseInstance *courseInstance.CourseInstance) error {
+func (r *CourseInstanceRepo) UpdateCourseInstanceByID(ctx context.Context, id int64, courseInstance *courseInstance.CourseInstance) error {
 	_, err := r.pool.Exec(ctx, queryUpdateCourseInstanceByID,
-		courseInstance.CourseID,
 		courseInstance.SemesterID,
-		courseInstance.Year,
-		courseInstance.Mode,
 		courseInstance.AcademicYearID,
+		courseInstance.Mode,
 		courseInstance.HardnessCoefficient,
 		courseInstance.Form,
 		courseInstance.GroupsNeeded,
-		courseInstance.GroupsTaken,
-		courseInstance.PIAllocationStatus,
-		courseInstance.TIAllocationStatus,
+		id,
 	)
 	if err != nil {
 		r.logger.Error("Error editing courseInstance",

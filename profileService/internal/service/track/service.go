@@ -3,6 +3,7 @@ package track
 import (
 	"context"
 	"fmt"
+
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/track"
 	trackcourseinstance "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/trackCourseInstance"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
@@ -48,6 +49,18 @@ func (s *Service) GetTrackNameByID(ctx context.Context, trackID int64) (*string,
 		return nil, fmt.Errorf("error getting track name: %w", err)
 	}
 	return trackName, nil
+}
+func (s *Service) GetTrackIDByName(ctx context.Context, trackName string) (*int64, error) {
+	trackID, err := s.trackRepo.GetTrackIDByName(ctx, trackName)
+	if err != nil {
+		s.logger.Error("Error getting track name",
+			zap.String("layer", logctx.LogServiceLayer),
+			zap.String("function", logctx.LogGetTrackNameByID),
+			zap.Error(err),
+		)
+		return nil, fmt.Errorf("error getting track name: %w", err)
+	}
+	return trackID, nil
 }
 func (s *Service) GetTracksOfCourseByInstanceID(ctx context.Context, instanceID int64) ([]int64, error) {
 	tracks, err := s.trackInstanceRepo.GetTracksIDsOfCourseByInstanceID(ctx, instanceID)

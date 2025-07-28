@@ -101,4 +101,11 @@ const (
 	LogGetAllAcademicYears               = "allAcademicYears"
 	LogGetAllSemesters                   = "GetAllSemesters"
 	LogGetLabByID                        = "getLabByID"
+	LogGetProgramIDByName                = "getProgramIDByName"
+	LogGetTrackIDByName                  = "getTrackIDByName"
+	LogGetResponsibleInstituteIDByName   = "getResponsibleInstituteIDByName"
+	LogAddFullCourse                     = "addFullCourse"
+	LogAddFullUser                       = "addFullUser"
+	LogGetInstituteIDByName              = "getInstituteIDByName"
+	LogGetCodeByLanguageName             = "getCodeByLanguageName"
 )

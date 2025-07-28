@@ -3,6 +3,7 @@ package postgres
 import (
 	"context"
 	"fmt"
+
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
 
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -22,10 +23,31 @@ func NewInstituteRepo(pool *pgxpool.Pool, logger *zap.Logger) *InstituteRepo {
 }
 
 const (
-	queryGetByID = `SELECT institute_id, name FROM institute WHERE institute_id = $1`
-	queryGetAll  = `SELECT institute_id, name FROM institute`
+	queryGetByID     = `SELECT institute_id, name FROM institute WHERE institute_id = $1`
+	queryGetAll      = `SELECT institute_id, name FROM institute`
+	queryGetIDByName = `SELECT institute_id FROM institute WHERE name = $1`
 )
 
+func (r *InstituteRepo) GetInstituteIDByName(ctx context.Context, instituteName string) (*int64, error) {
+	row := r.pool.QueryRow(ctx, queryGetIDByName, instituteName)
+	var instituteID int64
+	err := row.Scan(&instituteID)
+	if err != nil {
+		r.logger.Error("Error getting instituteID",
+			zap.String("layer", logctx.LogRepoLayer),
+			zap.String("function", logctx.LogGetInstituteIDByName),
+			zap.String("instituteName", instituteName),
+			zap.Error(err),
+		)
+		return nil, fmt.Errorf("error getting instituteByID: %w", err)
+	}
+	r.logger.Info("Successfully got instituteID",
+		zap.String("layer", logctx.LogRepoLayer),
+		zap.String("function", logctx.LogGetInstituteIDByName),
+		zap.Int64("instituteID", instituteID),
+	)
+	return &instituteID, nil
+}
 func (r *InstituteRepo) GetInstituteByID(ctx context.Context, instituteID int64) (*institute.Institute, error) {
 	row := r.pool.QueryRow(ctx, queryGetByID, instituteID)
 	var instituteByID institute.Institute
