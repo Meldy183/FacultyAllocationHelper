@@ -3,18 +3,25 @@ package main
 import (
 	"context"
 	"fmt"
+	httpNet "net/http"
+	"time"
+
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/config"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/handler/courses"
 	userprofile2 "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/handler/facultyProfile"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/handler/filters"
+	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/handler/parse"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/http"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/academicYear"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/completeCourse"
+	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/completeUser"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/course"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/courseInstance"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/facultyProfile"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/institute"
+	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/language"
+	Parsing "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/parsing"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/position"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/profileCourseInstance"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/profileInstitute"
@@ -31,8 +38,6 @@ import (
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/storage/db"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/storage/postgres"
 	"go.uber.org/zap"
-	httpNet "net/http"
-	"time"
 )
 
 func main() {
@@ -79,6 +84,7 @@ func main() {
 	profileInstituteRepo := postgres.NewUserInstituteRepo(pool, logger)
 	profileCourseInstanceRepo := postgres.NewUserCourseInstance(pool, logger)
 	positionRepo := postgres.NewPositionRepo(pool, logger)
+	languageRepo := postgres.NewLanguageRepo(pool, logger)
 	instituteRepo := postgres.NewInstituteRepo(pool, logger)
 	profileVersionRepo := postgres.NewUserProfileVersionRepo(pool, logger)
 	workloadRepo := postgres.NewSemesterWorkloadRepo(pool, logger)
@@ -97,21 +103,24 @@ func main() {
 	profileLanguageService := profileLanguage.NewService(profileLanguageRepo, logger)
 	userCourseInstanceService := profileCourseInstance.NewService(profileCourseInstanceRepo, logger)
 	positionService := position.NewService(positionRepo, logger)
+	profileInstituteService := profileInstitute.NewService(profileInstituteRepo, logger)
+	languageService := language.NewService(languageRepo, logger)
 	instituteService := institute.NewService(instituteRepo, logger)
 	profileVersionService := profileVersion.NewService(profileVersionRepo, logger)
 	workloadService := workload.NewService(workloadRepo, logger)
 	programService := program.NewService(programRepo, programCourseInstanceRepo, logger)
 	trackService := track.NewService(trackRepo, trackInstanceRepo, logger)
+	trackInstanceService := trackcourseinstance.NewService(trackInstanceRepo, logger)
+	programCourseInstanceService := programCourseInstance.NewService(programCourseInstanceRepo, logger)
 	courseInstanceService := courseInstance.NewService(courseInstanceRepo, logger)
 	courseService := course.NewService(courseRepo, logger)
-	fullCourseService := completeCourse.NewService(courseInstanceService, courseService, trackService, programService, logger)
+	fullCourseService := completeCourse.NewService(courseInstanceService, courseService, trackService, programService, logger, trackInstanceService, programCourseInstanceService)
+	fullUserService := completeUser.NewService(logger, profileService, profileVersionService, languageService, profileLanguageService, instituteService, profileInstituteService)
+	parseService := Parsing.NewService(logger, fullCourseService, fullUserService)
 	staffService := staff.NewStaffService(staffRepo, logger)
-	profileInstituteService := profileInstitute.NewService(profileInstituteRepo, logger)
 	academicYearService := academicYear.NewService(academicYearRepo, logger)
 	semesterService := semester.NewService(semesterRepo, logger)
 	responsibleInstituteService := responsibleInstitute.NewService(responsibleInstituteRepo, logger)
-	programCourseInstanceService := programCourseInstance.NewService(programCourseInstanceRepo, logger)
-	trackInstanceService := trackcourseinstance.NewService(trackInstanceRepo, logger)
 	facultyHandler := userprofile2.NewHandler(
 		profileService,
 		profileInstituteRepo,
@@ -149,7 +158,11 @@ func main() {
 		responsibleInstituteService,
 		logger,
 	)
-	router := http.NewRouter(facultyHandler, courseHandler, filtersHandler)
+	parsingHandler := parse.NewHandler(
+		logger,
+		parseService,
+	)
+	router := http.NewRouter(facultyHandler, courseHandler, filtersHandler, parsingHandler)
 	server := httpNet.Server{
 		Addr:         cfg.Server.Host + ":" + cfg.Server.Port,
 		Handler:      router,
