@@ -33,7 +33,7 @@ services:
     ports:
       - "8081:8081"
     env_file:
-      - profileService/.env
+      - db.env
     depends_on:
       auth-db:
         condition: service_healthy
@@ -43,8 +43,6 @@ services:
     build: 
       context: ./fah-frontend
       dockerfile: Dockerfile
-      args:
-        - NEXT_PUBLIC_BASE_API=${NEXT_PUBLIC_BASE_API}
     ports:
       - "3000:3000"
 
@@ -54,7 +52,7 @@ services:
       - parsing_service
     
     env_file:
-      - profileService/.env
+      - db.env
     networks:
       - fah
   parsing_service:
@@ -73,7 +71,7 @@ services:
     env_file:
       - profileService/.env
     volumes:
-      - db-data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
     healthcheck:
@@ -86,14 +84,14 @@ services:
     networks:
       - fah
   db:
-    image: postgres:15
-    container_name: db
+    image: postgres:latest
+    container_name: profile_db
     env_file:
-      - db.env
+      - ./profileService/.env
     ports:
       - "5433:5432"
     volumes:
-      - db-data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U user"]
       interval: 10s
@@ -115,8 +113,8 @@ services:
       - db
       - parsing_service
     env_file:
-      - db.env
+      - ./profileService/.env
     networks:
       - fah
 volumes:
-  db-data:
+  postgres_data:
