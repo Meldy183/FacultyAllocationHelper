@@ -3,6 +3,7 @@ package position
 import (
 	"context"
 	"fmt"
+
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/position"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
 	"go.uber.org/zap"
@@ -18,7 +19,24 @@ type Service struct {
 func NewService(repo position.Repository, logger *zap.Logger) *Service {
 	return &Service{repo: repo, logger: logger}
 }
-
+func (s *Service) GetPositionIDByName(ctx context.Context, positionName string) (*int64, error) {
+	positionID, err := s.repo.GetPositionIDByName(ctx, positionName)
+	if err != nil {
+		s.logger.Error("failed to retrieve positionID by Name",
+			zap.String("layer", logctx.LogServiceLayer),
+			zap.String("function", logctx.LogGetPositionByID),
+			zap.String("positionName", positionName),
+			zap.Error(err),
+		)
+		return nil, err
+	}
+	s.logger.Info("Successfully retrieved positionID: ",
+		zap.String("layer", logctx.LogServiceLayer),
+		zap.String("function", logctx.LogGetPositionIDByName),
+		zap.String("positionName", positionName),
+	)
+	return positionID, nil
+}
 func (s *Service) GetPositionByID(ctx context.Context, positionID int64) (*string, error) {
 	if positionID <= 0 || positionID > 7 {
 		s.logger.Error("position_id is invalid",

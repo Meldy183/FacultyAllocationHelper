@@ -5,9 +5,13 @@ import (
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/handler/courses"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/handler/facultyProfile"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/handler/filters"
+	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/handler/parse"
 )
 
-func NewRouter(facultyHandler *facultyProfile.Handler, coursesHandler *courses.Handler, filtersHandler *filters.Handler) chi.Router {
+func NewRouter(facultyHandler *facultyProfile.Handler,
+	coursesHandler *courses.Handler,
+	filtersHandler *filters.Handler,
+	parsigHandler *parse.Handler) chi.Router {
 	r := chi.NewRouter()
 	r.Route("/", func(r chi.Router) {
 		r.Route("/profile", func(r chi.Router) {
@@ -18,6 +22,9 @@ func NewRouter(facultyHandler *facultyProfile.Handler, coursesHandler *courses.H
 		})
 		r.Route("/filter", func(r chi.Router) {
 			filters.RegisterRoutes(r, filtersHandler)
+		})
+		r.Route("/parsing", func(r chi.Router) {
+			parse.RegisterRoutes(r, parsigHandler)
 		})
 	})
 

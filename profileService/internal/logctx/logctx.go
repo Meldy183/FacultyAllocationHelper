@@ -108,4 +108,9 @@ const (
 	LogAddFullUser                       = "addFullUser"
 	LogGetInstituteIDByName              = "getInstituteIDByName"
 	LogGetCodeByLanguageName             = "getCodeByLanguageName"
+	LogParse                             = "parse"
+	LogParseUser                         = "parseUser"
+	LogParseCourse                       = "parseCourse"
+	LogGetPositionIDByName               = "getPositionIDByName"
+	LogParseExcel                        = "parseExcel"
 )
