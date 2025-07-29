@@ -1,13 +1,13 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { API_PATH } from "@/shared/configs/constants/api/paths";
-import { GetFiltersType } from "@/shared/types/api/profile";
-import { GetCourseFilterProcess, RawFiltersResponse } from "@/shared/types/api/filters";
+import { GetFacultyFiltersProcessType } from "@/shared/types/api/profile";
+import { GetCourseFilterProcess, RawFilters } from "@/shared/types/api/filters";
 import { transformRawFilters } from "@/shared/lib/transformFilter";
 
 export const filterSlice = createApi({
-  reducerPath: "api/filters",
+  reducerPath: "api/filter",
   baseQuery: fetchBaseQuery({
-    baseUrl: `${ API_PATH }/filter`,
+    baseUrl: `${ API_PATH }/filters`,
     credentials: "include"
   }),
   endpoints: (builder) => ({
@@ -17,17 +17,17 @@ export const filterSlice = createApi({
         method: "GET"
       })
     }),
-    getFilters: builder.query<GetFiltersType["responseBody"], GetFiltersType["requestQuery"]>({
+    getProfileFilters: builder.query<GetFacultyFiltersProcessType["responseBody"], GetFacultyFiltersProcessType["requestQuery"]>({
       query: () => ({
         url: "/profile",
         method: "GET",
       }),
-      transformResponse: (response: RawFiltersResponse) => transformRawFilters(response)
+      transformResponse: (response: RawFilters) => transformRawFilters(response)
     }),
   })
 })
 
 export const {
   useGetCourseFiltersQuery,
-  useGetFiltersQuery
+  useGetProfileFiltersQuery
 } = filterSlice;

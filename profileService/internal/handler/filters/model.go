@@ -20,6 +20,7 @@ type GetCourseFiltersResponse struct {
 
 type FiltersCourse struct {
 	Filters GetCourseFiltersResponse `json:"filters"`
+	
 }
 
 type FiltersFaculty struct {

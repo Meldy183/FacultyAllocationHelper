@@ -7,13 +7,13 @@ import { Label } from "@/shared/ui/label";
 import { Checkbox } from "@/shared/ui/checkbox";
 import { useAppDispatch, useAppSelector } from "@/features/store/hooks";
 import { toggleFilter } from "@/features/store/slices/filters/faculty";
-import { useGetFiltersQuery } from "@/features/api/slises/filters";
+import { useGetProfileFiltersQuery } from "@/features/api/slises/filters";
 
 const SideBarContent: React.FC = () => {
 	const filters = useAppSelector(state => state.facultyFilters.filters);
 	const dispatcher = useAppDispatch();
 
-	const { data, isError } = useGetFiltersQuery({});
+	const { data, isError } = useGetProfileFiltersQuery({});
 
 	const toggleFilters = (filterGroupName: string, filter: FilterItem) => {
 		dispatcher(toggleFilter({
