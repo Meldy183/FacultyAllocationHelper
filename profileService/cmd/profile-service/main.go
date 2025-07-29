@@ -114,7 +114,7 @@ func main() {
 	programCourseInstanceService := programCourseInstance.NewService(programCourseInstanceRepo, logger)
 	courseInstanceService := courseInstance.NewService(courseInstanceRepo, logger)
 	courseService := course.NewService(courseRepo, logger)
-	fullCourseService := completeCourse.NewService(courseInstanceService, courseService, trackService, programService, logger, trackInstanceService, programCourseInstanceService)
+	fullCourseService := completeCourse.NewService(courseInstanceService, courseService, trackService, programService, trackInstanceService, programCourseInstanceService, logger)
 	fullUserService := completeUser.NewService(logger, profileService, profileVersionService, languageService, profileLanguageService, instituteService, profileInstituteService)
 	parseService := Parsing.NewService(logger, fullCourseService, fullUserService)
 	staffService := staff.NewStaffService(staffRepo, logger)
@@ -188,5 +188,3 @@ func initLogger() (*zap.Logger, error) {
 	}
 	return logger, nil
 }
-
-// try4
