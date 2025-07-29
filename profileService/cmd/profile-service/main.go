@@ -104,7 +104,6 @@ func main() {
 	trackService := track.NewService(trackRepo, trackInstanceRepo, logger)
 	courseInstanceService := courseInstance.NewService(courseInstanceRepo, logger)
 	courseService := course.NewService(courseRepo, logger)
-	fullCourseService := completeCourse.NewService(courseInstanceService, courseService, trackService, programService, logger)
 	staffService := staff.NewStaffService(staffRepo, logger)
 	profileInstituteService := profileInstitute.NewService(profileInstituteRepo, logger)
 	academicYearService := academicYear.NewService(academicYearRepo, logger)
@@ -112,6 +111,8 @@ func main() {
 	responsibleInstituteService := responsibleInstitute.NewService(responsibleInstituteRepo, logger)
 	programCourseInstanceService := programCourseInstance.NewService(programCourseInstanceRepo, logger)
 	trackInstanceService := trackcourseinstance.NewService(trackInstanceRepo, logger)
+	fullCourseService := completeCourse.NewService(courseInstanceService, courseService, trackService, programService,
+		trackInstanceService, programCourseInstanceService, logger)
 	facultyHandler := userprofile2.NewHandler(
 		profileService,
 		profileInstituteRepo,

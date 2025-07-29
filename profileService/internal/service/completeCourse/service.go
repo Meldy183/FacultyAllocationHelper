@@ -32,9 +32,9 @@ func NewService(instance courseInstance.Service,
 	course course.Service,
 	track track.Service,
 	program program.Service,
-	logger *zap.Logger,
 	trackInstance trackcourseinstance.Service,
-	programInstance programcourseinstance.Service) *Service {
+	programInstance programcourseinstance.Service,
+	logger *zap.Logger) *Service {
 	return &Service{
 		instanceService:       instance,
 		courseService:         course,
