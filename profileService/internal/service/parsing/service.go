@@ -25,11 +25,19 @@ type Service struct {
 	completeUserService   CompleteUser.Service
 	completeCourseService CompleteCourse.Service
 	positionService       position.Service
-	respInstituteSerice   responsibleInstitute.Service
+	respInstituteService  responsibleInstitute.Service
 }
 
-func NewService(logger *zap.Logger, completeCourseService CompleteCourse.Service, completeUserService CompleteUser.Service) *Service {
-	return &Service{logger: logger, completeUserService: completeUserService, completeCourseService: completeCourseService}
+func NewService(logger *zap.Logger,
+	completeCourseService CompleteCourse.Service,
+	completeUserService CompleteUser.Service,
+	positionService position.Service,
+	respInstituteService responsibleInstitute.Service) *Service {
+	return &Service{logger: logger,
+		completeUserService:   completeUserService,
+		completeCourseService: completeCourseService,
+		positionService:       positionService,
+		respInstituteService:  respInstituteService}
 }
 func (s *Service) Parse(ctx context.Context, file *multipart.File) error {
 	f, err := excelize.OpenReader(*file)
@@ -183,12 +191,13 @@ func (s *Service) parseCourses(courses [][]string, ctx context.Context, studyyea
 					course.Course.LecHours = &labratoryhours
 				case 28:
 					st := strings.ReplaceAll(cells, ".", "/")
-					intstituteID, err := s.respInstituteSerice.GetResponsibleInstituteIDByName(ctx, st)
-					if err != nil {
+					intstituteID, err := s.respInstituteService.GetResponsibleInstituteIDByName(ctx, st)
+					if err != nil || intstituteID == nil {
 						s.logger.Error("unable to get responsible institute ID by name",
 							zap.String("layer", logctx.LogServiceLayer),
 							zap.String("function", logctx.LogParseCourse),
 							zap.Error(err))
+						continue
 					}
 					course.Course.ResponsibleInstituteID = *intstituteID
 				default:
@@ -196,7 +205,7 @@ func (s *Service) parseCourses(courses [][]string, ctx context.Context, studyyea
 				}
 
 			}
-			if *course.Course.OfficialName != "" {
+			if course.Course.OfficialName != nil {
 				switch course.CourseInstance.SemesterID {
 				case 2, 3:
 					course.CourseInstance.Year = int64(studyyear + 1)
@@ -225,11 +234,12 @@ func (s *Service) parseUsers(ctx context.Context, users [][]string) error {
 					person.UserProfile.RussianName = &cells
 				case 2:
 					positionID, err := s.positionService.GetPositionIDByName(ctx, cells)
-					if err != nil {
+					if err != nil || positionID == nil {
 						s.logger.Error("unable to parse get ID of position by name",
 							zap.String("layer", logctx.LogServiceLayer),
 							zap.String("function", logctx.LogParseUser),
 							zap.Error(err))
+						continue
 					}
 					person.UserProfileVersion.PositionID = *positionID
 				case 3:
@@ -283,6 +293,9 @@ func (s *Service) parseUsers(ctx context.Context, users [][]string) error {
 				default:
 					continue
 				}
+			}
+			if person.UserProfile.RussianName == nil {
+				continue
 			}
 			err := s.completeUserService.AddFullUser(ctx, &person)
 			if err != nil {

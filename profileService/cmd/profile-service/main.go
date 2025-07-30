@@ -106,6 +106,7 @@ func main() {
 	profileInstituteService := profileInstitute.NewService(profileInstituteRepo, logger)
 	languageService := language.NewService(languageRepo, logger)
 	instituteService := institute.NewService(instituteRepo, logger)
+	responsibleInstituteService := responsibleInstitute.NewService(responsibleInstituteRepo, logger)
 	profileVersionService := profileVersion.NewService(profileVersionRepo, logger)
 	workloadService := workload.NewService(workloadRepo, logger)
 	programService := program.NewService(programRepo, programCourseInstanceRepo, logger)
@@ -116,11 +117,10 @@ func main() {
 	courseService := course.NewService(courseRepo, logger)
 	fullCourseService := completeCourse.NewService(courseInstanceService, courseService, trackService, programService, trackInstanceService, programCourseInstanceService, logger)
 	fullUserService := completeUser.NewService(logger, profileService, profileVersionService, languageService, profileLanguageService, instituteService, profileInstituteService)
-	parseService := Parsing.NewService(logger, fullCourseService, fullUserService)
+	parseService := Parsing.NewService(logger, fullCourseService, fullUserService, positionService, responsibleInstituteService)
 	staffService := staff.NewStaffService(staffRepo, logger)
 	academicYearService := academicYear.NewService(academicYearRepo, logger)
 	semesterService := semester.NewService(semesterRepo, logger)
-	responsibleInstituteService := responsibleInstitute.NewService(responsibleInstituteRepo, logger)
 	facultyHandler := userprofile2.NewHandler(
 		profileService,
 		profileInstituteRepo,

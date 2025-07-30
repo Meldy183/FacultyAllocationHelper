@@ -21,7 +21,7 @@ func NewService(repo position.Repository, logger *zap.Logger) *Service {
 }
 func (s *Service) GetPositionIDByName(ctx context.Context, positionName string) (*int64, error) {
 	positionID, err := s.repo.GetPositionIDByName(ctx, positionName)
-	if err != nil {
+	if err != nil || positionID == nil {
 		s.logger.Error("failed to retrieve positionID by Name",
 			zap.String("layer", logctx.LogServiceLayer),
 			zap.String("function", logctx.LogGetPositionByID),
