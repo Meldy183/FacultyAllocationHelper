@@ -13,12 +13,10 @@ export type FiltersRequest = { [key: string]: string[] };
 export type GetCourseFilterProcess = {
 	requestParams: {},
 	responseBody: {
-		// filters: {
 		allocaion_not_finished: boolean,
 		academic_year: RawFilter[],
 		semester: RawFilter[],
 		study_program: RawFilter[],
 		institute: RawFilter[],
-		// }
 	}
 }
