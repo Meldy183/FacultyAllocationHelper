@@ -363,7 +363,7 @@ func (h *Handler) GetProfile(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) GetAllFaculties(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	instQuery := r.URL.Query()["institute_ids"]
+	instQuery := r.URL.Query()["institutes"]
 	year, err := strconv.ParseInt(r.URL.Query().Get("year"), 10, 64)
 	if err != nil {
 		h.logger.Error("error parsing year",
