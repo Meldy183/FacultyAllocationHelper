@@ -3,6 +3,7 @@ package db
 import (
 	"context"
 	"fmt"
+
 	"github.com/jackc/pgx/v5/pgxpool"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/config"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
@@ -214,7 +215,7 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 	)
 	query = `CREATE TABLE IF NOT EXISTS course (
     course_id SERIAL PRIMARY KEY,
-    name VARCHAR (50),
+    name VARCHAR (100),
 	official_name VARCHAR (100),
 	responsible_institute_id INT,
     lec_hours INTEGER,

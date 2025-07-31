@@ -32,7 +32,7 @@ responsible_institute WHERE responsible_institute_id = $1`
 )
 
 func (r *ResponsibleInstituteRepo) GetResponsibleInstituteIDByName(ctx context.Context, responsibleInstituteName string) (*int64, error) {
-	ID := r.pool.QueryRow(ctx, queryGetResponsibleInstituteNameByID, responsibleInstituteName)
+	ID := r.pool.QueryRow(ctx, queryGetResponsibleInstituteIDByName, responsibleInstituteName)
 	var responsibleInstituteID int64
 	err := ID.Scan(&responsibleInstituteID)
 	if err != nil {

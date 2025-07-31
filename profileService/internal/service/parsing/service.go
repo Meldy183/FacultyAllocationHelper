@@ -115,19 +115,26 @@ func (s *Service) parseCourses(courses [][]string, ctx context.Context, studyyea
 			if rows[0] != "факультатив" && rows[0] != "BS" && rows[0] != "MS" && rows[0] != "PhD" && rows[0] != "" {
 				yearsem := strings.Split(rows[0], "-")
 				var err error
-				year, err = strconv.Atoi(yearsem[0][len(yearsem[0])-1:])
-				if err != nil {
+				yearString := strings.Trim(yearsem[0], " ")
+				year, err = strconv.Atoi(yearString[len(yearString)-1:])
+				if err != nil && err != strconv.ErrSyntax {
 					s.logger.Error("unable to parse academic year",
 						zap.String("layer", logctx.LogServiceLayer),
 						zap.String("function", logctx.LogParseCourse),
+						zap.String("year string", yearString),
+						zap.Int("row", ind),
+						zap.String("fullcell", rows[0]),
 						zap.Error(err))
+					return err
 				}
-				semester, err = strconv.Atoi(yearsem[1][len(yearsem[1])-1:])
-				if err != nil {
+				semesterString := strings.Trim(yearsem[1], " ")
+				semester, err = strconv.Atoi(semesterString[len(semesterString)-1:])
+				if err != nil && err != strconv.ErrSyntax {
 					s.logger.Error("unable to parse semester",
 						zap.String("layer", logctx.LogServiceLayer),
 						zap.String("function", logctx.LogParseCourse),
 						zap.Error(err))
+					return err
 				}
 				continue
 			}
@@ -171,21 +178,25 @@ func (s *Service) parseCourses(courses [][]string, ctx context.Context, studyyea
 				//TODO: allocation
 				case 26:
 					lechours, err := strconv.Atoi(cells)
-					if err != nil {
+					if err != nil && cells != "" {
 						s.logger.Error("unable to parse lecture hours",
 							zap.String("layer", logctx.LogServiceLayer),
 							zap.String("function", logctx.LogParseCourse),
+							zap.String("cell", cells),
+							zap.Int("row index", ind),
 							zap.Error(err))
+						return err
 					}
 					lecturehours := int64(lechours)
 					course.Course.LecHours = &lecturehours
 				case 27:
 					labhours, err := strconv.Atoi(cells)
-					if err != nil {
+					if err != nil && cells != "" {
 						s.logger.Error("unable to parse labratory hours",
 							zap.String("layer", logctx.LogServiceLayer),
 							zap.String("function", logctx.LogParseCourse),
 							zap.Error(err))
+						return err
 					}
 					labratoryhours := int64(labhours)
 					course.Course.LecHours = &labratoryhours
@@ -251,11 +262,12 @@ func (s *Service) parseUsers(ctx context.Context, users [][]string) error {
 					person.UserProfileVersion.Mode = &cells
 				case 9:
 					mxload, err := strconv.Atoi(cells)
-					if err != nil {
+					if err != nil && cells != "" {
 						s.logger.Error("unable to convert maxloadd to integer",
 							zap.String("layer", logctx.LogServiceLayer),
 							zap.String("function", logctx.LogParseUser),
 							zap.Error(err))
+						return err
 					}
 					maxload := int64(mxload)
 					person.UserProfileVersion.MaxLoad = &maxload
