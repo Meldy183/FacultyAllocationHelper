@@ -6,11 +6,11 @@ type routeType = {
 export const routesAuth: routeType[] = [
 	{
 		routeName: "Registration",
-		routePath: "/registration"
+		routePath: "/auth/registration"
 	},
 	{
 		routeName: "Login",
-		routePath: "/login"
+		routePath: "/auth/login"
 	}
 ]
 
