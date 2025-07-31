@@ -19,7 +19,7 @@ func NewService(repo workload.Repository, logger *zap.Logger) *Service {
 	return &Service{repo: repo, logger: logger}
 }
 
-func (s *Service) GetSemesterWorkloadByVersionID(ctx context.Context, profileVersionID int64, semesterID int) (*workload.Workload, error) {
+func (s *Service) GetSemesterWorkloadByVersionID(ctx context.Context, profileVersionID int64, semesterID int64) (*workload.Workload, error) {
 	if semesterID < 1 || semesterID > 3 {
 		s.logger.Error(`semesterID must be between 1 and 3`,
 			zap.String("layer", logctx.LogServiceLayer),

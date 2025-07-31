@@ -3,6 +3,7 @@ package postgres
 import (
 	"context"
 	"fmt"
+
 	"github.com/jackc/pgx/v5/pgxpool"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/language"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
@@ -21,11 +22,12 @@ func NewLanguageRepo(pool *pgxpool.Pool, logger *zap.Logger) *LanguageRepo {
 }
 
 const (
-	queryGetLangByCode = `SELECT code, language_name FROM language WHERE code = $1`
-	queryGetAllLang    = `SELECT code, language_name FROM language`
+	queryGetLangByCode     = `SELECT code, language_name FROM language WHERE code = $1`
+	queryGetAllLang        = `SELECT code FROM language`
+	queryGetLangCodeByName = `SELECT code FROM language WHERE language_name = $1`
 )
 
-func (r *LanguageRepo) GetAllLanguages(ctx context.Context) ([]*language.Language, error) {
+func (r *LanguageRepo) GetAllLanguages(ctx context.Context) ([]string, error) {
 	rows, err := r.pool.Query(ctx, queryGetAllLang)
 	if err != nil {
 		r.logger.Error("failed to query all languages",
@@ -36,7 +38,7 @@ func (r *LanguageRepo) GetAllLanguages(ctx context.Context) ([]*language.Languag
 		return nil, fmt.Errorf("get all languages: %w", err)
 	}
 	defer rows.Close()
-	var languages []*language.Language
+	var languages []string
 	for rows.Next() {
 		if rows.Err() != nil {
 			r.logger.Error("failed to query all languages",
@@ -46,10 +48,10 @@ func (r *LanguageRepo) GetAllLanguages(ctx context.Context) ([]*language.Languag
 			)
 			return nil, fmt.Errorf("get all languages: %w", rows.Err())
 		}
-		var lang language.Language
+		var lang string
 		err := rows.Scan(
-			&lang.LanguageCode,
-			&lang.LanguageName)
+			&lang,
+		)
 		if err != nil {
 			r.logger.Error("failed to query all languages",
 				zap.String("layer", logctx.LogRepoLayer),
@@ -58,14 +60,35 @@ func (r *LanguageRepo) GetAllLanguages(ctx context.Context) ([]*language.Languag
 			)
 			return nil, fmt.Errorf("get all languages: %w", err)
 		}
-		languages = append(languages, &lang)
+		languages = append(languages, lang)
 	}
-	r.logger.Info("all languages returned",
+	r.logger.Info("all languages returned successfully",
+		zap.Strings("languages", languages),
 		zap.String("layer", logctx.LogRepoLayer),
 		zap.String("function", logctx.LogGetAllLanguages),
 		zap.Int("count", len(languages)),
 	)
 	return languages, nil
+}
+func (r *LanguageRepo) GetCodeByLanguageName(ctx context.Context, name string) (*string, error) {
+	row := r.pool.QueryRow(ctx, queryGetLangCodeByName, name)
+	var languageID string
+	err := row.Scan(&languageID)
+	if err != nil {
+		r.logger.Error("GetLanguageByCode",
+			zap.String("layer", logctx.LogRepoLayer),
+			zap.String("function", logctx.LogGetCodeByLanguageName),
+			zap.String("name", name),
+			zap.Error(err),
+		)
+		return nil, fmt.Errorf("GetLanguageByCode: %w", err)
+	}
+	r.logger.Info("GetLanguageByCode successfully retrieved",
+		zap.String("layer", logctx.LogRepoLayer),
+		zap.String("function", logctx.LogGetLanguageByCode),
+		zap.String("name", name),
+	)
+	return &languageID, nil
 }
 func (r *LanguageRepo) GetLanguageByCode(ctx context.Context, code string) (*language.Language, error) {
 	row := r.pool.QueryRow(ctx, queryGetLangByCode, code)
@@ -80,7 +103,7 @@ func (r *LanguageRepo) GetLanguageByCode(ctx context.Context, code string) (*lan
 		)
 		return nil, fmt.Errorf("GetLanguageByCode: %w", err)
 	}
-	r.logger.Info("GetLanguageByCode",
+	r.logger.Info("GetLanguageByCode successfully retrieved",
 		zap.String("layer", logctx.LogRepoLayer),
 		zap.String("function", logctx.LogGetLanguageByCode),
 		zap.String("code", code),

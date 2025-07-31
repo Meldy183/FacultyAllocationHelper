@@ -1,7 +1,7 @@
 package filters
 
 type FilterObj struct {
-	ID   int    `json:"id"`
+	ID   int64  `json:"id"`
 	Name string `json:"name"`
 }
 
@@ -14,15 +14,6 @@ type GetCourseFiltersResponse struct {
 	AllocationStatus []bool      `json:"allocation_not_finished"`
 	YearOfStudy      []FilterObj `json:"academic_year"`
 	Semester         []FilterObj `json:"semester"`
-	StudyProgram     []FilterObj `json:"position"`
+	StudyProgram     []FilterObj `json:"study_program"`
 	InstituteFilters []FilterObj `json:"institute"`
-}
-
-type FiltersCourse struct {
-	Filters GetCourseFiltersResponse `json:"filters"`
-	
-}
-
-type FiltersFaculty struct {
-	Filters GetFacultyFiltersResponse `json:"filters"`
 }

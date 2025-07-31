@@ -54,7 +54,7 @@ func (s *Service) AddCourse(ctx context.Context, course *course.Course) error {
 	err := s.repo.AddNewCourse(ctx, course)
 	if err != nil {
 		s.logger.Error(
-			"Invalid responsibleInstituteID",
+			"Error adding new course",
 			zap.String("layer", logctx.LogServiceLayer),
 			zap.String("function", logctx.LogAddNewCourse),
 		)
@@ -63,6 +63,31 @@ func (s *Service) AddCourse(ctx context.Context, course *course.Course) error {
 	s.logger.Info("new course created",
 		zap.String("layer", logctx.LogServiceLayer),
 		zap.String("function", logctx.LogAddNewCourse),
+	)
+	return nil
+}
+
+func (s *Service) UpdateCourseByID(ctx context.Context, id int64, course *course.Course) error {
+	if !responsibleInstituteIDValid(course.ResponsibleInstituteID) {
+		s.logger.Error(
+			"Invalid responsibleInstituteID",
+			zap.String("layer", logctx.LogServiceLayer),
+			zap.String("function", logctx.LogUpdateCourseByID),
+		)
+		return fmt.Errorf("invalid responsibleInstituteID: %v", course.ResponsibleInstituteID)
+	}
+	err := s.repo.UpdateCourseByID(ctx, id, course)
+	if err != nil {
+		s.logger.Error(
+			"Error updating course by id",
+			zap.String("layer", logctx.LogServiceLayer),
+			zap.String("function", logctx.LogUpdateCourseByID),
+		)
+		return fmt.Errorf("error creating new course: %v", err)
+	}
+	s.logger.Info("course updated",
+		zap.String("layer", logctx.LogServiceLayer),
+		zap.String("function", logctx.LogUpdateCourseByID),
 	)
 	return nil
 }

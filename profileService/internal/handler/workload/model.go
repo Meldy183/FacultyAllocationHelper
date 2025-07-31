@@ -8,9 +8,9 @@ type Stats struct {
 }
 
 type Classes struct {
-	Lec  int     `json:"lec_hours"`
-	Tut  int     `json:"tut_hours"`
-	Lab  int     `json:"lab_hours"`
-	Elec int     `json:"elective_hours"`
+	Lec  int64   `json:"lec_hours"`
+	Tut  int64   `json:"tut_hours"`
+	Lab  int64   `json:"lab_hours"`
+	Elec int64   `json:"elective_hours"`
 	Rate float64 `json:"rate"`
 }

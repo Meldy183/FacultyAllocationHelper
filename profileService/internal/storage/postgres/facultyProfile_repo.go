@@ -126,7 +126,7 @@ func (r *FacultyProfileRepo) UpdateProfileByID(ctx context.Context, userProfile 
 	return nil
 }
 
-func (r *FacultyProfileRepo) GetProfileIDsByInstituteIDs(ctx context.Context, instituteIDs []int) ([]int64, error) {
+func (r *FacultyProfileRepo) GetProfileIDsByInstituteIDs(ctx context.Context, instituteIDs []int64) ([]int64, error) {
 	rows, err := r.pool.Query(ctx, queryGetProfileIDsByInstituteIDs, instituteIDs)
 	if err != nil {
 		r.logger.Error("Error getting facultyProfile by instituteIDs",
@@ -168,7 +168,7 @@ func (r *FacultyProfileRepo) GetProfileIDsByInstituteIDs(ctx context.Context, in
 	)
 	return ids, nil
 }
-func (r *FacultyProfileRepo) GetProfileIDsByPositionIDs(ctx context.Context, positionIDs []int) ([]int64, error) {
+func (r *FacultyProfileRepo) GetProfileIDsByPositionIDs(ctx context.Context, positionIDs []int64) ([]int64, error) {
 	rows, err := r.pool.Query(ctx, queryGetProfileIDsByPositionIDs, positionIDs)
 	if err != nil {
 		r.logger.Error("Error getting facultyProfile by positionIDs",

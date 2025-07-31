@@ -44,7 +44,7 @@ const (
 `
 )
 
-func (r *ProfileVersionRepo) GetVersionByProfileID(ctx context.Context, profileID int64, year int) (*profileVersion.ProfileVersion, error) {
+func (r *ProfileVersionRepo) GetVersionByProfileID(ctx context.Context, profileID int64, year int64) (*profileVersion.ProfileVersion, error) {
 	row := r.pool.QueryRow(ctx, queryGetVersionByProfileID, profileID, year)
 	var version profileVersion.ProfileVersion
 	err := row.Scan(

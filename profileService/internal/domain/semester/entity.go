@@ -1,6 +1,6 @@
 package semester
 
 type Semester struct {
-	SemesterID int
+	SemesterID int64
 	Name       string
 }

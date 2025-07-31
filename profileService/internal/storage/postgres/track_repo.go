@@ -22,10 +22,32 @@ func NewTrackRepo(pool *pgxpool.Pool, logger *zap.Logger) *TrackRepo {
 }
 
 const (
-	queryGetTracNameByID = `SELECT track_id, name FROM track WHERE track_id = $1`
-	queryGetAllTracks    = `SELECT track_id, name FROM track`
+	queryGetTracNameByID  = `SELECT track_id, name FROM track WHERE track_id = $1`
+	queryGetAllTracks     = `SELECT track_id, name FROM track`
+	queryGetTrackIDByName = `SELECT track_id, name FROM track WHERE name = $1`
 )
 
+func (r *TrackRepo) GetTrackIDByName(ctx context.Context, name string) (*int64, error) {
+	row := r.pool.QueryRow(ctx, queryGetTrackIDByName, name)
+	var trackObj track.Track
+	err := row.Scan(&trackObj.TrackID, &trackObj.Name)
+	if err != nil {
+		r.logger.Error("failed to Get Track Name By ID",
+			zap.String("layer", logctx.LogRepoLayer),
+			zap.String("function", logctx.LogGetTrackIDByName),
+			zap.String("name", name),
+			zap.Error(err),
+		)
+		return nil, fmt.Errorf("GetLanguageByCode: %w", err)
+	}
+	r.logger.Info("successfully Got TrackName By ID",
+		zap.String("layer", logctx.LogRepoLayer),
+		zap.String("function", logctx.LogGetTrackIDByName),
+		zap.String("name", name),
+		zap.String("name", trackObj.Name),
+	)
+	return &trackObj.TrackID, nil
+}
 func (r *TrackRepo) GetTrackNameByID(ctx context.Context, id int64) (*string, error) {
 	row := r.pool.QueryRow(ctx, queryGetTracNameByID, id)
 	var trackObj track.Track
@@ -68,10 +90,10 @@ func (r *TrackRepo) GetAllTracks(ctx context.Context) ([]*track.Track, error) {
 			)
 			return nil, fmt.Errorf("get all tracks: %w", rows.Err())
 		}
-		var track track.Track
+		var trackObj track.Track
 		err := rows.Scan(
-			&track.TrackID,
-			&track.Name)
+			&trackObj.TrackID,
+			&trackObj.Name)
 		if err != nil {
 			r.logger.Error("failed to query all tracks",
 				zap.String("layer", logctx.LogRepoLayer),
@@ -80,7 +102,7 @@ func (r *TrackRepo) GetAllTracks(ctx context.Context) ([]*track.Track, error) {
 			)
 			return nil, fmt.Errorf("get all tracks: %w", err)
 		}
-		tracks = append(tracks, &track)
+		tracks = append(tracks, &trackObj)
 	}
 	r.logger.Info("all tracks returned",
 		zap.String("layer", logctx.LogRepoLayer),

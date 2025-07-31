@@ -5,12 +5,12 @@ import (
 )
 
 type AddProfileRequest struct {
-	NameEnglish  string `json:"name_eng"`
-	Email        string `json:"email"`
-	Alias        string `json:"alias"`
-	InstituteIDs []int  `json:"institute_id"`
-	PositionID   int    `json:"position_id"`
-	Year         int    `json:"year"`
+	NameEnglish  string  `json:"name_eng"`
+	Email        string  `json:"email"`
+	Alias        string  `json:"alias"`
+	InstituteIDs []int64 `json:"institute_ids"`
+	PositionID   int64   `json:"position_id"`
+	Year         int64   `json:"year"`
 }
 
 type AddProfileResponse struct {
@@ -20,12 +20,12 @@ type AddProfileResponse struct {
 	Alias            string   `json:"alias"`
 	InstituteNames   []string `json:"institute_names"`
 	PositionName     string   `json:"position_name"`
-	Year             int      `json:"year"`
+	Year             int64    `json:"year"`
 }
 
 type GetProfileResponse struct {
 	ProfileVersionID int64           `json:"profile_id"`
-	Year             int             `json:"year"`
+	Year             int64           `json:"year"`
 	NameEnglish      string          `json:"name_eng"`
 	NameRussian      *string         `json:"name_ru"`
 	Alias            string          `json:"alias"`
@@ -39,8 +39,8 @@ type GetProfileResponse struct {
 	EmploymentType   *string         `json:"employment_type"`
 	HiringStatus     *string         `json:"hiring_status"`
 	Mode             *string         `json:"mode"`
-	MaxLoad          *int            `json:"max_load"`
-	FrontalHours     *int            `json:"frontal_hours"`
+	MaxLoad          *int64          `json:"max_load"`
+	FrontalHours     *int64          `json:"frontal_hours"`
 	ExtraActivity    *float64        `json:"extra_activities"`
 	WorkloadStats    *workload.Stats `json:"workload_stats"`
 }
@@ -63,12 +63,12 @@ type ShortProfile struct {
 
 type EditProfileRequest struct {
 	ProfileVersionID int64   `json:"profile_id"`
-	Year             int     `json:"year"`
+	Year             int64   `json:"year"`
 	NameEng          string  `json:"name_eng"`
 	NameRu           string  `json:"name_ru"`
 	Alias            string  `json:"alias"`
 	Email            string  `json:"email"`
-	PositionID       int     `json:"position_id"`
+	PositionID       int64   `json:"position_id"`
 	InstituteIDs     *[]int  `json:"institute_id"`
 	StudentType      *string `json:"student_type"`
 	Degree           *bool   `json:"degree"`
@@ -81,7 +81,7 @@ type EditProfileRequest struct {
 
 type EditProfileResponse struct {
 	ProfileVersionID int64     `json:"profile_id"`
-	Year             int       `json:"year"`
+	Year             int64     `json:"year"`
 	NameEng          string    `json:"name_eng"`
 	NameRu           string    `json:"name_ru"`
 	Alias            string    `json:"alias"`

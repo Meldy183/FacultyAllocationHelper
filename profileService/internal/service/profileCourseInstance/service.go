@@ -47,7 +47,7 @@ func (s *Service) GetCourseInstancesByVersionID(ctx context.Context, profileVers
 	return ids, nil
 }
 
-func (s *Service) AddCourseInstance(ctx context.Context, instance *profileCourseInstance.ProfileCourseInstance) error {
+func (s *Service) AddCourseInstance(ctx context.Context, instance *profileCourseInstance.ProfileVersionCourseInstance) error {
 	if instance == nil {
 		s.logger.Error("instance cannot be nil",
 			zap.String("layer", logctx.LogServiceLayer),
@@ -60,7 +60,7 @@ func (s *Service) AddCourseInstance(ctx context.Context, instance *profileCourse
 		s.logger.Error("instance.CourseInstanceID must be positive",
 			zap.String("layer", logctx.LogServiceLayer),
 			zap.String("function", logctx.LogAddCourseInstance),
-			zap.Int("instance_id", instance.CourseInstanceID),
+			zap.Int64("instance_id", instance.CourseInstanceID),
 		)
 		return fmt.Errorf("instance.CourseInstanceID must be positive. Id: %d", instance.CourseInstanceID)
 	}
@@ -68,7 +68,7 @@ func (s *Service) AddCourseInstance(ctx context.Context, instance *profileCourse
 		s.logger.Error("instance.ProfileVersionID must be positive",
 			zap.String("layer", logctx.LogServiceLayer),
 			zap.String("function", logctx.LogAddCourseInstance),
-			zap.Int("instance_id", instance.ProfileVersionID),
+			zap.Int64("instance_id", instance.ProfileVersionID),
 		)
 		return fmt.Errorf("instance.ProfileVersionID must be positive. Id: %d", instance.ProfileVersionID)
 	}
@@ -76,7 +76,7 @@ func (s *Service) AddCourseInstance(ctx context.Context, instance *profileCourse
 		s.logger.Error("instance.ProfileCourseID must be positive",
 			zap.String("layer", logctx.LogServiceLayer),
 			zap.String("function", logctx.LogAddCourseInstance),
-			zap.Int("instance_id", instance.ProfileCourseID),
+			zap.Int64("instance_id", instance.ProfileCourseID),
 		)
 		return fmt.Errorf("instance.ProfileCourseID must be positive. Id: %d", instance.ProfileCourseID)
 	}
@@ -85,7 +85,7 @@ func (s *Service) AddCourseInstance(ctx context.Context, instance *profileCourse
 		s.logger.Error("Failed to add course instance",
 			zap.String("layer", logctx.LogServiceLayer),
 			zap.String("function", logctx.LogAddCourseInstance),
-			zap.Int("instance_id", instance.CourseInstanceID),
+			zap.Int64("instance_id", instance.CourseInstanceID),
 			zap.Error(err),
 		)
 		return fmt.Errorf("failed to add course instance %d: %v", instance.CourseInstanceID, err)

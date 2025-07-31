@@ -1,6 +1,6 @@
 package academicYear
 
 type AcademicYear struct {
-	YearID int
+	YearID int64
 	Name   string
 }

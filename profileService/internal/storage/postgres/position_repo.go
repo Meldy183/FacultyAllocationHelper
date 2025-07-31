@@ -3,10 +3,10 @@ package postgres
 import (
 	"context"
 	"fmt"
-	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/position"
+	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
 	"go.uber.org/zap"
 )
 
@@ -22,35 +22,57 @@ func NewPositionRepo(pool *pgxpool.Pool, logger *zap.Logger) *PositionRepo {
 }
 
 const (
-	queryGetPositionByID = `SELECT position_id, name FROM position WHERE position_id = $1`
-	queryGetAllPositions = `SELECT position_id, name FROM position`
+	queryGetPositionByID     = `SELECT name FROM position WHERE position_id = $1`
+	queryGetAllPositions     = `SELECT position_id FROM position`
+	queryGetPositionIDByName = `SELECT position_id FROM position WHERE name = $1`
 )
 
-func (r *PositionRepo) GetPositionByID(ctx context.Context, positionID int) (*string, error) {
-	row := r.pool.QueryRow(ctx, queryGetPositionByID, positionID)
-	var positionByID position.Position
+func (r *PositionRepo) GetPositionIDByName(ctx context.Context, name string) (*int64, error) {
+	row := r.pool.QueryRow(ctx, queryGetPositionIDByName, name)
+	var posID int64
 	err := row.Scan(
-		&positionByID.PositionID,
-		&positionByID.Name)
+		&posID,
+	)
 	if err != nil {
-		r.logger.Error("Error getting positionByID",
+		r.logger.Error("Error getting posName",
 			zap.String("layer", logctx.LogRepoLayer),
 			zap.String("function", logctx.LogGetPositionByID),
-			zap.Int("positionID", positionID),
+			zap.String("position name", name),
 			zap.Error(err),
 		)
-		return nil, fmt.Errorf("error getting positionByID: %w", err)
+		return nil, fmt.Errorf("error getting posName: %w", err)
 	}
-	r.logger.Info("Successfully got positionByID",
+	r.logger.Info("Successfully got position ID by name",
 		zap.String("layer", logctx.LogRepoLayer),
 		zap.String("function", logctx.LogGetPositionByID),
-		zap.Int("positionID", positionID),
+		zap.String("position name", name),
 	)
-	return &positionByID.Name, nil
+	return &posID, nil
+}
+func (r *PositionRepo) GetPositionByID(ctx context.Context, positionID int64) (*string, error) {
+	row := r.pool.QueryRow(ctx, queryGetPositionByID, positionID)
+	var posName string
+	err := row.Scan(
+		&posName,
+	)
+	if err != nil {
+		r.logger.Error("Error getting posName",
+			zap.String("layer", logctx.LogRepoLayer),
+			zap.String("function", logctx.LogGetPositionByID),
+			zap.Int64("positionID", positionID),
+			zap.Error(err),
+		)
+		return nil, fmt.Errorf("error getting posName: %w", err)
+	}
+	r.logger.Info("Successfully got position by ID",
+		zap.String("layer", logctx.LogRepoLayer),
+		zap.String("function", logctx.LogGetPositionByID),
+		zap.Int64("positionID", positionID),
+	)
+	return &posName, nil
 }
 
-func (r *PositionRepo) GetAllPositions(ctx context.Context) ([]*position.Position, error) {
-	r.logger.Info("Getting all positions")
+func (r *PositionRepo) GetAllPositions(ctx context.Context) ([]int64, error) {
 	rows, err := r.pool.Query(ctx, queryGetAllPositions)
 	if err != nil {
 		r.logger.Error("Error getting all positions",
@@ -61,12 +83,12 @@ func (r *PositionRepo) GetAllPositions(ctx context.Context) ([]*position.Positio
 		return nil, fmt.Errorf("error getting all positions: %w", err)
 	}
 	defer rows.Close()
-	var positions []*position.Position
+	var positions []int64
 	for rows.Next() {
-		var iterThroughPositions position.Position
+		var iterThroughPositions int64
 		err := rows.Scan(
-			&iterThroughPositions.PositionID,
-			&iterThroughPositions.Name)
+			&iterThroughPositions,
+		)
 		if err != nil {
 			r.logger.Error("Error getting all positions",
 				zap.String("layer", logctx.LogRepoLayer),
@@ -75,9 +97,9 @@ func (r *PositionRepo) GetAllPositions(ctx context.Context) ([]*position.Positio
 			)
 			return nil, fmt.Errorf("error getting all positions: %w", err)
 		}
-		positions = append(positions, &iterThroughPositions)
+		positions = append(positions, iterThroughPositions)
 	}
-	r.logger.Info("Finished getting all positions",
+	r.logger.Info("Successfully got all positions",
 		zap.String("layer", logctx.LogRepoLayer),
 		zap.String("function", logctx.LogGetAllPositions),
 		zap.Int64("positions", int64(len(positions))),

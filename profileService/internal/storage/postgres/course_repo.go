@@ -99,7 +99,7 @@ func (r *CourseRepo) AddNewCourse(ctx context.Context, course *course.Course) er
 	return nil
 }
 
-func (r *CourseRepo) UpdateCourseByID(ctx context.Context, course *course.Course) error {
+func (r *CourseRepo) UpdateCourseByID(ctx context.Context, id int64, course *course.Course) error {
 	_, err := r.pool.Exec(ctx, queryUpdateCourseByID,
 		course.Name,
 		course.OfficialName,
@@ -107,6 +107,7 @@ func (r *CourseRepo) UpdateCourseByID(ctx context.Context, course *course.Course
 		course.LecHours,
 		course.LabHours,
 		course.IsElective,
+		id,
 	)
 	if err != nil {
 		r.logger.Error("Error editing course",

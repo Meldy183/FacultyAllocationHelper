@@ -4,4 +4,4 @@ export const facultyPositions = [
 	"Teacher assistant"
 ]
 
-export const API_PATH = "/api";
+export const API_PATH = (process.env.NEXT_PUBLIC_BASE_API || "") + "/api";

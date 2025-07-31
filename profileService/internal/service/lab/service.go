@@ -19,7 +19,19 @@ func NewService(repo lab.Repository, logger *zap.Logger) *Service {
 	return &Service{repo: repo, logger: logger}
 }
 
-func (s *Service) GetLabsByInstituteID(ctx context.Context, instituteID int64) ([]*lab.Lab, error) {
+func (s *Service) GetLabByID(ctx context.Context, labID int64) (*lab.Lab, error) {
+	labObj, err := s.repo.GetLabByID(ctx, labID)
+	if err != nil {
+		s.logger.Info("Error getting labObj",
+			zap.String("layer", logctx.LogServiceLayer),
+			zap.String("function", logctx.LogGetLabByID),
+			zap.Error(err),
+		)
+	}
+	return labObj, err
+}
+
+func (s *Service) GetLabsByInstituteID(ctx context.Context, instituteID int64) ([]int64, error) {
 	labs, err := s.repo.GetLabsByInstituteID(ctx, instituteID)
 	if err != nil {
 		s.logger.Error("Error getting labs",
@@ -38,7 +50,7 @@ func (s *Service) GetLabsByInstituteID(ctx context.Context, instituteID int64) (
 	return labs, nil
 }
 
-func (s *Service) GetAllLabs(ctx context.Context) ([]*lab.Lab, error) {
+func (s *Service) GetAllLabs(ctx context.Context) ([]int64, error) {
 	labs, err := s.repo.GetAllLabs(ctx)
 	if err != nil {
 		s.logger.Error("Error getting labs",

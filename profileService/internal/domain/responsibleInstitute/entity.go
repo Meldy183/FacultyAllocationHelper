@@ -1,6 +1,6 @@
 package responsibleInstitute
 
 type ResponsibleInstitute struct {
-	ResponsibleInstituteID int
+	ResponsibleInstituteID int64
 	Name                   string
 }

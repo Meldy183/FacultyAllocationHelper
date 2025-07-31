@@ -11,12 +11,12 @@ type Course struct {
 	Tracks               []*string `json:"track_names"`
 	IsAllocationFinished *bool     `json:"allocation_finished"`
 	Mode                 *string   `json:"mode"`
-	Year                 *int      `json:"year"`
+	Year                 *int64    `json:"year"`
 	Form                 *string   `json:"form"`
-	LectureHours         *int      `json:"lecture_hours"`
-	LabHours             *int      `json:"lab_hours"`
-	GroupsNeeded         *int      `json:"groups_needed"`
-	GroupsTaken          *int      `json:"groups_taken"`
+	LectureHours         *int64    `json:"lecture_hours"`
+	LabHours             *int64    `json:"lab_hours"`
+	GroupsNeeded         *int64    `json:"groups_needed"`
+	GroupsTaken          *int64    `json:"groups_taken"`
 	PI                   PI        `json:"pi"`
 	TI                   PI        `json:"ti"`
 	TAs                  []Faculty `json:"tas"`

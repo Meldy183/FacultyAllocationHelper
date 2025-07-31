@@ -306,7 +306,7 @@ func (h *Handler) AddNewCourse(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusBadRequest, "Error getting responsible institute")
 		return
 	}
-	groupsTakenByDefault := 0
+	groupsTakenByDefault := int64(0)
 	resp.BriefName = courseObj.Name
 	resp.ResponsibleInstituteName = *responsibleInstituteName
 	courseInstanceObj := &courseInstance.CourseInstance{
@@ -369,7 +369,7 @@ func (h *Handler) AddNewCourse(w http.ResponseWriter, r *http.Request) {
 	for _, elem := range req.ProgramIDs {
 		pr := &programcourseinstance.ProgramCourseInstance{
 			ProgramID:        elem,
-			CourseInstanceID: int(courseInstanceObj.InstanceID),
+			CourseInstanceID: courseInstanceObj.InstanceID,
 		}
 		err := h.programInstance.AddProgramToCourseInstance(ctx, pr)
 		if err != nil {
@@ -396,7 +396,7 @@ func (h *Handler) AddNewCourse(w http.ResponseWriter, r *http.Request) {
 	resp.ProgramNames = programs
 	tracks := make([]string, 0)
 	for _, elem := range req.TrackIDs {
-		err := h.trackInstance.AddTracksToCourseInstance(ctx, int(courseInstanceObj.InstanceID), elem)
+		err := h.trackInstance.AddTracksToCourseInstance(ctx, courseInstanceObj.InstanceID, elem)
 		if err != nil {
 			h.logger.Error("Error adding track",
 				zap.String("layer", logctx.LogHandlerLayer),
@@ -508,28 +508,28 @@ func (h *Handler) CombineCourseCard(w http.ResponseWriter, err error, ctx contex
 		}
 		tas = append(tas, *facObj)
 	}
-	academicYearName, err := h.academicYearService.GetAcademicYearNameByID(ctx, int64(fullCourse.AcademicYearID))
-	semesterName, err := h.semesterService.GetSemesterNameByID(ctx, int64(fullCourse.SemesterID))
-	instituteObj, err := h.responsibleInstituteService.GetResponsibleInstituteNameByID(ctx, fullCourse.ResponsibleInstituteID)
-	isAllocDone := fullCourse.GroupsNeeded-*fullCourse.GroupsTaken == 0
+	academicYearName, err := h.academicYearService.GetAcademicYearNameByID(ctx, int64(fullCourse.CourseInstance.AcademicYearID))
+	semesterName, err := h.semesterService.GetSemesterNameByID(ctx, int64(fullCourse.CourseInstance.SemesterID))
+	instituteObj, err := h.responsibleInstituteService.GetResponsibleInstituteNameByID(ctx, fullCourse.Course.ResponsibleInstituteID)
+	isAllocDone := fullCourse.CourseInstance.GroupsNeeded-*fullCourse.CourseInstance.GroupsTaken == 0
 	pi := &sharedContent.PI{
-		AllocationStatus: (*string)(fullCourse.PIAllocationStatus),
+		AllocationStatus: (*string)(fullCourse.CourseInstance.PIAllocationStatus),
 		ProfileData:      piFaculty,
 	}
 	ti := &sharedContent.PI{
-		AllocationStatus: (*string)(fullCourse.PIAllocationStatus),
+		AllocationStatus: (*string)(fullCourse.CourseInstance.PIAllocationStatus),
 		ProfileData:      tiFaculty,
 	}
 	var offname *string
-	if fullCourse.OfficialName == nil {
+	if fullCourse.Course.OfficialName == nil {
 		emptyStr := ""
 		offname = &emptyStr
 	} else {
-		offname = fullCourse.OfficialName
+		offname = fullCourse.Course.OfficialName
 	}
 	courseObj := &sharedContent.Course{
-		InstanceID:           &fullCourse.InstanceID,
-		BriefName:            &fullCourse.Name,
+		InstanceID:           &fullCourse.CourseInstance.InstanceID,
+		BriefName:            &fullCourse.Course.Name,
 		OfficialName:         offname,
 		AcademicYearName:     academicYearName,
 		SemesterName:         semesterName,
@@ -537,13 +537,13 @@ func (h *Handler) CombineCourseCard(w http.ResponseWriter, err error, ctx contex
 		InstituteName:        instituteObj,
 		Tracks:               fullCourse.Tracks,
 		IsAllocationFinished: &isAllocDone,
-		Mode:                 (*string)(fullCourse.Mode),
-		Year:                 &fullCourse.Year,
-		Form:                 (*string)(fullCourse.Form),
-		LectureHours:         fullCourse.LecHours,
-		LabHours:             fullCourse.LabHours,
-		GroupsNeeded:         &fullCourse.GroupsNeeded,
-		GroupsTaken:          fullCourse.GroupsTaken,
+		Mode:                 (*string)(fullCourse.CourseInstance.Mode),
+		Year:                 &fullCourse.CourseInstance.Year,
+		Form:                 (*string)(fullCourse.CourseInstance.Form),
+		LectureHours:         fullCourse.Course.LecHours,
+		LabHours:             fullCourse.Course.LabHours,
+		GroupsNeeded:         &fullCourse.CourseInstance.GroupsNeeded,
+		GroupsTaken:          fullCourse.CourseInstance.GroupsTaken,
 		PI:                   *pi,
 		TI:                   *ti,
 		TAs:                  tas,

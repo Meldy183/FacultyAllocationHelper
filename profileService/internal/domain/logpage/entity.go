@@ -3,7 +3,7 @@ package logpage
 import "time"
 
 type LogPage struct {
-	LogPageID int
+	LogPageID int64
 	UserID    string
 	Action    string
 	SubjectID int64

@@ -2,15 +2,15 @@ package courseInstance
 
 type CourseInstance struct {
 	InstanceID          int64
-	Year                int
+	Year                int64
 	CourseID            int64
-	SemesterID          int
-	AcademicYearID      int
+	SemesterID          int64
+	AcademicYearID      int64
 	HardnessCoefficient *float64
 	Form                *Form
 	Mode                *Mode
-	GroupsNeeded        int
-	GroupsTaken         *int
+	GroupsNeeded        int64
+	GroupsTaken         *int64
 	PIAllocationStatus  *Status
 	TIAllocationStatus  *Status
 }

@@ -79,7 +79,7 @@ func (h *Handler) AddProfile(w http.ResponseWriter, r *http.Request) {
 	}
 	if req.PositionID <= 0 {
 		h.logger.Error("invalid position",
-			zap.Int("position_id", req.PositionID),
+			zap.Int64("position_id", req.PositionID),
 			zap.String("layer", logctx.LogHandlerLayer),
 			zap.String("function", logctx.LogAddProfile),
 		)
@@ -89,7 +89,7 @@ func (h *Handler) AddProfile(w http.ResponseWriter, r *http.Request) {
 	instituteIDs := req.InstituteIDs
 	if len(instituteIDs) <= 0 {
 		h.logger.Error("invalid institute",
-			zap.Int("institute_id", req.PositionID),
+			zap.Int64("institute_id", req.PositionID),
 			zap.String("layer", logctx.LogHandlerLayer),
 			zap.String("function", logctx.LogAddProfile),
 		)
@@ -99,7 +99,7 @@ func (h *Handler) AddProfile(w http.ResponseWriter, r *http.Request) {
 	for _, elem := range req.InstituteIDs {
 		if elem <= 0 {
 			h.logger.Error("invalid instituteID",
-				zap.Int("InstituteID", elem),
+				zap.Int64("InstituteID", elem),
 				zap.String("layer", logctx.LogHandlerLayer),
 				zap.String("function", logctx.LogAddProfile),
 			)
@@ -110,7 +110,7 @@ func (h *Handler) AddProfile(w http.ResponseWriter, r *http.Request) {
 
 	if req.Year < 2015 {
 		h.logger.Error("invalid year",
-			zap.Int("Year", req.Year),
+			zap.Int64("Year", req.Year),
 			zap.String("layer", logctx.LogHandlerLayer),
 			zap.String("function", logctx.LogAddProfile),
 		)
@@ -298,7 +298,7 @@ func (h *Handler) GetProfile(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusInternalServerError, "error getting facultyProfile")
 		return
 	}
-	languages, err := h.serviceLang.GetUserLanguages(ctx, version.ProfileID)
+	languages, err := h.serviceLang.GetProfileLanguages(ctx, version.ProfileID)
 	if err != nil {
 		h.logger.Error("error getting languages",
 			zap.String("layer", logctx.LogHandlerLayer),
@@ -311,7 +311,7 @@ func (h *Handler) GetProfile(w http.ResponseWriter, r *http.Request) {
 	var langEntries []Lang
 	for _, l := range languages {
 		langEntries = append(langEntries, Lang{
-			Language: l.LanguageName,
+			Language: l,
 		})
 	}
 
@@ -320,7 +320,7 @@ func (h *Handler) GetProfile(w http.ResponseWriter, r *http.Request) {
 		h.logger.Error("error getting position name by id",
 			zap.String("layer", logctx.LogHandlerLayer),
 			zap.String("function", logctx.LogGetProfileByID),
-			zap.Int("id", version.PositionID),
+			zap.Int64("id", version.PositionID),
 			zap.Error(err),
 		)
 		writeError(w, http.StatusInternalServerError, "error getting position by id")
@@ -364,7 +364,7 @@ func (h *Handler) GetProfile(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) GetAllFaculties(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	instQuery := r.URL.Query()["institute_ids"]
-	year, err := strconv.Atoi(r.URL.Query().Get("year"))
+	year, err := strconv.ParseInt(r.URL.Query().Get("year"), 10, 64)
 	if err != nil {
 		h.logger.Error("error parsing year",
 			zap.String("layer", logctx.LogHandlerLayer),
@@ -374,9 +374,9 @@ func (h *Handler) GetAllFaculties(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusBadRequest, "error parsing year")
 		return
 	}
-	var institutes []int
+	var institutes []int64
 	for _, elem := range instQuery {
-		id, err := strconv.Atoi(elem)
+		id, err := strconv.ParseInt(elem, 10, 64)
 		if err != nil {
 			h.logger.Error(
 				"Error converting query to int",
@@ -390,9 +390,9 @@ func (h *Handler) GetAllFaculties(w http.ResponseWriter, r *http.Request) {
 		institutes = append(institutes, id)
 	}
 	posQuery := r.URL.Query()["positions"]
-	var positions []int
+	var positions []int64
 	for _, elem := range posQuery {
-		pos, err := strconv.Atoi(elem)
+		pos, err := strconv.ParseInt(elem, 10, 64)
 		if err != nil {
 			h.logger.Error("error converting to int the position",
 				zap.String("layer", logctx.LogHandlerLayer),
