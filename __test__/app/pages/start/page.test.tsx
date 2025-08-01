@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import StartPage from '@/app/start/page';
+import StartPage from '@/app/(pages)/start/page';
 import { routesAuth } from '@/shared/configs/routes';
 import '@testing-library/jest-dom';
 

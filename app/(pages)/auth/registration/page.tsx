@@ -1,11 +1,11 @@
 import React from "react";
 import { Button } from "@/shared/ui/button";
 import Wrapper from "@/shared/ui/wrapper";
-import styles from "./styles.module.scss";
+import RegistrationForm from "@/app/(pages)/auth/registration/RegistrationForm";
 import Link from "next/link";
-import LoginForm from "@/app/auth/login/LoginForm";
+import styles from "./styles.module.scss";
 
-const AuthPage: React.FC = () => {
+const RegistrationPage: React.FC = () => {
 	return <Wrapper hasNavBar={ false }>
 		<div className={ styles.menu }>
 			<div className={ styles.top }>
@@ -13,9 +13,9 @@ const AuthPage: React.FC = () => {
 					<Link href={ "/start" }>go back</Link>
 				</Button>
 			</div>
-			<LoginForm />
+			<RegistrationForm />
 		</div>
 	</Wrapper>
 }
 
-export default AuthPage;
+export default RegistrationPage

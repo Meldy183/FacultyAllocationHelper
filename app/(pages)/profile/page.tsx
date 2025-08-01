@@ -21,7 +21,7 @@ export default function ProfileDashboard() {
 								<p className={styles.subName}>Фамилия Имя Отчество</p>
 							</div>
 						</div>
-						<Button><Link href={ "/" }>Edit profile</Link></Button>
+						<Button><Link href={ "/public" }>Edit profile</Link></Button>
 
 					</div>
 

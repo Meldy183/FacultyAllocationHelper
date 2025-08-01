@@ -4,7 +4,7 @@ import { GetSimpleUserDataInterface } from "@/shared/types/ui/faculties";
 import styles from "../styles.module.scss";
 
 const TeacherAssistance: React.FC<GetSimpleUserDataInterface> = (props) => {
-  return <Link href={ `/faculty/${ props.profile_id }` }>
+  return <Link href={ `/app/(pages)/faculty/${props.profile_id}` }>
     <li className={styles.row}>
       <div className={styles.colName}>
         <h2>{ props.name_eng }</h2>

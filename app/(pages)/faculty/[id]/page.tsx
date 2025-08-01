@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-// import CourseField from "@/shared/ui/CourseField";
 import Image from "next/image";
 import userIcon from "@/public/icons/faculty/faculty-member/faculty-member-icon.svg"
 import Wrapper from "@/shared/ui/wrapper";
@@ -34,7 +33,6 @@ export default function ProfileDashboard() {
 								<p className={styles.subName}>{ data.name_ru }</p>
 							</div>
 						</div>
-
 					</div>
 
 					{/* Profile Info */}
