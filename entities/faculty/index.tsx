@@ -1,0 +1,1 @@
+export { FacultyMenu } from "./ui";

@@ -6,7 +6,7 @@ import { Button } from "@/shared/ui/button";
 import { handleErrorForm } from "@/shared/hooks/hadleErrorForm";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CreateMemberResolver, CreateMemberType } from "@/shared/types/resolvers/profile";
+import { CreateMemberResolver, CreateMemberType } from "@/features/CreateFacultyForm";
 import { useCreateUserMutation } from "@/features/api/slises/profile";
 import { instituteList, roleList } from "@/shared/configs/constants/ui";
 import { MultiSelect } from "@/shared/ui/MultiSelect";
@@ -16,7 +16,7 @@ interface IProps {
   onSubmit: (response?: any) => void
 }
 
-const CreateNewFacultyForm: React.FC<IProps> = ({ onSubmit }) => {
+export const CreateNewFacultyForm: React.FC<IProps> = ({ onSubmit }) => {
   const [createUser, { isLoading }] = useCreateUserMutation();
 
   const form = useForm<CreateMemberType>({
@@ -142,5 +142,3 @@ const CreateNewFacultyForm: React.FC<IProps> = ({ onSubmit }) => {
     </form>
   </Form>
 }
-
-export default CreateNewFacultyForm;

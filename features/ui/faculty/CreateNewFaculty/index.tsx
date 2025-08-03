@@ -3,7 +3,7 @@ import styles from "./styles.module.scss";
 import { Button } from "@/shared/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/shared/ui/dialog";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
-import CreateNewFacultyForm from "@/entities/faculty/CreateFacultyForm/ui";
+import { CreateNewFacultyForm } from "@/features/CreateFacultyForm/ui";
 
 const CreateFacultyMenu: React.FC = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);

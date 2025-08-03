@@ -3,7 +3,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/shar
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/shared/ui/dialog";
 import Image from "next/image";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
-import PersonDialogMenuContent from "@/entities/faculty/PersonDialogMenuContent";
+import { FacultyMenu } from "@/entities/faculty";
 import arrowRightIcon from "@/public/icons/svg/right-arrow.svg";
 import checkMarkIcon from "@/public/icons/svg/check-mark.svg";
 import crossIcon from "@/public/icons/svg/cross.svg";
@@ -26,9 +26,9 @@ const TAElement: React.FC<Props> = (props) => {
 								<Image src={ crossIcon } alt={ "dis-approve" } />
 							</div>
 							<TooltipTrigger>
-	              <span className={ styles.menuTrigger }>
-                { props.profile_data.name_eng }
-              </span>
+	              				<span className={ styles.menuTrigger }>
+									{ props.profile_data.name_eng }
+				  				</span>
 							</TooltipTrigger>
 						</div>
 					</div>
@@ -101,7 +101,7 @@ const TAElement: React.FC<Props> = (props) => {
 							<h2>Меню</h2>
 						</div>
 					</VisuallyHidden>
-					<PersonDialogMenuContent id={ props.profile_data.profile_id } />
+					<FacultyMenu id={ props.profile_data.profile_id.toString() } />
 				</DialogContent>
 			</Dialog>
 		</TooltipProvider>

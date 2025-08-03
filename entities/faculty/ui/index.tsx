@@ -6,15 +6,14 @@ import Image from "next/image";
 import userIcon from "@/public/icons/faculty/faculty-member/faculty-member-icon.svg";
 import { useGetUserQuery } from "@/features/api/slises/profile";
 
-const PersonDialogMenuContent: React.FC<{ id: number }> = ({ id }) => {
-	const { data, isLoading, error } = useGetUserQuery({ id: id.toString() });
+export const FacultyMenu: React.FC<{ id: string }> = ({ id }) => {
+	const { data, isLoading, error } = useGetUserQuery({ id });
 
 	if (error || !data) return <div>can't load user data</div>;
 
 	return <div className={ styles.description }>
 		<div className={ styles.container }>
 			<div className={ styles.card }>
-				{/* Header */ }
 				<div className={ styles.header }>
 					<div className={ styles.userInfo }>
 						<Image src={ userIcon } alt={ "user icon" } className={ styles.avatar }/>
@@ -25,13 +24,10 @@ const PersonDialogMenuContent: React.FC<{ id: number }> = ({ id }) => {
 					</div>
 					{/*<Button><Link href={ "/public" }>Edit profile</Link></Button>*/}
 				</div>
-
-				{/* Profile Info */ }
 				<div className={ styles.section }>
 					<div className={ styles.row }><strong>Position:</strong> { data.position_name }</div>
 					<div className={ styles.row }><strong>Institutes:</strong> { data.institute_names.map(institute => <span key={ institute }>{ institute }</span>) } </div>
 				</div>
-
 				<div className={ styles.section }>
 					<h2 className={ styles.title }>Personal Information</h2>
 					<div className={ styles.grid }>
@@ -43,7 +39,6 @@ const PersonDialogMenuContent: React.FC<{ id: number }> = ({ id }) => {
 						<div>Languages: { data.languages.map(({ language_code }) => <span key={ language_code }>{ language_code }</span>) }</div>
 					</div>
 				</div>
-
 				<div className={ styles.section }>
 					<h2 className={ styles.title }>Employment</h2>
 					<div className={ styles.grid }>
@@ -55,8 +50,6 @@ const PersonDialogMenuContent: React.FC<{ id: number }> = ({ id }) => {
 					</div>
 				</div>
 			</div>
-
-			{/* Workload */ }
 			<div className={styles.card}>
 				<div className={styles.sectionCardWhite}>
 					<h2 className={styles.name}>Workload</h2>
@@ -110,7 +103,6 @@ const PersonDialogMenuContent: React.FC<{ id: number }> = ({ id }) => {
 						</div>
 					</div>
 				</div>
-
 			</div>
 			<div className={ styles.card }>
 				<h2 className={ styles.title }>Teaching courses:</h2>
@@ -118,5 +110,3 @@ const PersonDialogMenuContent: React.FC<{ id: number }> = ({ id }) => {
 		</div>
 	</div>
 }
-
-export default PersonDialogMenuContent;
