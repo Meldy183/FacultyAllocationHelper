@@ -1,4 +1,4 @@
-export { CreateMemberResolver } from "./models";
-export type { CreateMemberType } from "./models";
+export { CreateFacultyResolver } from "./models";
+export type { CreateFacultyType } from "./models";
 
-// export { Create } from "./ui"
+export { CreateNewFacultyForm } from "./ui";

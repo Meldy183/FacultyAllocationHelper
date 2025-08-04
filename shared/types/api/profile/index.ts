@@ -1,5 +1,5 @@
 import { FilterGroup } from "@/shared/types/api/filters";
-import { CreateMemberType } from "@/shared/types/resolvers/profile";
+import { CreateFacultyType } from "@/features/CreateFacultyForm";
 import {
   CreateSimpleUserDataInterface,
   GetSimpleUserDataInterface,
@@ -25,7 +25,7 @@ export type GetAllUsers = {
   },
 }
 
-export type CreateMember = {
-  requestBody: CreateMemberType,
+export type CreateFacultyProcessType = {
+  requestBody: CreateFacultyType,
   responseBody: CreateSimpleUserDataInterface
 }

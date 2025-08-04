@@ -4,9 +4,9 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Wrapper from "@/shared/ui/wrapper";
 import SideBar from "@/shared/ui/wrapper/sidebar";
-import SideBarContent from "@/app/(pages)/faculty/SideBarContent";
+import { FacultyFilters } from "./module/features/FacultyFilters";
 import TeacherAssistance from "@/app/(pages)/faculty/teacherAssistantField";
-import CreateFacultyMenu from "@/features/ui/faculty/CreateNewFaculty";
+import { CreateFacultyMenu } from "./module/features/CreateNewFacultyMenu";
 import { useLazyGetMembersByParamQuery } from "@/features/api/slises/profile";
 import { GetSimpleUserDataInterface } from "@/shared/types/ui/faculties";
 import { useAppSelector } from "@/features/store/hooks";
@@ -35,7 +35,7 @@ const AssistantsPage: React.FC = () => {
 	}, [data]);
 
 	return <Wrapper>
-		<SideBar hiddenText={ "Filters" }><SideBarContent/></SideBar>
+		<SideBar hiddenText={ "Filters" }><FacultyFilters /></SideBar>
 		<div className={ styles.headerContainer }>
 			<div className={styles.name}>Faculty list</div>
 			<CreateFacultyMenu />

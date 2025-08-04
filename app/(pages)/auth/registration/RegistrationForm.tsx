@@ -5,7 +5,7 @@ import { useRegisterMutation } from "@/features/api/slises/auth";
 import { Form, FormField } from "@/shared/ui/form";
 import { Button } from "@/shared/ui/button";
 import { registerResolver } from "@/shared/types/resolvers/auth";
-import CustomField from "@/shared/ui/CustomField";
+import { CustomField } from "@/shared/ui/CustomField";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import styles from "./styles.module.scss";

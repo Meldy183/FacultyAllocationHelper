@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const CreateMemberResolver = z.object({
+export const CreateFacultyResolver = z.object({
     name_eng: z.string(),
     email: z.string().email({}),
     alias: z.string(),
@@ -14,4 +14,4 @@ export const CreateMemberResolver = z.object({
     }),
 });
 
-export type CreateMemberType = z.infer<typeof CreateMemberResolver>;
+export type CreateFacultyType = z.infer<typeof CreateFacultyResolver>;

@@ -4,7 +4,7 @@ import { Button } from "@/shared/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/shared/ui/dialog";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { Form, FormField } from "@/shared/ui/form";
-import CustomField from "@/shared/ui/CustomField";
+import { CustomField } from "@/shared/ui/CustomField";
 import { useForm, useWatch } from "react-hook-form";
 import { CreateCourseResolver, CreateCourseType } from "@/shared/types/resolvers/course";
 import { zodResolver } from "@hookform/resolvers/zod";

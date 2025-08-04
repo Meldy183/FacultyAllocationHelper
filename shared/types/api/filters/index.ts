@@ -1,9 +1,4 @@
-export type RawFilter = {
-	id: number,
-	name: string
-};
-
-export type RawFilters = { [key: string]: RawFilter[] };
+import { RawFilter } from "@/app/(pages)/faculty/module/features/FacultyFilters";
 
 export type FilterItem = { name: string; value: number };
 export type FilterGroup = { name: string; items: FilterItem[] };

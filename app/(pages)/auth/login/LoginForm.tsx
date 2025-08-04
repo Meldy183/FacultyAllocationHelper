@@ -5,7 +5,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { authResolver } from "@/shared/types/resolvers/auth";
 import { Form, FormField } from "@/shared/ui/form";
-import CustomField from "@/shared/ui/CustomField";
+import { CustomField } from "@/shared/ui/CustomField";
 import { Button } from "@/shared/ui/button";
 import styles from "./styles.module.scss";
 import { useLoginMutation } from "@/features/api/slises/auth";

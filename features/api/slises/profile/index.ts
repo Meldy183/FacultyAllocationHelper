@@ -2,7 +2,7 @@ import { createApi,  fetchBaseQuery, } from "@reduxjs/toolkit/query/react";
 import { API_PATH } from "@/shared/configs/constants/api/paths";
 import { buildQuery } from "@/shared/lib/buildQuery";
 import { ProfileTag } from "@/shared/configs/constants/dev/cache/tags/profile";
-import { CreateMember, GetAllUsers, GetMemberProcessType } from "@/shared/types/api/profile";
+import { GetAllUsers, GetMemberProcessType } from "@/shared/types/api/profile";
 import { GetSimpleUserDataInterface } from "@/shared/types/ui/faculties";
 
 export const memberSlice = createApi({
@@ -31,17 +31,6 @@ export const memberSlice = createApi({
           ProfileTag,
           ...result.profiles.map((profile: GetSimpleUserDataInterface) => ({ type: ProfileTag, id: profile.alias }) as const)
         ]
-    }),
-    createUser: builder.mutation<CreateMember["responseBody"], CreateMember["requestBody"]>({
-      query: (body) => ({
-        url: "addProfile",
-        method: "POST",
-        body: {
-          year: 2026,
-          ...body
-        }
-      }),
-      invalidatesTags: [ProfileTag],
     })
   })
 });
@@ -49,5 +38,4 @@ export const memberSlice = createApi({
 export const {
   useGetUserQuery,
   useLazyGetMembersByParamQuery,
-  useCreateUserMutation,
 } = memberSlice;
