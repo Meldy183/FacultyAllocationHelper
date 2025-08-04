@@ -1,10 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { FilterGroup } from "shared/types/api/filters";
-
-export type RawFilter = {
-    id: number,
-    name: string
-};
+import { FilterGroup, RawFilter } from "shared/types/api/filters";
 
 export type RawFilters = { [key: string]: RawFilter[] };
 

@@ -1,4 +1,7 @@
-import { RawFilter } from "@/app/(pages)/faculty/module/features/FacultyFilters";
+export type RawFilter = {
+	id: number,
+	name: string
+};
 
 export type FilterItem = { name: string; value: number };
 export type FilterGroup = { name: string; items: FilterItem[] };

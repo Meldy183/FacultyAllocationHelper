@@ -5,7 +5,7 @@ import Image from "next/image";
 import Wrapper from "@/shared/ui/wrapper";
 import SideBar from "@/shared/ui/wrapper/sidebar";
 import { FacultyFilters } from "./module/features/FacultyFilters";
-import TeacherAssistance from "@/app/(pages)/faculty/teacherAssistantField";
+import { TeacherAssistance } from "./module/entities/FacultyCart";
 import { CreateFacultyMenu } from "./module/features/CreateNewFacultyMenu";
 import { useLazyGetMembersByParamQuery } from "@/features/api/slises/profile";
 import { GetSimpleUserDataInterface } from "@/shared/types/ui/faculties";

@@ -1,9 +1,9 @@
 import React from "react";
 import Link from "next/link";
 import { GetSimpleUserDataInterface } from "@/shared/types/ui/faculties";
-import styles from "../styles.module.scss";
+import styles from "./styles.module.scss";
 
-const TeacherAssistance: React.FC<GetSimpleUserDataInterface> = (props) => {
+export const TeacherAssistance: React.FC<GetSimpleUserDataInterface> = (props) => {
     return <Link href={ `/faculty/${ props.profile_id }` }>
         <li className={ styles.row }>
             <div className={ styles.colName }>
@@ -18,5 +18,3 @@ const TeacherAssistance: React.FC<GetSimpleUserDataInterface> = (props) => {
         </li>
     </Link>
 }
-
-export default TeacherAssistance;
