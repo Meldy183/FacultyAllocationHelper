@@ -1,6 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { facultyFilterReducer } from "@/app/(pages)/faculty/module/features/FacultyFilters";
-import courseFilterReducer from "./slices/filters/course";
+import { courseFiltersReducer } from "@/app/(pages)/courses/modules/features/CourseFilters";
 import { index } from "@/features/api/slises/auth";
 import { memberSlice } from "@/features/api/slises/profile";
 import { DevMode } from "@/shared/configs/constants/dev/DevMode";
@@ -10,7 +10,7 @@ import { filterSlice } from "@/features/api/slises/filters";
 const makeStore = () => configureStore({
 	reducer: {
 		facultyFilters: facultyFilterReducer,
-		courseFilters: courseFilterReducer,
+		courseFilters: courseFiltersReducer,
 		[index.reducerPath]: index.reducer,
 		[memberSlice.reducerPath]: memberSlice.reducer,
 		[coursesSlice.reducerPath]: coursesSlice.reducer,

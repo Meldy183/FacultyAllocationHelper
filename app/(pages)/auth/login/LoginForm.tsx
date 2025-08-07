@@ -7,11 +7,11 @@ import { authResolver } from "@/shared/types/resolvers/auth";
 import { Form, FormField } from "@/shared/ui/form";
 import { CustomField } from "@/shared/ui/CustomField";
 import { Button } from "@/shared/ui/button";
-import styles from "./styles.module.scss";
 import { useLoginMutation } from "@/features/api/slises/auth";
 import { handleErrorForm } from "@/shared/hooks/hadleErrorForm";
 import { useRouter } from "next/navigation";
 import { dashboardRoute } from "@/shared/configs/routes";
+import styles from "./styles.module.scss";
 
 type LoginInput = z.infer<typeof authResolver>;
 

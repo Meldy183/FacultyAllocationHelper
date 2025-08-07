@@ -11,13 +11,6 @@ export const coursesSlice = createApi({
   tagTypes: ["apiCourses"],
   refetchOnReconnect: true,
   endpoints: (builder) => ({
-    getAllCourses: builder.query<GetCoursesProcess["responseBody"], string>({
-      query: (body) => ({
-        url: `getCourseList?${ body }`,
-        method: "GET"
-      }),
-      providesTags: ["apiCourses"]
-    }),
     createNew: builder.mutation<CreateCourseProcess["responseBody"], CreateCourseProcess["requestBody"]>({
       query: (body) => ({
         url: "addNewCourse",
@@ -30,7 +23,5 @@ export const coursesSlice = createApi({
 });
 
 export const {
-  useGetAllCoursesQuery,
-  useLazyGetAllCoursesQuery,
   useCreateNewMutation
 } = coursesSlice;
