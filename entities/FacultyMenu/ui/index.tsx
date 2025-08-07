@@ -4,7 +4,7 @@ import React from "react";
 import styles from "./styles.module.scss";
 import Image from "next/image";
 import userIcon from "@/public/icons/faculty/faculty-member/faculty-member-icon.svg";
-import { useGetUserQuery } from "@/features/api/slises/profile";
+import { useGetUserQuery } from "../api";
 
 export const FacultyMenu: React.FC<{ id: string }> = ({ id }) => {
 	const { data, isLoading, error } = useGetUserQuery({ id });

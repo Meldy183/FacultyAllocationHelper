@@ -78,8 +78,6 @@
   max-width: 780px;
 }
 
-
-
 .list {
   background-color: #ffffff;
   list-style: none;
@@ -161,89 +159,3 @@
     flex-shrink: 0;
   }
 }
-
-
-
-
-
-// .assistance {
-//   border: 0.5px solid #eee;
-//   border-radius: 0.75rem;
-//   .title {
-//     //font-family: Inter;
-//     font-weight: 400;
-//     font-size: 18px;
-//     line-height: 24px;
-//     letter-spacing: 0.15px;
-//     color: #333333;
-//     margin-bottom: 30px;
-//   }
-
-//   .heading {
-//     //font-family: Poppins;
-//     background-color: #ECF8E9;
-//     border-radius: 0.75rem;
-//     height: 40px;
-//     align-items: center;
-//     font-weight: 500;
-//     font-size: 14px;
-//     // line-height: 100%;
-//     letter-spacing: -1%;
-//     color: #333333;
-//     display: flex;
-//     justify-content:  flex-start;
-
-//     li {
-//       transform: translateY(50%);
-
-//       width: 300px;
-//       text-align: center;
-//       margin-bottom: 15px;
-//     }
-//   }
-
-//   .list {
-//     width: 100%;
-//   }
-// }
-
-// .primatyTutorItem {
-//   margin-top: 10px;
-
-//   background-color: #ECF8E9;
-//   border-radius: 0.75rem;
-//   display: flex;
-//   justify-content: flex-start;
-//   align-items: center;
-//   padding: 10px;
-//   gap: 40px;
-//   border-top: 1px solid #eee;
-//   margin-bottom: 10px;
-//   &:first-child {
-//     border-top: none;
-//   }
-//   .nameAliasPrimaryTutor {
-//     width: 300px;
-//     margin-left: 10px;
-//   }
-// }
-
-// .TaItem {
-//   display: flex;
-//   justify-content: flex-start;
-//   align-items: center;
-//   padding: 0px;
-//   gap: 40px;
-//   border-top: 1px solid #333333;
-//   margin-bottom: 10px;
-//   &:first-child {
-//     border-top: none;
-//   }
-//   .nameAliasTA {
-//     width: 200px;
-//     margin-left: 10px;
-//   }
-//   .emailTA {
-//     width: 300px;
-//   }
-// }

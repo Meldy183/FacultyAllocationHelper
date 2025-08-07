@@ -3,10 +3,12 @@
 import React from "react";
 import Wrapper from "@/shared/ui/wrapper";
 import SideBar from "@/shared/ui/wrapper/sidebar";
-import { CourseList } from "@/app/(pages)/courses/modules/entities/CourseList";
+import { CourseList } from "./modules/entities/CourseList";
 import { CourseFilters } from "./modules/features/CourseFilters";
-import AddCourseMenu from "@/features/ui/course/CreateCourseMenu";
 import { Button } from "@/shared/ui/button";
+import { CreateCourseForm } from "@/features/CreateCourseForm";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/shared/ui/dialog";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import styles from "./styles.module.scss";
 
 const CoursesPage: React.FC = () => {
@@ -17,7 +19,20 @@ const CoursesPage: React.FC = () => {
 			</SideBar>
 			<div className={ styles.headerContainer }>
 				<div className={styles.name}>Courses</div>
-				<AddCourseMenu><Button className={ styles.button }>Add a new course</Button></AddCourseMenu>
+				<Dialog>
+					<DialogTrigger asChild>
+						<Button className={ styles.button }>Add a new course</Button>
+					</DialogTrigger>
+					<DialogContent>
+						<VisuallyHidden>
+							<DialogHeader>
+								<DialogTitle />
+								<DialogDescription />
+							</DialogHeader>
+						</VisuallyHidden>
+						<CreateCourseForm />
+					</DialogContent>
+				</Dialog>
 			</div>
 			<CourseList />
 		</Wrapper>

@@ -3,7 +3,7 @@ import { useLazyGetAllCoursesQuery } from "../api";
 import { transformFilters } from "../lib";
 import { useAppSelector } from "@/features/store/hooks";
 import { useDebounce } from "@/shared/hooks/useDebounce";
-import CourseField from "@/shared/ui/CourseField";
+import { CourseCard } from "@/widgets/CourseCard";
 import styles from "./styles.module.scss";
 
 export const CourseList: React.FC = () => {
@@ -24,7 +24,7 @@ export const CourseList: React.FC = () => {
                 }
                 {
                     data?.courses.map((course) => (
-                        <div key={ course.course_id } className={ styles.field }><CourseField { ...course } /></div>
+                        <div key={ course.course_id } className={ styles.field }><CourseCard { ...course } /></div>
                     ))
                 }
             </div>
