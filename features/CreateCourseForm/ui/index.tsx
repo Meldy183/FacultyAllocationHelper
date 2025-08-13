@@ -1,7 +1,6 @@
 import React from "react";
 import { Button } from "@/shared/ui/button";
-import { Form, FormField } from "@/shared/ui/form";
-import { CustomField } from "@/shared/ui/CustomField";
+import { Form, FormField, FormMessage } from "@/shared/ui/form";
 import { useForm } from "react-hook-form";
 import { useCreateNewCourseMutation } from "../api";
 import { CreateCourseResolver, CreateCourseType } from "../models";
@@ -11,6 +10,7 @@ import { Switch } from "@/shared/ui/switch";
 import { Checkbox } from "@/shared/ui/checkbox";
 import { handleErrorForm } from "@/shared/hooks/hadleErrorForm";
 import styles from "./styles.module.scss";
+import { CustomField } from "@/shared/ui/CustomField";
 
 export const ACADEMIC_YEARS = [
     { id: 1, name: "BS1" },
@@ -92,13 +92,13 @@ export const CreateCourseForm: React.FC = () => {
         resolver: zodResolver(CreateCourseResolver),
         defaultValues: {
             brief_name: "",
-            academic_year_id: undefined, // Changed to undefined for select default
-            semester_id: undefined, // Changed to undefined for select default
-            year: 0,
+            academic_year_id: 0,
+            semester_id: 0,
+            year: "",
             program_ids: [],
             track_ids: [],
-            responsible_institute_id: undefined, // Changed to undefined for select default
-            groups_needed: 0,
+            responsible_institute_id: 0,
+            groups_needed: "",
             is_elective: false,
         },
     });
@@ -120,11 +120,6 @@ export const CreateCourseForm: React.FC = () => {
                                         title="Course Name"
                                         customClassName={ styles.input }
                                     />
-                                    { fieldState.error && (
-                                        <div className={ styles.error }>
-                                            { fieldState.error.message }
-                                        </div>
-                                    ) }
                                 </div>
                             ) }
                         />
@@ -139,11 +134,11 @@ export const CreateCourseForm: React.FC = () => {
                                     </Label>
                                     <select
                                         { ...field }
-                                        className={ styles.input } // Apply your input styles to the select
+                                        className={ styles.input }
                                         onChange={ (e) => field.onChange(Number(e.target.value)) }
-                                        value={ field.value || "" } // Ensure value is controlled
+                                        value={ field.value || 0 }
                                     >
-                                        <option value="">Select an academic year</option>
+                                        <option value={ 0 } disabled>Select an academic year</option>
                                         { ACADEMIC_YEARS.map((year) => (
                                             <option key={ year.id } value={ year.id }>
                                                 { year.name }
@@ -169,9 +164,9 @@ export const CreateCourseForm: React.FC = () => {
                                         { ...field }
                                         className={ styles.input }
                                         onChange={ (e) => field.onChange(Number(e.target.value)) }
-                                        value={ field.value || "" }
+                                        value={ field.value || 0 }
                                     >
-                                        <option value="">Select a semester</option>
+                                        <option value={ 0 } disabled> Select a semester</option>
                                         { SEMESTERS.map((semester) => (
                                             <option key={ semester.id } value={ semester.id }>
                                                 { semester.name }
@@ -190,24 +185,14 @@ export const CreateCourseForm: React.FC = () => {
                         <FormField
                             control={ form.control }
                             name="year"
-                            render={ ({ field, fieldState }) => (
+                            render={ ({ field }) => (
                                 <div className={ styles.fieldBlock }>
                                     <CustomField
-                                        field={ {
-                                            ...field,
-                                            onChange: (e: React.ChangeEvent<HTMLInputElement>) =>
-                                                field.onChange(Number(e.target.value)),
-                                        } } // Ensure year is number
+                                        field={ field }
                                         fieldName={ field.name }
                                         title="Year"
-                                        type="number" // Set type to number
                                         customClassName={ styles.input }
                                     />
-                                    { fieldState.error && (
-                                        <div className={ styles.error }>
-                                            { fieldState.error.message }
-                                        </div>
-                                    ) }
                                 </div>
                             ) }
                         />
@@ -224,9 +209,9 @@ export const CreateCourseForm: React.FC = () => {
                                         { ...field }
                                         className={ styles.input }
                                         onChange={ (e) => field.onChange(Number(e.target.value)) }
-                                        value={ field.value || "" }
+                                        value={ field.value || 0 }
                                     >
-                                        <option value="">Select an institute</option>
+                                        <option value={ 0 } disabled>Select an institute</option>
                                         { RESPONSIBLE_INSTITUTES.map((institute) => (
                                             <option key={ institute.id } value={ institute.id }>
                                                 { institute.name }
@@ -248,21 +233,11 @@ export const CreateCourseForm: React.FC = () => {
                             render={ ({ field, fieldState }) => (
                                 <div className={ styles.fieldBlock }>
                                     <CustomField
-                                        field={ {
-                                            ...field,
-                                            onChange: (e: React.ChangeEvent<HTMLInputElement>) =>
-                                                field.onChange(Number(e.target.value)),
-                                        } } // Ensure groups_needed is number
+                                        field={ field }
                                         fieldName={ field.name }
                                         title="Groups Needed on Course"
-                                        type="number" // Set type to number
                                         customClassName={ styles.input }
                                     />
-                                    { fieldState.error && (
-                                        <div className={ styles.error }>
-                                            { fieldState.error.message }
-                                        </div>
-                                    ) }
                                 </div>
                             ) }
                         />
@@ -367,9 +342,8 @@ export const CreateCourseForm: React.FC = () => {
                                 </Label>
                             ) }
                         />
-                        <Button type={ "submit" } className={ styles.button } onClick={ () => {
-                            console.log("clicked")
-                        } }>Submit</Button>
+                        <Button type={ "submit" } className={ styles.button }>Submit</Button>
+                        <FormMessage />
                     </form>
                 </Form>
             </div>

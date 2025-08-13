@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { Suspense } from "react";
 import Wrapper from "@/shared/ui/wrapper";
 import SideBar from "@/shared/ui/wrapper/sidebar";
 import { CourseList } from "./modules/entities/CourseList";

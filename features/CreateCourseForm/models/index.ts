@@ -2,13 +2,35 @@ import z from "zod";
 
 export const CreateCourseResolver = z.object({
     brief_name: z.string(),
-    academic_year_id: z.number(),
-    semester_id: z.number(),
-    year: z.number(),
-    program_ids: z.array(z.number()),
-    track_ids: z.array(z.number()),
-    responsible_institute_id: z.number(),
-    groups_needed: z.number(),
+    academic_year_id: z.number().min(1, {
+        message: "choose the academic year"
+    }),
+    semester_id: z.number().min(1),
+    year: z
+        .string()
+        .min(1, {
+            message: "Choose the year"
+        })
+        .regex(/^[0-9]*$/, {
+            message: "Please enter a valid year."
+        }),
+    program_ids: z.array(z.number()).min(1, {
+        message: "choose the program"
+    }),
+    track_ids: z.array(z.number()).min(1,{
+        message: "choose the track"
+    }),
+    responsible_institute_id: z.number().min(1, {
+        message: "choose the institute"
+    }),
+    groups_needed: z
+        .string()
+        .min(1, {
+            message: "Choose the number of groups"
+        })
+        .regex(/^[0-9]*$/, {
+            message: "Please enter a valid number of groups."
+        }),
     is_elective: z.boolean()
 })
 
