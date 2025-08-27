@@ -3,78 +3,21 @@ import { Button } from "@/shared/ui/button";
 import { Form, FormField, FormMessage } from "@/shared/ui/form";
 import { useForm } from "react-hook-form";
 import { useCreateNewCourseMutation } from "../api";
-import { CreateCourseResolver, CreateCourseType } from "../models";
+import {
+    CreateCourseType,
+    CreateCourseResolver,
+    ACADEMIC_YEARS,
+    PROGRAMS,
+    RESPONSIBLE_INSTITUTES,
+    SEMESTERS, TRACKS
+} from "../models";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Label } from "@/shared/ui/label";
 import { Switch } from "@/shared/ui/switch";
 import { Checkbox } from "@/shared/ui/checkbox";
 import { handleErrorForm } from "@/shared/hooks/hadleErrorForm";
-import styles from "./styles.module.scss";
 import { CustomField } from "@/shared/ui/CustomField";
-
-export const ACADEMIC_YEARS = [
-    { id: 1, name: "BS1" },
-    { id: 2, name: "BS2" },
-    { id: 3, name: "BS3" },
-    { id: 4, name: "BS4" },
-    { id: 5, name: "MS1" },
-    { id: 6, name: "MS2" },
-    { id: 7, name: "PhD1" },
-    { id: 8, name: "PhD2" },
-];
-
-export const SEMESTERS = [
-    { id: 1, name: "T1" },
-    { id: 2, name: "T2" },
-    { id: 3, name: "T3" },
-];
-
-export const RESPONSIBLE_INSTITUTES = [
-    { id: 1, name: "DS" },
-    { id: 2, name: "DS/Math" },
-    { id: 3, name: "DS/SDE" },
-    { id: 4, name: "GAMEDEV" },
-    { id: 5, name: "HUM" },
-    { id: 6, name: "RO" },
-    { id: 7, name: "SDE" },
-    { id: 8, name: "SNE" },
-];
-
-export const PROGRAMS = [
-    { id: 1, name: "AI360" },
-    { id: 2, name: "МОИИ" },
-    { id: 3, name: "BS RO" },
-    { id: 4, name: "AIDE" },
-    { id: 5, name: "SE" },
-    { id: 6, name: "SNE" },
-    { id: 7, name: "ROCV" },
-    { id: 8, name: "MSRO" },
-    { id: 9, name: "TE" },
-    { id: 10, name: "УРКИ" },
-    { id: 11, name: "КБ" },
-    { id: 12, name: "УнОД" },
-    { id: 13, name: "УЦП" },
-    { id: 14, name: "DS" },
-    { id: 15, name: "R" },
-    { id: 16, name: "ITE" },
-    { id: 17, name: "ИиВТ" },
-    { id: 18, name: "DSAI" },
-    { id: 19, name: "CSE" },
-];
-
-export const TRACKS = [
-    { id: 1, name: "AAI" },
-    { id: 2, name: "AAIR" },
-    { id: 3, name: "CS" },
-    { id: 4, name: "CSDS" },
-    { id: 5, name: "DS" },
-    { id: 6, name: "GD" },
-    { id: 7, name: "ITE" },
-    { id: 8, name: "R" },
-    { id: 9, name: "SD" },
-    { id: 10, name: "SE" },
-    { id: 11, name: "SNE" },
-];
+import styles from "./styles.module.scss";
 
 export const CreateCourseForm: React.FC = () => {
     const [createCourse, { isLoading }] = useCreateNewCourseMutation();
