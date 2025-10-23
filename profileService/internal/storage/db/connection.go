@@ -77,7 +77,7 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 		str.logger.Error("Error acquiring connection",
 			zap.String("layer", logctx.LogDBInitLayer),
 			zap.String("function", logctx.LogInitSchema),
-			zap.Error(err),
+			zap.Error(err), //
 		)
 		return err
 	}
