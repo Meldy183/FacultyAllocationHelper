@@ -3,9 +3,6 @@ package main
 import (
 	"context"
 	"fmt"
-	httpNet "net/http"
-	"time"
-
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/config"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/handler/courses"
 	userprofile2 "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/handler/facultyProfile"
@@ -38,6 +35,7 @@ import (
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/storage/db"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/storage/postgres"
 	"go.uber.org/zap"
+	httpNet "net/http"
 )
 
 func main() {
@@ -62,8 +60,8 @@ func main() {
 		zap.String("layer", logctx.LogMainFuncLayer),
 		zap.String("function", logctx.LogMain),
 	)
-	time.Sleep(time.Second * 3)
 	defer pool.Close()
+	// time.Sleep(3 * time.Second)
 	err = dataBase.InitSchema(ctx, pool)
 	if err != nil {
 		logger.Fatal("Error initializing schema",

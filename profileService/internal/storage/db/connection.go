@@ -3,11 +3,11 @@ package db
 import (
 	"context"
 	"fmt"
-
 	"github.com/jackc/pgx/v5/pgxpool"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/config"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
 	"go.uber.org/zap"
+	"time"
 )
 
 type ConnectAndInit struct {
@@ -57,7 +57,22 @@ func (str *ConnectAndInit) NewPostgresPool(ctx context.Context, cfg config.Datab
 	return pool, err
 }
 func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) error {
-	conn, err := pool.Acquire(ctx)
+	var conn *pgxpool.Conn
+	var err error
+	for i := 1; i < 10; i++ {
+		conn, err = pool.Acquire(ctx)
+		if err != nil {
+			str.logger.Warn("Error acquiring PostgreSQL connection",
+				zap.String("layer", logctx.LogDBInitLayer),
+				zap.String("function", logctx.LogNewPostgresPool),
+				zap.Error(err),
+				zap.Int("attempt", i),
+			)
+			time.Sleep(1 * time.Second)
+			continue
+		}
+		break
+	}
 	if err != nil {
 		str.logger.Error("Error acquiring connection",
 			zap.String("layer", logctx.LogDBInitLayer),

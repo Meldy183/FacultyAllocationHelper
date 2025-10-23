@@ -1,13 +1,9 @@
 services:
   db:
-    image: postgres:latest
-    container_name: profile_db
+    image: postgres:15.9
+    container_name: db
     env_file:
       - ./.env
-    environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: postgres
     ports:
       - "5432:5432"
     volumes:
