@@ -5,11 +5,8 @@ services:
     image: nginx:stable-alpine
     ports:
       - 80:80
-      - 443:443
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
-      - ./certbot/conf:/etc/letsencrypt
-      - ./certbot/www:/var/www/certbot
     depends_on:
       - profile-service
       - fah_frontend
@@ -19,12 +16,6 @@ services:
 
     networks:
       - fah
-  certbot:
-    image: certbot/certbot
-    volumes:
-      - ./certbot/conf:/etc/letsencrypt
-      - ./certbot/www:/var/www/certbot
-    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
 
   auth-server:
     build:
