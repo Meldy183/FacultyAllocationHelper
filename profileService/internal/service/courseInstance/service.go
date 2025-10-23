@@ -366,7 +366,7 @@ func (s *Service) GetInstancesByAllocationStatus(ctx context.Context, allocNotFi
 		zap.String("allocNotFinished", fmt.Sprintf("%v", allocNotFinished)),
 		zap.String("CourseInstancesIDs", fmt.Sprintf("%v", CourseInstances)),
 	)
-	return CourseInstances, nil
+	return CourseInstances, nil //
 }
 
 func (s *Service) GetInstancesByYear(ctx context.Context, year int64) ([]int64, error) {
