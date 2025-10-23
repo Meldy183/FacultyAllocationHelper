@@ -24,7 +24,7 @@ Project context diagram with key stakeholders and external systems:
 - [x] Adding faculty
 - [x] Data extraction from Excel tables
 - [x] HTTP to HTTPS conversion
-- [ ] Adding courses
+- [X] Adding courses
 - [ ] Authorization via SSO
 - [ ] Information archive of previous years
 - [ ] Varying functionality for different user types

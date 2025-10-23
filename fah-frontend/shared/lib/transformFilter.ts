@@ -1,7 +1,7 @@
-import { FilterGroup, FiltersRequest, RawFiltersResponse } from "shared/types/api/filters";
+import { FilterGroup, FiltersRequest, RawFilters } from "shared/types/api/filters";
 
-export function transformRawFilters(raw: RawFiltersResponse): FilterGroup[] {
-	const filters = Object.entries(raw.filters).map(([name, rawItems]) => ({
+export function transformRawFilters(raw: RawFilters): FilterGroup[] {
+	const filters = Object.entries(raw).map(([name, rawItems]) => ({
 		name,
 		items: rawItems.map(rawItem => ({
 			name: rawItem.name,
@@ -17,7 +17,7 @@ export function transformRawFilters(raw: RawFiltersResponse): FilterGroup[] {
 export function transformWorkingFilters(filters: FilterGroup[]): FiltersRequest {
 	const obj: FiltersRequest = {};
 	filters.forEach(filter => {
-		obj[filter.name] = filter.items.map(item => item.name);
+		obj[filter.name] = filter.items.map(item => item.value.toString());
 	})
 	return obj;
 }

@@ -13,12 +13,14 @@ const StartPage: React.FC = () => {
 				University e-mail.
 			</div>
 			<div className={ styles.buttons }>
-				{ routesAuth.map(({ routeName, routePath }) =>
-					<Link key={ routePath } href={ routePath }>
-						<Button variant={ "strictWhite" } className={ styles.button }>
-							{ routeName }
-						</Button>
-          </Link>)
+				{
+					routesAuth.map(({ routeName, routePath }) =>
+						<Link key={ routePath } href={ routePath }>
+							<Button variant={ "strictWhite" } className={ styles.button }>
+								{ routeName }
+							</Button>
+						</Link>
+					)
 				}
 			</div>
 		</div>
