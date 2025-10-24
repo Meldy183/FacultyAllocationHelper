@@ -3,15 +3,13 @@ export type RawFilter = {
 	name: string
 };
 
-export type RawFilters = { [key: string]: RawFilter[] };
-
 export type FilterItem = { name: string; value: number };
 export type FilterGroup = { name: string; items: FilterItem[] };
 
 export type FiltersRequest = { [key: string]: string[] };
 
 export type GetCourseFilterProcess = {
-	requestParams: {},
+	requestParams: object,
 	responseBody: {
 		allocaion_not_finished: boolean,
 		academic_year: RawFilter[],

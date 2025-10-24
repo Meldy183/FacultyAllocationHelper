@@ -1,5 +1,5 @@
 import React from "react";
-import { FormControl, FormItem, FormLabel } from "@/shared/ui/form";
+import { FormControl, FormItem, FormLabel, FormMessage } from "@/shared/ui/form";
 import { Input } from "@/shared/ui/input";
 import styles from "./styles.module.scss";
 
@@ -12,7 +12,7 @@ interface fieldProps {
   error?: string
 }
 
-const CustomField: React.FC<fieldProps> = ({ field, fieldName, title, type = "text", customClassName = "" }) => {
+export const CustomField: React.FC<fieldProps> = ({ field, fieldName, title, type = "text", customClassName = "" }) => {
   const autocompleteValue = type === "password" ? "current-password" : "off";
 
   return (
@@ -29,9 +29,8 @@ const CustomField: React.FC<fieldProps> = ({ field, fieldName, title, type = "te
             { ...field }
           />
         </FormControl>
+        <FormMessage />
       </FormItem>
     </>
   )
 }
-
-export default CustomField;

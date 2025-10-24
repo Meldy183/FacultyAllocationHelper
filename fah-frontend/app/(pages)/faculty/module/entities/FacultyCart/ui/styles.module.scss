@@ -1,0 +1,78 @@
+.header,
+.row {
+  display: flex;
+  text-align: center;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 0.5px solid #ccc;
+  border-radius: 0;
+}
+
+.header {
+  background-color: #DBF2D5;
+  font-weight: 600;
+  color: #666666;
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+  border-bottom: 1px solid #ccc;
+
+  > div {
+    padding: 0;
+    text-align: left;
+  }
+
+  .colName {
+    padding: 0 20px;  // Override horizontal padding for header first col
+  }
+}
+
+.row {
+  > div {
+    padding: 0;
+    border-radius: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: left;
+  }
+
+  .colName {
+    padding-left: 20px;  // Increased padding for first column in data rows
+  }
+
+  h2 {
+    margin: 0 0 4px 0;
+    font-weight: 600;
+    font-size: 1rem;
+    color: #666666;
+  }
+
+  div > div {
+    font-size: 0.9rem;
+    color: #999999;
+  }
+}
+
+.colName {
+  width: 150px;
+  margin-right: 25px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex-shrink: 0;
+}
+
+.colEmail {
+  width: 250px;
+  flex-shrink: 0;
+}
+
+.colInstitute,
+.colPosition {
+  width: 100px;
+  flex-shrink: 0;
+}
+
+.colInstitute {
+  margin-right: 40px;
+  flex-grow: 1;
+}

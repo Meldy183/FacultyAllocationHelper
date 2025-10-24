@@ -3,7 +3,7 @@ import styles from "@/features/ui/course/AssignNewMember/styles.module.scss";
 import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/shared/ui/accordion";
-import CreateNewFacultyForm from "@/entities/faculty/CreateFacultyForm/ui";
+import { CreateNewFacultyForm } from "@/features/CreateFacultyForm/ui";
 
 interface IProps {
 	position: string

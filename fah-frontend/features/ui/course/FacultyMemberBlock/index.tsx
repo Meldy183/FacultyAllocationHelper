@@ -3,7 +3,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/shar
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/shared/ui/dialog";
 import Image from "next/image";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
-import PersonDialogMenuContent from "@/entities/faculty/PersonDialogMenuContent";
+import { FacultyMenu } from "@/entities/FacultyMenu";
 import arrowRightIcon from "@/public/icons/svg/right-arrow.svg";
 import checkMarkIcon from "@/public/icons/svg/check-mark.svg";
 import crossIcon from "@/public/icons/svg/cross.svg";
@@ -15,6 +15,7 @@ type Props = CourseTeacher;
 
 const TAElement: React.FC<Props> = (props) => {
 	const [openDialog, setOpenDialog] = useState(false);
+
 	return (
 		<TooltipProvider>
 			<Dialog open={openDialog} onOpenChange={setOpenDialog}>
@@ -26,9 +27,9 @@ const TAElement: React.FC<Props> = (props) => {
 								<Image src={ crossIcon } alt={ "dis-approve" } />
 							</div>
 							<TooltipTrigger>
-	              <span className={ styles.menuTrigger }>
-                { props.profile_data.name_eng }
-              </span>
+	              				<span className={ styles.menuTrigger }>
+									{ props.profile_data.name_eng }
+				  				</span>
 							</TooltipTrigger>
 						</div>
 					</div>
@@ -66,42 +67,37 @@ const TAElement: React.FC<Props> = (props) => {
 										<div className={styles.value}>{ props.profile_data.position_name }</div>
 									</div>
 								</div>
-								{/*<div className={ styles.workload }>*/}
-								{/*	<div className={ styles.block }>*/}
-								{/*		<div className={ styles.number }>0.2</div>*/}
-								{/*		<div className={ styles.text }>Rate T1</div>*/}
-								{/*	</div>*/}
-								{/*	<div className={ styles.block }>*/}
-								{/*		<div className={ styles.number }>0.2</div>*/}
-								{/*		<div className={ styles.text }>Rate T2</div>*/}
-								{/*	</div>*/}
-								{/*	<div className={ styles.block }>*/}
-								{/*		<div className={ styles.number }>0.2</div>*/}
-								{/*		<div className={ styles.text }>Rate T3</div>*/}
-								{/*	</div>*/}
-								{/*</div>*/}
+								<div className={ styles.workload }>
+									<div className={ styles.block }>
+										<div className={ styles.number }>0.2</div>
+										<div className={ styles.text }>Rate T1</div>
+									</div>
+									<div className={ styles.block }>
+										<div className={ styles.number }>0.2</div>
+										<div className={ styles.text }>Rate T2</div>
+									</div>
+									<div className={ styles.block }>
+										<div className={ styles.number }>0.2</div>
+										<div className={ styles.text }>Rate T3</div>
+									</div>
+								</div>
 							</div>
-							{/*<ul className={styles.labList}>*/}
-							{/*	<li className={styles.lab}>AGLA I - 2 lab</li>*/}
-							{/*	<li className={styles.lab}>MA I - 3 labs</li>*/}
-							{/*	<li className={styles.lab}>AGLA I - 1 tut</li>*/}
-							{/*	<li className={styles.lab}>Smt else - 1 lab</li>*/}
-							{/*	<li className={styles.lab}>Smt else - 1 lab</li>*/}
-							{/*</ul>*/}
+							<ul className={ styles.labList }>
+								{
+									props.profile_data.classes.map((studyClass, i) => (
+										<li key={ i } className={ styles.lab }>{ studyClass }</li>
+									))
+								}
+							</ul>
 						</div>
 					</TooltipContent>
 				</Tooltip>
 				<VisuallyHidden>
-					<DialogTitle></DialogTitle>
+					<DialogTitle />
 					<DialogContent />
 				</VisuallyHidden>
 				<DialogContent className={styles.dialogMenu}>
-					<VisuallyHidden>
-						<div className={styles.header}>
-							<h2>Меню</h2>
-						</div>
-					</VisuallyHidden>
-					<PersonDialogMenuContent id={ props.profile_data.profile_id } />
+					<FacultyMenu id={ props.profile_data.profile_id.toString() } />
 				</DialogContent>
 			</Dialog>
 		</TooltipProvider>

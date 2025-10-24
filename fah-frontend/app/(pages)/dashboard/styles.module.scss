@@ -1,0 +1,64 @@
+.mainScreen {
+  width: 100%;
+  min-width: 1200px;
+}
+
+
+.title {
+  width: 100%;
+  background-image: url("/images/main-page/background.jpg");
+  background-repeat: no-repeat;
+  background-origin: border-box;
+  text-align: center;
+  padding: 90px 0;
+  font-family: var(--font-montserrat, 'Montserrat', sans-serif);
+  font-weight: 700;
+  font-size: 48px;
+  line-height: 100%;
+}
+
+.previewElements {
+  display: flex;
+  background-color: #ffffff;
+  font-family: var(--font-montserrat, 'Montserrat', sans-serif);
+  padding: 28px;
+  justify-content: space-around;
+
+  .previewElement {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    .previewImage {
+      background-color: #40BA2180;
+      height: 104px;
+      width: 104px;
+      border-radius: 50%;
+      position: relative;
+      margin-bottom: 12px;
+
+      .img {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+    }
+
+    .previewTitle {
+      font-weight: 600;
+      font-size: 24px;
+      line-height: 100%;
+      margin-bottom: 12px;
+    }
+
+    .previewDescription {
+      font-weight: 400;
+      font-size: 14px;
+      line-height: 100%;
+      text-align: center;
+      max-width: 250px;
+    }
+  }
+}
