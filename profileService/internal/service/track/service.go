@@ -18,7 +18,11 @@ type Service struct {
 	trackInstanceRepo trackcourseinstance.Repository
 }
 
-func NewService(trackRepo track.Repository, trackInstanceRepo trackcourseinstance.Repository, logger *zap.Logger) *Service {
+func NewService(
+	trackRepo track.Repository,
+	trackInstanceRepo trackcourseinstance.Repository,
+	logger *zap.Logger,
+) *Service {
 	return &Service{
 		logger:            logger,
 		trackRepo:         trackRepo,

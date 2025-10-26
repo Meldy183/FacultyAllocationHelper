@@ -140,7 +140,10 @@ func (r *CourseInstanceRepo) GetAllInstancesIDs(ctx context.Context) ([]int64, e
 	return instancesIDs, nil
 }
 
-func (r *CourseInstanceRepo) GetCourseInstanceByID(ctx context.Context, courseInstanceID int64) (*courseInstance.CourseInstance, error) {
+func (r *CourseInstanceRepo) GetCourseInstanceByID(
+	ctx context.Context,
+	courseInstanceID int64,
+) (*courseInstance.CourseInstance, error) {
 	row := r.pool.QueryRow(ctx, queryGetCourseInstanceByID, courseInstanceID)
 	var courseInstanceObj courseInstance.CourseInstance
 	err := row.Scan(
@@ -174,7 +177,10 @@ func (r *CourseInstanceRepo) GetCourseInstanceByID(ctx context.Context, courseIn
 	return &courseInstanceObj, nil
 }
 
-func (r *CourseInstanceRepo) AddNewCourseInstance(ctx context.Context, courseInstance *courseInstance.CourseInstance) error {
+func (r *CourseInstanceRepo) AddNewCourseInstance(
+	ctx context.Context,
+	courseInstance *courseInstance.CourseInstance,
+) error {
 	err := r.pool.QueryRow(ctx, queryInsertCourseInstance,
 		courseInstance.CourseID,
 		courseInstance.SemesterID,
@@ -205,7 +211,11 @@ func (r *CourseInstanceRepo) AddNewCourseInstance(ctx context.Context, courseIns
 	return nil
 }
 
-func (r *CourseInstanceRepo) UpdateCourseInstanceByID(ctx context.Context, id int64, courseInstance *courseInstance.CourseInstance) error {
+func (r *CourseInstanceRepo) UpdateCourseInstanceByID(
+	ctx context.Context,
+	id int64,
+	courseInstance *courseInstance.CourseInstance,
+) error {
 	_, err := r.pool.Exec(ctx, queryUpdateCourseInstanceByID,
 		courseInstance.SemesterID,
 		courseInstance.AcademicYearID,
@@ -277,7 +287,10 @@ func (r *CourseInstanceRepo) GetInstancesIDsByInstituteIDs(ctx context.Context, 
 	return instancesIDs, nil
 }
 
-func (r *CourseInstanceRepo) GetInstancesIDsByAcademicYearIDs(ctx context.Context, academicYearIDs []int64) ([]int64, error) {
+func (r *CourseInstanceRepo) GetInstancesIDsByAcademicYearIDs(
+	ctx context.Context,
+	academicYearIDs []int64,
+) ([]int64, error) {
 	rows, err := r.pool.Query(ctx, queryGetInstancesByAcademicYearIDs, academicYearIDs)
 	if err != nil {
 		r.logger.Error("Error getting courseInstances by academicYearIDs",

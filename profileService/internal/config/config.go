@@ -2,11 +2,12 @@ package config
 
 import (
 	"errors"
+	"os"
+	"time"
+
 	"github.com/ilyakaznacheev/cleanenv"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
 	"go.uber.org/zap"
-	"os"
-	"time"
 )
 
 type Config struct {
@@ -15,7 +16,7 @@ type Config struct {
 }
 
 type Server struct {
-	Host         string        `yaml:"host" env:"SERVER_HOST"`
+	Host         string        `yaml:"host"          env:"SERVER_HOST"`
 	Port         string        `yaml:"port"`
 	ReadTimeout  time.Duration `yaml:"read_timeout"`
 	WriteTimeout time.Duration `yaml:"write_timeout"`
@@ -23,10 +24,10 @@ type Server struct {
 }
 
 type Database struct {
-	Host               string        `yaml:"host" env:"DB_HOST"`
+	Host               string        `yaml:"host"                    env:"DB_HOST"`
 	Port               string        `yaml:"port"`
-	User               string        `yaml:"user" env:"POSTGRES_USER"`
-	Password           string        `yaml:"password" env:"POSTGRES_PASSWORD"`
+	User               string        `yaml:"user"                    env:"POSTGRES_USER"`
+	Password           string        `yaml:"password"                env:"POSTGRES_PASSWORD"`
 	DatabaseName       string        `yaml:"name"`
 	SSLMode            string        `yaml:"ssl_mode"`
 	MaxIdleConnections int           `yaml:"max_idle_connections"`

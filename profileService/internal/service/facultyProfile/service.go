@@ -3,10 +3,11 @@ package facultyProfile
 import (
 	"context"
 	"fmt"
+	"strings"
+
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/facultyProfile"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
 	"go.uber.org/zap"
-	"strings"
 )
 
 var _ facultyProfile.Service = (*Service)(nil)

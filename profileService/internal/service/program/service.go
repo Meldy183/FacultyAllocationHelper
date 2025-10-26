@@ -28,7 +28,12 @@ func (s *Service) GetProgramNameByID(ctx context.Context, id int64) (*string, er
 func (s *Service) GetProgramIDByName(ctx context.Context, name string) (*int64, error) {
 	return s.programRepo.GetProgramIDByName(ctx, name)
 }
-func NewService(programRepo program.Repository, programCourseInstance programcourseinstance.Repository, logger *zap.Logger) *Service {
+
+func NewService(
+	programRepo program.Repository,
+	programCourseInstance programcourseinstance.Repository,
+	logger *zap.Logger,
+) *Service {
 	return &Service{
 		programRepo:       programRepo,
 		programCourseRepo: programCourseInstance,

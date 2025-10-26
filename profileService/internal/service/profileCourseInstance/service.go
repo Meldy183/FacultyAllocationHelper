@@ -37,7 +37,7 @@ func (s *Service) GetCourseInstancesByVersionID(ctx context.Context, profileVers
 			zap.Int64("profile_id", profileVersionID),
 			zap.Error(err),
 		)
-		return nil, fmt.Errorf("failed to get instances by facultyProfile id %d: %v", profileVersionID, err)
+		return nil, fmt.Errorf("failed to get instances by facultyProfile id %d: %w", profileVersionID, err)
 	}
 	s.logger.Info("Successfully got instances by facultyProfile id",
 		zap.String("layer", logctx.LogServiceLayer),
@@ -47,7 +47,10 @@ func (s *Service) GetCourseInstancesByVersionID(ctx context.Context, profileVers
 	return ids, nil
 }
 
-func (s *Service) AddCourseInstance(ctx context.Context, instance *profileCourseInstance.ProfileVersionCourseInstance) error {
+func (s *Service) AddCourseInstance(
+	ctx context.Context,
+	instance *profileCourseInstance.ProfileVersionCourseInstance,
+) error {
 	if instance == nil {
 		s.logger.Error("instance cannot be nil",
 			zap.String("layer", logctx.LogServiceLayer),
@@ -88,7 +91,7 @@ func (s *Service) AddCourseInstance(ctx context.Context, instance *profileCourse
 			zap.Int64("instance_id", instance.CourseInstanceID),
 			zap.Error(err),
 		)
-		return fmt.Errorf("failed to add course instance %d: %v", instance.CourseInstanceID, err)
+		return fmt.Errorf("failed to add course instance %d: %w", instance.CourseInstanceID, err)
 	}
 	return nil
 }

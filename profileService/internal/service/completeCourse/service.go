@@ -150,8 +150,11 @@ func (s *Service) AddFullCourse(ctx context.Context, fullcourse *CompleteCourse.
 				zap.Error(err))
 			continue
 		}
-		err = s.programCourseInstance.AddProgramToCourseInstance(ctx, &programcourseinstance.ProgramCourseInstance{ProgramID: *programID,
-			CourseInstanceID: fullcourse.CourseInstance.InstanceID})
+		err = s.programCourseInstance.AddProgramToCourseInstance(
+			ctx,
+			&programcourseinstance.ProgramCourseInstance{ProgramID: *programID,
+				CourseInstanceID: fullcourse.CourseInstance.InstanceID},
+		)
 		if err != nil {
 			s.logger.Error("error adding program to course instance",
 				zap.String("layer", logctx.LogServiceLayer),

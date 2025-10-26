@@ -3,6 +3,7 @@ package semester
 import (
 	"context"
 	"errors"
+
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/semester"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
 	"go.uber.org/zap"

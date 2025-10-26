@@ -3,6 +3,7 @@ package courseInstance
 import (
 	"context"
 	"fmt"
+	"strconv"
 
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/courseInstance"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
@@ -94,7 +95,7 @@ func (s *Service) AddCourseInstance(ctx context.Context, courseInstance *courseI
 			zap.String("layer", logctx.LogServiceLayer),
 			zap.String("function", logctx.LogAddNewCourse),
 		)
-		return fmt.Errorf("error creating new course: %v", err)
+		return fmt.Errorf("error creating new course: %w", err)
 	}
 	s.logger.Info("new course created",
 		zap.String("layer", logctx.LogServiceLayer),
@@ -161,7 +162,11 @@ func (s *Service) GetCourseInstanceByID(ctx context.Context, id int64) (*courseI
 	return CourseInstance, nil
 }
 
-func (s *Service) UpdateCourseInstanceByID(ctx context.Context, id int64, courseInstance *courseInstance.CourseInstance) error {
+func (s *Service) UpdateCourseInstanceByID(
+	ctx context.Context,
+	id int64,
+	courseInstance *courseInstance.CourseInstance,
+) error {
 	if !semesterIDValid(courseInstance.SemesterID) {
 		s.logger.Error(
 			"Invalid semester ID",
@@ -226,7 +231,7 @@ func (s *Service) UpdateCourseInstanceByID(ctx context.Context, id int64, course
 			zap.String("layer", logctx.LogServiceLayer),
 			zap.String("function", logctx.LogUpdateCourseInstanceByID),
 		)
-		return fmt.Errorf("error updating course instance: %v", err)
+		return fmt.Errorf("error updating course instance: %w", err)
 	}
 	s.logger.Info("course updated",
 		zap.String("layer", logctx.LogServiceLayer),
@@ -356,14 +361,14 @@ func (s *Service) GetInstancesByAllocationStatus(ctx context.Context, allocNotFi
 		s.logger.Error("error getting CourseInstances by AllocationStatus",
 			zap.String("layer", logctx.LogServiceLayer),
 			zap.String("function", logctx.LogGetInstancesByAllocationStatus),
-			zap.String("allocNotFinished", fmt.Sprintf("%v", allocNotFinished)),
+			zap.String("allocNotFinished", strconv.FormatBool(allocNotFinished)),
 			zap.Error(err))
 		return nil, fmt.Errorf("error getting course instances %w", err)
 	}
 	s.logger.Info("CourseInstances found by AllocationStatus",
 		zap.String("layer", logctx.LogServiceLayer),
 		zap.String("function", logctx.LogGetInstancesByAllocationStatus),
-		zap.String("allocNotFinished", fmt.Sprintf("%v", allocNotFinished)),
+		zap.String("allocNotFinished", strconv.FormatBool(allocNotFinished)),
 		zap.String("CourseInstancesIDs", fmt.Sprintf("%v", CourseInstances)),
 	)
 	return CourseInstances, nil //

@@ -3,6 +3,7 @@ package postgres
 import (
 	"context"
 	"fmt"
+
 	"github.com/jackc/pgx/v5/pgxpool"
 	workloadDomain "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/workload"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
@@ -24,14 +25,18 @@ WHERE profile_version_id = $1 AND semester_id = $2`
 	(profile_version_id, semester_id, lectures_count, tutorials_count, labs_count, electives_count, rate)
 	VALUES ($1, $2, $3, $4, $5, $6, $7)
 	RETURNING workload_id`
-	// queryUpdateSemesterWorkload = ``
+	// queryUpdateSemesterWorkload = ``.
 )
 
 func NewSemesterWorkloadRepo(pool *pgxpool.Pool, log *zap.Logger) *WorkloadRepo {
 	return &WorkloadRepo{pool: pool, logger: log}
 }
 
-func (r *WorkloadRepo) GetSemesterWorkloadByVersionID(ctx context.Context, VersionID int64, semID int64) (*workloadDomain.Workload, error) {
+func (r *WorkloadRepo) GetSemesterWorkloadByVersionID(
+	ctx context.Context,
+	VersionID int64,
+	semID int64,
+) (*workloadDomain.Workload, error) {
 	row := r.pool.QueryRow(ctx, queryGetSemesterWorkloadByVersionID, VersionID, semID)
 	var workload workloadDomain.Workload
 	err := row.Scan(

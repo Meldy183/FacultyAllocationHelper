@@ -58,7 +58,7 @@ func (s *Service) AddCourse(ctx context.Context, course *course.Course) error {
 			zap.String("layer", logctx.LogServiceLayer),
 			zap.String("function", logctx.LogAddNewCourse),
 		)
-		return fmt.Errorf("error creating new course: %v", err)
+		return fmt.Errorf("error creating new course: %w", err)
 	}
 	s.logger.Info("new course created",
 		zap.String("layer", logctx.LogServiceLayer),
@@ -83,7 +83,7 @@ func (s *Service) UpdateCourseByID(ctx context.Context, id int64, course *course
 			zap.String("layer", logctx.LogServiceLayer),
 			zap.String("function", logctx.LogUpdateCourseByID),
 		)
-		return fmt.Errorf("error creating new course: %v", err)
+		return fmt.Errorf("error creating new course: %w", err)
 	}
 	s.logger.Info("course updated",
 		zap.String("layer", logctx.LogServiceLayer),

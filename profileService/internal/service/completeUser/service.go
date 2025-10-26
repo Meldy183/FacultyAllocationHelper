@@ -43,7 +43,6 @@ func NewService(logger *zap.Logger,
 		instituteService:       instituteService,
 		userInstituteService:   userInstituteService,
 	}
-
 }
 func (s *Service) AddFullUser(ctx context.Context, fulluser *CompleteUser.FullUser) error {
 	err := s.profileService.AddProfile(ctx, &fulluser.UserProfile)
@@ -95,8 +94,11 @@ func (s *Service) AddFullUser(ctx context.Context, fulluser *CompleteUser.FullUs
 				zap.Error(err))
 			continue
 		}
-		err = s.profileLanguageService.AddUserLanguage(ctx, &profileLanguage.ProfileLanguage{LanguageCode: *languageCode,
-			ProfileID: fulluser.UserProfile.ProfileID})
+		err = s.profileLanguageService.AddUserLanguage(
+			ctx,
+			&profileLanguage.ProfileLanguage{LanguageCode: *languageCode,
+				ProfileID: fulluser.UserProfile.ProfileID},
+		)
 		if err != nil {
 			s.logger.Error("error adding lanuage to user profile",
 				zap.String("layer", logctx.LogServiceLayer),

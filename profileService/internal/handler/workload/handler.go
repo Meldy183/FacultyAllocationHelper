@@ -3,11 +3,12 @@ package workload
 import (
 	"context"
 	"encoding/json"
+	"net/http"
+
 	workloadDomain "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/workload"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/workload"
 	"go.uber.org/zap"
-	"net/http"
 )
 
 type Handler struct {
@@ -22,7 +23,11 @@ func NewWorkloadHandler(
 	return &Handler{serviceWorkload: serviceWorkload, logger: logger}
 }
 
-func (h *Handler) WorkloadToClasses(sem1 *workloadDomain.Workload, sem2 *workloadDomain.Workload, sem3 *workloadDomain.Workload) *Stats {
+func (h *Handler) WorkloadToClasses(
+	sem1 *workloadDomain.Workload,
+	sem2 *workloadDomain.Workload,
+	sem3 *workloadDomain.Workload,
+) *Stats {
 	class1 := &Classes{
 		Lec:  sem1.LecturesCount,
 		Tut:  sem1.TutorialsCount,
@@ -52,7 +57,12 @@ func (h *Handler) WorkloadToClasses(sem1 *workloadDomain.Workload, sem2 *workloa
 	return stats
 }
 
-func (h *Handler) GetYearWorkload(w http.ResponseWriter, err error, ctx context.Context, versionID int64) (*workloadDomain.Workload, *workloadDomain.Workload, *workloadDomain.Workload, bool) {
+func (h *Handler) GetYearWorkload(
+	w http.ResponseWriter,
+	err error,
+	ctx context.Context,
+	versionID int64,
+) (*workloadDomain.Workload, *workloadDomain.Workload, *workloadDomain.Workload, bool) {
 	sem1, err := h.serviceWorkload.GetSemesterWorkloadByVersionID(ctx, versionID, 1)
 	if err != nil {
 		h.logger.Error(`GetSemesterWorkloadByVersionID failed`,

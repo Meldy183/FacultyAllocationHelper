@@ -2,6 +2,7 @@ package Parsing
 
 import (
 	"context"
+	"errors"
 	"mime/multipart"
 	"strconv"
 	"strings"
@@ -117,7 +118,7 @@ func (s *Service) parseCourses(courses [][]string, ctx context.Context, studyyea
 				var err error
 				yearString := strings.Trim(yearsem[0], " ")
 				year, err = strconv.Atoi(yearString[len(yearString)-1:])
-				if err != nil && err != strconv.ErrSyntax {
+				if err != nil && !errors.Is(err, strconv.ErrSyntax) {
 					s.logger.Error("unable to parse academic year",
 						zap.String("layer", logctx.LogServiceLayer),
 						zap.String("function", logctx.LogParseCourse),
@@ -129,7 +130,7 @@ func (s *Service) parseCourses(courses [][]string, ctx context.Context, studyyea
 				}
 				semesterString := strings.Trim(yearsem[1], " ")
 				semester, err = strconv.Atoi(semesterString[len(semesterString)-1:])
-				if err != nil && err != strconv.ErrSyntax {
+				if err != nil && !errors.Is(err, strconv.ErrSyntax) {
 					s.logger.Error("unable to parse semester",
 						zap.String("layer", logctx.LogServiceLayer),
 						zap.String("function", logctx.LogParseCourse),
@@ -214,7 +215,6 @@ func (s *Service) parseCourses(courses [][]string, ctx context.Context, studyyea
 				default:
 					//TODO: allocation
 				}
-
 			}
 			if course.Course.OfficialName != nil {
 				switch course.CourseInstance.SemesterID {

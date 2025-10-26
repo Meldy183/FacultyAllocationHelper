@@ -26,7 +26,10 @@ const (
 	queryAddCourseInstance       = `INSERT INTO profile_course_instance (profile_version_id, profile_course_id) VALUES ($1, $2)`
 )
 
-func (r *ProfileCourseInstanceRepo) GetCourseInstancesByVersionID(ctx context.Context, ProfileVersionID int64) ([]int64, error) {
+func (r *ProfileCourseInstanceRepo) GetCourseInstancesByVersionID(
+	ctx context.Context,
+	ProfileVersionID int64,
+) ([]int64, error) {
 	rows, err := r.pool.Query(ctx, queryGetInstancesByProfileID, ProfileVersionID)
 	if err != nil {
 		r.logger.Error("GetCourseInstancesByProfileID",
@@ -72,7 +75,12 @@ func (r *ProfileCourseInstanceRepo) GetCourseInstancesByVersionID(ctx context.Co
 
 func (r *ProfileCourseInstanceRepo) AddCourseInstance(ctx context.Context,
 	profileVersionCourseInstance *profileCourseInstance.ProfileVersionCourseInstance) error {
-	_, err := r.pool.Exec(ctx, queryAddCourseInstance, profileVersionCourseInstance.ProfileCourseID, profileVersionCourseInstance.CourseInstanceID)
+	_, err := r.pool.Exec(
+		ctx,
+		queryAddCourseInstance,
+		profileVersionCourseInstance.ProfileCourseID,
+		profileVersionCourseInstance.CourseInstanceID,
+	)
 	if err != nil {
 		r.logger.Error("AddCourseInstance",
 			zap.String("layer", logctx.LogRepoLayer),

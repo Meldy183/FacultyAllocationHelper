@@ -157,7 +157,10 @@ func (h *Handler) GetAllCoursesByFilters(w http.ResponseWriter, r *http.Request)
 		writeError(w, http.StatusBadRequest, "Error parsing profile_version_id")
 		return
 	}
-	instancesIDsAllocationNotFinished, err := h.courseInstanceService.GetInstancesByAllocationStatus(ctx, isAllocationNotFinished)
+	instancesIDsAllocationNotFinished, err := h.courseInstanceService.GetInstancesByAllocationStatus(
+		ctx,
+		isAllocationNotFinished,
+	)
 	if err != nil {
 		h.logger.Error("Error getting instances by allocation status",
 			zap.String("layer", logctx.LogHandlerLayer),
@@ -207,7 +210,10 @@ func (h *Handler) GetAllCoursesByFilters(w http.ResponseWriter, r *http.Request)
 		writeError(w, http.StatusBadRequest, "Error getting instances by programs")
 		return
 	}
-	instancesIDsByResponsibleInstituteIDs, err := h.courseInstanceService.GetInstancesByInstituteIDs(ctx, responsibleInstituteIDs)
+	instancesIDsByResponsibleInstituteIDs, err := h.courseInstanceService.GetInstancesByInstituteIDs(
+		ctx,
+		responsibleInstituteIDs,
+	)
 	if err != nil {
 		h.logger.Error("Error getting instances by responsible_institute_ids",
 			zap.String("layer", logctx.LogHandlerLayer),
@@ -296,7 +302,10 @@ func (h *Handler) AddNewCourse(w http.ResponseWriter, r *http.Request) {
 	}
 	h.logger.Info("Added course successfully")
 
-	responsibleInstituteName, err := h.responsibleInstituteService.GetResponsibleInstituteNameByID(ctx, courseObj.ResponsibleInstituteID)
+	responsibleInstituteName, err := h.responsibleInstituteService.GetResponsibleInstituteNameByID(
+		ctx,
+		courseObj.ResponsibleInstituteID,
+	)
 	if err != nil {
 		h.logger.Error("Error getting responsible institute",
 			zap.String("layer", logctx.LogHandlerLayer),
@@ -450,7 +459,12 @@ func (h *Handler) GetCourse(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, resp)
 }
 
-func (h *Handler) CombineCourseCard(w http.ResponseWriter, err error, ctx context.Context, id int64) (*sharedContent.Course, bool) {
+func (h *Handler) CombineCourseCard(
+	w http.ResponseWriter,
+	err error,
+	ctx context.Context,
+	id int64,
+) (*sharedContent.Course, bool) {
 	fullCourse, err := h.fullCourseService.GetFullCourseInfoByID(ctx, id)
 	if err != nil {
 		h.logger.Error("error getting full courseObj",
@@ -508,9 +522,15 @@ func (h *Handler) CombineCourseCard(w http.ResponseWriter, err error, ctx contex
 		}
 		tas = append(tas, *facObj)
 	}
-	academicYearName, err := h.academicYearService.GetAcademicYearNameByID(ctx, int64(fullCourse.CourseInstance.AcademicYearID))
+	academicYearName, err := h.academicYearService.GetAcademicYearNameByID(
+		ctx,
+		int64(fullCourse.CourseInstance.AcademicYearID),
+	)
 	semesterName, err := h.semesterService.GetSemesterNameByID(ctx, int64(fullCourse.CourseInstance.SemesterID))
-	instituteObj, err := h.responsibleInstituteService.GetResponsibleInstituteNameByID(ctx, fullCourse.Course.ResponsibleInstituteID)
+	instituteObj, err := h.responsibleInstituteService.GetResponsibleInstituteNameByID(
+		ctx,
+		fullCourse.Course.ResponsibleInstituteID,
+	)
 	isAllocDone := fullCourse.CourseInstance.GroupsNeeded-*fullCourse.CourseInstance.GroupsTaken == 0
 	pi := &sharedContent.PI{
 		AllocationStatus: (*string)(fullCourse.CourseInstance.PIAllocationStatus),
@@ -605,7 +625,7 @@ func (h *Handler) staffToFaculty(ctx context.Context, s *staff.Staff) (*sharedCo
 			zap.String("function", logctx.LogStaffToFaculty),
 			zap.Error(err),
 		)
-		return nil, fmt.Errorf("error getting institutes by id: %v", err)
+		return nil, fmt.Errorf("error getting institutes by id: %w", err)
 	}
 	fuck := &sharedContent.Faculty{
 		ProfileVersionID: s.ProfileVersionID,

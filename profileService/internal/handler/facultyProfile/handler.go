@@ -201,7 +201,12 @@ func (h *Handler) AddProfile(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, resp)
 }
 
-func (h *Handler) AddWorkloadAddingProfileVersion(w http.ResponseWriter, version *profileVersionDomain.ProfileVersion, err error, ctx context.Context) bool {
+func (h *Handler) AddWorkloadAddingProfileVersion(
+	w http.ResponseWriter,
+	version *profileVersionDomain.ProfileVersion,
+	err error,
+	ctx context.Context,
+) bool {
 	workloadStats := workloadDomain.Workload{
 		ProfileVersionID: version.ProfileVersionId,
 		SemesterID:       1,
@@ -463,7 +468,6 @@ func (h *Handler) GetAllFaculties(w http.ResponseWriter, r *http.Request) {
 			)
 			writeError(w, http.StatusInternalServerError, "error getting user institute by id")
 			return
-
 		}
 		instNames := make([]string, 0)
 		for _, inst := range institutesStruct {

@@ -3,6 +3,8 @@ package main
 import (
 	"context"
 	"fmt"
+	httpNet "net/http"
+
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/config"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/handler/courses"
 	userprofile2 "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/handler/facultyProfile"
@@ -35,7 +37,6 @@ import (
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/storage/db"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/storage/postgres"
 	"go.uber.org/zap"
-	httpNet "net/http"
 )
 
 func main() {
@@ -113,9 +114,31 @@ func main() {
 	programCourseInstanceService := programCourseInstance.NewService(programCourseInstanceRepo, logger)
 	courseInstanceService := courseInstance.NewService(courseInstanceRepo, logger)
 	courseService := course.NewService(courseRepo, logger)
-	fullCourseService := completeCourse.NewService(courseInstanceService, courseService, trackService, programService, trackInstanceService, programCourseInstanceService, logger)
-	fullUserService := completeUser.NewService(logger, profileService, profileVersionService, languageService, profileLanguageService, instituteService, profileInstituteService)
-	parseService := Parsing.NewService(logger, fullCourseService, fullUserService, positionService, responsibleInstituteService)
+	fullCourseService := completeCourse.NewService(
+		courseInstanceService,
+		courseService,
+		trackService,
+		programService,
+		trackInstanceService,
+		programCourseInstanceService,
+		logger,
+	)
+	fullUserService := completeUser.NewService(
+		logger,
+		profileService,
+		profileVersionService,
+		languageService,
+		profileLanguageService,
+		instituteService,
+		profileInstituteService,
+	)
+	parseService := Parsing.NewService(
+		logger,
+		fullCourseService,
+		fullUserService,
+		positionService,
+		responsibleInstituteService,
+	)
 	staffService := staff.NewStaffService(staffRepo, logger)
 	academicYearService := academicYear.NewService(academicYearRepo, logger)
 	semesterService := semester.NewService(semesterRepo, logger)
@@ -174,7 +197,6 @@ func main() {
 	if err := server.ListenAndServe(); err != nil {
 		logger.Fatal("Error starting server", zap.Error(err))
 	}
-
 }
 
 func initLogger() (*zap.Logger, error) {

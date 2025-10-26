@@ -3,6 +3,7 @@ package profileVersion
 import (
 	"context"
 	"fmt"
+
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/profileVersion"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
 	"go.uber.org/zap"
@@ -19,7 +20,11 @@ func NewService(repo profileVersion.Repository, logger *zap.Logger) *Service {
 	return &Service{repo: repo, logger: logger}
 }
 
-func (s *Service) GetVersionByProfileID(ctx context.Context, profileID int64, year int64) (*profileVersion.ProfileVersion, error) {
+func (s *Service) GetVersionByProfileID(
+	ctx context.Context,
+	profileID int64,
+	year int64,
+) (*profileVersion.ProfileVersion, error) {
 	return s.repo.GetVersionByProfileID(ctx, profileID, year)
 }
 

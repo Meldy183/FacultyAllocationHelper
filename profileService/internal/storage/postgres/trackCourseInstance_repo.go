@@ -3,6 +3,8 @@ package postgres
 import (
 	"context"
 	"fmt"
+	"strconv"
+
 	"github.com/jackc/pgx/v5/pgxpool"
 	trackcourseinstance "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/trackCourseInstance"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
@@ -60,7 +62,7 @@ func (r *TrackCourseRepo) GetTracksIDsOfCourseByInstanceID(ctx context.Context, 
 			r.logger.Error("Error getting trackCourses by courseIDs",
 				zap.String("layer", logctx.LogRepoLayer),
 				zap.String("function", logctx.LogGetTrackCourseByCourseID),
-				zap.String("course id", fmt.Sprintf("%v", id)),
+				zap.String("course id", strconv.FormatInt(id, 10)),
 				zap.Error(err),
 			)
 			return nil, fmt.Errorf("GetTracksIDsOfCourseByInstanceID failed: %w", err)
@@ -72,7 +74,7 @@ func (r *TrackCourseRepo) GetTracksIDsOfCourseByInstanceID(ctx context.Context, 
 		r.logger.Error("Error getting trackCourses by courseIDs",
 			zap.String("layer", logctx.LogRepoLayer),
 			zap.String("function", logctx.LogGetTrackCourseByCourseID),
-			zap.String("course id", fmt.Sprintf("%v", id)),
+			zap.String("course id", strconv.FormatInt(id, 10)),
 			zap.Error(err),
 		)
 		return nil, fmt.Errorf("GetTracksIDsOfCourseByInstanceID failed: %w", err)

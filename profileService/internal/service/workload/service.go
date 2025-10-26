@@ -2,7 +2,8 @@ package workload
 
 import (
 	"context"
-	"fmt"
+	"errors"
+
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/workload"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
 	"go.uber.org/zap"
@@ -19,13 +20,17 @@ func NewService(repo workload.Repository, logger *zap.Logger) *Service {
 	return &Service{repo: repo, logger: logger}
 }
 
-func (s *Service) GetSemesterWorkloadByVersionID(ctx context.Context, profileVersionID int64, semesterID int64) (*workload.Workload, error) {
+func (s *Service) GetSemesterWorkloadByVersionID(
+	ctx context.Context,
+	profileVersionID int64,
+	semesterID int64,
+) (*workload.Workload, error) {
 	if semesterID < 1 || semesterID > 3 {
 		s.logger.Error(`semesterID must be between 1 and 3`,
 			zap.String("layer", logctx.LogServiceLayer),
 			zap.String("function", logctx.LogGetSemesterWorkloadByVersionID),
 		)
-		return nil, fmt.Errorf(`semesterID must be between 1 and 3`)
+		return nil, errors.New(`semesterID must be between 1 and 3`)
 	}
 	semWorkload, err := s.repo.GetSemesterWorkloadByVersionID(ctx, profileVersionID, semesterID)
 	if err != nil {
@@ -34,7 +39,7 @@ func (s *Service) GetSemesterWorkloadByVersionID(ctx context.Context, profileVer
 			zap.String("function", logctx.LogGetSemesterWorkloadByVersionID),
 			zap.Error(err),
 		)
-		return nil, fmt.Errorf(`GetSemesterWorkloadByVersionID failed`)
+		return nil, errors.New(`GetSemesterWorkloadByVersionID failed`)
 	}
 	return semWorkload, nil
 }
@@ -46,7 +51,7 @@ func (s *Service) AddSemesterWorkload(ctx context.Context, workload *workload.Wo
 			zap.String("function", logctx.LogAddSemesterWorkload),
 			zap.Error(err),
 		)
-		return fmt.Errorf(`AddSemesterWorkload failed`)
+		return errors.New(`AddSemesterWorkload failed`)
 	}
 	return nil
 }
@@ -58,7 +63,7 @@ func (s *Service) UpdateSemesterWorkload(ctx context.Context, workload *workload
 			zap.String("function", logctx.LogUpdateSemesterWorkload),
 			zap.Error(err),
 		)
-		return fmt.Errorf(`UpdateSemesterWorkload failed`)
+		return errors.New(`UpdateSemesterWorkload failed`)
 	}
 	return nil
 }

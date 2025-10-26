@@ -31,7 +31,10 @@ responsible_institute WHERE responsible_institute_id = $1`
 	 responsible_institute WHERE responsible_institute_name = $1`
 )
 
-func (r *ResponsibleInstituteRepo) GetResponsibleInstituteIDByName(ctx context.Context, responsibleInstituteName string) (*int64, error) {
+func (r *ResponsibleInstituteRepo) GetResponsibleInstituteIDByName(
+	ctx context.Context,
+	responsibleInstituteName string,
+) (*int64, error) {
 	ID := r.pool.QueryRow(ctx, queryGetResponsibleInstituteIDByName, responsibleInstituteName)
 	var responsibleInstituteID int64
 	err := ID.Scan(&responsibleInstituteID)
@@ -51,7 +54,9 @@ func (r *ResponsibleInstituteRepo) GetResponsibleInstituteIDByName(ctx context.C
 	return &responsibleInstituteID, nil
 }
 
-func (r *ResponsibleInstituteRepo) GetAllInstitutes(ctx context.Context) ([]responsibleInstitute.ResponsibleInstitute, error) {
+func (r *ResponsibleInstituteRepo) GetAllInstitutes(
+	ctx context.Context,
+) ([]responsibleInstitute.ResponsibleInstitute, error) {
 	rows, err := r.pool.Query(ctx, "SELECT * FROM responsible_institute")
 	if err != nil {
 		r.logger.Error("Error during query",
@@ -82,7 +87,10 @@ func (r *ResponsibleInstituteRepo) GetAllInstitutes(ctx context.Context) ([]resp
 	return res, nil
 }
 
-func (r *ResponsibleInstituteRepo) GetResponsibleInstituteNameByID(ctx context.Context, responsibleInstituteID int64) (*string, error) {
+func (r *ResponsibleInstituteRepo) GetResponsibleInstituteNameByID(
+	ctx context.Context,
+	responsibleInstituteID int64,
+) (*string, error) {
 	str := r.pool.QueryRow(ctx, queryGetResponsibleInstituteNameByID, responsibleInstituteID)
 	var responsibleInstituteName string
 	err := str.Scan(&responsibleInstituteName)

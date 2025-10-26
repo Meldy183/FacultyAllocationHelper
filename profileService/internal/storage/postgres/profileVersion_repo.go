@@ -3,6 +3,7 @@ package postgres
 import (
 	"context"
 	"fmt"
+
 	"github.com/jackc/pgx/v5/pgxpool"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/profileVersion"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
@@ -44,7 +45,11 @@ const (
 `
 )
 
-func (r *ProfileVersionRepo) GetVersionByProfileID(ctx context.Context, profileID int64, year int64) (*profileVersion.ProfileVersion, error) {
+func (r *ProfileVersionRepo) GetVersionByProfileID(
+	ctx context.Context,
+	profileID int64,
+	year int64,
+) (*profileVersion.ProfileVersion, error) {
 	row := r.pool.QueryRow(ctx, queryGetVersionByProfileID, profileID, year)
 	var version profileVersion.ProfileVersion
 	err := row.Scan(
@@ -100,7 +105,10 @@ func (r *ProfileVersionRepo) AddProfileVersion(ctx context.Context, version *pro
 	return nil
 }
 
-func (r *ProfileVersionRepo) GetVersionByVersionID(ctx context.Context, versionID int64) (*profileVersion.ProfileVersion, error) {
+func (r *ProfileVersionRepo) GetVersionByVersionID(
+	ctx context.Context,
+	versionID int64,
+) (*profileVersion.ProfileVersion, error) {
 	row := r.pool.QueryRow(ctx, queryGetVersionByVersionID, versionID)
 	var version profileVersion.ProfileVersion
 	err := row.Scan(

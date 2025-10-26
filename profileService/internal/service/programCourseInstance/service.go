@@ -16,7 +16,10 @@ type Service struct {
 	programCourseInstanceRepo programcourseinstance.Repository
 }
 
-func (s *Service) AddProgramToCourseInstance(ctx context.Context, programCourseInstance *programcourseinstance.ProgramCourseInstance) error {
+func (s *Service) AddProgramToCourseInstance(
+	ctx context.Context,
+	programCourseInstance *programcourseinstance.ProgramCourseInstance,
+) error {
 	return s.programCourseInstanceRepo.AddProgramToCourseInstance(ctx, programCourseInstance)
 }
 
@@ -27,7 +30,10 @@ func NewService(programCourseInstanceRepo programcourseinstance.Repository, logg
 	}
 }
 
-func (s *Service) GetProgramCourseInstancesByCourseID(ctx context.Context, instanceID int64) ([]*programcourseinstance.ProgramCourseInstance, error) {
+func (s *Service) GetProgramCourseInstancesByCourseID(
+	ctx context.Context,
+	instanceID int64,
+) ([]*programcourseinstance.ProgramCourseInstance, error) {
 	programCourseInstances, err := s.programCourseInstanceRepo.GetProgramCourseInstancesByCourseID(ctx, instanceID)
 	if err != nil {
 		s.logger.Error("Error getting program course instances by instance ids",

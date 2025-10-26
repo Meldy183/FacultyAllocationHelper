@@ -2,6 +2,7 @@ package responsibleInstitute
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/responsibleInstitute"
@@ -28,7 +29,7 @@ func (s *Service) GetResponsibleInstituteIDByName(ctx context.Context, name stri
 			zap.String("instituteName", name),
 			zap.Error(err),
 		)
-		return nil, fmt.Errorf("error getting responsible_institute name: %v", err)
+		return nil, fmt.Errorf("error getting responsible_institute name: %w", err)
 	}
 	return id, err
 }
@@ -40,7 +41,7 @@ func (s *Service) GetResponsibleInstituteNameByID(ctx context.Context, institute
 			zap.String("function", logctx.LogGetResponsibleInstituteNameByID),
 			zap.Int64("instituteID", instituteID),
 		)
-		return nil, fmt.Errorf("institute ID must be between 0 and 8")
+		return nil, errors.New("institute ID must be between 0 and 8")
 	}
 	name, err := s.respInstRepo.GetResponsibleInstituteNameByID(ctx, instituteID)
 	if err != nil {
@@ -50,7 +51,7 @@ func (s *Service) GetResponsibleInstituteNameByID(ctx context.Context, institute
 			zap.Int64("instituteID", instituteID),
 			zap.Error(err),
 		)
-		return nil, fmt.Errorf("error getting responsible_institute name: %v", err)
+		return nil, fmt.Errorf("error getting responsible_institute name: %w", err)
 	}
 	return name, nil
 }

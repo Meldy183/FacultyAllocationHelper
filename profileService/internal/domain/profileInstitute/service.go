@@ -2,6 +2,7 @@ package profileInstitute
 
 import (
 	"context"
+
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/institute"
 )
 

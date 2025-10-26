@@ -3,11 +3,12 @@ package db
 import (
 	"context"
 	"fmt"
+	"time"
+
 	"github.com/jackc/pgx/v5/pgxpool"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/config"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
 	"go.uber.org/zap"
-	"time"
 )
 
 type ConnectAndInit struct {
@@ -216,7 +217,6 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
   )`
 	_, err = conn.Exec(ctx, query)
 	if err != nil {
-
 		str.logger.Error("Error creating responsible_institute table",
 			zap.String("layer", logctx.LogDBInitLayer),
 			zap.String("function", logctx.LogInitSchema),
@@ -240,7 +240,6 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
   )`
 	_, err = conn.Exec(ctx, query)
 	if err != nil {
-
 		str.logger.Error("Error creating course table",
 			zap.String("layer", logctx.LogDBInitLayer),
 			zap.String("function", logctx.LogInitSchema),
@@ -258,7 +257,6 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
   )`
 	_, err = conn.Exec(ctx, query)
 	if err != nil {
-
 		str.logger.Error("Error creating semester table",
 			zap.String("layer", logctx.LogDBInitLayer),
 			zap.String("function", logctx.LogInitSchema),
@@ -276,7 +274,6 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
   )`
 	_, err = conn.Exec(ctx, query)
 	if err != nil {
-
 		str.logger.Error("Error creating academic_year table",
 			zap.String("layer", logctx.LogDBInitLayer),
 			zap.String("function", logctx.LogInitSchema),
@@ -305,7 +302,6 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
   )`
 	_, err = conn.Exec(ctx, query)
 	if err != nil {
-
 		str.logger.Error("Error creating course_instance table",
 			zap.String("layer", logctx.LogDBInitLayer),
 			zap.String("function", logctx.LogInitSchema),
@@ -323,7 +319,6 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
   )`
 	_, err = conn.Exec(ctx, query)
 	if err != nil {
-
 		str.logger.Error("Error creating program table",
 			zap.String("layer", logctx.LogDBInitLayer),
 			zap.String("function", logctx.LogInitSchema),
@@ -363,7 +358,6 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
   )`
 	_, err = conn.Exec(ctx, query)
 	if err != nil {
-
 		str.logger.Error("Error creating track_course_instance table",
 			zap.String("layer", logctx.LogDBInitLayer),
 			zap.String("function", logctx.LogInitSchema),
@@ -384,7 +378,6 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
   )`
 	_, err = conn.Exec(ctx, query)
 	if err != nil {
-
 		str.logger.Error("Error creating program_course_instance table",
 			zap.String("layer", logctx.LogDBInitLayer),
 			zap.String("function", logctx.LogInitSchema),
@@ -410,7 +403,6 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
   )`
 	_, err = conn.Exec(ctx, query)
 	if err != nil {
-
 		str.logger.Error("Error creating staff table",
 			zap.String("layer", logctx.LogDBInitLayer),
 			zap.String("function", logctx.LogInitSchema),

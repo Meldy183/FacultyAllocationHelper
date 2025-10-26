@@ -3,6 +3,7 @@ package postgres
 import (
 	"context"
 	"fmt"
+
 	"github.com/jackc/pgx/v5/pgxpool"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/profileLanguage"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
@@ -26,7 +27,13 @@ const (
 )
 
 func (r *UserLanguageRepo) AddUserLanguage(ctx context.Context, userLanguage *profileLanguage.ProfileLanguage) error {
-	_, err := r.pool.Exec(ctx, queryAdd, userLanguage.ProfileLanguageID, userLanguage.ProfileID, userLanguage.LanguageCode)
+	_, err := r.pool.Exec(
+		ctx,
+		queryAdd,
+		userLanguage.ProfileLanguageID,
+		userLanguage.ProfileID,
+		userLanguage.LanguageCode,
+	)
 	if err != nil {
 		r.logger.Error("Error adding user-language to database",
 			zap.String("layer", logctx.LogRepoLayer),

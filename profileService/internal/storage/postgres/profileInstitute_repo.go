@@ -3,6 +3,7 @@ package postgres
 import (
 	"context"
 	"fmt"
+
 	"github.com/jackc/pgx/v5/pgxpool"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/institute"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/profileInstitute"
@@ -28,7 +29,10 @@ const (
 								 RETURNING user_institute_id`
 )
 
-func (r *UserInstituteRepo) GetUserInstitutesByProfileID(ctx context.Context, profileID int64) ([]*institute.Institute, error) {
+func (r *UserInstituteRepo) GetUserInstitutesByProfileID(
+	ctx context.Context,
+	profileID int64,
+) ([]*institute.Institute, error) {
 	row, err := r.pool.Query(ctx, queryGetUserInstituteByID, profileID)
 	if err != nil {
 		r.logger.Error("Error getting user institute by ID",
