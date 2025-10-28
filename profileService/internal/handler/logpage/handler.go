@@ -11,12 +11,12 @@ package logpage
 //	"go.uber.org/zap"
 //)
 //
-//type Handler struct {
+// type Handler struct {
 //	serviceLogpage *logpage.Service
 //	logger         *zap.Logger
 //}
 //
-//func writeJSON(w http.ResponseWriter, status int, data interface{}) {
+// func writeJSON(w http.ResponseWriter, status int, data interface{}) {
 //	w.Header().Set("Content-Type", "application/json")
 //	w.WriteHeader(status)
 //	_ = json.NewEncoder(w).Encode(data)
