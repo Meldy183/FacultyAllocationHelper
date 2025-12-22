@@ -3,14 +3,14 @@ package main
 import (
 	"context"
 	"fmt"
-	httpNet "net/http"
+	"net/http"
 
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/config"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/handler/courses"
 	userprofile2 "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/handler/facultyProfile"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/handler/filters"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/handler/parse"
-	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/http"
+	router "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/http"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/academicYear"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/completeCourse"
@@ -183,8 +183,8 @@ func main() {
 		logger,
 		parseService,
 	)
-	router := http.NewRouter(facultyHandler, courseHandler, filtersHandler, parsingHandler)
-	server := httpNet.Server{
+	router := router.NewRouter(facultyHandler, courseHandler, filtersHandler, parsingHandler)
+	server := http.Server{
 		Addr:         cfg.Server.Host + ":" + cfg.Server.Port,
 		Handler:      router,
 		ReadTimeout:  cfg.Server.ReadTimeout,

@@ -18,7 +18,6 @@ import (
 	handlerWorkload "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/handler/workload"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/institute"
-	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/workload"
 	"go.uber.org/zap"
 )
 
@@ -30,7 +29,7 @@ type Handler struct {
 	servicePosition       position2.Service
 	serviceInstitute      institute2.Service
 	serviceVersionProfile profileVersionDomain.Service
-	serviceWorkload       workload.Service
+	serviceWorkload       workloadDomain.Service
 	logger                *zap.Logger
 }
 
@@ -42,7 +41,7 @@ func NewHandler(
 	servicePosition position2.Service,
 	serviceInstitute institute2.Service,
 	serviceVersionProfile profileVersionDomain.Service,
-	workloadService workload.Service,
+	workloadService workloadDomain.Service,
 	logger *zap.Logger,
 ) *Handler {
 	return &Handler{
@@ -331,13 +330,13 @@ func (h *Handler) GetProfile(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusInternalServerError, "error getting position by id")
 		return
 	}
-	workloadHandler := handlerWorkload.NewWorkloadHandler(&h.serviceWorkload, h.logger)
+	workloadHandler := handlerWorkload.NewWorkloadHandler(h.serviceWorkload, h.logger)
 
 	sem1, sem2, sem3, notDone := workloadHandler.GetYearWorkload(w, err, ctx, versionID)
 	if notDone {
 		return
 	}
-	stats := workloadHandler.WorkloadToClasses(sem1, sem2, sem3)
+	stats := WorkloadToClasses(sem1, sem2, sem3)
 	resp := GetProfileResponse{
 		ProfileVersionID: version.ProfileVersionId,
 		Year:             version.Year,

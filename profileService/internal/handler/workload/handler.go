@@ -23,7 +23,7 @@ func NewWorkloadHandler(
 	return &Handler{serviceWorkload: serviceWorkload, logger: logger}
 }
 
-func (h *Handler) WorkloadToClasses(
+func WorkloadToClasses(
 	sem1 *workloadDomain.Workload,
 	sem2 *workloadDomain.Workload,
 	sem3 *workloadDomain.Workload,
