@@ -19,7 +19,7 @@ func NewConnectAndInit(logger *zap.Logger) *ConnectAndInit {
 	return &ConnectAndInit{logger: logger}
 }
 func (str *ConnectAndInit) NewPostgresPool(ctx context.Context, cfg config.Database) (*pgxpool.Pool, error) {
-	connectionString := fmt.Sprintf("postgresql://%s:%s@%s:%s/%s?sslmode=%s",
+	connectionString := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=%s",
 		cfg.User,
 		cfg.Password,
 		cfg.Host,
