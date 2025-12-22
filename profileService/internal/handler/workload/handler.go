@@ -1,29 +1,30 @@
 package workload
 
+// TODO: MOVE TO SERVICE LAYER. THERE IS NO BUSINESS LOGIC HERE
 import (
 	"context"
 	"encoding/json"
 	"net/http"
 
+	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/workload"
 	workloadDomain "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/workload"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
-	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/workload"
 	"go.uber.org/zap"
 )
 
 type Handler struct {
 	logger          *zap.Logger
-	serviceWorkload *workload.Service
+	serviceWorkload workload.Service
 }
 
 func NewWorkloadHandler(
-	serviceWorkload *workload.Service,
+	serviceWorkload workload.Service,
 	logger *zap.Logger,
 ) *Handler {
 	return &Handler{serviceWorkload: serviceWorkload, logger: logger}
 }
 
-func WorkloadToClasses(
+func (h *Handler) WorkloadToClasses(
 	sem1 *workloadDomain.Workload,
 	sem2 *workloadDomain.Workload,
 	sem3 *workloadDomain.Workload,

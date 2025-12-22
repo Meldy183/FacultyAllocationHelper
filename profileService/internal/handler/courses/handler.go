@@ -9,6 +9,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/CompleteCourse"
+	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/academicYear"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/course"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/courseInstance"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/facultyProfile"
@@ -17,13 +18,12 @@ import (
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/program"
 	programcourseinstance "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/programCourseInstance"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/responsibleInstitute"
+	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/semester"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/staff"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/track"
 	trackcourseinstance "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/trackCourseInstance"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/handler/sharedContent"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
-	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/academicYear"
-	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/semester"
 	"go.uber.org/zap"
 )
 

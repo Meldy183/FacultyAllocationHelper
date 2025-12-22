@@ -1,3 +1,4 @@
+// TODO: move second method to service layer
 package facultyProfile
 
 import (
@@ -336,7 +337,7 @@ func (h *Handler) GetProfile(w http.ResponseWriter, r *http.Request) {
 	if notDone {
 		return
 	}
-	stats := WorkloadToClasses(sem1, sem2, sem3)
+	stats := workloadHandler.WorkloadToClasses(sem1, sem2, sem3)
 	resp := GetProfileResponse{
 		ProfileVersionID: version.ProfileVersionId,
 		Year:             version.Year,
