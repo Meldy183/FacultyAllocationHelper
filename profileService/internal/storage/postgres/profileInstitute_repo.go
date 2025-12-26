@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/institute"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/profileInstitute"
@@ -31,7 +32,7 @@ const (
 
 func (r *UserInstituteRepo) GetUserInstitutesByProfileID(
 	ctx context.Context,
-	profileID int64,
+	profileID uuid.UUID,
 ) ([]*institute.Institute, error) {
 	row, err := r.pool.Query(ctx, queryGetUserInstituteByID, profileID)
 	if err != nil {
@@ -62,7 +63,7 @@ func (r *UserInstituteRepo) GetUserInstitutesByProfileID(
 	r.logger.Info("GetUserInstitutesByProfileID Success",
 		zap.String("layer", logctx.LogRepoLayer),
 		zap.String("function", logctx.LogGetUserInstitute),
-		zap.Int64("profileID", profileID),
+		zap.String("profileID", profileID.String()),
 	)
 	return institutes, nil
 }
@@ -74,7 +75,7 @@ func (r *UserInstituteRepo) AddUserInstitute(ctx context.Context, userInstitute 
 		r.logger.Error("AddUserInstitute",
 			zap.String("layer", logctx.LogRepoLayer),
 			zap.String("function", logctx.LogAddUserInstitute),
-			zap.Int64("profileID", userInstitute.ProfileID),
+			zap.String("profileID", userInstitute.ProfileID.String()),
 			zap.Error(err),
 		)
 		return fmt.Errorf("AddUserInstitute: %w", err)
@@ -82,7 +83,7 @@ func (r *UserInstituteRepo) AddUserInstitute(ctx context.Context, userInstitute 
 	r.logger.Info("Success of adding UserInstitute",
 		zap.String("layer", logctx.LogRepoLayer),
 		zap.String("function", logctx.LogAddUserInstitute),
-		zap.Int64("profileID", userInstitute.ProfileID),
+		zap.String("profileID", userInstitute.ProfileID.String()),
 	)
 	return nil
 }

@@ -8,6 +8,7 @@ import (
 	"strconv"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/google/uuid"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/CompleteCourse"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/academicYear"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/course"
@@ -94,7 +95,7 @@ func (h *Handler) GetAllCoursesByFilters(w http.ResponseWriter, r *http.Request)
 		writeError(w, http.StatusBadRequest, "Error parsing year")
 		return
 	}
-	academicYearsIDs, err := convertStrToInt(r.URL.Query()["academic_year"])
+	academicYearsIDs, err := convertStrToUUID(r.URL.Query()["academic_year"])
 	if err != nil {
 		h.logger.Error("Error parsing year_Studies",
 			zap.String("layer", logctx.LogHandlerLayer),
@@ -104,7 +105,7 @@ func (h *Handler) GetAllCoursesByFilters(w http.ResponseWriter, r *http.Request)
 		writeError(w, http.StatusBadRequest, "Error parsing year_Studies")
 		return
 	}
-	semesterIDs, err := convertStrToInt(r.URL.Query()["semester_ids"])
+	semesterIDs, err := convertStrToUUID(r.URL.Query()["semester_ids"])
 	if err != nil {
 		h.logger.Error("Error parsing semester_id",
 			zap.String("layer", logctx.LogHandlerLayer),
@@ -114,7 +115,7 @@ func (h *Handler) GetAllCoursesByFilters(w http.ResponseWriter, r *http.Request)
 		writeError(w, http.StatusBadRequest, "Error parsing semester_id")
 		return
 	}
-	programIDs, err := convertStrToInt(r.URL.Query()["study_program_ids"])
+	programIDs, err := convertStrToUUID(r.URL.Query()["study_program_ids"])
 	if err != nil {
 		h.logger.Error("Error parsing study_program_ids",
 			zap.String("layer", logctx.LogHandlerLayer),
@@ -124,7 +125,7 @@ func (h *Handler) GetAllCoursesByFilters(w http.ResponseWriter, r *http.Request)
 		writeError(w, http.StatusBadRequest, "Error parsing study_program_ids")
 		return
 	}
-	responsibleInstituteIDs, err := convertStrToInt(r.URL.Query()["responsible_institute_ids"])
+	responsibleInstituteIDs, err := convertStrToUUID(r.URL.Query()["responsible_institute_ids"])
 	if err != nil {
 		h.logger.Error("Error parsing responsible_institute_ids",
 			zap.String("layer", logctx.LogHandlerLayer),
@@ -135,9 +136,6 @@ func (h *Handler) GetAllCoursesByFilters(w http.ResponseWriter, r *http.Request)
 		return
 	}
 	verse := r.URL.Query().Get("profile_version_id")
-	if verse == "" {
-		verse = "0"
-	}
 	h.logger.Warn("Debug",
 		zap.Any("year", year),
 		zap.Any("semester_id", semesterIDs),
@@ -147,15 +145,18 @@ func (h *Handler) GetAllCoursesByFilters(w http.ResponseWriter, r *http.Request)
 		zap.Any("profile_version_id", verse),
 		zap.Any("academic_year", academicYearsIDs),
 	)
-	profileVersionId, err := strconv.ParseInt(verse, 10, 64)
-	if err != nil {
-		h.logger.Error("Error parsing profile_version_id",
-			zap.String("layer", logctx.LogHandlerLayer),
-			zap.String("function", logctx.LogGetAllCourses),
-			zap.Error(err),
-		)
-		writeError(w, http.StatusBadRequest, "Error parsing profile_version_id")
-		return
+	var profileVersionId uuid.UUID
+	if verse != "" {
+		profileVersionId, err = uuid.Parse(verse)
+		if err != nil {
+			h.logger.Error("Error parsing profile_version_id",
+				zap.String("layer", logctx.LogHandlerLayer),
+				zap.String("function", logctx.LogGetAllCourses),
+				zap.Error(err),
+			)
+			writeError(w, http.StatusBadRequest, "Error parsing profile_version_id")
+			return
+		}
 	}
 	instancesIDsAllocationNotFinished, err := h.courseInstanceService.GetInstancesByAllocationStatus(
 		ctx,
@@ -223,8 +224,8 @@ func (h *Handler) GetAllCoursesByFilters(w http.ResponseWriter, r *http.Request)
 		writeError(w, http.StatusBadRequest, "Error getting instances by responsible_institute_ids")
 		return
 	}
-	var instancesIDsByVersionID []int64
-	if profileVersionId != 0 {
+	var instancesIDsByVersionID []uuid.UUID
+	if profileVersionId != uuid.Nil {
 		instancesIDsByVersionID, err = h.courseInstanceService.GetInstancesByVersionID(ctx, profileVersionId)
 	} else {
 		instancesIDsByVersionID = instancesIDsAllocationNotFinished
@@ -340,7 +341,7 @@ func (h *Handler) AddNewCourse(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusBadRequest, "Error adding courseInstance")
 		return
 	}
-	academicYearName, err := h.academicYearService.GetAcademicYearNameByID(ctx, int64(courseInstanceObj.AcademicYearID))
+	academicYearName, err := h.academicYearService.GetAcademicYearNameByID(ctx, courseInstanceObj.AcademicYearID)
 	if err != nil {
 		h.logger.Error("Error getting academic year",
 			zap.String("layer", logctx.LogHandlerLayer),
@@ -353,7 +354,7 @@ func (h *Handler) AddNewCourse(w http.ResponseWriter, r *http.Request) {
 	resp.AcademicYearName = *academicYearName
 	resp.CourseInstanceID = courseInstanceObj.InstanceID
 	resp.GroupsNeeded = courseInstanceObj.GroupsNeeded
-	semesterName, err := h.semesterService.GetSemesterNameByID(ctx, int64(courseInstanceObj.SemesterID))
+	semesterName, err := h.semesterService.GetSemesterNameByID(ctx, courseInstanceObj.SemesterID)
 	if err != nil {
 		h.logger.Error("Error getting semester name",
 			zap.String("layer", logctx.LogHandlerLayer),
@@ -415,7 +416,7 @@ func (h *Handler) AddNewCourse(w http.ResponseWriter, r *http.Request) {
 			writeError(w, http.StatusBadRequest, "Error adding track")
 			return
 		}
-		trackName, err := h.trackService.GetTrackNameByID(ctx, int64(elem))
+		trackName, err := h.trackService.GetTrackNameByID(ctx, elem)
 		if err != nil {
 			h.logger.Error("Error getting track name",
 				zap.String("layer", logctx.LogHandlerLayer),
@@ -437,7 +438,8 @@ func (h *Handler) AddNewCourse(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) GetCourse(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	id, err := strconv.ParseInt(chi.URLParam(r, "id"), 10, 64)
+	idStr := chi.URLParam(r, "id")
+	id, err := uuid.Parse(idStr)
 	if err != nil {
 		h.logger.Error("error getting courseObj id",
 			zap.String("layer", logctx.LogHandlerLayer),
@@ -463,7 +465,7 @@ func (h *Handler) CombineCourseCard(
 	w http.ResponseWriter,
 	err error,
 	ctx context.Context,
-	id int64,
+	id uuid.UUID,
 ) (*sharedContent.Course, bool) {
 	fullCourse, err := h.fullCourseService.GetFullCourseInfoByID(ctx, id)
 	if err != nil {
@@ -524,9 +526,9 @@ func (h *Handler) CombineCourseCard(
 	}
 	academicYearName, err := h.academicYearService.GetAcademicYearNameByID(
 		ctx,
-		int64(fullCourse.CourseInstance.AcademicYearID),
+		fullCourse.CourseInstance.AcademicYearID,
 	)
-	semesterName, err := h.semesterService.GetSemesterNameByID(ctx, int64(fullCourse.CourseInstance.SemesterID))
+	semesterName, err := h.semesterService.GetSemesterNameByID(ctx, fullCourse.CourseInstance.SemesterID)
 	instituteObj, err := h.responsibleInstituteService.GetResponsibleInstituteNameByID(
 		ctx,
 		fullCourse.Course.ResponsibleInstituteID,
@@ -571,21 +573,15 @@ func (h *Handler) CombineCourseCard(
 	return courseObj, false
 }
 
-func UniteIDs(a []int64, b []int64) *[]int64 {
-	union := make([]int64, 0)
-	p1 := 0
-	p2 := 0
-	for p1 < len(a) && p2 < len(b) {
-		if a[p1] == b[p2] {
-			union = append(union, a[p1])
-			p1++
-			p2++
-			continue
-		}
-		if a[p1] < b[p2] {
-			p1++
-		} else {
-			p2++
+func UniteIDs(a []uuid.UUID, b []uuid.UUID) *[]uuid.UUID {
+	union := make([]uuid.UUID, 0)
+	aSet := make(map[uuid.UUID]bool)
+	for _, v := range a {
+		aSet[v] = true
+	}
+	for _, v := range b {
+		if aSet[v] {
+			union = append(union, v)
 		}
 	}
 	return &union
@@ -640,7 +636,7 @@ func (h *Handler) staffToFaculty(ctx context.Context, s *staff.Staff) (*sharedCo
 	return fuck, nil
 }
 
-func (h *Handler) getProfileByVersionID(ctx context.Context, versionID int64) *facultyProfile.UserProfile {
+func (h *Handler) getProfileByVersionID(ctx context.Context, versionID uuid.UUID) *facultyProfile.UserProfile {
 	version, err := h.profileVersionService.GetVersionByVersionID(ctx, versionID)
 	if err != nil {
 		h.logger.Error("getProfileByVersionID",
@@ -663,26 +659,14 @@ func (h *Handler) getProfileByVersionID(ctx context.Context, versionID int64) *f
 	return profileObj
 }
 
-func convertStrToInt64(s []string) ([]int64, error) {
-	ints := make([]int64, 0)
+func convertStrToUUID(s []string) ([]uuid.UUID, error) {
+	uuids := make([]uuid.UUID, 0)
 	for _, v := range s {
-		i, err := strconv.ParseInt(v, 10, 64)
+		id, err := uuid.Parse(v)
 		if err != nil {
 			return nil, err
 		}
-		ints = append(ints, i)
+		uuids = append(uuids, id)
 	}
-	return ints, nil
-}
-
-func convertStrToInt(s []string) ([]int64, error) {
-	ints := make([]int64, 0)
-	for _, v := range s {
-		i, err := strconv.ParseInt(v, 10, 64)
-		if err != nil {
-			return nil, err
-		}
-		ints = append(ints, i)
-	}
-	return ints, nil
+	return uuids, nil
 }

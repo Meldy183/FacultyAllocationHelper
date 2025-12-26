@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/lab"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
@@ -27,7 +28,7 @@ const (
 	queryGetLabByID           = `SELECT lab_id, name, institute_id FROM lab WHERE lab_id = $1`
 )
 
-func (r *LabRepo) GetLabByID(ctx context.Context, labID int64) (*lab.Lab, error) {
+func (r *LabRepo) GetLabByID(ctx context.Context, labID uuid.UUID) (*lab.Lab, error) {
 	var labByID lab.Lab
 	err := r.pool.QueryRow(ctx, queryGetLabByID, labID).Scan(
 		&labByID.LabID,
@@ -49,9 +50,9 @@ func (r *LabRepo) GetLabByID(ctx context.Context, labID int64) (*lab.Lab, error)
 	return &labByID, err
 }
 
-func (r *LabRepo) GetAllLabs(ctx context.Context) ([]int64, error) {
+func (r *LabRepo) GetAllLabs(ctx context.Context) ([]uuid.UUID, error) {
 	rows, err := r.pool.Query(ctx, queryGetAllLabs)
-	var labs []int64
+	var labs []uuid.UUID
 	if err != nil {
 		r.logger.Error("get-all",
 			zap.String("layer", logctx.LogRepoLayer),
@@ -70,7 +71,7 @@ func (r *LabRepo) GetAllLabs(ctx context.Context) ([]int64, error) {
 			)
 			return nil, fmt.Errorf("error in get-all: %w", err)
 		}
-		var labToAdd int64
+		var labToAdd uuid.UUID
 		err := rows.Scan(
 			&labToAdd,
 		)
@@ -92,9 +93,9 @@ func (r *LabRepo) GetAllLabs(ctx context.Context) ([]int64, error) {
 	return labs, nil
 }
 
-func (r *LabRepo) GetLabsByInstituteID(ctx context.Context, instituteID int64) ([]int64, error) {
+func (r *LabRepo) GetLabsByInstituteID(ctx context.Context, instituteID uuid.UUID) ([]uuid.UUID, error) {
 	rows, err := r.pool.Query(ctx, queryGetLabsByInstituteID, instituteID)
-	var labs []int64
+	var labs []uuid.UUID
 	if err != nil {
 		r.logger.Error("get-labs-by-institute-id",
 			zap.String("layer", logctx.LogRepoLayer),
@@ -113,7 +114,7 @@ func (r *LabRepo) GetLabsByInstituteID(ctx context.Context, instituteID int64) (
 			)
 			return nil, fmt.Errorf("error in get-labs-by-institute-id: %w", err)
 		}
-		var labToAdd int64
+		var labToAdd uuid.UUID
 		err := rows.Scan(
 			&labToAdd,
 		)

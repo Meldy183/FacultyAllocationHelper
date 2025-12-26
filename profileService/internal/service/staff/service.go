@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/google/uuid"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/staff"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
 	"go.uber.org/zap"
@@ -52,10 +53,10 @@ func (s *Service) GetTAs(staffs []*staff.Staff) []*staff.Staff {
 	return ti
 }
 
-func (s *Service) GetAllStaffByInstanceID(ctx context.Context, instanceID int64) ([]*staff.Staff, error) {
+func (s *Service) GetAllStaffByInstanceID(ctx context.Context, instanceID uuid.UUID) ([]*staff.Staff, error) {
 	//TODO: validations that important field are not nil
-	if instanceID <= 0 {
-		return nil, fmt.Errorf("invalid instance id: %d", instanceID)
+	if instanceID == uuid.Nil {
+		return nil, fmt.Errorf("invalid instance id: %s", instanceID.String())
 	}
 	return s.repo.GetAllStaffByInstanceID(ctx, instanceID)
 }

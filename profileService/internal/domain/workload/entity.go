@@ -1,9 +1,11 @@
 package workload
 
+import "github.com/google/uuid"
+
 type Workload struct {
-	WorkloadID       int64
-	ProfileVersionID int64
-	SemesterID       int64
+	WorkloadID       uuid.UUID
+	ProfileVersionID uuid.UUID
+	SemesterID       uuid.UUID
 	LecturesCount    int64
 	TutorialsCount   int64
 	LabsCount        int64

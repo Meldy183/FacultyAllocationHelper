@@ -1,9 +1,13 @@
 package lab
 
-import "context"
+import (
+	"context"
+
+	"github.com/google/uuid"
+)
 
 type Repository interface {
-	GetAllLabs(ctx context.Context) ([]int64, error)
-	GetLabsByInstituteID(ctx context.Context, instituteID int64) ([]int64, error)
-	GetLabByID(ctx context.Context, labID int64) (*Lab, error)
+	GetAllLabs(ctx context.Context) ([]uuid.UUID, error)
+	GetLabsByInstituteID(ctx context.Context, instituteID uuid.UUID) ([]uuid.UUID, error)
+	GetLabByID(ctx context.Context, labID uuid.UUID) (*Lab, error)
 }

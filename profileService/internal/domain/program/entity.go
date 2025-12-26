@@ -1,6 +1,8 @@
 package program
 
+import "github.com/google/uuid"
+
 type Program struct {
-	ProgramID int64
+	ProgramID uuid.UUID
 	Name      string
 }

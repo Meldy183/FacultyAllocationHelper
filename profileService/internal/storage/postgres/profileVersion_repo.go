@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/profileVersion"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
@@ -47,7 +48,7 @@ const (
 
 func (r *ProfileVersionRepo) GetVersionByProfileID(
 	ctx context.Context,
-	profileID int64,
+	profileID uuid.UUID,
 	year int64,
 ) (*profileVersion.ProfileVersion, error) {
 	row := r.pool.QueryRow(ctx, queryGetVersionByProfileID, profileID, year)
@@ -70,7 +71,7 @@ func (r *ProfileVersionRepo) GetVersionByProfileID(
 		r.logger.Error("Failed to get version by profile ID",
 			zap.String("layer", logctx.LogRepoLayer),
 			zap.String("function", logctx.LogGetVersionByProfileID),
-			zap.Int64("profile_id", profileID),
+			zap.String("profile_id", profileID.String()),
 			zap.Error(err),
 		)
 		return nil, fmt.Errorf("failed to get version by profile ID: %w", err)
@@ -78,7 +79,7 @@ func (r *ProfileVersionRepo) GetVersionByProfileID(
 	r.logger.Info("Succeeded to get version by profile ID",
 		zap.String("layer", logctx.LogRepoLayer),
 		zap.String("function", logctx.LogGetVersionByProfileID),
-		zap.Int64("profile_id", profileID),
+		zap.String("profile_id", profileID.String()),
 	)
 	return &version, nil
 }
@@ -100,14 +101,14 @@ func (r *ProfileVersionRepo) AddProfileVersion(ctx context.Context, version *pro
 	r.logger.Info("Succeeded to insert version",
 		zap.String("layer", logctx.LogRepoLayer),
 		zap.String("function", logctx.LogAddVersion),
-		zap.Int64("version_id", version.ProfileVersionId),
+		zap.String("version_id", version.ProfileVersionId.String()),
 	)
 	return nil
 }
 
 func (r *ProfileVersionRepo) GetVersionByVersionID(
 	ctx context.Context,
-	versionID int64,
+	versionID uuid.UUID,
 ) (*profileVersion.ProfileVersion, error) {
 	row := r.pool.QueryRow(ctx, queryGetVersionByVersionID, versionID)
 	var version profileVersion.ProfileVersion
@@ -129,7 +130,7 @@ func (r *ProfileVersionRepo) GetVersionByVersionID(
 		r.logger.Error("Failed to get version by profile ID",
 			zap.String("layer", logctx.LogRepoLayer),
 			zap.String("function", logctx.LogGetVersionByProfileID),
-			zap.Int64("profile_id", versionID),
+			zap.String("profile_id", versionID.String()),
 			zap.Error(err),
 		)
 		return nil, fmt.Errorf("failed to get version by profile ID: %w", err)
@@ -137,7 +138,7 @@ func (r *ProfileVersionRepo) GetVersionByVersionID(
 	r.logger.Info("Succeeded to get version by profile ID",
 		zap.String("layer", logctx.LogRepoLayer),
 		zap.String("function", logctx.LogGetVersionByProfileID),
-		zap.Int64("profile_id", versionID),
+		zap.String("profile_id", versionID.String()),
 	)
 	return &version, nil
 }

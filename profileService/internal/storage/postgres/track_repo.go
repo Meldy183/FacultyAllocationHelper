@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/track"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
@@ -27,7 +28,7 @@ const (
 	queryGetTrackIDByName = `SELECT track_id, name FROM track WHERE name = $1`
 )
 
-func (r *TrackRepo) GetTrackIDByName(ctx context.Context, name string) (*int64, error) {
+func (r *TrackRepo) GetTrackIDByName(ctx context.Context, name string) (*uuid.UUID, error) {
 	row := r.pool.QueryRow(ctx, queryGetTrackIDByName, name)
 	var trackObj track.Track
 	err := row.Scan(&trackObj.TrackID, &trackObj.Name)
@@ -48,7 +49,7 @@ func (r *TrackRepo) GetTrackIDByName(ctx context.Context, name string) (*int64, 
 	)
 	return &trackObj.TrackID, nil
 }
-func (r *TrackRepo) GetTrackNameByID(ctx context.Context, id int64) (*string, error) {
+func (r *TrackRepo) GetTrackNameByID(ctx context.Context, id uuid.UUID) (*string, error) {
 	row := r.pool.QueryRow(ctx, queryGetTracNameByID, id)
 	var trackObj track.Track
 	err := row.Scan(&trackObj.TrackID, &trackObj.Name)
@@ -56,7 +57,7 @@ func (r *TrackRepo) GetTrackNameByID(ctx context.Context, id int64) (*string, er
 		r.logger.Error("failed to Get Track Name By ID",
 			zap.String("layer", logctx.LogRepoLayer),
 			zap.String("function", logctx.LogGetTrackNameByID),
-			zap.Int64("id", id),
+			zap.String("id", id.String()),
 			zap.Error(err),
 		)
 		return nil, fmt.Errorf("GetLanguageByCode: %w", err)
@@ -64,7 +65,7 @@ func (r *TrackRepo) GetTrackNameByID(ctx context.Context, id int64) (*string, er
 	r.logger.Info("successfully Got TrackName By ID",
 		zap.String("layer", logctx.LogRepoLayer),
 		zap.String("function", logctx.LogGetTrackNameByID),
-		zap.Int64("id", id),
+		zap.String("id", id.String()),
 		zap.String("name", trackObj.Name),
 	)
 	return &trackObj.Name, nil

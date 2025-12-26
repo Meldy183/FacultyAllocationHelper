@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/academicYear"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
@@ -56,9 +57,9 @@ func (r *AcademicYearRepo) GetAllAcademicYears(ctx context.Context) ([]academicY
 	return academicYears, nil
 }
 
-func (r *AcademicYearRepo) GetAcademicYearNameByID(ctx context.Context, yearID int64) (*string, error) {
+func (r *AcademicYearRepo) GetAcademicYearNameByID(ctx context.Context, yearID uuid.UUID) (*string, error) {
 	var str string
-	r.logger.Info(queryGetAcademicYearByID, zap.Int64("year_id", yearID))
+	r.logger.Info(queryGetAcademicYearByID, zap.String("year_id", yearID.String()))
 	err := r.pool.QueryRow(ctx, queryGetAcademicYearByID, yearID).Scan(
 		&str,
 	)

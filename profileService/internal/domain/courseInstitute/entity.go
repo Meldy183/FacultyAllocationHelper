@@ -1,7 +1,9 @@
 package courseInstitute
 
+import "github.com/google/uuid"
+
 type InstituteCourseLink struct {
-	CourseInstituteID int64
-	InstituteID       int64
-	CourseID          int64
+	CourseInstituteID uuid.UUID
+	InstituteID       uuid.UUID
+	CourseID          uuid.UUID
 }

@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/course"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
@@ -44,7 +45,7 @@ const (
 	`
 )
 
-func (r *CourseRepo) GetCourseByID(ctx context.Context, courseID int64) (*course.Course, error) {
+func (r *CourseRepo) GetCourseByID(ctx context.Context, courseID uuid.UUID) (*course.Course, error) {
 	row := r.pool.QueryRow(ctx, queryGetCourseByID, courseID)
 	var course course.Course
 	err := row.Scan(
@@ -60,7 +61,7 @@ func (r *CourseRepo) GetCourseByID(ctx context.Context, courseID int64) (*course
 		r.logger.Error("Error getting course",
 			zap.String("layer", logctx.LogRepoLayer),
 			zap.String("function", logctx.LogGetCourseByID),
-			zap.Int64("courseID", courseID),
+			zap.String("courseID", courseID.String()),
 			zap.Error(err),
 		)
 		return nil, fmt.Errorf("GetCourseByID failed: %w", err)
@@ -68,7 +69,7 @@ func (r *CourseRepo) GetCourseByID(ctx context.Context, courseID int64) (*course
 	r.logger.Info("Course found",
 		zap.String("layer", logctx.LogRepoLayer),
 		zap.String("function", logctx.LogGetCourseByID),
-		zap.Int64("courseID", courseID),
+		zap.String("courseID", courseID.String()),
 	)
 	return &course, nil
 }
@@ -86,7 +87,7 @@ func (r *CourseRepo) AddNewCourse(ctx context.Context, course *course.Course) er
 		r.logger.Error("Error creating course",
 			zap.String("layer", logctx.LogRepoLayer),
 			zap.String("function", logctx.LogAddNewCourse),
-			zap.Int64("courseID", course.CourseID),
+			zap.String("courseID", course.CourseID.String()),
 			zap.Error(err),
 		)
 		return fmt.Errorf("AddNewCourse failed: %w", err)
@@ -94,12 +95,12 @@ func (r *CourseRepo) AddNewCourse(ctx context.Context, course *course.Course) er
 	r.logger.Info("Course profile created",
 		zap.String("layer", logctx.LogRepoLayer),
 		zap.String("function", logctx.LogAddNewCourse),
-		zap.Int64("courseID", course.CourseID),
+		zap.String("courseID", course.CourseID.String()),
 	)
 	return nil
 }
 
-func (r *CourseRepo) UpdateCourseByID(ctx context.Context, id int64, course *course.Course) error {
+func (r *CourseRepo) UpdateCourseByID(ctx context.Context, id uuid.UUID, course *course.Course) error {
 	_, err := r.pool.Exec(ctx, queryUpdateCourseByID,
 		course.Name,
 		course.OfficialName,
@@ -113,7 +114,7 @@ func (r *CourseRepo) UpdateCourseByID(ctx context.Context, id int64, course *cou
 		r.logger.Error("Error editing course",
 			zap.String("layer", logctx.LogRepoLayer),
 			zap.String("function", logctx.LogUpdateCourseByID),
-			zap.Int64("courseID", course.CourseID),
+			zap.String("courseID", course.CourseID.String()),
 			zap.Error(err),
 		)
 		return fmt.Errorf("AddNewCourse failed: %w", err)
@@ -121,7 +122,7 @@ func (r *CourseRepo) UpdateCourseByID(ctx context.Context, id int64, course *cou
 	r.logger.Info("Course profile updated",
 		zap.String("layer", logctx.LogRepoLayer),
 		zap.String("function", logctx.LogUpdateCourseByID),
-		zap.Int64("courseID", course.CourseID),
+		zap.String("courseID", course.CourseID.String()),
 	)
 	return nil
 }

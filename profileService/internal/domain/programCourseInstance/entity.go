@@ -1,7 +1,9 @@
 package programcourseinstance
 
+import "github.com/google/uuid"
+
 type ProgramCourseInstance struct {
-	ProgramCourseID  int64
-	ProgramID        int64
-	CourseInstanceID int64
+	ProgramCourseID  uuid.UUID
+	ProgramID        uuid.UUID
+	CourseInstanceID uuid.UUID
 }

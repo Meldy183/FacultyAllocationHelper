@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/xuri/excelize/v2"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/CompleteCourse"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/CompleteUser"
@@ -18,6 +19,25 @@ import (
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
 	"go.uber.org/zap"
 )
+
+// Semester UUIDs mapping (from connection.go)
+var semesterUUIDs = map[int]uuid.UUID{
+	1: uuid.MustParse("00000000-0000-0000-0005-000000000001"), // T1
+	2: uuid.MustParse("00000000-0000-0000-0005-000000000002"), // T2
+	3: uuid.MustParse("00000000-0000-0000-0005-000000000003"), // T3
+}
+
+// Academic Year UUIDs mapping (from connection.go)
+var academicYearUUIDs = map[int]uuid.UUID{
+	1: uuid.MustParse("00000000-0000-0000-0006-000000000001"), // BS1
+	2: uuid.MustParse("00000000-0000-0000-0006-000000000002"), // BS2
+	3: uuid.MustParse("00000000-0000-0000-0006-000000000003"), // BS3
+	4: uuid.MustParse("00000000-0000-0000-0006-000000000004"), // BS4
+	5: uuid.MustParse("00000000-0000-0000-0006-000000000005"), // MS1
+	6: uuid.MustParse("00000000-0000-0000-0006-000000000006"), // MS2
+	7: uuid.MustParse("00000000-0000-0000-0006-000000000007"), // PhD1
+	8: uuid.MustParse("00000000-0000-0000-0006-000000000008"), // PhD2
+}
 
 var _ parsing.Service = (*Service)(nil)
 
@@ -143,8 +163,12 @@ func (s *Service) parseCourses(courses [][]string, ctx context.Context, studyyea
 				cells := cellValue
 				switch indj {
 				case 1:
-					course.CourseInstance.AcademicYearID = int64(year)
-					course.CourseInstance.SemesterID = int64(semester)
+					if yearUUID, ok := academicYearUUIDs[year]; ok {
+						course.CourseInstance.AcademicYearID = yearUUID
+					}
+					if semUUID, ok := semesterUUIDs[semester]; ok {
+						course.CourseInstance.SemesterID = semUUID
+					}
 					course.Course.Name = cells
 				case 2:
 					course.Course.OfficialName = &cells
@@ -217,10 +241,11 @@ func (s *Service) parseCourses(courses [][]string, ctx context.Context, studyyea
 				}
 			}
 			if course.Course.OfficialName != nil {
-				switch course.CourseInstance.SemesterID {
-				case 2, 3:
+				semUUID := course.CourseInstance.SemesterID
+				switch semUUID {
+				case semesterUUIDs[2], semesterUUIDs[3]:
 					course.CourseInstance.Year = int64(studyyear + 1)
-				case 1:
+				case semesterUUIDs[1]:
 					course.CourseInstance.Year = int64(studyyear)
 				}
 				s.completeCourseService.AddFullCourse(ctx, &course)

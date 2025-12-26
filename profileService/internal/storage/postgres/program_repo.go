@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/program"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
@@ -27,9 +28,9 @@ const (
 	queryProgramIDByName = `SELECT program_id FROM program WHERE name = $1`
 )
 
-func (r *ProgramRepo) GetProgramIDByName(ctx context.Context, name string) (*int64, error) {
+func (r *ProgramRepo) GetProgramIDByName(ctx context.Context, name string) (*uuid.UUID, error) {
 	ID := r.pool.QueryRow(ctx, queryProgramIDByName, name)
-	var ProgramID int64
+	var ProgramID uuid.UUID
 	err := ID.Scan(&ProgramID)
 	if err != nil {
 		r.logger.Error("Error getting responsible institute name",
@@ -46,7 +47,7 @@ func (r *ProgramRepo) GetProgramIDByName(ctx context.Context, name string) (*int
 	)
 	return &ProgramID, nil
 }
-func (r *ProgramRepo) GetProgramNameByID(ctx context.Context, id int64) (*string, error) {
+func (r *ProgramRepo) GetProgramNameByID(ctx context.Context, id uuid.UUID) (*string, error) {
 	row := r.pool.QueryRow(ctx, queryProgramByID, id)
 	var programObj program.Program
 	err := row.Scan(&programObj.ProgramID, &programObj.Name)
@@ -54,7 +55,7 @@ func (r *ProgramRepo) GetProgramNameByID(ctx context.Context, id int64) (*string
 		r.logger.Error("failed to Get Program Name By ID",
 			zap.String("layer", logctx.LogRepoLayer),
 			zap.String("function", logctx.LogGetProgramNameByID),
-			zap.Int64("id", id),
+			zap.String("id", id.String()),
 			zap.Error(err),
 		)
 		return nil, fmt.Errorf("GetProgramNameByCode: %w", err)
@@ -62,7 +63,7 @@ func (r *ProgramRepo) GetProgramNameByID(ctx context.Context, id int64) (*string
 	r.logger.Info("successfully Got ProgramName By ID",
 		zap.String("layer", logctx.LogRepoLayer),
 		zap.String("function", logctx.LogGetProgramNameByID),
-		zap.Int64("id", id),
+		zap.String("id", id.String()),
 		zap.String("name", programObj.Name),
 	)
 	return &programObj.Name, nil

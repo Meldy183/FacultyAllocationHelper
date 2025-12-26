@@ -78,13 +78,30 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 		str.logger.Error("Error acquiring connection",
 			zap.String("layer", logctx.LogDBInitLayer),
 			zap.String("function", logctx.LogInitSchema),
-			zap.Error(err), //
+			zap.Error(err),
 		)
 		return err
 	}
 	defer conn.Release()
-	query := `CREATE TABLE IF NOT EXISTS position (
-      position_id SERIAL PRIMARY KEY,
+
+	// Enable uuid-ossp extension for UUID generation
+	query := `CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`
+	_, err = conn.Exec(ctx, query)
+	if err != nil {
+		str.logger.Error("Error creating uuid-ossp extension",
+			zap.String("layer", logctx.LogDBInitLayer),
+			zap.String("function", logctx.LogInitSchema),
+			zap.Error(err),
+		)
+		return err
+	}
+	str.logger.Info("created uuid-ossp extension",
+		zap.String("layer", logctx.LogDBInitLayer),
+		zap.String("function", logctx.LogInitSchema),
+	)
+
+	query = `CREATE TABLE IF NOT EXISTS position (
+      position_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
       name VARCHAR(255) UNIQUE NOT NULL
     )`
 	_, err = conn.Exec(ctx, query)
@@ -100,8 +117,9 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 		zap.String("layer", logctx.LogDBInitLayer),
 		zap.String("function", logctx.LogInitSchema),
 	)
+
 	query = `CREATE TABLE IF NOT EXISTS user_profile (
-      profile_id SERIAL PRIMARY KEY,
+      profile_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
       email VARCHAR(50) UNIQUE NOT NULL,
       english_name VARCHAR(255) NOT NULL,
       russian_name VARCHAR(255),
@@ -121,6 +139,7 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 		zap.String("layer", logctx.LogDBInitLayer),
 		zap.String("function", logctx.LogInitSchema),
 	)
+
 	query = `CREATE TABLE IF NOT EXISTS language (
       code VARCHAR(20) PRIMARY KEY,
       language_name VARCHAR(255) UNIQUE NOT NULL
@@ -137,8 +156,9 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 		zap.String("layer", logctx.LogDBInitLayer),
 		zap.String("function", logctx.LogInitSchema),
 	)
+
 	query = `CREATE TABLE IF NOT EXISTS institute (
-      institute_id SERIAL PRIMARY KEY,
+      institute_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
       name VARCHAR(255) UNIQUE NOT NULL
   )`
 	_, err = conn.Exec(ctx, query)
@@ -156,9 +176,9 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 	)
 
 	query = `CREATE TABLE IF NOT EXISTS lab (
-      lab_id SERIAL PRIMARY KEY,
+      lab_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
       name VARCHAR(255) UNIQUE NOT NULL,
-      institute_id INT NOT NULL,
+      institute_id UUID NOT NULL,
       FOREIGN KEY (institute_id) REFERENCES institute (institute_id)
   )`
 	_, err = conn.Exec(ctx, query)
@@ -174,9 +194,10 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 		zap.String("layer", logctx.LogDBInitLayer),
 		zap.String("function", logctx.LogInitSchema),
 	)
+
 	query = `CREATE TABLE IF NOT EXISTS user_language (
-      user_language_id SERIAL PRIMARY KEY,
-      profile_id INT NOT NULL,
+      user_language_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+      profile_id UUID NOT NULL,
       code VARCHAR(255) NOT NULL,
       FOREIGN KEY (profile_id) REFERENCES user_profile (profile_id),
       FOREIGN KEY (code) REFERENCES language (code)
@@ -194,10 +215,11 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 		zap.String("layer", logctx.LogDBInitLayer),
 		zap.String("function", logctx.LogInitSchema),
 	)
+
 	query = `CREATE TABLE IF NOT EXISTS user_institute (
-      user_institute_id SERIAL PRIMARY KEY,
-      profile_id INT NOT NULL,
-      institute_id INT NOT NULL,
+      user_institute_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+      profile_id UUID NOT NULL,
+      institute_id UUID NOT NULL,
       FOREIGN KEY (profile_id) REFERENCES user_profile (profile_id),
       FOREIGN KEY (institute_id) REFERENCES institute (institute_id)
   )`
@@ -212,7 +234,7 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 	}
 
 	query = `CREATE TABLE IF NOT EXISTS responsible_institute (
-    responsible_institute_id SERIAL PRIMARY KEY,
+    responsible_institute_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     responsible_institute_name VARCHAR
   )`
 	_, err = conn.Exec(ctx, query)
@@ -228,11 +250,12 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 		zap.String("layer", logctx.LogDBInitLayer),
 		zap.String("function", logctx.LogInitSchema),
 	)
+
 	query = `CREATE TABLE IF NOT EXISTS course (
-    course_id SERIAL PRIMARY KEY,
+    course_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     name VARCHAR (100),
 	official_name VARCHAR (100),
-	responsible_institute_id INT,
+	responsible_institute_id UUID,
     lec_hours INTEGER,
     lab_hours INTEGER,
 	is_elective BOOL,
@@ -251,8 +274,9 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 		zap.String("layer", logctx.LogDBInitLayer),
 		zap.String("function", logctx.LogInitSchema),
 	)
+
 	query = `CREATE TABLE IF NOT EXISTS semester (
-    semester_id SERIAL PRIMARY KEY,
+    semester_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     semester_name VARCHAR(20)
   )`
 	_, err = conn.Exec(ctx, query)
@@ -268,8 +292,9 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 		zap.String("layer", logctx.LogDBInitLayer),
 		zap.String("function", logctx.LogInitSchema),
 	)
+
 	query = `CREATE TABLE IF NOT EXISTS academic_year (
-    academic_year_id INT PRIMARY KEY,
+    academic_year_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     academic_year_name VARCHAR(20)
   )`
 	_, err = conn.Exec(ctx, query)
@@ -285,20 +310,23 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 		zap.String("layer", logctx.LogDBInitLayer),
 		zap.String("function", logctx.LogInitSchema),
 	)
+
 	query = `CREATE TABLE IF NOT EXISTS course_instance (
-    instance_id SERIAL PRIMARY KEY,
-    course_id INT NOT NULL,
-    semester_id INT,
+    instance_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    course_id UUID NOT NULL,
+    semester_id UUID,
     year INT,
     mode VARCHAR(20),
-    academic_year_id INT,
+    academic_year_id UUID,
 	hardness_coefficient FLOAT,
     form VARCHAR(30),
     groups_needed INT,
     groups_taken INT,
     pi_allocation_status VARCHAR(20),
     ti_allocation_status VARCHAR(20),
-    FOREIGN KEY (course_id) REFERENCES course (course_id)
+    FOREIGN KEY (course_id) REFERENCES course (course_id),
+    FOREIGN KEY (semester_id) REFERENCES semester (semester_id),
+    FOREIGN KEY (academic_year_id) REFERENCES academic_year (academic_year_id)
   )`
 	_, err = conn.Exec(ctx, query)
 	if err != nil {
@@ -313,8 +341,9 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 		zap.String("layer", logctx.LogDBInitLayer),
 		zap.String("function", logctx.LogInitSchema),
 	)
+
 	query = `CREATE TABLE IF NOT EXISTS program (
-    program_id SERIAL PRIMARY KEY,
+    program_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     name VARCHAR(20)
   )`
 	_, err = conn.Exec(ctx, query)
@@ -330,12 +359,13 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 		zap.String("layer", logctx.LogDBInitLayer),
 		zap.String("function", logctx.LogInitSchema),
 	)
+
 	query = `CREATE TABLE IF NOT EXISTS track (
-    track_id SERIAL PRIMARY KEY,
+    track_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     name VARCHAR(20),
-    program_id INT,
+    program_id UUID,
     FOREIGN KEY (program_id) REFERENCES program (program_id)
-  )` // name это типо CS AI пон???
+  )`
 	_, err = conn.Exec(ctx, query)
 	if err != nil {
 		str.logger.Error("Error creating track table",
@@ -349,10 +379,11 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 		zap.String("layer", logctx.LogDBInitLayer),
 		zap.String("function", logctx.LogInitSchema),
 	)
+
 	query = `CREATE TABLE IF NOT EXISTS track_course_instance (
-    track_course_instance_id SERIAL PRIMARY KEY,
-    track_id INT,
-    instance_id INT,
+    track_course_instance_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    track_id UUID,
+    instance_id UUID,
     FOREIGN KEY (track_id) REFERENCES track (track_id),
     FOREIGN KEY (instance_id) REFERENCES course_instance (instance_id)
   )`
@@ -369,10 +400,11 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 		zap.String("layer", logctx.LogDBInitLayer),
 		zap.String("function", logctx.LogInitSchema),
 	)
+
 	query = `CREATE TABLE IF NOT EXISTS program_course_instance (
-    program_course_instance_id SERIAL PRIMARY KEY,
-    program_id INT,
-    instance_id INT,
+    program_course_instance_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    program_id UUID,
+    instance_id UUID,
     FOREIGN KEY (program_id) REFERENCES program (program_id),
     FOREIGN KEY (instance_id) REFERENCES course_instance (instance_id)
   )`
@@ -389,41 +421,13 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 		zap.String("layer", logctx.LogDBInitLayer),
 		zap.String("function", logctx.LogInitSchema),
 	)
-	query = `CREATE TABLE IF NOT EXISTS staff (
-    assignment_id SERIAL PRIMARY KEY,
-    instance_id INT,
-    profile_version_id INT,
-    position_type VARCHAR(3),
-    groups_assigned INT,
-    is_confirmed BOOLEAN,
-    labs_count INT,
-    tutorials_count INT,
-    lectures_count INT,
-    FOREIGN KEY (instance_id) REFERENCES course_instance (instance_id)
-  )`
-	_, err = conn.Exec(ctx, query)
-	if err != nil {
-		str.logger.Error("Error creating staff table",
-			zap.String("layer", logctx.LogDBInitLayer),
-			zap.String("function", logctx.LogInitSchema),
-			zap.Error(err),
-		)
-		return err
-	}
-	str.logger.Info("created staff table",
-		zap.String("layer", logctx.LogDBInitLayer),
-		zap.String("function", logctx.LogInitSchema),
-	)
 
-	str.logger.Info("created profile_staff table",
-		zap.String("layer", logctx.LogDBInitLayer),
-		zap.String("function", logctx.LogInitSchema))
 	query = `CREATE TABLE IF NOT EXISTS user_profile_version (
-    profile_version_id SERIAL PRIMARY KEY,
-    profile_id INT,
+    profile_version_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    profile_id UUID,
     year INT,
 	maxload INT,
-	position_id INT,
+	position_id UUID,
 	employment_type VARCHAR(128),
 	student_type VARCHAR(32),
 	fsro VARCHAR(128),
@@ -445,10 +449,38 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 	str.logger.Info("created user_profile_version table",
 		zap.String("layer", logctx.LogDBInitLayer),
 		zap.String("function", logctx.LogInitSchema))
+
+	query = `CREATE TABLE IF NOT EXISTS staff (
+    assignment_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    instance_id UUID,
+    profile_version_id UUID,
+    position_type VARCHAR(3),
+    groups_assigned INT,
+    is_confirmed BOOLEAN,
+    labs_count INT,
+    tutorials_count INT,
+    lectures_count INT,
+    FOREIGN KEY (instance_id) REFERENCES course_instance (instance_id),
+    FOREIGN KEY (profile_version_id) REFERENCES user_profile_version (profile_version_id)
+  )`
+	_, err = conn.Exec(ctx, query)
+	if err != nil {
+		str.logger.Error("Error creating staff table",
+			zap.String("layer", logctx.LogDBInitLayer),
+			zap.String("function", logctx.LogInitSchema),
+			zap.Error(err),
+		)
+		return err
+	}
+	str.logger.Info("created staff table",
+		zap.String("layer", logctx.LogDBInitLayer),
+		zap.String("function", logctx.LogInitSchema),
+	)
+
 	query = `CREATE TABLE IF NOT EXISTS profile_course_instance (
-		profile_course_id SERIAL PRIMARY KEY,
-		profile_version_id INT NOT NULL,
-		instance_id INT NOT NULL,
+		profile_course_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+		profile_version_id UUID NOT NULL,
+		instance_id UUID NOT NULL,
 		FOREIGN KEY (profile_version_id) REFERENCES user_profile_version (profile_version_id),
 		FOREIGN KEY (instance_id) REFERENCES course_instance (instance_id)
 	)`
@@ -465,12 +497,13 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 		zap.String("layer", logctx.LogDBInitLayer),
 		zap.String("function", logctx.LogInitSchema),
 	)
+
 	query = `CREATE TABLE IF NOT EXISTS log (
-  log_id SERIAL PRIMARY KEY,
+  log_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   user_id VARCHAR(255),
   action VARCHAR(50),
   timestamp TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-  subject_id INT
+  subject_id UUID
   )`
 	_, err = conn.Exec(ctx, query)
 	if err != nil {
@@ -483,10 +516,11 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 	str.logger.Info("created log table",
 		zap.String("layer", logctx.LogDBInitLayer),
 		zap.String("function", logctx.LogInitSchema))
+
 	query = `CREATE TABLE IF NOT EXISTS workload (
-      workload_id SERIAL PRIMARY KEY,
-      profile_version_id INT NOT NULL,
-      semester_id INT NOT NULL,
+      workload_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+      profile_version_id UUID NOT NULL,
+      semester_id UUID NOT NULL,
       lectures_count INT NOT NULL,
       tutorials_count INT NOT NULL,
       labs_count INT NOT NULL,
@@ -497,19 +531,20 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
   )`
 	_, err = conn.Exec(ctx, query)
 	if err != nil {
-		str.logger.Error("Error creating lab_table",
+		str.logger.Error("Error creating workload_table",
 			zap.String("layer", logctx.LogDBInitLayer),
 			zap.String("function", logctx.LogInitSchema),
 			zap.Error(err),
 		)
 		return err
 	}
-	str.logger.Info("created lab_table",
+	str.logger.Info("created workload_table",
 		zap.String("layer", logctx.LogDBInitLayer),
 		zap.String("function", logctx.LogInitSchema),
 	)
+
 	query = `CREATE TABLE IF NOT EXISTS institute_course_link (
-      profile_id SERIAL PRIMARY KEY,
+      profile_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
       email VARCHAR(50) UNIQUE NOT NULL,
       english_name VARCHAR(255) NOT NULL,
       russian_name VARCHAR(255),
@@ -519,16 +554,17 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
   )`
 	_, err = conn.Exec(ctx, query)
 	if err != nil {
-		str.logger.Error("Error creating user_table",
+		str.logger.Error("Error creating institute_course_link table",
 			zap.String("layer", logctx.LogDBInitLayer),
 			zap.String("function", logctx.LogInitSchema),
 			zap.Error(err))
 		return err
 	}
-	str.logger.Info("created user_table",
+	str.logger.Info("created institute_course_link table",
 		zap.String("layer", logctx.LogDBInitLayer),
 		zap.String("function", logctx.LogInitSchema),
 	)
+
 	tx, err := pool.Begin(ctx)
 	if err != nil {
 		str.logger.Error("Error starting transaction",
@@ -542,6 +578,7 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 		zap.String("function", logctx.LogInitSchema),
 	)
 	defer tx.Rollback(ctx)
+
 	_, err = tx.Exec(ctx, `
     INSERT INTO language (code, language_name)
     VALUES ('en', 'English'), ('ru', 'Russian')
@@ -559,13 +596,14 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 		zap.String("layer", logctx.LogDBInitLayer),
 		zap.String("function", logctx.LogInitSchema),
 	)
+
 	_, err = tx.Exec(ctx, `
     INSERT INTO institute (institute_id, name)
-    VALUES (1, 'Институт анализа данных и Искусственного Интеллекта'),
-           (2, 'Институт разработки ПО и программной инженерии'),
-           (3, 'Институт робототехники и компьютерного зрения'),
-           (4, 'Институт информационной безопасности'),
-           (5, 'Институт гуманитарных и социальных наук')
+    VALUES ('00000000-0000-0000-0000-000000000001', 'Институт анализа данных и Искусственного Интеллекта'),
+           ('00000000-0000-0000-0000-000000000002', 'Институт разработки ПО и программной инженерии'),
+           ('00000000-0000-0000-0000-000000000003', 'Институт робототехники и компьютерного зрения'),
+           ('00000000-0000-0000-0000-000000000004', 'Институт информационной безопасности'),
+           ('00000000-0000-0000-0000-000000000005', 'Институт гуманитарных и социальных наук')
     ON CONFLICT (institute_id) DO NOTHING;
   `)
 	if err != nil {
@@ -582,14 +620,14 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 
 	_, err = tx.Exec(ctx, `
     INSERT INTO responsible_institute (responsible_institute_id, responsible_institute_name)
-    VALUES (1, 'DS'),
-           (2, 'DS/Math'),
-           (3, 'DS/SDE'),
-           (4, 'GAMEDEV'),
-           (5, 'HUM'),
-		   (6, 'RO'),
-		   (7, 'SDE'),
-		   (8, 'SNE')
+    VALUES ('00000000-0000-0000-0001-000000000001', 'DS'),
+           ('00000000-0000-0000-0001-000000000002', 'DS/Math'),
+           ('00000000-0000-0000-0001-000000000003', 'DS/SDE'),
+           ('00000000-0000-0000-0001-000000000004', 'GAMEDEV'),
+           ('00000000-0000-0000-0001-000000000005', 'HUM'),
+		   ('00000000-0000-0000-0001-000000000006', 'RO'),
+		   ('00000000-0000-0000-0001-000000000007', 'SDE'),
+		   ('00000000-0000-0000-0001-000000000008', 'SNE')
     ON CONFLICT (responsible_institute_id) DO NOTHING;
   `)
 	if err != nil {
@@ -606,25 +644,25 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 
 	_, err = tx.Exec(ctx, `
     INSERT INTO program (program_id, name)
-    VALUES (1, 'AI360'),
-           (2, 'МОИИ'),
-           (3, 'BS RO'),
-           (4, 'AIDE'),
-           (5, 'SE'),
-		   (6, 'SNE'),
-		   (7, 'ROCV'),
-		   (8, 'MSRO'),
-		   (9, 'TE'),
-           (10, 'УРКИ'),
-           (11, 'КБ'),
-           (12, 'УнОД'),
-           (13, 'УЦП'),
-		   (14, 'DS'),
-		   (15, 'R'),
-		   (16, 'ITE'),
-           (17, 'ИиВТ'),
-           (18, 'DSAI'),
-           (19, 'CSE')
+    VALUES ('00000000-0000-0000-0002-000000000001', 'AI360'),
+           ('00000000-0000-0000-0002-000000000002', 'МОИИ'),
+           ('00000000-0000-0000-0002-000000000003', 'BS RO'),
+           ('00000000-0000-0000-0002-000000000004', 'AIDE'),
+           ('00000000-0000-0000-0002-000000000005', 'SE'),
+		   ('00000000-0000-0000-0002-000000000006', 'SNE'),
+		   ('00000000-0000-0000-0002-000000000007', 'ROCV'),
+		   ('00000000-0000-0000-0002-000000000008', 'MSRO'),
+		   ('00000000-0000-0000-0002-000000000009', 'TE'),
+           ('00000000-0000-0000-0002-000000000010', 'УРКИ'),
+           ('00000000-0000-0000-0002-000000000011', 'КБ'),
+           ('00000000-0000-0000-0002-000000000012', 'УнОД'),
+           ('00000000-0000-0000-0002-000000000013', 'УЦП'),
+		   ('00000000-0000-0000-0002-000000000014', 'DS'),
+		   ('00000000-0000-0000-0002-000000000015', 'R'),
+		   ('00000000-0000-0000-0002-000000000016', 'ITE'),
+           ('00000000-0000-0000-0002-000000000017', 'ИиВТ'),
+           ('00000000-0000-0000-0002-000000000018', 'DSAI'),
+           ('00000000-0000-0000-0002-000000000019', 'CSE')
     ON CONFLICT (program_id) DO NOTHING;
   `)
 	if err != nil {
@@ -641,17 +679,17 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 
 	_, err = tx.Exec(ctx, `
     INSERT INTO track (track_id, name)
-    VALUES (1, 'AAI'),
-           (2, 'AAIR'),
-           (3, 'CS'),
-           (4, 'CSDS'),
-           (5, 'DS'),
-		   (6, 'GD'),
-		   (7, 'ITE'),
-		   (8, 'R'),
-		   (9, 'SD'),
-           (10, 'SE'),
-           (11, 'SNE')
+    VALUES ('00000000-0000-0000-0003-000000000001', 'AAI'),
+           ('00000000-0000-0000-0003-000000000002', 'AAIR'),
+           ('00000000-0000-0000-0003-000000000003', 'CS'),
+           ('00000000-0000-0000-0003-000000000004', 'CSDS'),
+           ('00000000-0000-0000-0003-000000000005', 'DS'),
+		   ('00000000-0000-0000-0003-000000000006', 'GD'),
+		   ('00000000-0000-0000-0003-000000000007', 'ITE'),
+		   ('00000000-0000-0000-0003-000000000008', 'R'),
+		   ('00000000-0000-0000-0003-000000000009', 'SD'),
+           ('00000000-0000-0000-0003-000000000010', 'SE'),
+           ('00000000-0000-0000-0003-000000000011', 'SNE')
     ON CONFLICT (track_id) DO NOTHING;
   `)
 	if err != nil {
@@ -668,13 +706,13 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 
 	_, err = tx.Exec(ctx, `
     INSERT INTO position (position_id, name)
-    VALUES (1, 'Professor'),
-           (2, 'Docent'),
-           (3, 'Senior Instructor'),
-           (4, 'Instructor'),
-           (5, 'TA'),
-		   (6, 'TA intern'),
-		   (7, 'Visiting')
+    VALUES ('00000000-0000-0000-0004-000000000001', 'Professor'),
+           ('00000000-0000-0000-0004-000000000002', 'Docent'),
+           ('00000000-0000-0000-0004-000000000003', 'Senior Instructor'),
+           ('00000000-0000-0000-0004-000000000004', 'Instructor'),
+           ('00000000-0000-0000-0004-000000000005', 'TA'),
+		   ('00000000-0000-0000-0004-000000000006', 'TA intern'),
+		   ('00000000-0000-0000-0004-000000000007', 'Visiting')
     ON CONFLICT (position_id) DO NOTHING;
   `)
 	if err != nil {
@@ -691,9 +729,9 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 
 	_, err = tx.Exec(ctx, `
     INSERT INTO semester (semester_id, semester_name)
-    VALUES (1, 'T1'),
-           (2, 'T2'),
-           (3, 'T3')
+    VALUES ('00000000-0000-0000-0005-000000000001', 'T1'),
+           ('00000000-0000-0000-0005-000000000002', 'T2'),
+           ('00000000-0000-0000-0005-000000000003', 'T3')
     ON CONFLICT (semester_id) DO NOTHING;
   `)
 	if err != nil {
@@ -710,14 +748,14 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 
 	_, err = tx.Exec(ctx, `
     INSERT INTO academic_year (academic_year_id, academic_year_name)
-    VALUES (1, 'BS1'),
-           (2, 'BS2'),
-           (3, 'BS3'),
-		   (4, 'BS4'),
-           (5, 'MS1'),
-           (6, 'MS2'),
-		   (7, 'PhD1'),
-           (8, 'PhD2')
+    VALUES ('00000000-0000-0000-0006-000000000001', 'BS1'),
+           ('00000000-0000-0000-0006-000000000002', 'BS2'),
+           ('00000000-0000-0000-0006-000000000003', 'BS3'),
+		   ('00000000-0000-0000-0006-000000000004', 'BS4'),
+           ('00000000-0000-0000-0006-000000000005', 'MS1'),
+           ('00000000-0000-0000-0006-000000000006', 'MS2'),
+		   ('00000000-0000-0000-0006-000000000007', 'PhD1'),
+           ('00000000-0000-0000-0006-000000000008', 'PhD2')
 		ON CONFLICT (academic_year_id) DO NOTHING;
   `)
 	if err != nil {
@@ -731,6 +769,7 @@ func (str *ConnectAndInit) InitSchema(ctx context.Context, pool *pgxpool.Pool) e
 		zap.String("layer", logctx.LogDBInitLayer),
 		zap.String("function", logctx.LogInitSchema),
 	)
+
 	if err := tx.Commit(ctx); err != nil {
 		str.logger.Error("Error committing transaction",
 			zap.String("layer", logctx.LogDBInitLayer),

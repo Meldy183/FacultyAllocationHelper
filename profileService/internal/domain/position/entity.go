@@ -1,6 +1,8 @@
 package position
 
+import "github.com/google/uuid"
+
 type Position struct {
-	PositionID int64
+	PositionID uuid.UUID
 	Name       string
 }

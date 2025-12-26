@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/google/uuid"
 	trackcourseinstance "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/trackCourseInstance"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
 	"go.uber.org/zap"
@@ -16,7 +17,7 @@ type Service struct {
 	trackInstanceRepo trackcourseinstance.Repository
 }
 
-func (s *Service) AddTracksToCourseInstance(ctx context.Context, instanceID int64, trackID int64) error {
+func (s *Service) AddTracksToCourseInstance(ctx context.Context, instanceID uuid.UUID, trackID uuid.UUID) error {
 	return s.trackInstanceRepo.AddTracksToCourseInstance(ctx, instanceID, trackID)
 }
 
@@ -27,7 +28,7 @@ func NewService(trackInstanceRepo trackcourseinstance.Repository, logger *zap.Lo
 	}
 }
 
-func (s *Service) GetTracksIDsOfCourseByInstanceID(ctx context.Context, instanceID int64) ([]int64, error) {
+func (s *Service) GetTracksIDsOfCourseByInstanceID(ctx context.Context, instanceID uuid.UUID) ([]uuid.UUID, error) {
 	trackCourseInstances, err := s.trackInstanceRepo.GetTracksIDsOfCourseByInstanceID(ctx, instanceID)
 	if err != nil {
 		s.logger.Error("Error getting track course instances by instance ids",

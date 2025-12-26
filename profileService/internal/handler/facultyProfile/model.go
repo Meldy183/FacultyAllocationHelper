@@ -1,30 +1,31 @@
 package facultyProfile
 
 import (
+	"github.com/google/uuid"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/handler/workload"
 )
 
 type AddProfileRequest struct {
-	NameEnglish  string  `json:"name_eng"`
-	Email        string  `json:"email"`
-	Alias        string  `json:"alias"`
-	InstituteIDs []int64 `json:"institute_id"`
-	PositionID   int64   `json:"position_id"`
-	Year         int64   `json:"year"`
+	NameEnglish  string      `json:"name_eng"`
+	Email        string      `json:"email"`
+	Alias        string      `json:"alias"`
+	InstituteIDs []uuid.UUID `json:"institute_id"`
+	PositionID   uuid.UUID   `json:"position_id"`
+	Year         int64       `json:"year"`
 }
 
 type AddProfileResponse struct {
-	ProfileVersionID int64    `json:"profile_id"`
-	NameEnglish      string   `json:"name_eng"`
-	Email            string   `json:"email"`
-	Alias            string   `json:"alias"`
-	InstituteNames   []string `json:"institute_names"`
-	PositionName     string   `json:"position_name"`
-	Year             int64    `json:"year"`
+	ProfileVersionID uuid.UUID `json:"profile_id"`
+	NameEnglish      string    `json:"name_eng"`
+	Email            string    `json:"email"`
+	Alias            string    `json:"alias"`
+	InstituteNames   []string  `json:"institute_names"`
+	PositionName     string    `json:"position_name"`
+	Year             int64     `json:"year"`
 }
 
 type GetProfileResponse struct {
-	ProfileVersionID int64           `json:"profile_id"`
+	ProfileVersionID uuid.UUID       `json:"profile_id"`
 	Year             int64           `json:"year"`
 	NameEnglish      string          `json:"name_eng"`
 	NameRussian      *string         `json:"name_ru"`
@@ -53,34 +54,34 @@ type GetAllFacultiesResponse struct {
 }
 
 type ShortProfile struct {
-	ProfileVersionID int64    `json:"profile_id"`
-	NameEnglish      string   `json:"name_eng"`
-	Alias            string   `json:"alias"`
-	Email            string   `json:"email"`
-	Position         string   `json:"position_name"`
-	Institutes       []string `json:"institute_names"`
+	ProfileVersionID uuid.UUID `json:"profile_id"`
+	NameEnglish      string    `json:"name_eng"`
+	Alias            string    `json:"alias"`
+	Email            string    `json:"email"`
+	Position         string    `json:"position_name"`
+	Institutes       []string  `json:"institute_names"`
 }
 
 type EditProfileRequest struct {
-	ProfileVersionID int64   `json:"profile_id"`
-	Year             int64   `json:"year"`
-	NameEng          string  `json:"name_eng"`
-	NameRu           string  `json:"name_ru"`
-	Alias            string  `json:"alias"`
-	Email            string  `json:"email"`
-	PositionID       int64   `json:"position_id"`
-	InstituteIDs     *[]int  `json:"institute_id"`
-	StudentType      *string `json:"student_type"`
-	Degree           *bool   `json:"degree"`
-	Languages        *[]Lang `json:"languages"`
-	EmploymentType   *string `json:"employment_type"`
-	HiringStatus     *string `json:"hiring_status"`
-	FSRO             *string `json:"fsro"`
-	Mode             *string `json:"mode"`
+	ProfileVersionID uuid.UUID    `json:"profile_id"`
+	Year             int64        `json:"year"`
+	NameEng          string       `json:"name_eng"`
+	NameRu           string       `json:"name_ru"`
+	Alias            string       `json:"alias"`
+	Email            string       `json:"email"`
+	PositionID       uuid.UUID    `json:"position_id"`
+	InstituteIDs     *[]uuid.UUID `json:"institute_id"`
+	StudentType      *string      `json:"student_type"`
+	Degree           *bool        `json:"degree"`
+	Languages        *[]Lang      `json:"languages"`
+	EmploymentType   *string      `json:"employment_type"`
+	HiringStatus     *string      `json:"hiring_status"`
+	FSRO             *string      `json:"fsro"`
+	Mode             *string      `json:"mode"`
 }
 
 type EditProfileResponse struct {
-	ProfileVersionID int64     `json:"profile_id"`
+	ProfileVersionID uuid.UUID `json:"profile_id"`
 	Year             int64     `json:"year"`
 	NameEng          string    `json:"name_eng"`
 	NameRu           string    `json:"name_ru"`

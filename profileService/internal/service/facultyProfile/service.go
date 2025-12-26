@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/google/uuid"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/facultyProfile"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
 	"go.uber.org/zap"
@@ -44,13 +45,13 @@ func (s *Service) AddProfile(ctx context.Context, profile *facultyProfile.UserPr
 	)
 	return nil
 }
-func (s *Service) GetProfileByID(ctx context.Context, profileID int64) (*facultyProfile.UserProfile, error) {
+func (s *Service) GetProfileByID(ctx context.Context, profileID uuid.UUID) (*facultyProfile.UserProfile, error) {
 	profile, err := s.repo.GetProfileByID(ctx, profileID)
 	if err != nil {
 		s.logger.Error("error getting facultyProfile",
 			zap.String("layer", logctx.LogServiceLayer),
 			zap.String("function", logctx.LogGetProfileByID),
-			zap.Int64("profileID", profileID),
+			zap.String("profileID", profileID.String()),
 			zap.Error(err))
 		return nil, fmt.Errorf("error getting facultyProfile %w", err)
 	}
@@ -65,7 +66,7 @@ func (s *Service) GetProfileByID(ctx context.Context, profileID int64) (*faculty
 	s.logger.Info("user facultyProfile found",
 		zap.String("layer", logctx.LogServiceLayer),
 		zap.String("function", logctx.LogGetProfileByID),
-		zap.Int64("profileID", profileID),
+		zap.String("profileID", profileID.String()),
 		zap.Any("facultyProfile", profile),
 	)
 
@@ -95,26 +96,20 @@ func (s *Service) UpdateProfileByID(ctx context.Context, profile *facultyProfile
 	return nil
 }
 
-func (s *Service) GetProfilesByFilters(ctx context.Context, institutes []int64, positions []int64) ([]int64, error) {
-	if len(institutes) == 0 {
-		institutes = []int64{1, 2, 3, 4, 5}
-	}
-	if len(positions) == 0 {
-		positions = []int64{1, 2, 3, 4, 5, 6, 7}
-	}
+func (s *Service) GetProfilesByFilters(ctx context.Context, institutes []uuid.UUID, positions []uuid.UUID) ([]uuid.UUID, error) {
 	profilesByInst, err := s.repo.GetProfileIDsByInstituteIDs(ctx, institutes)
 	if err != nil {
 		s.logger.Error("error getting facultyProfile",
 			zap.String("layer", logctx.LogServiceLayer),
-			zap.Int64s("institutes", institutes),
-			zap.Int64s("positions", positions),
+			zap.Any("institutes", institutes),
+			zap.Any("positions", positions),
 			zap.Error(err),
 		)
 		return nil, fmt.Errorf("error getting facultyProfile %w", err)
 	}
 	profilesByInst = makeUnique(profilesByInst)
 	s.logger.Debug("Check institutes by filters",
-		zap.Int64s("institutesProfileIDs", profilesByInst),
+		zap.Any("institutesProfileIDs", profilesByInst),
 		zap.String("layer", logctx.LogServiceLayer),
 		zap.String("function", logctx.LogGetProfileByID),
 	)
@@ -123,16 +118,16 @@ func (s *Service) GetProfilesByFilters(ctx context.Context, institutes []int64, 
 	if err != nil {
 		s.logger.Error("error getting facultyProfile",
 			zap.String("layer", logctx.LogServiceLayer),
-			zap.Int64s("positions", positions),
-			zap.Int64s("institutes", institutes),
+			zap.Any("positions", positions),
+			zap.Any("institutes", institutes),
 			zap.Error(err),
 		)
 	}
 	s.logger.Warn("Check positions by filters",
-		zap.Int64s("positionsProfileIDs", profilesByPosition),
-		zap.Int64s("positions", positions),
-		zap.Int64s("institutesProfileIDs", profilesByInst),
-		zap.Int64s("institutes", institutes),
+		zap.Any("positionsProfileIDs", profilesByPosition),
+		zap.Any("positions", positions),
+		zap.Any("institutesProfileIDs", profilesByInst),
+		zap.Any("institutes", institutes),
 		zap.String("layer", logctx.LogServiceLayer),
 		zap.String("function", logctx.LogGetProfileByID),
 	)
@@ -147,37 +142,28 @@ func isAliasValid(req *facultyProfile.UserProfile) bool {
 	return true
 }
 
-func getUnion(arr1 []int64, arr2 []int64) []int64 {
-	ans := make([]int64, 0)
-	cnt1 := 0
-	cnt2 := 0
-	for cnt1 < len(arr1) && cnt2 < len(arr2) {
-		if arr1[cnt1] < arr2[cnt2] {
-			cnt1++
-			continue
+func getUnion(arr1 []uuid.UUID, arr2 []uuid.UUID) []uuid.UUID {
+	set := make(map[uuid.UUID]bool)
+	for _, v := range arr1 {
+		set[v] = true
+	}
+	ans := make([]uuid.UUID, 0)
+	for _, v := range arr2 {
+		if set[v] {
+			ans = append(ans, v)
 		}
-		if arr1[cnt1] > arr2[cnt2] {
-			cnt2++
-			continue
-		}
-		ans = append(ans, arr1[cnt1])
-		cnt1++
-		cnt2++
 	}
 	return ans
 }
 
-func makeUnique(arr []int64) []int64 {
-	ans := make([]int64, 0)
-	if len(arr) == 0 {
-		return ans
-	}
-	ans = append(ans, arr[0])
-	for i := 1; i < len(arr); i++ {
-		if arr[i] == arr[i-1] {
-			continue
+func makeUnique(arr []uuid.UUID) []uuid.UUID {
+	seen := make(map[uuid.UUID]bool)
+	ans := make([]uuid.UUID, 0)
+	for _, v := range arr {
+		if !seen[v] {
+			seen[v] = true
+			ans = append(ans, v)
 		}
-		ans = append(ans, arr[i])
 	}
 	return ans
 }

@@ -2,10 +2,12 @@ package facultyProfile
 
 import (
 	"time"
+
+	"github.com/google/uuid"
 )
 
 type UserProfile struct {
-	ProfileID   int64
+	ProfileID   uuid.UUID
 	Email       string
 	EnglishName string
 	RussianName *string

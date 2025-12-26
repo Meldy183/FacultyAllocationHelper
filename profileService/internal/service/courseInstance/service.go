@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strconv"
 
+	"github.com/google/uuid"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/courseInstance"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
 	"go.uber.org/zap"
@@ -37,7 +38,7 @@ func (s *Service) AddCourseInstance(ctx context.Context, courseInstance *courseI
 			zap.String("layer", logctx.LogServiceLayer),
 			zap.String("function", logctx.LogAddNewCourseInstance),
 		)
-		return fmt.Errorf("invalid year: %v", courseInstance.SemesterID)
+		return fmt.Errorf("invalid semester: %v", courseInstance.SemesterID)
 	}
 	if !academicYearIDValid(courseInstance.AcademicYearID) {
 		s.logger.Error(
@@ -108,12 +109,12 @@ func yearValid(year int64) bool {
 	return year >= 2015
 }
 
-func semesterIDValid(id int64) bool {
-	return id >= 1 && id <= 3
+func semesterIDValid(id uuid.UUID) bool {
+	return id != uuid.Nil
 }
 
-func academicYearIDValid(id int64) bool {
-	return id >= 1 && id <= 8
+func academicYearIDValid(id uuid.UUID) bool {
+	return id != uuid.Nil
 }
 
 func formValid(form courseInstance.Form) bool {
@@ -143,20 +144,20 @@ func statusValid(mode courseInstance.Status) bool {
 	}
 }
 
-func (s *Service) GetCourseInstanceByID(ctx context.Context, id int64) (*courseInstance.CourseInstance, error) {
+func (s *Service) GetCourseInstanceByID(ctx context.Context, id uuid.UUID) (*courseInstance.CourseInstance, error) {
 	CourseInstance, err := s.repo.GetCourseInstanceByID(ctx, id)
 	if err != nil {
 		s.logger.Error("error getting CourseInstance by ID",
 			zap.String("layer", logctx.LogServiceLayer),
 			zap.String("function", logctx.LogGetCourseInstanceByID),
-			zap.Int64("CourseInstanceID", id),
+			zap.String("CourseInstanceID", id.String()),
 			zap.Error(err))
 		return nil, fmt.Errorf("error getting course %w", err)
 	}
 	s.logger.Info("CourseInstance found",
 		zap.String("layer", logctx.LogServiceLayer),
 		zap.String("function", logctx.LogGetCourseInstanceByID),
-		zap.Int64("CourseInstanceID", id),
+		zap.String("CourseInstanceID", id.String()),
 		zap.Any("CourseInstance", CourseInstance),
 	)
 	return CourseInstance, nil
@@ -164,7 +165,7 @@ func (s *Service) GetCourseInstanceByID(ctx context.Context, id int64) (*courseI
 
 func (s *Service) UpdateCourseInstanceByID(
 	ctx context.Context,
-	id int64,
+	id uuid.UUID,
 	courseInstance *courseInstance.CourseInstance,
 ) error {
 	if !semesterIDValid(courseInstance.SemesterID) {
@@ -173,7 +174,7 @@ func (s *Service) UpdateCourseInstanceByID(
 			zap.String("layer", logctx.LogServiceLayer),
 			zap.String("function", logctx.LogUpdateCourseInstanceByID),
 		)
-		return fmt.Errorf("invalid year: %v", courseInstance.SemesterID)
+		return fmt.Errorf("invalid semester: %v", courseInstance.SemesterID)
 	}
 	if !academicYearIDValid(courseInstance.AcademicYearID) {
 		s.logger.Error(
@@ -236,15 +237,15 @@ func (s *Service) UpdateCourseInstanceByID(
 	s.logger.Info("course updated",
 		zap.String("layer", logctx.LogServiceLayer),
 		zap.String("function", logctx.LogUpdateCourseInstanceByID),
-		zap.Int64("id", id),
+		zap.String("id", id.String()),
 	)
 	return nil
 }
 
-func (s *Service) GetInstancesByInstituteIDs(ctx context.Context, instituteIDs []int64) ([]int64, error) {
-	var actualIDs []int64
+func (s *Service) GetInstancesByInstituteIDs(ctx context.Context, instituteIDs []uuid.UUID) ([]uuid.UUID, error) {
+	var actualIDs []uuid.UUID
 	if len(instituteIDs) == 0 {
-		actualIDs = []int64{1, 2, 3, 4, 5, 6, 7, 8}
+		actualIDs = []uuid.UUID{}
 	} else {
 		actualIDs = instituteIDs
 	}
@@ -268,10 +269,10 @@ func (s *Service) GetInstancesByInstituteIDs(ctx context.Context, instituteIDs [
 	return CourseInstances, nil
 }
 
-func (s *Service) GetInstancesByAcademicYearIDs(ctx context.Context, academicYearIDs []int64) ([]int64, error) {
-	var actualIDs []int64
+func (s *Service) GetInstancesByAcademicYearIDs(ctx context.Context, academicYearIDs []uuid.UUID) ([]uuid.UUID, error) {
+	var actualIDs []uuid.UUID
 	if len(academicYearIDs) == 0 {
-		actualIDs = []int64{1, 2, 3, 4, 5, 6, 7, 8}
+		actualIDs = []uuid.UUID{}
 	} else {
 		actualIDs = academicYearIDs
 	}
@@ -295,10 +296,10 @@ func (s *Service) GetInstancesByAcademicYearIDs(ctx context.Context, academicYea
 	return CourseInstances, nil
 }
 
-func (s *Service) GetInstancesBySemesterIDs(ctx context.Context, semesterIDs []int64) ([]int64, error) {
-	var actualIDs []int64
+func (s *Service) GetInstancesBySemesterIDs(ctx context.Context, semesterIDs []uuid.UUID) ([]uuid.UUID, error) {
+	var actualIDs []uuid.UUID
 	if len(semesterIDs) == 0 {
-		actualIDs = []int64{1, 2, 3}
+		actualIDs = []uuid.UUID{}
 	} else {
 		actualIDs = semesterIDs
 	}
@@ -322,10 +323,10 @@ func (s *Service) GetInstancesBySemesterIDs(ctx context.Context, semesterIDs []i
 	return CourseInstances, nil
 }
 
-func (s *Service) GetInstancesByProgramIDs(ctx context.Context, programIDs []int64) ([]int64, error) {
-	var actualIDs []int64
+func (s *Service) GetInstancesByProgramIDs(ctx context.Context, programIDs []uuid.UUID) ([]uuid.UUID, error) {
+	var actualIDs []uuid.UUID
 	if len(programIDs) == 0 {
-		actualIDs = []int64{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19}
+		actualIDs = []uuid.UUID{}
 	} else {
 		actualIDs = programIDs
 	}
@@ -349,8 +350,8 @@ func (s *Service) GetInstancesByProgramIDs(ctx context.Context, programIDs []int
 	return CourseInstances, nil
 }
 
-func (s *Service) GetInstancesByAllocationStatus(ctx context.Context, allocNotFinished bool) ([]int64, error) {
-	var CourseInstances []int64
+func (s *Service) GetInstancesByAllocationStatus(ctx context.Context, allocNotFinished bool) ([]uuid.UUID, error) {
+	var CourseInstances []uuid.UUID
 	var err error
 	if allocNotFinished {
 		CourseInstances, err = s.repo.GetInstancesByAllocationStatus(ctx)
@@ -374,7 +375,7 @@ func (s *Service) GetInstancesByAllocationStatus(ctx context.Context, allocNotFi
 	return CourseInstances, nil //
 }
 
-func (s *Service) GetInstancesByYear(ctx context.Context, year int64) ([]int64, error) {
+func (s *Service) GetInstancesByYear(ctx context.Context, year int64) ([]uuid.UUID, error) {
 	CourseInstances, err := s.repo.GetInstancesByYear(ctx, year)
 	if err != nil {
 		s.logger.Error("error getting CourseInstances by year",
@@ -393,20 +394,20 @@ func (s *Service) GetInstancesByYear(ctx context.Context, year int64) ([]int64, 
 	return CourseInstances, nil
 }
 
-func (s *Service) GetInstancesByVersionID(ctx context.Context, versionID int64) ([]int64, error) {
+func (s *Service) GetInstancesByVersionID(ctx context.Context, versionID uuid.UUID) ([]uuid.UUID, error) {
 	CourseInstances, err := s.repo.GetInstancesByVersionID(ctx, versionID)
 	if err != nil {
 		s.logger.Error("error getting CourseInstances by versionID",
 			zap.String("layer", logctx.LogServiceLayer),
 			zap.String("function", logctx.LogGetInstancesByVersionID),
-			zap.Int64("versionID", versionID),
+			zap.String("versionID", versionID.String()),
 			zap.Error(err))
 		return nil, fmt.Errorf("error getting course instances %w", err)
 	}
 	s.logger.Info("CourseInstances found by versionID",
 		zap.String("layer", logctx.LogServiceLayer),
 		zap.String("function", logctx.LogGetInstancesByVersionID),
-		zap.Int64("versionID", versionID),
+		zap.String("versionID", versionID.String()),
 		zap.String("CourseInstancesIDs", fmt.Sprintf("%v", CourseInstances)),
 	)
 	return CourseInstances, nil

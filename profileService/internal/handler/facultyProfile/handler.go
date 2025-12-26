@@ -8,6 +8,7 @@ import (
 	"strconv"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/google/uuid"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/facultyProfile"
 	institute2 "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/institute"
 	position2 "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/position"
@@ -77,9 +78,9 @@ func (h *Handler) AddProfile(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusBadRequest, "invalid NameEnglish")
 		return
 	}
-	if req.PositionID <= 0 {
+	if req.PositionID == uuid.Nil {
 		h.logger.Error("invalid position",
-			zap.Int64("position_id", req.PositionID),
+			zap.String("position_id", req.PositionID.String()),
 			zap.String("layer", logctx.LogHandlerLayer),
 			zap.String("function", logctx.LogAddProfile),
 		)
@@ -89,7 +90,7 @@ func (h *Handler) AddProfile(w http.ResponseWriter, r *http.Request) {
 	instituteIDs := req.InstituteIDs
 	if len(instituteIDs) <= 0 {
 		h.logger.Error("invalid institute",
-			zap.Int64("institute_id", req.PositionID),
+			zap.String("institute_id", req.PositionID.String()),
 			zap.String("layer", logctx.LogHandlerLayer),
 			zap.String("function", logctx.LogAddProfile),
 		)
@@ -97,9 +98,9 @@ func (h *Handler) AddProfile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	for _, elem := range req.InstituteIDs {
-		if elem <= 0 {
+		if elem == uuid.Nil {
 			h.logger.Error("invalid instituteID",
-				zap.Int64("InstituteID", elem),
+				zap.String("InstituteID", elem.String()),
 				zap.String("layer", logctx.LogHandlerLayer),
 				zap.String("function", logctx.LogAddProfile),
 			)
@@ -145,7 +146,7 @@ func (h *Handler) AddProfile(w http.ResponseWriter, r *http.Request) {
 			writeError(w, http.StatusInternalServerError, "error adding profileInstitute")
 			return
 		}
-		inst, err := h.serviceInstitute.GetInstituteByID(ctx, int64(elem))
+		inst, err := h.serviceInstitute.GetInstituteByID(ctx, elem)
 		if err != nil {
 			h.logger.Error("error getting institute",
 				zap.String("layer", logctx.LogHandlerLayer),
@@ -207,9 +208,10 @@ func (h *Handler) AddWorkloadAddingProfileVersion(
 	err error,
 	ctx context.Context,
 ) bool {
+	semUuid, _ := uuid.Parse("00000000-0000-0000-0005-000000000001")
 	workloadStats := workloadDomain.Workload{
 		ProfileVersionID: version.ProfileVersionId,
-		SemesterID:       1,
+		SemesterID:       semUuid,
 		LecturesCount:    0,
 		TutorialsCount:   0,
 		LabsCount:        0,
@@ -226,7 +228,7 @@ func (h *Handler) AddWorkloadAddingProfileVersion(
 		writeError(w, http.StatusInternalServerError, "error adding workloadStats")
 		return true
 	}
-	workloadStats.SemesterID = 2
+	workloadStats.SemesterID, _ = uuid.Parse("00000000-0000-0000-0005-000000000002")
 	err = h.serviceWorkload.AddSemesterWorkload(ctx, &workloadStats)
 	if err != nil {
 		h.logger.Error("error adding workloadStats",
@@ -237,7 +239,7 @@ func (h *Handler) AddWorkloadAddingProfileVersion(
 		writeError(w, http.StatusInternalServerError, "error adding workloadStats")
 		return true
 	}
-	workloadStats.SemesterID = 3
+	workloadStats.SemesterID, _ = uuid.Parse("00000000-0000-0000-0005-000000000003")
 	err = h.serviceWorkload.AddSemesterWorkload(ctx, &workloadStats)
 	if err != nil {
 		h.logger.Error("error adding workloadStats",
@@ -254,7 +256,7 @@ func (h *Handler) AddWorkloadAddingProfileVersion(
 func (h *Handler) GetProfile(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	idParam := chi.URLParam(r, "id")
-	versionID, err := strconv.ParseInt(idParam, 10, 64)
+	versionID, err := uuid.Parse(idParam)
 	if err != nil {
 		h.logger.Error("error parsing id param",
 			zap.String("layer", logctx.LogHandlerLayer),
@@ -262,6 +264,8 @@ func (h *Handler) GetProfile(w http.ResponseWriter, r *http.Request) {
 			zap.String("id", idParam),
 			zap.Error(err),
 		)
+		writeError(w, http.StatusBadRequest, "invalid profileID")
+		return
 	}
 	version, err := h.serviceVersionProfile.GetVersionByVersionID(ctx, versionID)
 	if err != nil {
@@ -273,11 +277,11 @@ func (h *Handler) GetProfile(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusInternalServerError, "error getting version")
 		return
 	}
-	if err != nil || versionID <= 0 {
+	if versionID == uuid.Nil {
 		h.logger.Error("invalid profileID",
 			zap.String("layer", logctx.LogHandlerLayer),
 			zap.String("function", logctx.LogGetProfileByID),
-			zap.Int64("id", versionID),
+			zap.String("id", versionID.String()),
 		)
 		writeError(w, http.StatusBadRequest, "invalid profileID")
 		return
@@ -325,7 +329,7 @@ func (h *Handler) GetProfile(w http.ResponseWriter, r *http.Request) {
 		h.logger.Error("error getting position name by id",
 			zap.String("layer", logctx.LogHandlerLayer),
 			zap.String("function", logctx.LogGetProfileByID),
-			zap.Int64("id", version.PositionID),
+			zap.String("id", version.PositionID.String()),
 			zap.Error(err),
 		)
 		writeError(w, http.StatusInternalServerError, "error getting position by id")
@@ -379,12 +383,12 @@ func (h *Handler) GetAllFaculties(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusBadRequest, "error parsing year")
 		return
 	}
-	var institutes []int64
+	var institutes []uuid.UUID
 	for _, elem := range instQuery {
-		id, err := strconv.ParseInt(elem, 10, 64)
+		id, err := uuid.Parse(elem)
 		if err != nil {
 			h.logger.Error(
-				"Error converting query to int",
+				"Error converting query to UUID",
 				zap.String("layer", logctx.LogHandlerLayer),
 				zap.String("function", logctx.LogGetAllFaculties),
 				zap.Error(err),
@@ -395,11 +399,11 @@ func (h *Handler) GetAllFaculties(w http.ResponseWriter, r *http.Request) {
 		institutes = append(institutes, id)
 	}
 	posQuery := r.URL.Query()["position"]
-	var positions []int64
+	var positions []uuid.UUID
 	for _, elem := range posQuery {
-		pos, err := strconv.ParseInt(elem, 10, 64)
+		pos, err := uuid.Parse(elem)
 		if err != nil {
-			h.logger.Error("error converting to int the position",
+			h.logger.Error("error converting to UUID the position",
 				zap.String("layer", logctx.LogHandlerLayer),
 				zap.String("function", logctx.LogGetAllFaculties),
 				zap.Error(err),
@@ -426,7 +430,7 @@ func (h *Handler) GetAllFaculties(w http.ResponseWriter, r *http.Request) {
 			h.logger.Error("Error getting facultyProfile by id",
 				zap.String("layer", logctx.LogHandlerLayer),
 				zap.String("function", logctx.LogGetAllFaculties),
-				zap.Int64("LabID", id),
+				zap.String("LabID", id.String()),
 				zap.Error(err),
 			)
 			writeError(w, http.StatusInternalServerError, "error getting facultyProfile")
@@ -437,7 +441,7 @@ func (h *Handler) GetAllFaculties(w http.ResponseWriter, r *http.Request) {
 			h.logger.Error("Error getting facultyVersionProfile by id",
 				zap.String("layer", logctx.LogHandlerLayer),
 				zap.String("function", logctx.LogGetAllFaculties),
-				zap.Int64("LabID", id),
+				zap.String("LabID", id.String()),
 				zap.Error(err),
 			)
 			if err.Error() == "failed to get version by profile ID: no rows in result set" {
@@ -452,7 +456,7 @@ func (h *Handler) GetAllFaculties(w http.ResponseWriter, r *http.Request) {
 			h.logger.Error("Error getting position by id",
 				zap.String("layer", logctx.LogHandlerLayer),
 				zap.String("function", logctx.LogGetAllFaculties),
-				zap.Int64("LabID", id),
+				zap.String("LabID", id.String()),
 				zap.Error(err),
 			)
 			writeError(w, http.StatusInternalServerError, "error getting position by id")
@@ -463,7 +467,7 @@ func (h *Handler) GetAllFaculties(w http.ResponseWriter, r *http.Request) {
 			h.logger.Error("Error getting user institute by id",
 				zap.String("layer", logctx.LogHandlerLayer),
 				zap.String("function", logctx.LogGetAllFaculties),
-				zap.Int64("LabID", id),
+				zap.String("LabID", id.String()),
 				zap.Error(err),
 			)
 			writeError(w, http.StatusInternalServerError, "error getting user institute by id")

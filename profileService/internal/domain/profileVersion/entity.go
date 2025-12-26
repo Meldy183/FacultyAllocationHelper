@@ -1,11 +1,13 @@
 package profileVersion
 
+import "github.com/google/uuid"
+
 type ProfileVersion struct {
-	ProfileVersionId int64
-	ProfileID        int64
+	ProfileVersionId uuid.UUID
+	ProfileID        uuid.UUID
 	Year             int64
 	MaxLoad          *int64
-	PositionID       int64
+	PositionID       uuid.UUID
 	EmploymentType   *string
 	StudentType      *string
 	Fsro             *string

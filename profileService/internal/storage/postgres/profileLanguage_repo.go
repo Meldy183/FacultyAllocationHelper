@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/profileLanguage"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
@@ -45,8 +46,8 @@ func (r *UserLanguageRepo) AddUserLanguage(ctx context.Context, userLanguage *pr
 	return nil
 }
 
-func (r *UserLanguageRepo) GetProfileLanguages(ctx context.Context, profileID int64) ([]string, error) {
-	r.logger.Info("Getting user-languages from database with LabID", zap.Int64("ProfileID", profileID))
+func (r *UserLanguageRepo) GetProfileLanguages(ctx context.Context, profileID uuid.UUID) ([]string, error) {
+	r.logger.Info("Getting user-languages from database with LabID", zap.String("ProfileID", profileID.String()))
 	rows, err := r.pool.Query(ctx, queryGetProfileLanguages, profileID)
 	var userLanguages []string
 	if err != nil {

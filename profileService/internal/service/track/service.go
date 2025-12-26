@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/google/uuid"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/track"
 	trackcourseinstance "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/trackCourseInstance"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
@@ -42,7 +43,7 @@ func (s *Service) GetAllTracks(ctx context.Context) ([]*track.Track, error) {
 	}
 	return tracks, nil
 }
-func (s *Service) GetTrackNameByID(ctx context.Context, trackID int64) (*string, error) {
+func (s *Service) GetTrackNameByID(ctx context.Context, trackID uuid.UUID) (*string, error) {
 	trackName, err := s.trackRepo.GetTrackNameByID(ctx, trackID)
 	if err != nil {
 		s.logger.Error("Error getting track name",
@@ -54,7 +55,7 @@ func (s *Service) GetTrackNameByID(ctx context.Context, trackID int64) (*string,
 	}
 	return trackName, nil
 }
-func (s *Service) GetTrackIDByName(ctx context.Context, trackName string) (*int64, error) {
+func (s *Service) GetTrackIDByName(ctx context.Context, trackName string) (*uuid.UUID, error) {
 	trackID, err := s.trackRepo.GetTrackIDByName(ctx, trackName)
 	if err != nil {
 		s.logger.Error("Error getting track name",
@@ -66,7 +67,7 @@ func (s *Service) GetTrackIDByName(ctx context.Context, trackName string) (*int6
 	}
 	return trackID, nil
 }
-func (s *Service) GetTracksOfCourseByInstanceID(ctx context.Context, instanceID int64) ([]int64, error) {
+func (s *Service) GetTracksOfCourseByInstanceID(ctx context.Context, instanceID uuid.UUID) ([]uuid.UUID, error) {
 	tracks, err := s.trackInstanceRepo.GetTracksIDsOfCourseByInstanceID(ctx, instanceID)
 	if err != nil {
 		s.logger.Error("Error getting all tracks",
@@ -79,7 +80,7 @@ func (s *Service) GetTracksOfCourseByInstanceID(ctx context.Context, instanceID 
 	return tracks, nil
 }
 
-func (s *Service) GetTracksNamesOfCourseByCourseInstanceID(ctx context.Context, instanceID int64) ([]*string, error) {
+func (s *Service) GetTracksNamesOfCourseByCourseInstanceID(ctx context.Context, instanceID uuid.UUID) ([]*string, error) {
 	trackIds, err := s.GetTracksOfCourseByInstanceID(ctx, instanceID)
 	if err != nil {
 		s.logger.Error("Error getting all tracks",

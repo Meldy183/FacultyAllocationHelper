@@ -1,9 +1,13 @@
 package workload
 
-import "context"
+import (
+	"context"
+
+	"github.com/google/uuid"
+)
 
 type Repository interface {
-	GetSemesterWorkloadByVersionID(ctx context.Context, profileVersionID int64, semesterID int64) (*Workload, error)
+	GetSemesterWorkloadByVersionID(ctx context.Context, profileVersionID uuid.UUID, semesterID uuid.UUID) (*Workload, error)
 	AddSemesterWorkload(ctx context.Context, workload *Workload) error
 	UpdateSemesterWorkload(ctx context.Context, workload *Workload) error
 }

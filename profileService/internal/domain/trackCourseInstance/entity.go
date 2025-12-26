@@ -1,7 +1,9 @@
 package trackcourseinstance
 
+import "github.com/google/uuid"
+
 type TrackToCourseInstance struct {
-	TrackCourseInstanceID int64
-	TrackID               int64
-	CourseInstanceID      int64
+	TrackCourseInstanceID uuid.UUID
+	TrackID               uuid.UUID
+	CourseInstanceID      uuid.UUID
 }

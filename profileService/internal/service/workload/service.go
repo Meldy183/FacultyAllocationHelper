@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 
+	"github.com/google/uuid"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/workload"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
 	"go.uber.org/zap"
@@ -22,15 +23,15 @@ func NewService(repo workload.Repository, logger *zap.Logger) *Service {
 
 func (s *Service) GetSemesterWorkloadByVersionID(
 	ctx context.Context,
-	profileVersionID int64,
-	semesterID int64,
+	profileVersionID uuid.UUID,
+	semesterID uuid.UUID,
 ) (*workload.Workload, error) {
-	if semesterID < 1 || semesterID > 3 {
-		s.logger.Error(`semesterID must be between 1 and 3`,
+	if semesterID == uuid.Nil {
+		s.logger.Error(`semesterID must not be nil`,
 			zap.String("layer", logctx.LogServiceLayer),
 			zap.String("function", logctx.LogGetSemesterWorkloadByVersionID),
 		)
-		return nil, errors.New(`semesterID must be between 1 and 3`)
+		return nil, errors.New(`semesterID must not be nil`)
 	}
 	semWorkload, err := s.repo.GetSemesterWorkloadByVersionID(ctx, profileVersionID, semesterID)
 	if err != nil {

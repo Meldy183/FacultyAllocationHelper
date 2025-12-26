@@ -1,8 +1,12 @@
 package trackcourseinstance
 
-import "context"
+import (
+	"context"
+
+	"github.com/google/uuid"
+)
 
 type Repository interface {
-	GetTracksIDsOfCourseByInstanceID(ctx context.Context, instanceID int64) ([]int64, error)
-	AddTracksToCourseInstance(ctx context.Context, instanceID int64, trackIDs int64) error
+	GetTracksIDsOfCourseByInstanceID(ctx context.Context, instanceID uuid.UUID) ([]uuid.UUID, error)
+	AddTracksToCourseInstance(ctx context.Context, instanceID uuid.UUID, trackIDs uuid.UUID) error
 }

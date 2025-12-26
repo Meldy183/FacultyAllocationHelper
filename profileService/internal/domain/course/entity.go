@@ -1,11 +1,13 @@
 package course
 
+import "github.com/google/uuid"
+
 type Course struct {
-	CourseID               int64
+	CourseID               uuid.UUID
 	Name                   string
 	IsElective             *bool
 	OfficialName           *string
-	ResponsibleInstituteID int64
+	ResponsibleInstituteID uuid.UUID
 	LecHours               *int64
 	LabHours               *int64
 }

@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/google/uuid"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/workload"
 	workloadDomain "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/workload"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
@@ -62,9 +63,10 @@ func (h *Handler) GetYearWorkload(
 	w http.ResponseWriter,
 	err error,
 	ctx context.Context,
-	versionID int64,
+	versionID uuid.UUID,
 ) (*workloadDomain.Workload, *workloadDomain.Workload, *workloadDomain.Workload, bool) {
-	sem1, err := h.serviceWorkload.GetSemesterWorkloadByVersionID(ctx, versionID, 1)
+	sem1uuid, _ := uuid.Parse("00000000-0000-0000-0005-000000000001")
+	sem1, err := h.serviceWorkload.GetSemesterWorkloadByVersionID(ctx, versionID, sem1uuid)
 	if err != nil {
 		h.logger.Error(`GetSemesterWorkloadByVersionID failed`,
 			zap.String("layer", logctx.LogServiceLayer),
@@ -74,7 +76,8 @@ func (h *Handler) GetYearWorkload(
 		writeError(w, http.StatusInternalServerError, "error getting semester workload by version id")
 		return nil, nil, nil, true
 	}
-	sem2, err := h.serviceWorkload.GetSemesterWorkloadByVersionID(ctx, versionID, 2)
+	sem2uuid, _ := uuid.Parse("00000000-0000-0000-0005-000000000002")
+	sem2, err := h.serviceWorkload.GetSemesterWorkloadByVersionID(ctx, versionID, sem2uuid)
 	if err != nil {
 		h.logger.Error(`GetSemesterWorkloadByVersionID failed`,
 			zap.String("layer", logctx.LogServiceLayer),
@@ -84,7 +87,8 @@ func (h *Handler) GetYearWorkload(
 		writeError(w, http.StatusInternalServerError, "error getting semester workload by version id")
 		return nil, nil, nil, true
 	}
-	sem3, err := h.serviceWorkload.GetSemesterWorkloadByVersionID(ctx, versionID, 3)
+	sem3uuid, _ := uuid.Parse("00000000-0000-0000-0005-000000000003")
+	sem3, err := h.serviceWorkload.GetSemesterWorkloadByVersionID(ctx, versionID, sem3uuid)
 	if err != nil {
 		h.logger.Error(`GetSemesterWorkloadByVersionID failed`,
 			zap.String("layer", logctx.LogServiceLayer),

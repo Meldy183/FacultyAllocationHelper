@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/google/uuid"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/institute"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/profileInstitute"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
@@ -21,20 +22,20 @@ func NewService(r profileInstitute.Repository, logger *zap.Logger) *Service {
 	return &Service{repo: r, logger: logger}
 }
 
-func (s *Service) GetUserInstitutesByProfileID(ctx context.Context, userID int64) ([]*institute.Institute, error) {
-	if userID <= 0 {
-		s.logger.Error("userID must be positive",
+func (s *Service) GetUserInstitutesByProfileID(ctx context.Context, userID uuid.UUID) ([]*institute.Institute, error) {
+	if userID == uuid.Nil {
+		s.logger.Error("userID must not be nil",
 			zap.String("layer", logctx.LogServiceLayer),
 			zap.String("function", logctx.LogGetUserInstitute),
-			zap.Int64("userID", userID))
-		return nil, fmt.Errorf("userID must be positive: %d", userID)
+			zap.String("userID", userID.String()))
+		return nil, fmt.Errorf("userID must not be nil: %s", userID.String())
 	}
 	userInst, err := s.repo.GetUserInstitutesByProfileID(ctx, userID)
 	if err != nil {
 		s.logger.Error("Error getting Institute by ProfileID",
 			zap.String("layer", logctx.LogServiceLayer),
 			zap.String("function", logctx.LogGetUserInstitute),
-			zap.Int64("LabID", userID),
+			zap.String("LabID", userID.String()),
 			zap.Error(err),
 		)
 		return nil, fmt.Errorf("error getting institute by LabID: %w", err)
@@ -42,7 +43,7 @@ func (s *Service) GetUserInstitutesByProfileID(ctx context.Context, userID int64
 	s.logger.Info("User Institute by LabID found",
 		zap.String("layer", logctx.LogServiceLayer),
 		zap.String("function", logctx.LogGetUserInstitute),
-		zap.Int64("LabID", userID),
+		zap.String("LabID", userID.String()),
 	)
 	return userInst, nil
 }

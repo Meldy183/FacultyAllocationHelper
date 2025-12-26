@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/facultyProfile"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
@@ -48,7 +49,7 @@ ORDER BY profile_id`
 ORDER BY profile_id`
 )
 
-func (r *FacultyProfileRepo) GetProfileByID(ctx context.Context, profileID int64) (*facultyProfile.UserProfile, error) {
+func (r *FacultyProfileRepo) GetProfileByID(ctx context.Context, profileID uuid.UUID) (*facultyProfile.UserProfile, error) {
 	row := r.pool.QueryRow(ctx, queryGetByProfileID, profileID)
 	var userProfile facultyProfile.UserProfile
 	err := row.Scan(
@@ -64,7 +65,7 @@ func (r *FacultyProfileRepo) GetProfileByID(ctx context.Context, profileID int64
 		r.logger.Error("Error getting user facultyProfile",
 			zap.String("layer", logctx.LogRepoLayer),
 			zap.String("function", logctx.LogGetProfileByID),
-			zap.Int64("profileID", profileID),
+			zap.String("profileID", profileID.String()),
 			zap.Error(err),
 		)
 		return nil, fmt.Errorf("GetUserProfile failed: %w", err)
@@ -72,7 +73,7 @@ func (r *FacultyProfileRepo) GetProfileByID(ctx context.Context, profileID int64
 	r.logger.Info("User facultyProfile found",
 		zap.String("layer", logctx.LogRepoLayer),
 		zap.String("function", logctx.LogGetProfileByID),
-		zap.Int64("profileID", profileID),
+		zap.String("profileID", profileID.String()),
 	)
 	return &userProfile, nil
 }
@@ -87,7 +88,7 @@ func (r *FacultyProfileRepo) AddProfile(ctx context.Context, userProfile *facult
 		r.logger.Error("Error creating user facultyProfile",
 			zap.String("layer", logctx.LogRepoLayer),
 			zap.String("function", logctx.LogAddProfile),
-			zap.Int64("profileID", userProfile.ProfileID),
+			zap.String("profileID", userProfile.ProfileID.String()),
 			zap.Error(err),
 		)
 		return fmt.Errorf("CreateUserProfile failed: %w", err)
@@ -95,7 +96,7 @@ func (r *FacultyProfileRepo) AddProfile(ctx context.Context, userProfile *facult
 	r.logger.Info("User facultyProfile created",
 		zap.String("layer", logctx.LogRepoLayer),
 		zap.String("function", logctx.LogAddProfile),
-		zap.Int64("profileId", userProfile.ProfileID),
+		zap.String("profileId", userProfile.ProfileID.String()),
 	)
 	return nil
 }
@@ -114,7 +115,7 @@ func (r *FacultyProfileRepo) UpdateProfileByID(ctx context.Context, userProfile 
 		r.logger.Error("Error updating user facultyProfile",
 			zap.String("layer", logctx.LogRepoLayer),
 			zap.String("function", logctx.LogUpdateFaculty),
-			zap.Int64("profileId", userProfile.ProfileID),
+			zap.String("profileId", userProfile.ProfileID.String()),
 			zap.Error(err),
 		)
 		return fmt.Errorf("UpdateUserProfile failed: %w", err)
@@ -122,12 +123,12 @@ func (r *FacultyProfileRepo) UpdateProfileByID(ctx context.Context, userProfile 
 	r.logger.Info("User facultyProfile updated",
 		zap.String("layer", logctx.LogRepoLayer),
 		zap.String("function", logctx.LogUpdateFaculty),
-		zap.Int64("profileId", userProfile.ProfileID),
+		zap.String("profileId", userProfile.ProfileID.String()),
 	)
 	return nil
 }
 
-func (r *FacultyProfileRepo) GetProfileIDsByInstituteIDs(ctx context.Context, instituteIDs []int64) ([]int64, error) {
+func (r *FacultyProfileRepo) GetProfileIDsByInstituteIDs(ctx context.Context, instituteIDs []uuid.UUID) ([]uuid.UUID, error) {
 	rows, err := r.pool.Query(ctx, queryGetProfileIDsByInstituteIDs, instituteIDs)
 	if err != nil {
 		r.logger.Error("Error getting facultyProfile by instituteIDs",
@@ -139,9 +140,9 @@ func (r *FacultyProfileRepo) GetProfileIDsByInstituteIDs(ctx context.Context, in
 		return nil, fmt.Errorf("GetProfileIDsByInstituteIDs failed: %w", err)
 	}
 	defer rows.Close()
-	var ids []int64
+	var ids []uuid.UUID
 	for rows.Next() {
-		var id int64
+		var id uuid.UUID
 		if err := rows.Scan(&id); err != nil {
 			r.logger.Error("Error getting facultyProfile by instituteIDs",
 				zap.String("layer", logctx.LogRepoLayer),
@@ -165,11 +166,11 @@ func (r *FacultyProfileRepo) GetProfileIDsByInstituteIDs(ctx context.Context, in
 	r.logger.Info("facultyProfile by instituteIDs found",
 		zap.String("layer", logctx.LogRepoLayer),
 		zap.String("function", logctx.LogGetProfileIDsByInstituteIDs),
-		zap.Int64s("instituteIDs", ids),
+		zap.String("instituteIDs", fmt.Sprintf("%v", ids)),
 	)
 	return ids, nil
 }
-func (r *FacultyProfileRepo) GetProfileIDsByPositionIDs(ctx context.Context, positionIDs []int64) ([]int64, error) {
+func (r *FacultyProfileRepo) GetProfileIDsByPositionIDs(ctx context.Context, positionIDs []uuid.UUID) ([]uuid.UUID, error) {
 	rows, err := r.pool.Query(ctx, queryGetProfileIDsByPositionIDs, positionIDs)
 	if err != nil {
 		r.logger.Error("Error getting facultyProfile by positionIDs",
@@ -181,9 +182,9 @@ func (r *FacultyProfileRepo) GetProfileIDsByPositionIDs(ctx context.Context, pos
 		return nil, fmt.Errorf("GetProfileIDsByPositionIDs failed: %w", err)
 	}
 	defer rows.Close()
-	var ids []int64
+	var ids []uuid.UUID
 	for rows.Next() {
-		var id int64
+		var id uuid.UUID
 		if err := rows.Scan(&id); err != nil {
 			r.logger.Error("Error getting facultyProfile by positionIDs",
 				zap.String("layer", logctx.LogRepoLayer),
@@ -207,7 +208,7 @@ func (r *FacultyProfileRepo) GetProfileIDsByPositionIDs(ctx context.Context, pos
 	r.logger.Info("facultyProfile by positionIDs found",
 		zap.String("layer", logctx.LogRepoLayer),
 		zap.String("function", logctx.LogGetProfileIDsByPositionIDs),
-		zap.Int64s("positionIDs", ids),
+		zap.String("positionIDs", fmt.Sprintf("%v", ids)),
 	)
 	return ids, nil
 }

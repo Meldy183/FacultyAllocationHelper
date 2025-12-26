@@ -1,9 +1,13 @@
 package track
 
-import "context"
+import (
+	"context"
+
+	"github.com/google/uuid"
+)
 
 type Repository interface {
 	GetAllTracks(ctx context.Context) ([]*Track, error)
-	GetTrackNameByID(ctx context.Context, trackID int64) (*string, error)
-	GetTrackIDByName(ctx context.Context, trackName string) (*int64, error)
+	GetTrackNameByID(ctx context.Context, trackID uuid.UUID) (*string, error)
+	GetTrackIDByName(ctx context.Context, trackName string) (*uuid.UUID, error)
 }

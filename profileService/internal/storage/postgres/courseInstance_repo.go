@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/courseInstance"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
@@ -98,7 +99,7 @@ const (
 	`
 )
 
-func (r *CourseInstanceRepo) GetAllInstancesIDs(ctx context.Context) ([]int64, error) {
+func (r *CourseInstanceRepo) GetAllInstancesIDs(ctx context.Context) ([]uuid.UUID, error) {
 	rows, err := r.pool.Query(ctx, queryGetAllInstancesIDs)
 	if err != nil {
 		r.logger.Error("Error getting all courseInstances IDs",
@@ -109,9 +110,9 @@ func (r *CourseInstanceRepo) GetAllInstancesIDs(ctx context.Context) ([]int64, e
 		return nil, fmt.Errorf("GetAllInstancesIDs failed: %w", err)
 	}
 	defer rows.Close()
-	var instancesIDs []int64
+	var instancesIDs []uuid.UUID
 	for rows.Next() {
-		var id int64
+		var id uuid.UUID
 		err := rows.Scan(&id)
 		if err != nil {
 			r.logger.Error("Error getting all courseInstances",
@@ -142,7 +143,7 @@ func (r *CourseInstanceRepo) GetAllInstancesIDs(ctx context.Context) ([]int64, e
 
 func (r *CourseInstanceRepo) GetCourseInstanceByID(
 	ctx context.Context,
-	courseInstanceID int64,
+	courseInstanceID uuid.UUID,
 ) (*courseInstance.CourseInstance, error) {
 	row := r.pool.QueryRow(ctx, queryGetCourseInstanceByID, courseInstanceID)
 	var courseInstanceObj courseInstance.CourseInstance
@@ -164,7 +165,7 @@ func (r *CourseInstanceRepo) GetCourseInstanceByID(
 		r.logger.Error("Error getting courseInstanceObj",
 			zap.String("layer", logctx.LogRepoLayer),
 			zap.String("function", logctx.LogGetCourseInstanceByID),
-			zap.Int64("courseInstanceID", courseInstanceID),
+			zap.String("courseInstanceID", courseInstanceID.String()),
 			zap.Error(err),
 		)
 		return nil, fmt.Errorf("GetCourseInstanceByID failed: %w", err)
@@ -172,7 +173,7 @@ func (r *CourseInstanceRepo) GetCourseInstanceByID(
 	r.logger.Info("CourseInstance found",
 		zap.String("layer", logctx.LogRepoLayer),
 		zap.String("function", logctx.LogGetCourseInstanceByID),
-		zap.Int64("courseInstanceID", courseInstanceID),
+		zap.String("courseInstanceID", courseInstanceID.String()),
 	)
 	return &courseInstanceObj, nil
 }
@@ -198,7 +199,7 @@ func (r *CourseInstanceRepo) AddNewCourseInstance(
 		r.logger.Error("Error creating courseInstance",
 			zap.String("layer", logctx.LogRepoLayer),
 			zap.String("function", logctx.LogAddNewCourseInstance),
-			zap.Int64("courseInstanceeID", courseInstance.InstanceID),
+			zap.String("courseInstanceeID", courseInstance.InstanceID.String()),
 			zap.Error(err),
 		)
 		return fmt.Errorf("AddNewCourseInstance failed: %w", err)
@@ -206,14 +207,14 @@ func (r *CourseInstanceRepo) AddNewCourseInstance(
 	r.logger.Info("CourseInstance created",
 		zap.String("layer", logctx.LogRepoLayer),
 		zap.String("function", logctx.LogAddNewCourseInstance),
-		zap.Int64("courseInstanceID", courseInstance.InstanceID),
+		zap.String("courseInstanceID", courseInstance.InstanceID.String()),
 	)
 	return nil
 }
 
 func (r *CourseInstanceRepo) UpdateCourseInstanceByID(
 	ctx context.Context,
-	id int64,
+	id uuid.UUID,
 	courseInstance *courseInstance.CourseInstance,
 ) error {
 	_, err := r.pool.Exec(ctx, queryUpdateCourseInstanceByID,
@@ -229,7 +230,7 @@ func (r *CourseInstanceRepo) UpdateCourseInstanceByID(
 		r.logger.Error("Error editing courseInstance",
 			zap.String("layer", logctx.LogRepoLayer),
 			zap.String("function", logctx.LogUpdateCourseInstanceByID),
-			zap.Int64("courseInstanceID", courseInstance.InstanceID),
+			zap.String("courseInstanceID", courseInstance.InstanceID.String()),
 			zap.Error(err),
 		)
 		return fmt.Errorf("UpdateCourseInstance failed: %w", err)
@@ -237,12 +238,12 @@ func (r *CourseInstanceRepo) UpdateCourseInstanceByID(
 	r.logger.Info("CourseInstance updated",
 		zap.String("layer", logctx.LogRepoLayer),
 		zap.String("function", logctx.LogUpdateCourseInstanceByID),
-		zap.Int64("courseInstanceID", courseInstance.InstanceID),
+		zap.String("courseInstanceID", courseInstance.InstanceID.String()),
 	)
 	return nil
 }
 
-func (r *CourseInstanceRepo) GetInstancesIDsByInstituteIDs(ctx context.Context, instituteIDs []int64) ([]int64, error) {
+func (r *CourseInstanceRepo) GetInstancesIDsByInstituteIDs(ctx context.Context, instituteIDs []uuid.UUID) ([]uuid.UUID, error) {
 	rows, err := r.pool.Query(ctx, queryGetInstancesByInstituteIDs, instituteIDs)
 	if err != nil {
 		r.logger.Error("Error getting courseInstances by instituteIDs",
@@ -254,9 +255,9 @@ func (r *CourseInstanceRepo) GetInstancesIDsByInstituteIDs(ctx context.Context, 
 		return nil, fmt.Errorf("GetInstancesByInstituteIDs failed: %w", err)
 	}
 	defer rows.Close()
-	var instancesIDs []int64
+	var instancesIDs []uuid.UUID
 	for rows.Next() {
-		var id int64
+		var id uuid.UUID
 		err := rows.Scan(&id)
 		if err != nil {
 			r.logger.Error("Error getting courseInstances by instituteIDs",
@@ -289,8 +290,8 @@ func (r *CourseInstanceRepo) GetInstancesIDsByInstituteIDs(ctx context.Context, 
 
 func (r *CourseInstanceRepo) GetInstancesIDsByAcademicYearIDs(
 	ctx context.Context,
-	academicYearIDs []int64,
-) ([]int64, error) {
+	academicYearIDs []uuid.UUID,
+) ([]uuid.UUID, error) {
 	rows, err := r.pool.Query(ctx, queryGetInstancesByAcademicYearIDs, academicYearIDs)
 	if err != nil {
 		r.logger.Error("Error getting courseInstances by academicYearIDs",
@@ -302,9 +303,9 @@ func (r *CourseInstanceRepo) GetInstancesIDsByAcademicYearIDs(
 		return nil, fmt.Errorf("GetInstancesByAcademicYearIDs failed: %w", err)
 	}
 	defer rows.Close()
-	var instancesIDs []int64
+	var instancesIDs []uuid.UUID
 	for rows.Next() {
-		var id int64
+		var id uuid.UUID
 		err := rows.Scan(&id)
 		if err != nil {
 			r.logger.Error("Error getting courseInstances by academicYearIDs",
@@ -334,7 +335,7 @@ func (r *CourseInstanceRepo) GetInstancesIDsByAcademicYearIDs(
 	return instancesIDs, nil
 }
 
-func (r *CourseInstanceRepo) GetInstancesIDsBySemesterIDs(ctx context.Context, semesterIDs []int64) ([]int64, error) {
+func (r *CourseInstanceRepo) GetInstancesIDsBySemesterIDs(ctx context.Context, semesterIDs []uuid.UUID) ([]uuid.UUID, error) {
 	rows, err := r.pool.Query(ctx, queryGetInstancesBySemesterIDs, semesterIDs)
 	if err != nil {
 		r.logger.Error("Error getting courseInstances by semesterIDs",
@@ -346,9 +347,9 @@ func (r *CourseInstanceRepo) GetInstancesIDsBySemesterIDs(ctx context.Context, s
 		return nil, fmt.Errorf("GetInstancesBySemesterIDs failed: %w", err)
 	}
 	defer rows.Close()
-	var instancesIDs []int64
+	var instancesIDs []uuid.UUID
 	for rows.Next() {
-		var id int64
+		var id uuid.UUID
 		err := rows.Scan(&id)
 		if err != nil {
 			r.logger.Error("Error getting courseInstances by semesterIDs",
@@ -379,7 +380,7 @@ func (r *CourseInstanceRepo) GetInstancesIDsBySemesterIDs(ctx context.Context, s
 	return instancesIDs, nil
 }
 
-func (r *CourseInstanceRepo) GetInstancesIDsByProgramIDs(ctx context.Context, programIDs []int64) ([]int64, error) {
+func (r *CourseInstanceRepo) GetInstancesIDsByProgramIDs(ctx context.Context, programIDs []uuid.UUID) ([]uuid.UUID, error) {
 	rows, err := r.pool.Query(ctx, queryGetInstancesByProgramIDs, programIDs)
 	if err != nil {
 		r.logger.Error("Error getting courseInstances by programIDs",
@@ -391,9 +392,9 @@ func (r *CourseInstanceRepo) GetInstancesIDsByProgramIDs(ctx context.Context, pr
 		return nil, fmt.Errorf("GetInstancesByProgramIDs failed: %w", err)
 	}
 	defer rows.Close()
-	var instancesIDs []int64
+	var instancesIDs []uuid.UUID
 	for rows.Next() {
-		var id int64
+		var id uuid.UUID
 		err := rows.Scan(&id)
 		if err != nil {
 			r.logger.Error("Error getting courseInstances by programIDs",
@@ -424,7 +425,7 @@ func (r *CourseInstanceRepo) GetInstancesIDsByProgramIDs(ctx context.Context, pr
 	return instancesIDs, nil
 }
 
-func (r *CourseInstanceRepo) GetInstancesByAllocationStatus(ctx context.Context) ([]int64, error) {
+func (r *CourseInstanceRepo) GetInstancesByAllocationStatus(ctx context.Context) ([]uuid.UUID, error) {
 	rows, err := r.pool.Query(ctx, queryGetInstancesByAllocationStatus)
 	if err != nil {
 		r.logger.Error("Error getting courseInstances by allocation status",
@@ -435,9 +436,9 @@ func (r *CourseInstanceRepo) GetInstancesByAllocationStatus(ctx context.Context)
 		return nil, fmt.Errorf("GetInstancesByAllocationStatus failed: %w", err)
 	}
 	defer rows.Close()
-	var instancesIDs []int64
+	var instancesIDs []uuid.UUID
 	for rows.Next() {
-		var id int64
+		var id uuid.UUID
 		err := rows.Scan(&id)
 		if err != nil {
 			r.logger.Error("Error getting courseInstances by allocation status",
@@ -466,7 +467,7 @@ func (r *CourseInstanceRepo) GetInstancesByAllocationStatus(ctx context.Context)
 	return instancesIDs, nil
 }
 
-func (r *CourseInstanceRepo) GetInstancesByYear(ctx context.Context, year int64) ([]int64, error) {
+func (r *CourseInstanceRepo) GetInstancesByYear(ctx context.Context, year int64) ([]uuid.UUID, error) {
 	rows, err := r.pool.Query(ctx, queryGetInstancesByYear, year)
 	if err != nil {
 		r.logger.Error("Error getting courseInstances by year",
@@ -478,9 +479,9 @@ func (r *CourseInstanceRepo) GetInstancesByYear(ctx context.Context, year int64)
 		return nil, fmt.Errorf("GetInstancesIDsByYear failed: %w", err)
 	}
 	defer rows.Close()
-	var instancesIDs []int64
+	var instancesIDs []uuid.UUID
 	for rows.Next() {
-		var id int64
+		var id uuid.UUID
 		err := rows.Scan(&id)
 		if err != nil {
 			r.logger.Error("Error getting courseInstances by year",
@@ -511,27 +512,27 @@ func (r *CourseInstanceRepo) GetInstancesByYear(ctx context.Context, year int64)
 	return instancesIDs, nil
 }
 
-func (r *CourseInstanceRepo) GetInstancesByVersionID(ctx context.Context, versionID int64) ([]int64, error) {
+func (r *CourseInstanceRepo) GetInstancesByVersionID(ctx context.Context, versionID uuid.UUID) ([]uuid.UUID, error) {
 	rows, err := r.pool.Query(ctx, queryGetInstancesByVersionID, versionID)
 	if err != nil {
 		r.logger.Error("Error getting courseInstances by versionID",
 			zap.String("layer", logctx.LogRepoLayer),
 			zap.String("function", logctx.LogGetCourseInstanceByVersionID),
-			zap.Int64("versionID", versionID),
+			zap.String("versionID", versionID.String()),
 			zap.Error(err),
 		)
 		return nil, fmt.Errorf("GetInstancesIDsByYear failed: %w", err)
 	}
 	defer rows.Close()
-	var instancesIDs []int64
+	var instancesIDs []uuid.UUID
 	for rows.Next() {
-		var id int64
+		var id uuid.UUID
 		err := rows.Scan(&id)
 		if err != nil {
 			r.logger.Error("Error getting courseInstances by versionID",
 				zap.String("layer", logctx.LogRepoLayer),
 				zap.String("function", logctx.LogGetCourseInstanceByVersionID),
-				zap.Int64("versionID", versionID),
+				zap.String("versionID", versionID.String()),
 				zap.Error(err),
 			)
 			return nil, fmt.Errorf("GetInstancesIDsByYear failed: %w", err)
@@ -543,7 +544,7 @@ func (r *CourseInstanceRepo) GetInstancesByVersionID(ctx context.Context, versio
 		r.logger.Error("Error getting courseInstance by versionID",
 			zap.String("layer", logctx.LogRepoLayer),
 			zap.String("function", logctx.LogGetCourseInstanceByVersionID),
-			zap.Int64("versionID", versionID),
+			zap.String("versionID", versionID.String()),
 			zap.Error(err),
 		)
 		return nil, fmt.Errorf("GetInstancesIDsByYear failed: %w", err)

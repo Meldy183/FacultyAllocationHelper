@@ -26,8 +26,8 @@ paths:
               name_eng: "John Doe"
               email: "j.doe@university.edu"
               alias: "jdoe"
-              institute_id: [1, 2]
-              position_id: 1
+              institute_id: ["00000000-0000-0000-0002-000000000001", "00000000-0000-0000-0002-000000000002"]
+              position_id: "00000000-0000-0000-0001-000000000001"
               year: 2024
       responses:
         '200':
@@ -37,7 +37,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/AddProfileResponse'
               example:
-                profile_id: 1
+                profile_id: "00000000-0000-0000-0000-000000000001"
                 name_eng: "John Doe"
                 email: "j.doe@university.edu"
                 alias: "jdoe"
@@ -67,12 +67,11 @@ paths:
         - name: id
           in: path
           required: true
-          description: Profile version ID (must be > 0)
+          description: Profile version ID
           schema:
-            type: integer
-            format: int64
-            minimum: 1
-          example: 1
+            type: string
+            format: uuid
+          example: "00000000-0000-0000-0000-000000000001"
       responses:
         '200':
           description: Profile found and retrieved successfully
@@ -102,26 +101,22 @@ paths:
       parameters:
         - name: institute
           in: query
-          description: "Institute IDs to filter by (valid values: 1-5)"
+          description: "Institute IDs to filter by"
           schema:
             type: array
             items:
-              type: integer
-              format: int64
-              minimum: 1
-              maximum: 5
-          example: [1, 2]
+              type: string
+              format: uuid
+          example: ["00000000-0000-0000-0002-000000000001", "00000000-0000-0000-0002-000000000002"]
         - name: position
           in: query
-          description: "Position IDs to filter by (valid values: 1=Professor, 2=Docent, 3=Senior Instructor, 4=Instructor, 5=TA, 6=TA intern, 7=Visiting)"
+          description: "Position IDs to filter by (1=Professor, 2=Docent, 3=Senior Instructor, 4=Instructor, 5=TA, 6=TA intern, 7=Visiting)"
           schema:
             type: array
             items:
-              type: integer
-              format: int64
-              minimum: 1
-              maximum: 7
-          example: [1, 2]
+              type: string
+              format: uuid
+          example: ["00000000-0000-0000-0001-000000000001", "00000000-0000-0000-0001-000000000002"]
         - name: year
           in: query
           required: true
@@ -161,12 +156,11 @@ paths:
         - name: id
           in: path
           required: true
-          description: Course instance ID (must be > 0)
+          description: Course instance ID
           schema:
-            type: integer
-            format: int64
-            minimum: 1
-          example: 1
+            type: string
+            format: uuid
+          example: "00000000-0000-0000-0004-000000000001"
       responses:
         '200':
           description: Course found and retrieved successfully
@@ -205,48 +199,40 @@ paths:
           example: 1
         - name: academic_year
           in: query
-          description: "Academic year IDs (valid values: 1=BS1, 2=BS2, 3=BS3, 4=BS4, 5=MS1, 6=MS2, 7=PhD1, 8=PhD2)"
+          description: "Academic year IDs (1=BS1, 2=BS2, 3=BS3, 4=BS4, 5=MS1, 6=MS2, 7=PhD1, 8=PhD2)"
           schema:
             type: array
             items:
-              type: integer
-              format: int64
-              minimum: 1
-              maximum: 8
-          example: [1, 2]
+              type: string
+              format: uuid
+          example: ["00000000-0000-0000-0005-000000000001", "00000000-0000-0000-0005-000000000002"]
         - name: semester_ids
           in: query
-          description: "Semester IDs (valid values: 1=T1, 2=T2, 3=T3)"
+          description: "Semester IDs (1=T1, 2=T2, 3=T3)"
           schema:
             type: array
             items:
-              type: integer
-              format: int64
-              minimum: 1
-              maximum: 3
-          example: [1, 2]
+              type: string
+              format: uuid
+          example: ["00000000-0000-0000-0003-000000000001", "00000000-0000-0000-0003-000000000002"]
         - name: study_program_ids
           in: query
-          description: "Study program IDs (valid values: 1-19)"
+          description: "Study program IDs"
           schema:
             type: array
             items:
-              type: integer
-              format: int64
-              minimum: 1
-              maximum: 19
-          example: [1, 5]
+              type: string
+              format: uuid
+          example: ["00000000-0000-0000-0006-000000000001", "00000000-0000-0000-0006-000000000005"]
         - name: responsible_institute_ids
           in: query
-          description: "Responsible institute IDs (valid values: 1=DS, 2=DS/Math, 3=DS/SDE, 4=GAMEDEV, 5=HUM, 6=RO, 7=SDE, 8=SNE)"
+          description: "Responsible institute IDs (1=DS, 2=DS/Math, 3=DS/SDE, 4=GAMEDEV, 5=HUM, 6=RO, 7=SDE, 8=SNE)"
           schema:
             type: array
             items:
-              type: integer
-              format: int64
-              minimum: 1
-              maximum: 8
-          example: [1, 7]
+              type: string
+              format: uuid
+          example: ["00000000-0000-0000-0007-000000000001", "00000000-0000-0000-0007-000000000007"]
         - name: allocation_not_finished
           in: query
           description: Filter by allocation status
@@ -255,12 +241,11 @@ paths:
           example: true
         - name: profile_version_id
           in: query
-          description: Profile version ID for filtering (must be > 0 if provided)
+          description: Profile version ID for filtering
           schema:
-            type: integer
-            format: int64
-            minimum: 1
-          example: 1
+            type: string
+            format: uuid
+          example: "00000000-0000-0000-0000-000000000001"
       responses:
         '200':
           description: List of courses retrieved successfully
@@ -296,12 +281,12 @@ paths:
             example:
               brief_name: "ML Basics"
               official_name: "Machine Learning Fundamentals"
-              academic_year_id: 2
-              semester_id: 1
+              academic_year_id: "00000000-0000-0000-0005-000000000002"
+              semester_id: "00000000-0000-0000-0003-000000000001"
               year: 2
-              program_ids: [1, 5]
-              track_ids: [3, 5]
-              responsible_institute_id: 1
+              program_ids: ["00000000-0000-0000-0006-000000000001", "00000000-0000-0000-0006-000000000005"]
+              track_ids: ["00000000-0000-0000-0008-000000000003", "00000000-0000-0000-0008-000000000005"]
+              responsible_institute_id: "00000000-0000-0000-0007-000000000001"
               groups_needed: 3
               is_elective: false
       responses:
@@ -312,7 +297,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/AddNewCourseResponse'
               example:
-                course_id: 1
+                course_id: "00000000-0000-0000-0004-000000000001"
                 brief_name: "ML Basics"
                 official_name: "Machine Learning Fundamentals"
                 academic_year_name: "BS2"
@@ -356,30 +341,30 @@ paths:
                 $ref: '#/components/schemas/GetFacultyFiltersResponse'
               example:
                 institute:
-                  - id: 1
+                  - id: "00000000-0000-0000-0002-000000000001"
                     name: "Институт анализа данных и Искусственного Интеллекта"
-                  - id: 2
+                  - id: "00000000-0000-0000-0002-000000000002"
                     name: "Институт разработки ПО и программной инженерии"
-                  - id: 3
+                  - id: "00000000-0000-0000-0002-000000000003"
                     name: "Институт робототехники и компьютерного зрения"
-                  - id: 4
+                  - id: "00000000-0000-0000-0002-000000000004"
                     name: "Институт информационной безопасности"
-                  - id: 5
+                  - id: "00000000-0000-0000-0002-000000000005"
                     name: "Институт гуманитарных и социальных наук"
                 position:
-                  - id: 1
+                  - id: "00000000-0000-0000-0001-000000000001"
                     name: "Professor"
-                  - id: 2
+                  - id: "00000000-0000-0000-0001-000000000002"
                     name: "Docent"
-                  - id: 3
+                  - id: "00000000-0000-0000-0001-000000000003"
                     name: "Senior Instructor"
-                  - id: 4
+                  - id: "00000000-0000-0000-0001-000000000004"
                     name: "Instructor"
-                  - id: 5
+                  - id: "00000000-0000-0000-0001-000000000005"
                     name: "TA"
-                  - id: 6
+                  - id: "00000000-0000-0000-0001-000000000006"
                     name: "TA intern"
-                  - id: 7
+                  - id: "00000000-0000-0000-0001-000000000007"
                     name: "Visiting"
         '500':
           description: Internal server error
@@ -404,42 +389,42 @@ paths:
               example:
                 allocation_not_finished: [true, false]
                 academic_year:
-                  - id: 1
+                  - id: "00000000-0000-0000-0005-000000000001"
                     name: "BS1"
-                  - id: 2
+                  - id: "00000000-0000-0000-0005-000000000002"
                     name: "BS2"
-                  - id: 3
+                  - id: "00000000-0000-0000-0005-000000000003"
                     name: "BS3"
-                  - id: 4
+                  - id: "00000000-0000-0000-0005-000000000004"
                     name: "BS4"
-                  - id: 5
+                  - id: "00000000-0000-0000-0005-000000000005"
                     name: "MS1"
-                  - id: 6
+                  - id: "00000000-0000-0000-0005-000000000006"
                     name: "MS2"
-                  - id: 7
+                  - id: "00000000-0000-0000-0005-000000000007"
                     name: "PhD1"
-                  - id: 8
+                  - id: "00000000-0000-0000-0005-000000000008"
                     name: "PhD2"
                 semester:
-                  - id: 1
+                  - id: "00000000-0000-0000-0003-000000000001"
                     name: "T1"
-                  - id: 2
+                  - id: "00000000-0000-0000-0003-000000000002"
                     name: "T2"
-                  - id: 3
+                  - id: "00000000-0000-0000-0003-000000000003"
                     name: "T3"
                 study_program:
-                  - id: 1
+                  - id: "00000000-0000-0000-0006-000000000001"
                     name: "AI360"
-                  - id: 2
+                  - id: "00000000-0000-0000-0006-000000000002"
                     name: "МОИИ"
-                  - id: 5
+                  - id: "00000000-0000-0000-0006-000000000005"
                     name: "SE"
                 institute:
-                  - id: 1
+                  - id: "00000000-0000-0000-0007-000000000001"
                     name: "DS"
-                  - id: 7
+                  - id: "00000000-0000-0000-0007-000000000007"
                     name: "SDE"
-                  - id: 8
+                  - id: "00000000-0000-0000-0007-000000000008"
                     name: "SNE"
         '500':
           description: Internal server error
@@ -515,34 +500,30 @@ components:
         institute_id:
           type: array
           items:
-            type: integer
-            format: int64
-            minimum: 1
-            maximum: 5
+            type: string
+            format: uuid
           minItems: 1
           description: |
-            List of institute IDs (1-5):
-            - 1: Институт анализа данных и Искусственного Интеллекта
-            - 2: Институт разработки ПО и программной инженерии
-            - 3: Институт робототехники и компьютерного зрения
-            - 4: Институт информационной безопасности
-            - 5: Институт гуманитарных и социальных наук
-          example: [1, 2]
+            List of institute IDs:
+            - Институт анализа данных и Искусственного Интеллекта
+            - Институт разработки ПО и программной инженерии
+            - Институт робототехники и компьютерного зрения
+            - Институт информационной безопасности
+            - Институт гуманитарных и социальных наук
+          example: ["00000000-0000-0000-0002-000000000001", "00000000-0000-0000-0002-000000000002"]
         position_id:
-          type: integer
-          format: int64
-          minimum: 1
-          maximum: 7
+          type: string
+          format: uuid
           description: |
-            Position ID (1-7):
-            - 1: Professor
-            - 2: Docent
-            - 3: Senior Instructor
-            - 4: Instructor
-            - 5: TA
-            - 6: TA intern
-            - 7: Visiting
-          example: 1
+            Position ID:
+            - Professor
+            - Docent
+            - Senior Instructor
+            - Instructor
+            - TA
+            - TA intern
+            - Visiting
+          example: "00000000-0000-0000-0001-000000000001"
         year:
           type: integer
           format: int64
@@ -554,8 +535,8 @@ components:
       type: object
       properties:
         profile_id:
-          type: integer
-          format: int64
+          type: string
+          format: uuid
           description: Generated profile version ID
         name_eng:
           type: string
@@ -577,8 +558,8 @@ components:
       type: object
       properties:
         profile_id:
-          type: integer
-          format: int64
+          type: string
+          format: uuid
         year:
           type: integer
           format: int64
@@ -649,8 +630,8 @@ components:
       type: object
       properties:
         profile_id:
-          type: integer
-          format: int64
+          type: string
+          format: uuid
         name_eng:
           type: string
         alias:
@@ -685,32 +666,28 @@ components:
           maxLength: 100
           example: "Machine Learning Fundamentals"
         academic_year_id:
-          type: integer
-          format: int64
-          minimum: 1
-          maximum: 8
+          type: string
+          format: uuid
           description: |
-            Academic year ID (1-8):
-            - 1: BS1 (Bachelor 1st year)
-            - 2: BS2 (Bachelor 2nd year)
-            - 3: BS3 (Bachelor 3rd year)
-            - 4: BS4 (Bachelor 4th year)
-            - 5: MS1 (Master 1st year)
-            - 6: MS2 (Master 2nd year)
-            - 7: PhD1 (PhD 1st year)
-            - 8: PhD2 (PhD 2nd year)
-          example: 2
+            Academic year ID:
+            - BS1 (Bachelor 1st year)
+            - BS2 (Bachelor 2nd year)
+            - BS3 (Bachelor 3rd year)
+            - BS4 (Bachelor 4th year)
+            - MS1 (Master 1st year)
+            - MS2 (Master 2nd year)
+            - PhD1 (PhD 1st year)
+            - PhD2 (PhD 2nd year)
+          example: "00000000-0000-0000-0005-000000000002"
         semester_id:
-          type: integer
-          format: int64
-          minimum: 1
-          maximum: 3
+          type: string
+          format: uuid
           description: |
-            Semester ID (1-3):
-            - 1: T1 (First trimester)
-            - 2: T2 (Second trimester)
-            - 3: T3 (Third trimester)
-          example: 1
+            Semester ID:
+            - T1 (First trimester)
+            - T2 (Second trimester)
+            - T3 (Third trimester)
+          example: "00000000-0000-0000-0003-000000000001"
         year:
           type: integer
           format: int64
@@ -720,42 +697,36 @@ components:
         program_ids:
           type: array
           items:
-            type: integer
-            format: int64
-            minimum: 1
-            maximum: 19
+            type: string
+            format: uuid
           description: |
-            IDs of associated study programs (1-19):
-            - 1: AI360, 2: МОИИ, 3: BS RO, 4: AIDE, 5: SE, 6: SNE, 7: ROCV, 8: MSRO, 9: TE,
-            - 10: УРКИ, 11: КБ, 12: УнОД, 13: УЦП, 14: DS, 15: R, 16: ITE, 17: ИиВТ, 18: DSAI, 19: CSE
-          example: [1, 5]
+            IDs of associated study programs:
+            - AI360, МОИИ, BS RO, AIDE, SE, SNE, ROCV, MSRO, TE,
+            - УРКИ, КБ, УнОД, УЦП, DS, R, ITE, ИиВТ, DSAI, CSE
+          example: ["00000000-0000-0000-0006-000000000001", "00000000-0000-0000-0006-000000000005"]
         track_ids:
           type: array
           items:
-            type: integer
-            format: int64
-            minimum: 1
-            maximum: 11
+            type: string
+            format: uuid
           description: |
-            IDs of associated tracks (1-11):
-            - 1: AAI, 2: AAIR, 3: CS, 4: CSDS, 5: DS, 6: GD, 7: ITE, 8: R, 9: SD, 10: SE, 11: SNE
-          example: [3, 5]
+            IDs of associated tracks:
+            - AAI, AAIR, CS, CSDS, DS, GD, ITE, R, SD, SE, SNE
+          example: ["00000000-0000-0000-0008-000000000003", "00000000-0000-0000-0008-000000000005"]
         responsible_institute_id:
-          type: integer
-          format: int64
-          minimum: 1
-          maximum: 8
+          type: string
+          format: uuid
           description: |
-            ID of the responsible institute (1-8):
-            - 1: DS
-            - 2: DS/Math
-            - 3: DS/SDE
-            - 4: GAMEDEV
-            - 5: HUM
-            - 6: RO
-            - 7: SDE
-            - 8: SNE
-          example: 1
+            ID of the responsible institute:
+            - DS
+            - DS/Math
+            - DS/SDE
+            - GAMEDEV
+            - HUM
+            - RO
+            - SDE
+            - SNE
+          example: "00000000-0000-0000-0007-000000000001"
         groups_needed:
           type: integer
           format: int64
@@ -771,8 +742,8 @@ components:
       type: object
       properties:
         course_id:
-          type: integer
-          format: int64
+          type: string
+          format: uuid
         brief_name:
           type: string
         official_name:
@@ -824,8 +795,8 @@ components:
       type: object
       properties:
         course_id:
-          type: integer
-          format: int64
+          type: string
+          format: uuid
           nullable: true
         brief_name:
           type: string
@@ -909,8 +880,8 @@ components:
       type: object
       properties:
         profile_id:
-          type: integer
-          format: int64
+          type: string
+          format: uuid
         name_eng:
           type: string
           nullable: true
@@ -1003,8 +974,8 @@ components:
       type: object
       properties:
         id:
-          type: integer
-          format: int64
+          type: string
+          format: uuid
         name:
           type: string
 

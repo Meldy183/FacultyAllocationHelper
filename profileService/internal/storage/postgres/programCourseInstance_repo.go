@@ -3,8 +3,8 @@ package postgres
 import (
 	"context"
 	"fmt"
-	"strconv"
 
+	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgxpool"
 	programcourseinstance "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/programCourseInstance"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
@@ -46,14 +46,14 @@ func (r *ProgramCourseRepo) AddProgramToCourseInstance(
 
 func (r *ProgramCourseRepo) GetProgramCourseInstancesByCourseID(
 	ctx context.Context,
-	id int64,
+	id uuid.UUID,
 ) ([]*programcourseinstance.ProgramCourseInstance, error) {
 	rows, err := r.pool.Query(ctx, queryProgramCourseByID, id)
 	if err != nil {
 		r.logger.Error("failed to Get ProgramCourses By course ID",
 			zap.String("layer", logctx.LogRepoLayer),
 			zap.String("function", logctx.LogGetProgramCourseByID),
-			zap.Int64("id", id),
+			zap.String("id", id.String()),
 			zap.Error(err),
 		)
 		return nil, fmt.Errorf("GetProgramCoursesByCourseIDs: %w", err)
@@ -68,7 +68,7 @@ func (r *ProgramCourseRepo) GetProgramCourseInstancesByCourseID(
 			r.logger.Error("Error getting programCourses by courseIDs",
 				zap.String("layer", logctx.LogRepoLayer),
 				zap.String("function", logctx.LogGetCourseInstanceByProgramID),
-				zap.String("course id", strconv.FormatInt(id, 10)),
+				zap.String("course id", id.String()),
 				zap.Error(err),
 			)
 			return nil, fmt.Errorf("GetProgramCourseInstancesByCourseIDs failed: %w", err)
@@ -80,7 +80,7 @@ func (r *ProgramCourseRepo) GetProgramCourseInstancesByCourseID(
 		r.logger.Error("Error getting programCourses by courseIDs",
 			zap.String("layer", logctx.LogRepoLayer),
 			zap.String("function", logctx.LogGetCourseInstanceByProgramID),
-			zap.String("course id", strconv.FormatInt(id, 10)),
+			zap.String("course id", id.String()),
 			zap.Error(err),
 		)
 		return nil, fmt.Errorf("GetCourseInstanceByProgramIDs failed: %w", err)

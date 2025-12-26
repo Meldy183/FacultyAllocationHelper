@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/google/uuid"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/program"
 	programcourseinstance "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/programCourseInstance"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
@@ -22,10 +23,10 @@ func (s *Service) GetAllPrograms(ctx context.Context) ([]*program.Program, error
 	return s.programRepo.GetAllPrograms(ctx)
 }
 
-func (s *Service) GetProgramNameByID(ctx context.Context, id int64) (*string, error) {
+func (s *Service) GetProgramNameByID(ctx context.Context, id uuid.UUID) (*string, error) {
 	return s.programRepo.GetProgramNameByID(ctx, id)
 }
-func (s *Service) GetProgramIDByName(ctx context.Context, name string) (*int64, error) {
+func (s *Service) GetProgramIDByName(ctx context.Context, name string) (*uuid.UUID, error) {
 	return s.programRepo.GetProgramIDByName(ctx, name)
 }
 
@@ -41,7 +42,7 @@ func NewService(
 	}
 }
 
-func (s *Service) GetProgramNamesByInstanceID(ctx context.Context, instanceID int64) ([]*string, error) {
+func (s *Service) GetProgramNamesByInstanceID(ctx context.Context, instanceID uuid.UUID) ([]*string, error) {
 	instances, err := s.programCourseRepo.GetProgramCourseInstancesByCourseID(ctx, instanceID)
 	if err != nil {
 		s.logger.Error("failed to retrieve program course instances by instanceID",

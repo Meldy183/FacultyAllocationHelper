@@ -1,17 +1,21 @@
 package courseInstance
 
-import "context"
+import (
+	"context"
+
+	"github.com/google/uuid"
+)
 
 type Repository interface {
 	AddNewCourseInstance(ctx context.Context, course *CourseInstance) error
-	GetCourseInstanceByID(ctx context.Context, courseID int64) (*CourseInstance, error)
-	UpdateCourseInstanceByID(ctx context.Context, id int64, course *CourseInstance) error
-	GetInstancesIDsByInstituteIDs(ctx context.Context, instituteIDs []int64) ([]int64, error)
-	GetInstancesIDsByAcademicYearIDs(ctx context.Context, academicYearIDs []int64) ([]int64, error)
-	GetInstancesIDsBySemesterIDs(ctx context.Context, semesterIDs []int64) ([]int64, error)
-	GetInstancesIDsByProgramIDs(ctx context.Context, programIDs []int64) ([]int64, error)
-	GetInstancesByAllocationStatus(ctx context.Context) ([]int64, error)
-	GetInstancesByYear(ctx context.Context, year int64) ([]int64, error)
-	GetInstancesByVersionID(ctx context.Context, versionID int64) ([]int64, error)
-	GetAllInstancesIDs(ctx context.Context) ([]int64, error)
+	GetCourseInstanceByID(ctx context.Context, courseID uuid.UUID) (*CourseInstance, error)
+	UpdateCourseInstanceByID(ctx context.Context, id uuid.UUID, course *CourseInstance) error
+	GetInstancesIDsByInstituteIDs(ctx context.Context, instituteIDs []uuid.UUID) ([]uuid.UUID, error)
+	GetInstancesIDsByAcademicYearIDs(ctx context.Context, academicYearIDs []uuid.UUID) ([]uuid.UUID, error)
+	GetInstancesIDsBySemesterIDs(ctx context.Context, semesterIDs []uuid.UUID) ([]uuid.UUID, error)
+	GetInstancesIDsByProgramIDs(ctx context.Context, programIDs []uuid.UUID) ([]uuid.UUID, error)
+	GetInstancesByAllocationStatus(ctx context.Context) ([]uuid.UUID, error)
+	GetInstancesByYear(ctx context.Context, year int64) ([]uuid.UUID, error)
+	GetInstancesByVersionID(ctx context.Context, versionID uuid.UUID) ([]uuid.UUID, error)
+	GetAllInstancesIDs(ctx context.Context) ([]uuid.UUID, error)
 }

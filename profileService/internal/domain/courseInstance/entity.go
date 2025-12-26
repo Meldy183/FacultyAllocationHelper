@@ -1,11 +1,13 @@
 package courseInstance
 
+import "github.com/google/uuid"
+
 type CourseInstance struct {
-	InstanceID          int64
+	InstanceID          uuid.UUID
 	Year                int64
-	CourseID            int64
-	SemesterID          int64
-	AcademicYearID      int64
+	CourseID            uuid.UUID
+	SemesterID          uuid.UUID
+	AcademicYearID      uuid.UUID
 	HardnessCoefficient *float64
 	Form                *Form
 	Mode                *Mode

@@ -1,11 +1,15 @@
 package logpage
 
-import "time"
+import (
+	"time"
+
+	"github.com/google/uuid"
+)
 
 type LogPage struct {
-	LogPageID int64
+	LogPageID uuid.UUID
 	UserID    string
 	Action    string
-	SubjectID int64
+	SubjectID uuid.UUID
 	Timestamp time.Time
 }

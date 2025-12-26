@@ -1,9 +1,13 @@
 package staff
 
-import "context"
+import (
+	"context"
+
+	"github.com/google/uuid"
+)
 
 type Service interface {
-	GetAllStaffByInstanceID(ctx context.Context, instanceID int64) ([]*Staff, error)
+	GetAllStaffByInstanceID(ctx context.Context, instanceID uuid.UUID) ([]*Staff, error)
 	AddStaff(ctx context.Context, staff *Staff) error
 	GetPI(staff []*Staff) *Staff
 	GetTI(staff []*Staff) *Staff

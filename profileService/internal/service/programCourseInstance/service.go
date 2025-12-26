@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/google/uuid"
 	programcourseinstance "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/programCourseInstance"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
 	"go.uber.org/zap"
@@ -32,7 +33,7 @@ func NewService(programCourseInstanceRepo programcourseinstance.Repository, logg
 
 func (s *Service) GetProgramCourseInstancesByCourseID(
 	ctx context.Context,
-	instanceID int64,
+	instanceID uuid.UUID,
 ) ([]*programcourseinstance.ProgramCourseInstance, error) {
 	programCourseInstances, err := s.programCourseInstanceRepo.GetProgramCourseInstancesByCourseID(ctx, instanceID)
 	if err != nil {

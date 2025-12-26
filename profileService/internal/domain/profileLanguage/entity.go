@@ -1,7 +1,9 @@
 package profileLanguage
 
+import "github.com/google/uuid"
+
 type ProfileLanguage struct {
-	ProfileLanguageID int64
-	ProfileID         int64
+	ProfileLanguageID uuid.UUID
+	ProfileID         uuid.UUID
 	LanguageCode      string
 }

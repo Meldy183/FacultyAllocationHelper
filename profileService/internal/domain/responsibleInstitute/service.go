@@ -1,8 +1,12 @@
 package responsibleInstitute
 
-import "context"
+import (
+	"context"
+
+	"github.com/google/uuid"
+)
 
 type Service interface {
-	GetResponsibleInstituteNameByID(ctx context.Context, instituteID int64) (*string, error)
-	GetResponsibleInstituteIDByName(ctx context.Context, responsubleInstituteName string) (*int64, error)
+	GetResponsibleInstituteNameByID(ctx context.Context, instituteID uuid.UUID) (*string, error)
+	GetResponsibleInstituteIDByName(ctx context.Context, responsubleInstituteName string) (*uuid.UUID, error)
 }

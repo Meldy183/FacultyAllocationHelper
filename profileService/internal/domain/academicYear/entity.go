@@ -1,6 +1,8 @@
 package academicYear
 
+import "github.com/google/uuid"
+
 type AcademicYear struct {
-	YearID int64
+	YearID uuid.UUID
 	Name   string
 }

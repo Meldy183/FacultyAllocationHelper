@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/position"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
@@ -27,9 +28,9 @@ const (
 	queryGetPositionIDByName = `SELECT position_id FROM position WHERE name = $1`
 )
 
-func (r *PositionRepo) GetPositionIDByName(ctx context.Context, name string) (*int64, error) {
+func (r *PositionRepo) GetPositionIDByName(ctx context.Context, name string) (*uuid.UUID, error) {
 	row := r.pool.QueryRow(ctx, queryGetPositionIDByName, name)
-	var posID int64
+	var posID uuid.UUID
 	err := row.Scan(
 		&posID,
 	)
@@ -49,7 +50,7 @@ func (r *PositionRepo) GetPositionIDByName(ctx context.Context, name string) (*i
 	)
 	return &posID, nil
 }
-func (r *PositionRepo) GetPositionByID(ctx context.Context, positionID int64) (*string, error) {
+func (r *PositionRepo) GetPositionByID(ctx context.Context, positionID uuid.UUID) (*string, error) {
 	row := r.pool.QueryRow(ctx, queryGetPositionByID, positionID)
 	var posName string
 	err := row.Scan(
@@ -59,7 +60,7 @@ func (r *PositionRepo) GetPositionByID(ctx context.Context, positionID int64) (*
 		r.logger.Error("Error getting posName",
 			zap.String("layer", logctx.LogRepoLayer),
 			zap.String("function", logctx.LogGetPositionByID),
-			zap.Int64("positionID", positionID),
+			zap.String("positionID", positionID.String()),
 			zap.Error(err),
 		)
 		return nil, fmt.Errorf("error getting posName: %w", err)
@@ -67,12 +68,12 @@ func (r *PositionRepo) GetPositionByID(ctx context.Context, positionID int64) (*
 	r.logger.Info("Successfully got position by ID",
 		zap.String("layer", logctx.LogRepoLayer),
 		zap.String("function", logctx.LogGetPositionByID),
-		zap.Int64("positionID", positionID),
+		zap.String("positionID", positionID.String()),
 	)
 	return &posName, nil
 }
 
-func (r *PositionRepo) GetAllPositions(ctx context.Context) ([]int64, error) {
+func (r *PositionRepo) GetAllPositions(ctx context.Context) ([]uuid.UUID, error) {
 	rows, err := r.pool.Query(ctx, queryGetAllPositions)
 	if err != nil {
 		r.logger.Error("Error getting all positions",
@@ -83,9 +84,9 @@ func (r *PositionRepo) GetAllPositions(ctx context.Context) ([]int64, error) {
 		return nil, fmt.Errorf("error getting all positions: %w", err)
 	}
 	defer rows.Close()
-	var positions []int64
+	var positions []uuid.UUID
 	for rows.Next() {
-		var iterThroughPositions int64
+		var iterThroughPositions uuid.UUID
 		err := rows.Scan(
 			&iterThroughPositions,
 		)
@@ -102,7 +103,7 @@ func (r *PositionRepo) GetAllPositions(ctx context.Context) ([]int64, error) {
 	r.logger.Info("Successfully got all positions",
 		zap.String("layer", logctx.LogRepoLayer),
 		zap.String("function", logctx.LogGetAllPositions),
-		zap.Int64("positions", int64(len(positions))),
+		zap.Int("positions", len(positions)),
 	)
 	return positions, nil
 }

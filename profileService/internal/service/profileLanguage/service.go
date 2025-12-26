@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/google/uuid"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/profileLanguage"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
 	"go.uber.org/zap"
@@ -35,20 +36,20 @@ func (s *Service) AddUserLanguage(ctx context.Context, userLanguage *profileLang
 	)
 	return nil
 }
-func (s *Service) GetProfileLanguages(ctx context.Context, profileID int64) ([]string, error) {
-	if profileID <= 0 {
-		s.logger.Error("profileID must be positive",
+func (s *Service) GetProfileLanguages(ctx context.Context, profileID uuid.UUID) ([]string, error) {
+	if profileID == uuid.Nil {
+		s.logger.Error("profileID must not be nil",
 			zap.String("layer", logctx.LogServiceLayer),
 			zap.String("function", logctx.LogGetUserLanguages),
 		)
-		return nil, fmt.Errorf("profileID must be positive: %d", profileID)
+		return nil, fmt.Errorf("profileID must not be nil: %s", profileID.String())
 	}
 	languages, err := s.repo.GetProfileLanguages(ctx, profileID)
 	if err != nil {
 		s.logger.Error("failed to get user languages",
 			zap.String("layer", logctx.LogServiceLayer),
 			zap.String("function", logctx.LogGetUserLanguages),
-			zap.Int64("profileID", profileID),
+			zap.String("profileID", profileID.String()),
 			zap.Error(err),
 		)
 		return nil, fmt.Errorf("failed to get user languages %w", err)
@@ -56,7 +57,7 @@ func (s *Service) GetProfileLanguages(ctx context.Context, profileID int64) ([]s
 	s.logger.Info("User Institute Added to DB",
 		zap.String("layer", logctx.LogServiceLayer),
 		zap.String("function", logctx.LogGetUserLanguages),
-		zap.Int64("profileID", profileID),
+		zap.String("profileID", profileID.String()),
 	)
 	return languages, nil
 }

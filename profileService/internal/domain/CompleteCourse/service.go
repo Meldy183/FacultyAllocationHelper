@@ -1,8 +1,12 @@
 package CompleteCourse
 
-import "context"
+import (
+	"context"
+
+	"github.com/google/uuid"
+)
 
 type Service interface {
-	GetFullCourseInfoByID(ctx context.Context, instanceID int64) (*FullCourse, error)
+	GetFullCourseInfoByID(ctx context.Context, instanceID uuid.UUID) (*FullCourse, error)
 	AddFullCourse(ctx context.Context, fullCourse *FullCourse) error
 }

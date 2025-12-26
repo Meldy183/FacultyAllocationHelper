@@ -1,6 +1,8 @@
 package semester
 
+import "github.com/google/uuid"
+
 type Semester struct {
-	SemesterID int64
+	SemesterID uuid.UUID
 	Name       string
 }

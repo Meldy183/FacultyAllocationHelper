@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/google/uuid"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/course"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
 	"go.uber.org/zap"
@@ -23,20 +24,20 @@ func NewService(repo course.Repository, logger *zap.Logger) *Service {
 	}
 }
 
-func (s *Service) GetCourseByID(ctx context.Context, courseID int64) (*course.Course, error) {
+func (s *Service) GetCourseByID(ctx context.Context, courseID uuid.UUID) (*course.Course, error) {
 	courseObj, err := s.repo.GetCourseByID(ctx, courseID)
 	if err != nil {
 		s.logger.Error("error getting courseObj by ID",
 			zap.String("layer", logctx.LogServiceLayer),
 			zap.String("function", logctx.LogGetCourseByID),
-			zap.Int64("courseID", courseID),
+			zap.String("courseID", courseID.String()),
 			zap.Error(err))
 		return nil, fmt.Errorf("error getting courseObj %w", err)
 	}
 	s.logger.Info("Course found",
 		zap.String("layer", logctx.LogServiceLayer),
 		zap.String("function", logctx.LogGetCourseByID),
-		zap.Int64("courseID", courseID),
+		zap.String("courseID", courseID.String()),
 		zap.Any("courseObj", courseObj),
 	)
 	return courseObj, nil
@@ -67,7 +68,7 @@ func (s *Service) AddCourse(ctx context.Context, course *course.Course) error {
 	return nil
 }
 
-func (s *Service) UpdateCourseByID(ctx context.Context, id int64, course *course.Course) error {
+func (s *Service) UpdateCourseByID(ctx context.Context, id uuid.UUID, course *course.Course) error {
 	if !responsibleInstituteIDValid(course.ResponsibleInstituteID) {
 		s.logger.Error(
 			"Invalid responsibleInstituteID",
@@ -92,6 +93,6 @@ func (s *Service) UpdateCourseByID(ctx context.Context, id int64, course *course
 	return nil
 }
 
-func responsibleInstituteIDValid(id int64) bool {
-	return id >= 1 && id <= 8
+func responsibleInstituteIDValid(id uuid.UUID) bool {
+	return id != uuid.Nil
 }

@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/google/uuid"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/institute"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
 	"go.uber.org/zap"
@@ -19,7 +20,8 @@ type Service struct {
 func NewService(repo institute.Repository, logger *zap.Logger) *Service {
 	return &Service{repo: repo, logger: logger}
 }
-func (s *Service) GetInstituteIDByName(ctx context.Context, instituteName string) (*int64, error) {
+
+func (s *Service) GetInstituteIDByName(ctx context.Context, instituteName string) (*uuid.UUID, error) {
 	instituteID, err := s.repo.GetInstituteIDByName(ctx, instituteName)
 	if err != nil {
 		s.logger.Error("failed to retrieve institute by LabID",
@@ -37,19 +39,20 @@ func (s *Service) GetInstituteIDByName(ctx context.Context, instituteName string
 	)
 	return instituteID, nil
 }
-func (s *Service) GetInstituteByID(ctx context.Context, instituteID int64) (*institute.Institute, error) {
-	if instituteID <= 0 {
+
+func (s *Service) GetInstituteByID(ctx context.Context, instituteID uuid.UUID) (*institute.Institute, error) {
+	if instituteID == uuid.Nil {
 		s.logger.Error("institute_id is invalid",
 			zap.String("layer", logctx.LogServiceLayer),
 			zap.String("function", logctx.LogGetInstituteByID))
-		return nil, fmt.Errorf("invalid institute_id: %d", instituteID)
+		return nil, fmt.Errorf("invalid institute_id: %s", instituteID.String())
 	}
 	instituteByID, err := s.repo.GetInstituteByID(ctx, instituteID)
 	if err != nil {
 		s.logger.Error("failed to retrieve institute by LabID",
 			zap.String("layer", logctx.LogServiceLayer),
 			zap.String("function", logctx.LogGetInstituteByID),
-			zap.Int64("institute_id", instituteID),
+			zap.String("institute_id", instituteID.String()),
 			zap.Error(err),
 		)
 		return nil, err
@@ -57,7 +60,7 @@ func (s *Service) GetInstituteByID(ctx context.Context, instituteID int64) (*ins
 	s.logger.Info("Successfully retrieved institute: ",
 		zap.String("layer", logctx.LogServiceLayer),
 		zap.String("function", logctx.LogGetInstituteByID),
-		zap.Int64("institute_id:", instituteID),
+		zap.String("institute_id", instituteID.String()),
 	)
 	return instituteByID, nil
 }

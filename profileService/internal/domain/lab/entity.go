@@ -1,7 +1,9 @@
 package lab
 
+import "github.com/google/uuid"
+
 type Lab struct {
-	LabID       int64
+	LabID       uuid.UUID
 	Name        string
-	InstituteID int64
+	InstituteID uuid.UUID
 }

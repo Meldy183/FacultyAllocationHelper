@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/google/uuid"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/lab"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
 	"go.uber.org/zap"
@@ -20,7 +21,7 @@ func NewService(repo lab.Repository, logger *zap.Logger) *Service {
 	return &Service{repo: repo, logger: logger}
 }
 
-func (s *Service) GetLabByID(ctx context.Context, labID int64) (*lab.Lab, error) {
+func (s *Service) GetLabByID(ctx context.Context, labID uuid.UUID) (*lab.Lab, error) {
 	labObj, err := s.repo.GetLabByID(ctx, labID)
 	if err != nil {
 		s.logger.Info("Error getting labObj",
@@ -32,13 +33,13 @@ func (s *Service) GetLabByID(ctx context.Context, labID int64) (*lab.Lab, error)
 	return labObj, err
 }
 
-func (s *Service) GetLabsByInstituteID(ctx context.Context, instituteID int64) ([]int64, error) {
+func (s *Service) GetLabsByInstituteID(ctx context.Context, instituteID uuid.UUID) ([]uuid.UUID, error) {
 	labs, err := s.repo.GetLabsByInstituteID(ctx, instituteID)
 	if err != nil {
 		s.logger.Error("Error getting labs",
 			zap.String("layer", logctx.LogServiceLayer),
 			zap.String("function", logctx.LogGetLabsByInstituteID),
-			zap.Int64("institute_id", instituteID),
+			zap.String("institute_id", instituteID.String()),
 			zap.Error(err),
 		)
 		return nil, fmt.Errorf("error getting labs: %w", err)
@@ -46,12 +47,12 @@ func (s *Service) GetLabsByInstituteID(ctx context.Context, instituteID int64) (
 	s.logger.Info("Labs found",
 		zap.String("layer", logctx.LogServiceLayer),
 		zap.String("function", logctx.LogGetLabsByInstituteID),
-		zap.Int64("institute_id", instituteID),
+		zap.String("institute_id", instituteID.String()),
 	)
 	return labs, nil
 }
 
-func (s *Service) GetAllLabs(ctx context.Context) ([]int64, error) {
+func (s *Service) GetAllLabs(ctx context.Context) ([]uuid.UUID, error) {
 	labs, err := s.repo.GetAllLabs(ctx)
 	if err != nil {
 		s.logger.Error("Error getting labs",

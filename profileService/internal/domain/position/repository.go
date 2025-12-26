@@ -1,9 +1,13 @@
 package position
 
-import "context"
+import (
+	"context"
+
+	"github.com/google/uuid"
+)
 
 type Repository interface {
-	GetPositionByID(ctx context.Context, positionID int64) (*string, error)
-	GetPositionIDByName(ctx context.Context, Name string) (*int64, error)
-	GetAllPositions(ctx context.Context) ([]int64, error)
+	GetPositionByID(ctx context.Context, positionID uuid.UUID) (*string, error)
+	GetPositionIDByName(ctx context.Context, Name string) (*uuid.UUID, error)
+	GetAllPositions(ctx context.Context) ([]uuid.UUID, error)
 }

@@ -1,7 +1,9 @@
 package profileInstitute
 
+import "github.com/google/uuid"
+
 type UserInstitute struct {
-	UserInstituteID int64
-	InstituteID     int64
-	ProfileID       int64
+	UserInstituteID uuid.UUID
+	InstituteID     uuid.UUID
+	ProfileID       uuid.UUID
 }

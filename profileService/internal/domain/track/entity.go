@@ -1,7 +1,9 @@
 package track
 
+import "github.com/google/uuid"
+
 type Track struct {
-	TrackID   int64
+	TrackID   uuid.UUID
 	Name      string
-	ProgramID int64
+	ProgramID uuid.UUID
 }

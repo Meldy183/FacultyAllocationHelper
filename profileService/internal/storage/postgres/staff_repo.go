@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/staff"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
@@ -31,13 +32,13 @@ const (
 	queryUpdateStaff = ``
 )
 
-func (r *StaffRepo) GetAllStaffByInstanceID(ctx context.Context, instanceID int64) ([]*staff.Staff, error) {
+func (r *StaffRepo) GetAllStaffByInstanceID(ctx context.Context, instanceID uuid.UUID) ([]*staff.Staff, error) {
 	rows, err := r.pool.Query(ctx, queryGetStaffByInstanceID, instanceID)
 	if err != nil {
 		r.logger.Error("failed to query staffs by instance id",
 			zap.String("layer", logctx.LogRepoLayer),
 			zap.String("function", logctx.LogGetStaffByInstanceID),
-			zap.Int64("instance", instanceID),
+			zap.String("instance", instanceID.String()),
 			zap.Error(err),
 		)
 		return nil, fmt.Errorf("failed to query staffs by instance id: %w", err)
@@ -50,7 +51,7 @@ func (r *StaffRepo) GetAllStaffByInstanceID(ctx context.Context, instanceID int6
 			r.logger.Error("failed to query staffs by instance id",
 				zap.String("layer", logctx.LogRepoLayer),
 				zap.String("function", logctx.LogGetStaffByInstanceID),
-				zap.Int64("instance", instanceID),
+				zap.String("instance", instanceID.String()),
 				zap.Error(rows.Err()),
 			)
 			return nil, fmt.Errorf("failed to query staffs by instance id: %w", err)
@@ -70,7 +71,7 @@ func (r *StaffRepo) GetAllStaffByInstanceID(ctx context.Context, instanceID int6
 			r.logger.Error("failed to scan staffs by instance id",
 				zap.String("layer", logctx.LogRepoLayer),
 				zap.String("function", logctx.LogGetStaffByInstanceID),
-				zap.Int64("instance", instanceID),
+				zap.String("instance", instanceID.String()),
 				zap.Error(err),
 			)
 			return nil, fmt.Errorf("failed to scan staffs by instance id: %w", err)
@@ -80,7 +81,7 @@ func (r *StaffRepo) GetAllStaffByInstanceID(ctx context.Context, instanceID int6
 	r.logger.Info("successfully fetched staffs by instance id",
 		zap.String("layer", logctx.LogRepoLayer),
 		zap.String("function", logctx.LogGetStaffByInstanceID),
-		zap.Int64("instance", instanceID),
+		zap.String("instance", instanceID.String()),
 	)
 	return staffs, nil
 }
@@ -99,7 +100,7 @@ func (r *StaffRepo) AddStaff(ctx context.Context, staff *staff.Staff) error {
 		r.logger.Error("failed to add staff",
 			zap.String("layer", logctx.LogRepoLayer),
 			zap.String("function", logctx.LogAddStaff),
-			zap.Int64("instance", staff.InstanceID),
+			zap.String("instance", staff.InstanceID.String()),
 			zap.Error(err),
 		)
 		return fmt.Errorf("failed to add staff: %w", err)

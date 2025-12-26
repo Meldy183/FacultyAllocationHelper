@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/google/uuid"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/profileVersion"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
 	"go.uber.org/zap"
@@ -22,26 +23,26 @@ func NewService(repo profileVersion.Repository, logger *zap.Logger) *Service {
 
 func (s *Service) GetVersionByProfileID(
 	ctx context.Context,
-	profileID int64,
+	profileID uuid.UUID,
 	year int64,
 ) (*profileVersion.ProfileVersion, error) {
 	return s.repo.GetVersionByProfileID(ctx, profileID, year)
 }
 
-func (s *Service) GetVersionByVersionID(ctx context.Context, versionID int64) (*profileVersion.ProfileVersion, error) {
+func (s *Service) GetVersionByVersionID(ctx context.Context, versionID uuid.UUID) (*profileVersion.ProfileVersion, error) {
 	return s.repo.GetVersionByVersionID(ctx, versionID)
 }
 
-func (s *Service) GetVersionIDByProfileID(ctx context.Context, profileID int64, year int64) (int64, error) {
+func (s *Service) GetVersionIDByProfileID(ctx context.Context, profileID uuid.UUID, year int64) (uuid.UUID, error) {
 	version, err := s.GetVersionByProfileID(ctx, profileID, year)
 	if err != nil {
 		s.logger.Error("Failed to get profile version",
 			zap.String("layer", logctx.LogServiceLayer),
 			zap.String("function", logctx.LogGetVersionIDByProfileID),
-			zap.Int64("profileID", profileID),
+			zap.String("profileID", profileID.String()),
 			zap.Error(err),
 		)
-		return 0, err
+		return uuid.Nil, err
 	}
 	return version.ProfileVersionId, nil
 }
@@ -51,7 +52,7 @@ func (s *Service) AddProfileVersion(ctx context.Context, version *profileVersion
 		s.logger.Error("Failed to add profile version",
 			zap.String("layer", logctx.LogServiceLayer),
 			zap.String("function", logctx.LogAddProfileVersion),
-			zap.Int64("profileID", version.ProfileVersionId),
+			zap.String("profileID", version.ProfileVersionId.String()),
 			zap.Error(err),
 		)
 		return fmt.Errorf("failed to add profile version: %w", err)

@@ -1,6 +1,8 @@
 package institute
 
+import "github.com/google/uuid"
+
 type Institute struct {
-	InstituteID int64
+	InstituteID uuid.UUID
 	Name        string
 }

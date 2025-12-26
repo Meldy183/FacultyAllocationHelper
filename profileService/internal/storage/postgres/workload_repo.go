@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgxpool"
 	workloadDomain "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/workload"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
@@ -34,8 +35,8 @@ func NewSemesterWorkloadRepo(pool *pgxpool.Pool, log *zap.Logger) *WorkloadRepo 
 
 func (r *WorkloadRepo) GetSemesterWorkloadByVersionID(
 	ctx context.Context,
-	VersionID int64,
-	semID int64,
+	VersionID uuid.UUID,
+	semID uuid.UUID,
 ) (*workloadDomain.Workload, error) {
 	row := r.pool.QueryRow(ctx, queryGetSemesterWorkloadByVersionID, VersionID, semID)
 	var workload workloadDomain.Workload
@@ -60,7 +61,7 @@ func (r *WorkloadRepo) GetSemesterWorkloadByVersionID(
 	r.logger.Info("workloadDomain successfully retrieved from database",
 		zap.String("layer", logctx.LogRepoLayer),
 		zap.String("function", logctx.LogGetSemesterWorkloadByVersionID),
-		zap.Int64("semester_id", semID),
+		zap.String("semester_id", semID.String()),
 		zap.Int64("lectures_count", workload.LecturesCount),
 		zap.Int64("tutorials_count", workload.TutorialsCount),
 		zap.Int64("labs_count", workload.LabsCount),

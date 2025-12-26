@@ -1,6 +1,8 @@
 package responsibleInstitute
 
+import "github.com/google/uuid"
+
 type ResponsibleInstitute struct {
-	ResponsibleInstituteID int64
+	ResponsibleInstituteID uuid.UUID
 	Name                   string
 }

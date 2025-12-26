@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/semester"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
@@ -56,7 +57,7 @@ func (r *SemesterRepo) GetAllSemesters(ctx context.Context) ([]semester.Semester
 	return semesters, nil
 }
 
-func (r *SemesterRepo) GetSemesterNameByID(ctx context.Context, semesterID int64) (*string, error) {
+func (r *SemesterRepo) GetSemesterNameByID(ctx context.Context, semesterID uuid.UUID) (*string, error) {
 	var str string
 	err := r.pool.QueryRow(ctx, queryGetSemesterNameByID, semesterID).Scan(&str)
 	if err != nil {

@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/google/uuid"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/CompleteCourse"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/course"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/courseInstance"
@@ -46,13 +47,13 @@ func NewService(instance courseInstance.Service,
 	}
 }
 
-func (s *Service) GetFullCourseInfoByID(ctx context.Context, instanceID int64) (*CompleteCourse.FullCourse, error) {
+func (s *Service) GetFullCourseInfoByID(ctx context.Context, instanceID uuid.UUID) (*CompleteCourse.FullCourse, error) {
 	courseInstanceObj, err := s.instanceService.GetCourseInstanceByID(ctx, instanceID)
 	if err != nil {
 		s.logger.Error("failed to fetch courseInstanceObj",
 			zap.String("layer", logctx.LogServiceLayer),
 			zap.String("function", logctx.LogGetFullCourseInfoByID),
-			zap.Int64("instanceID", instanceID),
+			zap.String("instanceID", instanceID.String()),
 			zap.Error(err),
 		)
 		return nil, fmt.Errorf("failed to fetch courseInstanceObj: %w", err)
@@ -62,7 +63,7 @@ func (s *Service) GetFullCourseInfoByID(ctx context.Context, instanceID int64) (
 		s.logger.Error("failed to fetch courseObj",
 			zap.String("layer", logctx.LogServiceLayer),
 			zap.String("function", logctx.LogGetFullCourseInfoByID),
-			zap.Int64("instanceID", instanceID),
+			zap.String("instanceID", instanceID.String()),
 			zap.Error(err),
 		)
 		return nil, fmt.Errorf("failed to fetch courseObj: %w", err)
@@ -72,7 +73,7 @@ func (s *Service) GetFullCourseInfoByID(ctx context.Context, instanceID int64) (
 		s.logger.Error("failed to fetch trackNames",
 			zap.String("layer", logctx.LogServiceLayer),
 			zap.String("function", logctx.LogGetFullCourseInfoByID),
-			zap.Int64("instanceID", instanceID),
+			zap.String("instanceID", instanceID.String()),
 			zap.Error(err),
 		)
 		return nil, fmt.Errorf("failed to fetch trackNames: %w", err)
@@ -82,7 +83,7 @@ func (s *Service) GetFullCourseInfoByID(ctx context.Context, instanceID int64) (
 		s.logger.Error("failed to fetch studyProgramNames",
 			zap.String("layer", logctx.LogServiceLayer),
 			zap.String("function", logctx.LogGetFullCourseInfoByID),
-			zap.Int64("instanceID", instanceID),
+			zap.String("instanceID", instanceID.String()),
 			zap.Error(err),
 		)
 		return nil, fmt.Errorf("failed to fetch studyProgramNames: %w", err)
@@ -96,8 +97,8 @@ func (s *Service) GetFullCourseInfoByID(ctx context.Context, instanceID int64) (
 	s.logger.Info("successfully fetched full course",
 		zap.String("layer", logctx.LogServiceLayer),
 		zap.String("function", logctx.LogGetFullCourseInfoByID),
-		zap.Int64("instanceID", instanceID),
-		zap.Int64("courseID", courseObj.CourseID),
+		zap.String("instanceID", instanceID.String()),
+		zap.String("courseID", courseObj.CourseID.String()),
 		zap.Any("fullCourse", fullCourse),
 	)
 	return fullCourse, nil

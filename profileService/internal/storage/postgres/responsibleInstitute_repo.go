@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/responsibleInstitute"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
@@ -34,9 +35,9 @@ responsible_institute WHERE responsible_institute_id = $1`
 func (r *ResponsibleInstituteRepo) GetResponsibleInstituteIDByName(
 	ctx context.Context,
 	responsibleInstituteName string,
-) (*int64, error) {
+) (*uuid.UUID, error) {
 	ID := r.pool.QueryRow(ctx, queryGetResponsibleInstituteIDByName, responsibleInstituteName)
-	var responsibleInstituteID int64
+	var responsibleInstituteID uuid.UUID
 	err := ID.Scan(&responsibleInstituteID)
 	if err != nil {
 		r.logger.Error("Error getting responsible institute name",
@@ -89,7 +90,7 @@ func (r *ResponsibleInstituteRepo) GetAllInstitutes(
 
 func (r *ResponsibleInstituteRepo) GetResponsibleInstituteNameByID(
 	ctx context.Context,
-	responsibleInstituteID int64,
+	responsibleInstituteID uuid.UUID,
 ) (*string, error) {
 	str := r.pool.QueryRow(ctx, queryGetResponsibleInstituteNameByID, responsibleInstituteID)
 	var responsibleInstituteName string

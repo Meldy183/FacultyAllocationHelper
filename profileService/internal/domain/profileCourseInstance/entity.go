@@ -1,7 +1,9 @@
 package profileCourseInstance
 
+import "github.com/google/uuid"
+
 type ProfileVersionCourseInstance struct {
-	ProfileCourseID  int64
-	ProfileVersionID int64
-	CourseInstanceID int64
+	ProfileCourseID  uuid.UUID
+	ProfileVersionID uuid.UUID
+	CourseInstanceID uuid.UUID
 }

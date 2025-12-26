@@ -1,9 +1,11 @@
 package staff
 
+import "github.com/google/uuid"
+
 type Staff struct {
-	AssignmentID     int64
-	InstanceID       int64
-	ProfileVersionID int64
+	AssignmentID     uuid.UUID
+	InstanceID       uuid.UUID
+	ProfileVersionID uuid.UUID
 	PositionType     *string
 	GroupsAssigned   *int64
 	IsConfirmed      bool

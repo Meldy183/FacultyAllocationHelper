@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/profileCourseInstance"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
@@ -28,37 +29,37 @@ const (
 
 func (r *ProfileCourseInstanceRepo) GetCourseInstancesByVersionID(
 	ctx context.Context,
-	ProfileVersionID int64,
-) ([]int64, error) {
+	ProfileVersionID uuid.UUID,
+) ([]uuid.UUID, error) {
 	rows, err := r.pool.Query(ctx, queryGetInstancesByProfileID, ProfileVersionID)
 	if err != nil {
 		r.logger.Error("GetCourseInstancesByProfileID",
 			zap.String("layer", logctx.LogRepoLayer),
 			zap.String("function", logctx.LogGetInstancesByProfileID),
-			zap.Int64("profileID", ProfileVersionID),
+			zap.String("profileID", ProfileVersionID.String()),
 			zap.Error(err),
 		)
 		return nil, fmt.Errorf("GetCourseInstancesByProfileID: %w", err)
 	}
 	defer rows.Close()
-	var instances []int64
+	var instances []uuid.UUID
 	for rows.Next() {
 		if rows.Err() != nil {
 			r.logger.Error("GetCourseInstancesByProfileID",
 				zap.String("layer", logctx.LogRepoLayer),
 				zap.String("function", logctx.LogGetInstancesByProfileID),
-				zap.Int64("profileID", ProfileVersionID),
+				zap.String("profileID", ProfileVersionID.String()),
 				zap.Error(rows.Err()),
 			)
 			return nil, fmt.Errorf("GetCourseInstancesByProfileID: %w", rows.Err())
 		}
-		var instanceTaken int64
+		var instanceTaken uuid.UUID
 		err := rows.Scan(&instanceTaken)
 		if err != nil {
 			r.logger.Error("GetCourseInstancesByProfileID",
 				zap.String("layer", logctx.LogRepoLayer),
 				zap.String("function", logctx.LogGetInstancesByProfileID),
-				zap.Int64("profileID", ProfileVersionID),
+				zap.String("profileID", ProfileVersionID.String()),
 				zap.Error(err),
 			)
 			return nil, fmt.Errorf("GetCourseInstancesByProfileID: %w", err)
@@ -68,7 +69,7 @@ func (r *ProfileCourseInstanceRepo) GetCourseInstancesByVersionID(
 	r.logger.Info("GetCourseInstancesByProfileID Success",
 		zap.String("layer", logctx.LogRepoLayer),
 		zap.String("function", logctx.LogGetInstancesByProfileID),
-		zap.Int64("profileID", ProfileVersionID),
+		zap.String("profileID", ProfileVersionID.String()),
 	)
 	return instances, nil
 }
@@ -92,7 +93,7 @@ func (r *ProfileCourseInstanceRepo) AddCourseInstance(ctx context.Context,
 	r.logger.Info("AddCourseInstance Success",
 		zap.String("layer", logctx.LogRepoLayer),
 		zap.String("function", logctx.LogAddCourseInstance),
-		zap.Int64("profileID", profileVersionCourseInstance.ProfileCourseID),
+		zap.String("profileID", profileVersionCourseInstance.ProfileCourseID.String()),
 	)
 	return nil
 }
