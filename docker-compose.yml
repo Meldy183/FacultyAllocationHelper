@@ -1,20 +1,6 @@
 networks:
   fah:
 services:
-  nginx:
-    image: nginx:stable-alpine
-    ports:
-      - 80:80
-    volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf
-    depends_on:
-      - profile-service
-      - fah_frontend
-      - parsing_service
-
-    networks:
-      - fah
-
   fah_frontend:
     build: 
       context: ./fah-frontend
