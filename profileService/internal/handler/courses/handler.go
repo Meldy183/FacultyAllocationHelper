@@ -325,7 +325,7 @@ func (h *Handler) AddNewCourse(w http.ResponseWriter, r *http.Request) {
 		SemesterID:         req.SemesterID,
 		Year:               req.Year,
 		GroupsNeeded:       req.GroupsNeeded,
-		GroupsTaken:        &groupsTakenByDefault,
+		GroupsTaken:        &groupsTakenByDefault, // убрать это чудо использования указателей
 		PIAllocationStatus: courseInstance.NewStatusDefault(),
 		TIAllocationStatus: courseInstance.NewStatusDefault(),
 		Form:               courseInstance.NewFormDefault(),
