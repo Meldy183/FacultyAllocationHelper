@@ -35,7 +35,56 @@ const (
 )
 
 func (r *StaffRepo) GetStaffByInstanceAndVersionID(ctx context.Context, instanceID int64, versionID int64) (*staff.Staff, error) {
-	panic("Implement Me!")
+	rows, err := r.pool.Query(ctx, queryGetStaffByInstanceAndVersionID, instanceID, versionID)
+	if err != nil {
+		r.logger.Error("failed to query staff by instance and version id",
+			zap.String("layer", logctx.LogRepoLayer),
+			zap.String("function", logctx.LogGetStaffByInstanceAndVersionID),
+			zap.Int64("instance", instanceID),
+			zap.Int64("version", versionID),
+			zap.Error(err),
+		)
+		return nil, fmt.Errorf("failed to query staff by instance and version id: %w", err)
+	}
+	defer rows.Close()
+	if !rows.Next() {
+		r.logger.Info("no staff found by instance and version id",
+			zap.String("layer", logctx.LogRepoLayer),
+			zap.String("function", logctx.LogGetStaffByInstanceAndVersionID),
+			zap.Int64("instance", instanceID),
+			zap.Int64("version", versionID),
+		)
+		return nil, nil
+	}
+	var staffInstance staff.Staff
+	err = rows.Scan(
+		&staffInstance.AssignmentID,
+		&staffInstance.InstanceID,
+		&staffInstance.ProfileVersionID,
+		&staffInstance.PositionType,
+		&staffInstance.GroupsAssigned,
+		&staffInstance.IsConfirmed,
+		&staffInstance.LecturesCount,
+		&staffInstance.TutorialsCount,
+		&staffInstance.LabsCount,
+	)
+	if err != nil {
+		r.logger.Error("failed to scan staff by instance and version id",
+			zap.String("layer", logctx.LogRepoLayer),
+			zap.String("function", logctx.LogGetStaffByInstanceAndVersionID),
+			zap.Int64("instance", instanceID),
+			zap.Int64("version", versionID),
+			zap.Error(err),
+		)
+		return nil, fmt.Errorf("failed to scan staff by instance and version id: %w", err)
+	}
+	r.logger.Info("successfully fetched staff by instance and version id",
+		zap.String("layer", logctx.LogRepoLayer),
+		zap.String("function", logctx.LogGetStaffByInstanceAndVersionID),
+		zap.Int64("instance", instanceID),
+		zap.Int64("version", versionID),
+	)
+	return &staffInstance, nil
 }
 func (r *StaffRepo) GetAllStaffByInstanceID(ctx context.Context, instanceID int64) ([]*staff.Staff, error) {
 	rows, err := r.pool.Query(ctx, queryGetStaffByInstanceID, instanceID)

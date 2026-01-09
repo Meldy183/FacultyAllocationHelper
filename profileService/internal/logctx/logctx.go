@@ -113,4 +113,6 @@ const (
 	LogParseCourse                       = "parseCourse"
 	LogGetPositionIDByName               = "getPositionIDByName"
 	LogParseExcel                        = "parseExcel"
+	LogGetStaffByInstanceAndVersionID    = "getStaffByInstanceAndVersionID"
+	LogAllocateFaculty                   = "allocateFaculty"
 )
