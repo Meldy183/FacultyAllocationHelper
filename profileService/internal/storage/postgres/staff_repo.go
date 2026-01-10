@@ -32,7 +32,8 @@ const (
 	queryGetStaffByInstanceAndVersionID = `SELECT assignment_id, instance_id, profile_version_id, position_type,
 	groups_assigned, is_confirmed, lectures_count, tutorials_count, labs_count
 	FROM staff WHERE instance_id = $1 AND profile_version_id = $2`
-	queryUpdateStaff = ``
+	queryUpdateStaff = `UPDATE staff SET position_type = $1, groups_assigned = $2, is_confirmed = $3,
+	lectures_count = $4, tutorials_count = $5, labs_count = $6 WHERE assignment_id = $7`
 )
 
 func (r *StaffRepo) GetStaffByInstanceAndVersionID(ctx context.Context, instanceID int64, versionID int64) (*staff.Staff, error) {
@@ -163,6 +164,28 @@ func (r *StaffRepo) AddStaff(ctx context.Context, tx *pgx.Tx, staff *staff.Staff
 	return nil
 }
 func (r *StaffRepo) UpdateStaff(ctx context.Context, tx *pgx.Tx, staff *staff.Staff) error {
-	//TODO: implement me
-	panic("implement me")
+	_, err := r.pool.Exec(ctx, queryUpdateStaff,
+		staff.PositionType,
+		staff.GroupsAssigned,
+		staff.IsConfirmed,
+		staff.LecturesCount,
+		staff.TutorialsCount,
+		staff.LabsCount,
+		staff.AssignmentID,
+	)
+	if err != nil {
+		r.logger.Error("failed to update staff",
+			zap.String("layer", logctx.LogRepoLayer),
+			zap.String("function", logctx.LogUpdateStaff),
+			zap.Int64("assignmentID", staff.AssignmentID),
+			zap.Error(err),
+		)
+		return fmt.Errorf("failed to update staff: %w", err)
+	}
+	r.logger.Info("Course Staff updated",
+		zap.String("layer", logctx.LogRepoLayer),
+		zap.String("function", logctx.LogUpdateStaff),
+		zap.Int64("assignmentID", staff.AssignmentID),
+	)
+	return nil
 }

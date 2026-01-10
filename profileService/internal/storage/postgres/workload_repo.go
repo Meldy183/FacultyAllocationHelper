@@ -26,7 +26,8 @@ WHERE profile_version_id = $1 AND semester_id = $2`
 	(profile_version_id, semester_id, lectures_count, tutorials_count, labs_count, electives_count, rate)
 	VALUES ($1, $2, $3, $4, $5, $6, $7)
 	RETURNING workload_id`
-	// queryUpdateSemesterWorkload = ``.
+	queryUpdateSemesterWorkload = `UPDATE workload SET lectures_count = $1, tutorials_count = $2, labs_count = $3, electives_count = $4, rate = $5
+	WHERE workload_id = $6`
 )
 
 func NewSemesterWorkloadRepo(pool *pgxpool.Pool, log *zap.Logger) *WorkloadRepo {
@@ -96,6 +97,25 @@ func (r *WorkloadRepo) AddSemesterWorkload(ctx context.Context, tx *pgx.Tx, work
 }
 
 func (r *WorkloadRepo) UpdateSemesterWorkload(ctx context.Context, tx *pgx.Tx, workload *workloadDomain.Workload) error {
+	_, err := r.pool.Exec(ctx, queryUpdateSemesterWorkload,
+		workload.LecturesCount,
+		workload.TutorialsCount,
+		workload.LabsCount,
+		workload.ElectivesCount,
+		workload.Rate,
+		workload.WorkloadID,
+	)
+	if err != nil {
+		r.logger.Error("error updating workload in database",
+			zap.String("layer", logctx.LogRepoLayer),
+			zap.String("function", logctx.LogUpdateSemesterWorkload),
+			zap.Error(err),
+		)
+		return fmt.Errorf("error updating workload: %w", err)
+	}
+	r.logger.Info("workload updated",
+		zap.String("layer", logctx.LogRepoLayer),
+		zap.String("function", logctx.LogUpdateSemesterWorkload),
+	)
 	return nil
-	// TODO: implement me
 }

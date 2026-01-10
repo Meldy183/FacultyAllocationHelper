@@ -115,4 +115,5 @@ const (
 	LogParseExcel                        = "parseExcel"
 	LogGetStaffByInstanceAndVersionID    = "getStaffByInstanceAndVersionID"
 	LogAllocateFaculty                   = "allocateFaculty"
+	LogUpdateStaff                       = "updateStaff"
 )
