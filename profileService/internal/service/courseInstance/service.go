@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strconv"
 
+	"github.com/jackc/pgx/v5/pgxpool"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/courseInstance"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
 	"go.uber.org/zap"
@@ -13,6 +14,7 @@ import (
 var _ courseInstance.Service = (*Service)(nil)
 
 type Service struct {
+	pool   *pgxpool.Pool // MOCK to avoid import error
 	repo   courseInstance.Repository
 	logger *zap.Logger
 }
@@ -22,6 +24,22 @@ func NewService(repo courseInstance.Repository, logger *zap.Logger) *Service {
 }
 
 func (s *Service) AddCourseInstance(ctx context.Context, courseInstance *courseInstance.CourseInstance) error {
+	tx, err := s.pool.Begin(ctx)
+	if err != nil {
+		s.logger.Error("error starting transaction",
+			zap.String("layer", logctx.LogServiceLayer),
+			zap.String("function", logctx.LogAddSemesterWorkload),
+			zap.Error(err))
+		return err
+	}
+	defer func() {
+		if rollbackErr := tx.Rollback(ctx); rollbackErr != nil {
+			s.logger.Error("error rolling back transaction",
+				zap.String("layer", logctx.LogServiceLayer),
+				zap.String("function", logctx.LogAddSemesterWorkload),
+				zap.Error(rollbackErr))
+		}
+	}()
 	if !yearValid(courseInstance.Year) {
 		s.logger.Error(
 			"Invalid year",
@@ -88,7 +106,7 @@ func (s *Service) AddCourseInstance(ctx context.Context, courseInstance *courseI
 	}
 	s.logger.Info("ti status ok")
 
-	err := s.repo.AddNewCourseInstance(ctx, courseInstance)
+	err = s.repo.AddNewCourseInstance(ctx, &tx, courseInstance)
 	if err != nil {
 		s.logger.Error(
 			"Invalid responsibleInstituteID",
@@ -167,6 +185,22 @@ func (s *Service) UpdateCourseInstanceByID(
 	id int64,
 	courseInstance *courseInstance.CourseInstance,
 ) error {
+	tx, err := s.pool.Begin(ctx)
+	if err != nil {
+		s.logger.Error("error starting transaction",
+			zap.String("layer", logctx.LogServiceLayer),
+			zap.String("function", logctx.LogAddSemesterWorkload),
+			zap.Error(err))
+		return err
+	}
+	defer func() {
+		if rollbackErr := tx.Rollback(ctx); rollbackErr != nil {
+			s.logger.Error("error rolling back transaction",
+				zap.String("layer", logctx.LogServiceLayer),
+				zap.String("function", logctx.LogAddSemesterWorkload),
+				zap.Error(rollbackErr))
+		}
+	}()
 	if !semesterIDValid(courseInstance.SemesterID) {
 		s.logger.Error(
 			"Invalid semester ID",
@@ -224,7 +258,7 @@ func (s *Service) UpdateCourseInstanceByID(
 	}
 	s.logger.Info("ti status ok")
 
-	err := s.repo.UpdateCourseInstanceByID(ctx, id, courseInstance)
+	err = s.repo.UpdateCourseInstanceByID(ctx, &tx, id, courseInstance)
 	if err != nil {
 		s.logger.Error(
 			"could not update course instance by id",

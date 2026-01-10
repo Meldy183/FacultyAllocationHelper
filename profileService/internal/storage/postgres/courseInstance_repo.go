@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/courseInstance"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
@@ -144,9 +145,27 @@ func (r *CourseInstanceRepo) GetCourseInstanceByID(
 	ctx context.Context,
 	courseInstanceID int64,
 ) (*courseInstance.CourseInstance, error) {
-	row := r.pool.QueryRow(ctx, queryGetCourseInstanceByID, courseInstanceID)
+	row, err := r.pool.Query(ctx, queryGetCourseInstanceByID, courseInstanceID)
+	if err != nil {
+		r.logger.Error("Error getting courseInstanceObj",
+			zap.String("layer", logctx.LogRepoLayer),
+			zap.String("function", logctx.LogGetCourseInstanceByID),
+			zap.Int64("courseInstanceID", courseInstanceID),
+			zap.Error(err),
+		)
+		return nil, fmt.Errorf("GetCourseInstanceByID failed: %w", err)
+	}
+	defer row.Close()
+	if !row.Next() {
+		r.logger.Info("no instance found by instance id",
+			zap.String("layer", logctx.LogRepoLayer),
+			zap.String("function", logctx.LogGetCourseInstanceByID),
+			zap.Int64("courseInstanceID", courseInstanceID),
+		)
+		return nil, nil
+	}
 	var courseInstanceObj courseInstance.CourseInstance
-	err := row.Scan(
+	err = row.Scan(
 		&courseInstanceObj.InstanceID,
 		&courseInstanceObj.CourseID,
 		&courseInstanceObj.SemesterID,
@@ -160,15 +179,7 @@ func (r *CourseInstanceRepo) GetCourseInstanceByID(
 		&courseInstanceObj.PIAllocationStatus,
 		&courseInstanceObj.TIAllocationStatus,
 	)
-	if err != nil {
-		r.logger.Error("Error getting courseInstanceObj",
-			zap.String("layer", logctx.LogRepoLayer),
-			zap.String("function", logctx.LogGetCourseInstanceByID),
-			zap.Int64("courseInstanceID", courseInstanceID),
-			zap.Error(err),
-		)
-		return nil, fmt.Errorf("GetCourseInstanceByID failed: %w", err)
-	}
+
 	r.logger.Info("CourseInstance found",
 		zap.String("layer", logctx.LogRepoLayer),
 		zap.String("function", logctx.LogGetCourseInstanceByID),
@@ -179,6 +190,7 @@ func (r *CourseInstanceRepo) GetCourseInstanceByID(
 
 func (r *CourseInstanceRepo) AddNewCourseInstance(
 	ctx context.Context,
+	tx *pgx.Tx,
 	courseInstance *courseInstance.CourseInstance,
 ) error {
 	err := r.pool.QueryRow(ctx, queryInsertCourseInstance,
@@ -213,6 +225,7 @@ func (r *CourseInstanceRepo) AddNewCourseInstance(
 
 func (r *CourseInstanceRepo) UpdateCourseInstanceByID(
 	ctx context.Context,
+	tx *pgx.Tx,
 	id int64,
 	courseInstance *courseInstance.CourseInstance,
 ) error {

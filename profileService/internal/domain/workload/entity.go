@@ -10,3 +10,15 @@ type Workload struct {
 	ElectivesCount   int64
 	Rate             float64
 }
+
+func NewWorkload(profileVersionID int64, semesterID int64, lecturesCount int64, tutorialsCount int64, labsCount int64) *Workload {
+	return &Workload{
+		ProfileVersionID: profileVersionID,
+		SemesterID:       semesterID,
+		LecturesCount:    lecturesCount,
+		TutorialsCount:   tutorialsCount,
+		LabsCount:        labsCount,
+		ElectivesCount:   0,
+		Rate:             0.0,
+	}
+}

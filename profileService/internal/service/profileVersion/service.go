@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/jackc/pgx/v5/pgxpool"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/profileVersion"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
 	"go.uber.org/zap"
@@ -12,6 +13,7 @@ import (
 var _ profileVersion.Service = (*Service)(nil)
 
 type Service struct {
+	pool   *pgxpool.Pool // MOCK to avoid import error
 	repo   profileVersion.Repository
 	logger *zap.Logger
 }
@@ -47,7 +49,23 @@ func (s *Service) GetVersionIDByProfileID(ctx context.Context, profileID int64, 
 }
 
 func (s *Service) AddProfileVersion(ctx context.Context, version *profileVersion.ProfileVersion) error {
-	if err := s.repo.AddProfileVersion(ctx, version); err != nil {
+	tx, err := s.pool.Begin(ctx)
+	if err != nil {
+		s.logger.Error("error starting transaction",
+			zap.String("layer", logctx.LogServiceLayer),
+			zap.String("function", logctx.LogAddSemesterWorkload),
+			zap.Error(err))
+		return err
+	}
+	defer func() {
+		if rollbackErr := tx.Rollback(ctx); rollbackErr != nil {
+			s.logger.Error("error rolling back transaction",
+				zap.String("layer", logctx.LogServiceLayer),
+				zap.String("function", logctx.LogAddSemesterWorkload),
+				zap.Error(rollbackErr))
+		}
+	}()
+	if err = s.repo.AddProfileVersion(ctx, &tx, version); err != nil {
 		s.logger.Error("Failed to add profile version",
 			zap.String("layer", logctx.LogServiceLayer),
 			zap.String("function", logctx.LogAddProfileVersion),

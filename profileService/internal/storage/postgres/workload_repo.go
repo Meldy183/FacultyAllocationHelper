@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	workloadDomain "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/workload"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
@@ -69,7 +70,7 @@ func (r *WorkloadRepo) GetSemesterWorkloadByVersionID(
 	return &workload, nil
 }
 
-func (r *WorkloadRepo) AddSemesterWorkload(ctx context.Context, workload *workloadDomain.Workload) error {
+func (r *WorkloadRepo) AddSemesterWorkload(ctx context.Context, tx *pgx.Tx, workload *workloadDomain.Workload) error {
 	err := r.pool.QueryRow(ctx, queryAddSemesterWorkload,
 		workload.ProfileVersionID,
 		workload.SemesterID,
@@ -94,7 +95,7 @@ func (r *WorkloadRepo) AddSemesterWorkload(ctx context.Context, workload *worklo
 	return nil
 }
 
-func (r *WorkloadRepo) UpdateSemesterWorkload(ctx context.Context, workload *workloadDomain.Workload) error {
+func (r *WorkloadRepo) UpdateSemesterWorkload(ctx context.Context, tx *pgx.Tx, workload *workloadDomain.Workload) error {
 	return nil
 	// TODO: implement me
 }

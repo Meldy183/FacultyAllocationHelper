@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/staff"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
@@ -139,7 +140,7 @@ func (r *StaffRepo) GetAllStaffByInstanceID(ctx context.Context, instanceID int6
 	)
 	return staffs, nil
 }
-func (r *StaffRepo) AddStaff(ctx context.Context, staff *staff.Staff) error {
+func (r *StaffRepo) AddStaff(ctx context.Context, tx *pgx.Tx, staff *staff.Staff) error {
 	err := r.pool.QueryRow(ctx, queryAddStaff,
 		staff.InstanceID,
 		staff.ProfileVersionID,
@@ -161,7 +162,7 @@ func (r *StaffRepo) AddStaff(ctx context.Context, staff *staff.Staff) error {
 	}
 	return nil
 }
-func (r *StaffRepo) UpdateStaff(ctx context.Context, staff *staff.Staff) error {
+func (r *StaffRepo) UpdateStaff(ctx context.Context, tx *pgx.Tx, staff *staff.Staff) error {
 	//TODO: implement me
 	panic("implement me")
 }

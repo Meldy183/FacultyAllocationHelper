@@ -36,3 +36,7 @@ type Faculty struct {
 	Classes          []string `json:"classes"`
 	IsConfirmed      bool     `json:"is_confirmed"`
 }
+
+func Ptr[T any](v T) *T {
+	return &v
+}

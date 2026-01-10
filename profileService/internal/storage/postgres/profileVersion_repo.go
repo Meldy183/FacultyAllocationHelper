@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/profileVersion"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
@@ -83,7 +84,7 @@ func (r *ProfileVersionRepo) GetVersionByProfileID(
 	return &version, nil
 }
 
-func (r *ProfileVersionRepo) AddProfileVersion(ctx context.Context, version *profileVersion.ProfileVersion) error {
+func (r *ProfileVersionRepo) AddProfileVersion(ctx context.Context, tx *pgx.Tx, version *profileVersion.ProfileVersion) error {
 	err := r.pool.QueryRow(ctx, queryInsertVersion,
 		version.PositionID,
 		version.ProfileID,
