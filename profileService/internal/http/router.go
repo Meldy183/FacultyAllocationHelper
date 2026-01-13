@@ -2,6 +2,7 @@ package router
 
 import (
 	"github.com/go-chi/chi/v5"
+	allocationHandler "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/handler/allocation"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/handler/courses"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/handler/facultyProfile"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/handler/filters"
@@ -11,7 +12,8 @@ import (
 func NewRouter(facultyHandler *facultyProfile.Handler,
 	coursesHandler *courses.Handler,
 	filtersHandler *filters.Handler,
-	parsigHandler *parse.Handler) chi.Router {
+	parsigHandler *parse.Handler,
+	allocatHandler *allocationHandler.Handler) chi.Router {
 	r := chi.NewRouter()
 	r.Route("/", func(r chi.Router) {
 		r.Route("/profile", func(r chi.Router) {
@@ -25,6 +27,9 @@ func NewRouter(facultyHandler *facultyProfile.Handler,
 		})
 		r.Route("/parsing", func(r chi.Router) {
 			parse.RegisterRoutes(r, parsigHandler)
+		})
+		r.Route("/allocation", func(r chi.Router) {
+			allocationHandler.RegisterRoutes(r, allocatHandler)
 		})
 	})
 

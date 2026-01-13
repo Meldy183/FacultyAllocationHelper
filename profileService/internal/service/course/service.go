@@ -51,6 +51,7 @@ func (s *Service) AddCourse(ctx context.Context, course *course.Course) error {
 		)
 		return fmt.Errorf("invalid responsibleInstituteID: %v", course.ResponsibleInstituteID)
 	}
+	s.logger.Info("Course is valid")
 	err := s.repo.AddNewCourse(ctx, course)
 	if err != nil {
 		s.logger.Error(

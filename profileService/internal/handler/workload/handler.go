@@ -39,14 +39,14 @@ func (h *Handler) WorkloadToClasses(
 	class2 := &Classes{
 		Lec:  sem2.LecturesCount,
 		Tut:  sem2.TutorialsCount,
-		Lab:  sem2.LecturesCount,
+		Lab:  sem2.LabsCount,
 		Elec: sem2.ElectivesCount,
 		Rate: sem2.Rate,
 	}
 	class3 := &Classes{
 		Lec:  sem3.LecturesCount,
 		Tut:  sem3.TutorialsCount,
-		Lab:  sem3.LecturesCount,
+		Lab:  sem3.LabsCount,
 		Elec: sem3.ElectivesCount,
 		Rate: sem3.Rate,
 	}

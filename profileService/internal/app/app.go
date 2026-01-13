@@ -7,6 +7,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
+	allocationHandler "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/handler/allocation"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/handler/courses"
 	userprofile2 "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/handler/facultyProfile"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/handler/filters"
@@ -16,10 +17,11 @@ import (
 )
 
 type App struct {
-	facultyHandler *userprofile2.Handler
-	courseHandler  *courses.Handler
-	filtersHandler *filters.Handler
-	parsingHandler *parse.Handler
+	facultyHandler   *userprofile2.Handler
+	courseHandler    *courses.Handler
+	filtersHandler   *filters.Handler
+	parsingHandler   *parse.Handler
+	allocatorHandler *allocationHandler.Handler
 
 	router chi.Router
 	server *http.Server
@@ -35,21 +37,24 @@ func NewApp(
 	courseHandler *courses.Handler,
 	filtersHandler *filters.Handler,
 	parsingHandler *parse.Handler,
+	allocatHandler *allocationHandler.Handler,
 ) *App {
 	router := router.NewRouter(
 		facultyHandler,
 		courseHandler,
 		filtersHandler,
 		parsingHandler,
+		allocatHandler,
 	)
 	return &App{
-		pool:           pool,
-		logger:         logger,
-		router:         router,
-		facultyHandler: facultyHandler,
-		courseHandler:  courseHandler,
-		filtersHandler: filtersHandler,
-		parsingHandler: parsingHandler,
+		pool:             pool,
+		logger:           logger,
+		router:           router,
+		facultyHandler:   facultyHandler,
+		courseHandler:    courseHandler,
+		filtersHandler:   filtersHandler,
+		parsingHandler:   parsingHandler,
+		allocatorHandler: allocatHandler,
 	}
 }
 func (a *App) Run(ctx context.Context,

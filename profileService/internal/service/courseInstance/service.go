@@ -19,8 +19,8 @@ type Service struct {
 	logger *zap.Logger
 }
 
-func NewService(repo courseInstance.Repository, logger *zap.Logger) *Service {
-	return &Service{repo: repo, logger: logger}
+func NewService(pool *pgxpool.Pool, repo courseInstance.Repository, logger *zap.Logger) *Service {
+	return &Service{pool: pool, repo: repo, logger: logger}
 }
 
 func (s *Service) AddCourseInstance(ctx context.Context, courseInstance *courseInstance.CourseInstance) error {
@@ -40,6 +40,7 @@ func (s *Service) AddCourseInstance(ctx context.Context, courseInstance *courseI
 				zap.Error(rollbackErr))
 		}
 	}()
+	s.logger.Info("we can get here in course instance1")
 	if !yearValid(courseInstance.Year) {
 		s.logger.Error(
 			"Invalid year",
@@ -49,6 +50,7 @@ func (s *Service) AddCourseInstance(ctx context.Context, courseInstance *courseI
 		)
 		return fmt.Errorf("invalid year: %v", courseInstance.Year)
 	}
+	s.logger.Info("year ok")
 	if !semesterIDValid(courseInstance.SemesterID) {
 		s.logger.Error(
 			"Invalid semester ID",
@@ -57,6 +59,7 @@ func (s *Service) AddCourseInstance(ctx context.Context, courseInstance *courseI
 		)
 		return fmt.Errorf("invalid year: %v", courseInstance.SemesterID)
 	}
+	s.logger.Info("semester ok")
 	if !academicYearIDValid(courseInstance.AcademicYearID) {
 		s.logger.Error(
 			"Invalid academic year ID",

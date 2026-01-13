@@ -26,12 +26,13 @@ type Service struct {
 	workloadRepo       workload.Repository
 }
 
-func NewService(logger *zap.Logger,
+func NewService(pool *pgxpool.Pool, logger *zap.Logger,
 	profileVersionRepo profileVersion.Repository,
 	courseStaffRepo staff.Repository,
 	courseInstanceRepo courseInstance.Repository,
 	workloadRepo workload.Repository) *Service {
 	return &Service{
+		pool:               pool,
 		logger:             logger,
 		profileVersionRepo: profileVersionRepo,
 		courseStaffRepo:    courseStaffRepo,
@@ -39,14 +40,15 @@ func NewService(logger *zap.Logger,
 		workloadRepo:       workloadRepo,
 	}
 }
-func (s *Service) AllocateFaculty(ctx context.Context, courseInstanceID int64, profileID int64, positionType *string, groupsAssigned *int64) error {
+func (s *Service) AllocateFaculty(ctx context.Context, courseID int64, profileID int64, positionType *string, groupsAssigned *int64) error {
+	s.logger.Info("allocation started")
 	tx, err := s.pool.Begin(ctx)
 	if err != nil {
 		s.logger.Error("error starting transaction",
 			zap.String("layer", logctx.LogServiceLayer),
 			zap.String("function", logctx.LogAllocateFaculty),
 			zap.Error(err))
-		return err
+		return fmt.Errorf("Internal server error")
 	}
 	defer func() {
 		if rollbackErr := tx.Rollback(ctx); rollbackErr != nil {
@@ -64,20 +66,30 @@ func (s *Service) AllocateFaculty(ctx context.Context, courseInstanceID int64, p
 			zap.String("function", logctx.LogAllocateFaculty),
 			zap.Int64("profileID", profileID),
 			zap.Error(err))
-		return err
+		return fmt.Errorf("Internal server error")
 	}
-	courseStaff, err := s.courseStaffRepo.GetStaffByInstanceAndVersionID(ctx, courseInstanceID, profileVer.ProfileVersionId)
+	inst, err := s.courseInstanceRepo.GetCourseInstanceByID(ctx, courseID)
+	if err != nil || inst == nil {
+		s.logger.Error("error getting Course Instance",
+			zap.String("layer", logctx.LogServiceLayer),
+			zap.String("function", logctx.LogAllocateFaculty),
+			zap.Int64("courseInstanceID", courseID),
+			zap.Error(err))
+		return fmt.Errorf("Internal server error")
+	}
+	courseStaff, err := s.courseStaffRepo.GetStaffByInstanceAndVersionID(ctx, inst.InstanceID, profileVer.ProfileVersionId)
 	if err != nil {
 		s.logger.Error("error getting Staff",
 			zap.String("layer", logctx.LogServiceLayer),
 			zap.String("function", logctx.LogAllocateFaculty),
 			zap.Int64("versionID", profileVer.ProfileVersionId),
-			zap.Int64("courseInstanceID", courseInstanceID),
+			zap.Int64("courseInstanceID", courseID),
 			zap.Error(err))
-		return err
+		return fmt.Errorf("Internal server error")
 	}
+
 	if courseStaff == nil {
-		courseStaff = staff.NewStaff(courseInstanceID, profileVer.ProfileVersionId, positionType, groupsAssigned)
+		courseStaff = staff.NewStaff(inst.InstanceID, profileVer.ProfileVersionId, positionType, groupsAssigned)
 		err := s.courseStaffRepo.AddStaff(ctx, &tx, courseStaff)
 		if err != nil {
 			s.logger.Error("Error adding Course Staff",
@@ -85,7 +97,7 @@ func (s *Service) AllocateFaculty(ctx context.Context, courseInstanceID int64, p
 				zap.String("function", logctx.LogAllocateFaculty),
 				zap.Error(err),
 			)
-			return err
+			return fmt.Errorf("Internal server error")
 		}
 	} else {
 		s.logger.Info("Course Staff found successfully",
@@ -98,26 +110,106 @@ func (s *Service) AllocateFaculty(ctx context.Context, courseInstanceID int64, p
 				zap.Int64("assignmentID", courseStaff.AssignmentID))
 			return fmt.Errorf("Faculty alredy allocated")
 		}
+		switch *positionType {
+		case "PI":
+			if courseStaff.LecturesCount == nil {
+				courseStaff.LecturesCount = new(int64)
+			}
+			*courseStaff.LecturesCount = 15
+			if *courseStaff.PositionType != *positionType {
+				courseStaff.PositionType = positionType
+			}
+		case "TI":
+			if courseStaff.TutorialsCount == nil {
+				courseStaff.TutorialsCount = new(int64)
+			}
+			*courseStaff.TutorialsCount = 15
+			if *courseStaff.PositionType != "PI" {
+				courseStaff.PositionType = positionType
+			}
+		case "TA":
+			if courseStaff.LabsCount == nil {
+				courseStaff.LabsCount = new(int64)
+			}
+			*courseStaff.LabsCount = 15 * int64(*groupsAssigned)
+		}
+		err := s.courseStaffRepo.UpdateStaff(ctx, &tx, courseStaff)
+		if err != nil {
+			s.logger.Error("Error updating Course Staff",
+				zap.String("layer", logctx.LogServiceLayer),
+				zap.String("function", logctx.LogAllocateFaculty),
+				zap.Error(err),
+			)
+			return fmt.Errorf("Internal server error")
+		}
 	}
-	// Staff assignment already exists
-	//TODO: staff update logic
-	inst, err := s.courseInstanceRepo.GetCourseInstanceByID(ctx, courseInstanceID)
-	if err != nil || inst == nil {
-		s.logger.Error("error getting Course Instance",
-			zap.String("layer", logctx.LogServiceLayer),
-			zap.String("function", logctx.LogAllocateFaculty),
-			zap.Int64("courseInstanceID", courseInstanceID),
-			zap.Error(err))
-		return err
-	}
+	// update course instance logic:
+	// if *positionType == "TA" {
+	// 	if *inst.GroupsTaken+*groupsAssigned > inst.GroupsNeeded {
+	// 		s.logger.Error("Too much groups for this course",
+	// 			zap.String("layer", logctx.LogServiceLayer),
+	// 			zap.String("function", logctx.LogAllocateFaculty),
+	// 			zap.Int64("courseInstanceID", courseID),
+	// 			zap.Int64("groups needed", inst.GroupsNeeded),
+	// 			zap.Int64("groups taken", *inst.GroupsTaken),
+	// 			zap.Error(err))
+	// 		return fmt.Errorf("Too much groups")
+
+	// 	} else {
+	// 		*inst.GroupsTaken += *groupsAssigned
+	// 		err := s.courseInstanceRepo.UpdateCourseInstanceByID(ctx, &tx, inst.InstanceID, inst)
+	// 		if err != nil {
+	// 			s.logger.Error("error updating course instance",
+	// 				zap.String("layer", logctx.LogServiceLayer),
+	// 				zap.String("function", logctx.LogAllocateFaculty),
+	// 				zap.Int64("courseInstanceID", courseID),
+	// 				zap.Error(err))
+	// 			return fmt.Errorf("Internal server error")
+	// 		}
+	// 	}
+	// } else {
+	// 	if positionOccupied(inst, *positionType) {
+	// 		s.logger.Error("Position already occupied for this course",
+	// 			zap.String("layer", logctx.LogServiceLayer),
+	// 			zap.String("function", logctx.LogAllocateFaculty),
+	// 			zap.Int64("courseInstanceID", courseID),
+	// 			zap.String("position", *positionType),
+	// 			zap.Error(err))
+	// 		return fmt.Errorf("Position already occupied")
+	// 	} else {
+	// 		switch *positionType {
+	// 		case "PI":
+	// 			*inst.PIAllocationStatus = courseInstance.Status("allocated")
+	// 		case "TI":
+	// 			*inst.TIAllocationStatus = courseInstance.Status("allocated")
+	// 		default:
+	// 			s.logger.Error("Invalid position",
+	// 				zap.String("layer", logctx.LogServiceLayer),
+	// 				zap.String("function", logctx.LogAllocateFaculty),
+	// 				zap.String("position", *positionType),
+	// 				zap.Error(err))
+	// 			return fmt.Errorf("Invalid position")
+	// 		}
+	// 		err := s.courseInstanceRepo.UpdateCourseInstanceByID(ctx, &tx, inst.InstanceID, inst)
+	// 		if err != nil {
+	// 			s.logger.Error("error updating course instance",
+	// 				zap.String("layer", logctx.LogServiceLayer),
+	// 				zap.String("function", logctx.LogAllocateFaculty),
+	// 				zap.Int64("courseInstanceID", courseID),
+	// 				zap.Error(err))
+	// 			return fmt.Errorf("Internal server error")
+	// 		}
+	// 	}
+	// }
+
 	load, err := s.workloadRepo.GetSemesterWorkloadByVersionID(ctx, profileVer.ProfileVersionId, inst.SemesterID)
 	if err != nil {
 		s.logger.Error("error getting Course Instance",
 			zap.String("layer", logctx.LogServiceLayer),
 			zap.String("function", logctx.LogAllocateFaculty),
-			zap.Int64("courseInstanceID", courseInstanceID),
+			zap.Int64("courseInstanceID", courseID),
 			zap.Error(err))
-		return err
+		return fmt.Errorf("Internal server error")
 	}
 	if load == nil {
 		load := workload.NewWorkload(profileVer.ProfileVersionId,
@@ -127,19 +219,41 @@ func (s *Service) AllocateFaculty(ctx context.Context, courseInstanceID int64, p
 			*courseStaff.LabsCount)
 		err := s.workloadRepo.AddSemesterWorkload(ctx, &tx, load)
 		if err != nil {
-			return err
+			return fmt.Errorf("Internal server error")
 		}
 	} else {
 		s.logger.Info("workload found successfully",
 			zap.String("layer", logctx.LogServiceLayer),
 			zap.String("function", logctx.LogAllocateFaculty))
+		switch *positionType {
+		case "PI":
+			load.LecturesCount += 15
+		case "TI":
+			load.TutorialsCount += 15
+		case "TA":
+			load.LabsCount += 15 * int64(*groupsAssigned)
+		}
+		err := s.workloadRepo.UpdateSemesterWorkload(ctx, &tx, load)
+		if err != nil {
+			s.logger.Error("Error updating Workload",
+				zap.String("layer", logctx.LogServiceLayer),
+				zap.String("function", logctx.LogAllocateFaculty),
+				zap.Error(err),
+			)
+			return fmt.Errorf("Internal server error")
+		}
+
 	}
-	// TODO: workload update logic
+
 	return tx.Commit(ctx)
 
 }
 func (s *Service) DeallocateFaculty(ctx context.Context, courseInstanceID int64, profileID int64, positionType *string) error {
-	panic("Implement Me!")
+	return nil
+}
+func positionOccupied(instance *courseInstance.CourseInstance, positionType string) bool {
+	return *instance.PIAllocationStatus == courseInstance.Status("allocated") && positionType == "PI" ||
+		*instance.TIAllocationStatus == courseInstance.Status("allocated") && positionType == "TI"
 }
 func staffIsValid(staffMember *staff.Staff, positionType string) bool {
 	switch positionType {

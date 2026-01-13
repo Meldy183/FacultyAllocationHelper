@@ -8,11 +8,13 @@ package app
 
 import (
 	"github.com/jackc/pgx/v5/pgxpool"
+	allocationHandler "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/handler/allocation"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/handler/courses"
 	facultyProfile2 "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/handler/facultyProfile"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/handler/filters"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/handler/parse"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/academicYear"
+	allocationService "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/allocation"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/completeCourse"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/completeUser"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/course"
@@ -20,7 +22,7 @@ import (
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/facultyProfile"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/institute"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/language"
-	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/parsing"
+	Parsing "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/parsing"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/position"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/profileCourseInstance"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/profileInstitute"
@@ -32,7 +34,7 @@ import (
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/semester"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/staff"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/track"
-	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/trackCourseInstance"
+	trackcourseinstance "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/trackCourseInstance"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/workload"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/storage/postgres"
 	"go.uber.org/zap"
@@ -54,12 +56,12 @@ func InitializeApp(pool *pgxpool.Pool, logger *zap.Logger) (*App, error) {
 	instituteRepo := postgres.NewInstituteRepo(pool, logger)
 	instituteService := institute.NewService(instituteRepo, logger)
 	profileVersionRepo := postgres.NewUserProfileVersionRepo(pool, logger)
-	profileVersionService := profileVersion.NewService(profileVersionRepo, logger)
+	profileVersionService := profileVersion.NewService(pool, profileVersionRepo, logger)
 	workloadRepo := postgres.NewSemesterWorkloadRepo(pool, logger)
-	workloadService := workload.NewService(workloadRepo, logger)
+	workloadService := workload.NewService(pool, workloadRepo, logger)
 	handler := facultyProfile2.NewHandler(service, profileInstituteService, profileLanguageService, profileCourseInstanceService, positionService, instituteService, profileVersionService, workloadService, logger)
 	courseInstanceRepo := postgres.NewCourseInstanceRepo(pool, logger)
-	courseInstanceService := courseInstance.NewService(courseInstanceRepo, logger)
+	courseInstanceService := courseInstance.NewService(pool, courseInstanceRepo, logger)
 	courseRepo := postgres.NewCourseRepo(pool, logger)
 	courseService := course.NewService(courseRepo, logger)
 	trackRepo := postgres.NewTrackRepo(pool, logger)
@@ -72,7 +74,7 @@ func InitializeApp(pool *pgxpool.Pool, logger *zap.Logger) (*App, error) {
 	programCourseInstanceService := programCourseInstance.NewService(programCourseRepo, logger)
 	completeCourseService := completeCourse.NewService(courseInstanceService, courseService, trackService, programService, trackcourseinstanceService, programCourseInstanceService, logger)
 	staffRepo := postgres.NewStaffRepo(pool, logger)
-	staffService := staff.NewStaffService(staffRepo, logger)
+	staffService := staff.NewStaffService(pool, staffRepo, logger)
 	academicYearRepo := postgres.NewAcademicYearRepo(pool, logger)
 	academicYearService := academicYear.NewService(academicYearRepo, logger)
 	semesterRepo := postgres.NewSemesterRepo(pool, logger)
@@ -86,6 +88,8 @@ func InitializeApp(pool *pgxpool.Pool, logger *zap.Logger) (*App, error) {
 	completeUserService := completeUser.NewService(logger, service, profileVersionService, languageService, profileLanguageService, instituteService, profileInstituteService)
 	parsingService := Parsing.NewService(logger, completeCourseService, completeUserService, positionService, responsibleInstituteService)
 	parseHandler := parse.NewHandler(logger, parsingService)
-	app := NewApp(pool, logger, handler, coursesHandler, filtersHandler, parseHandler)
+	allocationServiceService := allocationService.NewService(pool, logger, profileVersionRepo, staffRepo, courseInstanceRepo, workloadRepo)
+	allocationHandlerHandler := allocationHandler.NewHandler(allocationServiceService, logger)
+	app := NewApp(pool, logger, handler, coursesHandler, filtersHandler, parseHandler, allocationHandlerHandler)
 	return app, nil
 }

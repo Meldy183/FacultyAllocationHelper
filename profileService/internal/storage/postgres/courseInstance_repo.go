@@ -40,7 +40,7 @@ const (
 	queryUpdateCourseInstanceByID = `
 		UPDATE course_instance
 		SET semester_id = $1, academic_year_id = $2, mode = $3, hardness_coefficient = $4, form = $5, groups_needed = $6
-		WHERE course_instance_id = $7
+		WHERE instance_id = $7
 	`
 
 	queryGetInstancesByInstituteIDs = `
@@ -146,7 +146,7 @@ func (r *CourseInstanceRepo) GetCourseInstanceByID(
 	courseInstanceID int64,
 ) (*courseInstance.CourseInstance, error) {
 	row, err := r.pool.Query(ctx, queryGetCourseInstanceByID, courseInstanceID)
-	if err != nil {
+	if err != nil || !row.Next() {
 		r.logger.Error("Error getting courseInstanceObj",
 			zap.String("layer", logctx.LogRepoLayer),
 			zap.String("function", logctx.LogGetCourseInstanceByID),
@@ -156,14 +156,6 @@ func (r *CourseInstanceRepo) GetCourseInstanceByID(
 		return nil, fmt.Errorf("GetCourseInstanceByID failed: %w", err)
 	}
 	defer row.Close()
-	if !row.Next() {
-		r.logger.Info("no instance found by instance id",
-			zap.String("layer", logctx.LogRepoLayer),
-			zap.String("function", logctx.LogGetCourseInstanceByID),
-			zap.Int64("courseInstanceID", courseInstanceID),
-		)
-		return nil, nil
-	}
 	var courseInstanceObj courseInstance.CourseInstance
 	err = row.Scan(
 		&courseInstanceObj.InstanceID,

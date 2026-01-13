@@ -1,0 +1,1026 @@
+openapi: 3.0.3
+info:
+  title: Profile Service API
+  description: |
+    API сервиса управления профилями преподавателей и курсами.
+    Предоставляет функционал для:
+    - Управления профилями преподавателей
+    - Управления курсами и их экземплярами
+    - Фильтрации данных
+    - Распределения преподавателей по курсам
+    - Парсинга Excel файлов
+  version: 1.0.0
+  contact:
+    name: FAH Team
+    email: support@innopolis.university
+
+servers:
+  - url: http://localhost:8080
+    description: Local development server
+  - url: https://api.fah.innopolis.university
+    description: Production server
+
+tags:
+  - name: Profile
+    description: Операции с профилями преподавателей
+  - name: Courses
+    description: Операции с курсами
+  - name: Filters
+    description: Получение данных для фильтров
+  - name: Allocation
+    description: Распределение преподавателей по курсам
+  - name: Parsing
+    description: Парсинг Excel файлов
+
+paths:
+  # ==================== PROFILE ====================
+  /profile/addProfile:
+    post:
+      tags:
+        - Profile
+      summary: Добавление нового профиля преподавателя
+      description: Создаёт новый профиль преподавателя с указанными параметрами
+      operationId: addProfile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddProfileRequest'
+      responses:
+        '200':
+          description: Профиль успешно создан
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AddProfileResponse'
+        '400':
+          description: Некорректные входные данные
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Внутренняя ошибка сервера
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /profile/getProfile/{id}:
+    get:
+      tags:
+        - Profile
+      summary: Получение профиля по ID
+      description: Возвращает полную информацию о профиле преподавателя по версии профиля
+      operationId: getProfile
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID версии профиля
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Успешное получение профиля
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetProfileResponse'
+        '400':
+          description: Некорректный ID профиля
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Внутренняя ошибка сервера
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /profile/getAllProfiles:
+    get:
+      tags:
+        - Profile
+      summary: Получение списка всех профилей
+      description: Возвращает список профилей преподавателей с возможностью фильтрации по институту и должности
+      operationId: getAllProfiles
+      parameters:
+        - name: year
+          in: query
+          required: true
+          description: Год
+          schema:
+            type: integer
+            format: int64
+        - name: institute
+          in: query
+          required: false
+          description: ID института (можно передать несколько)
+          schema:
+            type: array
+            items:
+              type: integer
+              format: int64
+        - name: position
+          in: query
+          required: false
+          description: ID должности (можно передать несколько)
+          schema:
+            type: array
+            items:
+              type: integer
+              format: int64
+      responses:
+        '200':
+          description: Успешное получение списка профилей
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetAllFacultiesResponse'
+        '400':
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Внутренняя ошибка сервера
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  # ==================== COURSES ====================
+  /academic/getCourse/{id}:
+    get:
+      tags:
+        - Courses
+      summary: Получение курса по ID
+      description: Возвращает полную информацию о курсе по ID экземпляра курса
+      operationId: getCourse
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID экземпляра курса
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Успешное получение курса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetCourseResponse'
+        '400':
+          description: Некорректный ID курса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Внутренняя ошибка сервера
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /academic/getCourseList:
+    get:
+      tags:
+        - Courses
+      summary: Получение списка курсов с фильтрацией
+      description: Возвращает список курсов с возможностью фильтрации по различным параметрам
+      operationId: getCourseList
+      parameters:
+        - name: year
+          in: query
+          required: true
+          description: Год обучения
+          schema:
+            type: integer
+            format: int64
+        - name: allocation_not_finished
+          in: query
+          required: false
+          description: Фильтр по статусу распределения
+          schema:
+            type: boolean
+        - name: academic_year
+          in: query
+          required: false
+          description: ID академического года (можно передать несколько)
+          schema:
+            type: array
+            items:
+              type: integer
+              format: int64
+        - name: semester_ids
+          in: query
+          required: false
+          description: ID семестра (можно передать несколько)
+          schema:
+            type: array
+            items:
+              type: integer
+              format: int64
+        - name: study_program_ids
+          in: query
+          required: false
+          description: ID учебной программы (можно передать несколько)
+          schema:
+            type: array
+            items:
+              type: integer
+              format: int64
+        - name: responsible_institute_ids
+          in: query
+          required: false
+          description: ID ответственного института (можно передать несколько)
+          schema:
+            type: array
+            items:
+              type: integer
+              format: int64
+        - name: profile_version_id
+          in: query
+          required: false
+          description: ID версии профиля
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Успешное получение списка курсов
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetCourseListResponse'
+        '400':
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Внутренняя ошибка сервера
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /academic/addNewCourse:
+    post:
+      tags:
+        - Courses
+      summary: Добавление нового курса
+      description: Создаёт новый курс с указанными параметрами
+      operationId: addNewCourse
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddNewCourseRequest'
+      responses:
+        '200':
+          description: Курс успешно создан
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AddNewCourseResponse'
+        '400':
+          description: Некорректные входные данные
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Внутренняя ошибка сервера
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  # ==================== FILTERS ====================
+  /filter/profile:
+    get:
+      tags:
+        - Filters
+      summary: Получение фильтров для профилей
+      description: Возвращает доступные значения фильтров для списка профилей (институты и должности)
+      operationId: getFacultyFilters
+      responses:
+        '200':
+          description: Успешное получение фильтров
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetFacultyFiltersResponse'
+        '500':
+          description: Внутренняя ошибка сервера
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /filter/course:
+    get:
+      tags:
+        - Filters
+      summary: Получение фильтров для курсов
+      description: Возвращает доступные значения фильтров для списка курсов
+      operationId: getCoursesFilters
+      responses:
+        '200':
+          description: Успешное получение фильтров
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetCourseFiltersResponse'
+        '500':
+          description: Внутренняя ошибка сервера
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  # ==================== ALLOCATION ====================
+  /allocation/allocate:
+    post:
+      tags:
+        - Allocation
+      summary: Распределение преподавателя на курс
+      description: Назначает преподавателя на экземпляр курса с указанной позицией
+      operationId: allocateFaculty
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AllocateFacultyRequest'
+      responses:
+        '200':
+          description: Преподаватель успешно распределён
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AllocateFacultyResponse'
+        '400':
+          description: Некорректные входные данные
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Внутренняя ошибка сервера
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  # ==================== PARSING ====================
+  /parsing/parse:
+    post:
+      tags:
+        - Parsing
+      summary: Парсинг Excel файла
+      description: Загружает и парсит Excel файл с данными
+      operationId: parseExcel
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: Excel файл для парсинга
+              required:
+                - file
+      responses:
+        '200':
+          description: Файл успешно обработан
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ParseResponse'
+        '400':
+          description: Ошибка при обработке файла
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Внутренняя ошибка сервера
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  schemas:
+    # ==================== ERROR ====================
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Сообщение об ошибке
+      required:
+        - error
+
+    # ==================== PROFILE SCHEMAS ====================
+    AddProfileRequest:
+      type: object
+      properties:
+        name_eng:
+          type: string
+          description: Имя на английском языке
+        email:
+          type: string
+          format: email
+          description: Email преподавателя
+        alias:
+          type: string
+          description: Псевдоним преподавателя
+        institute_id:
+          type: array
+          items:
+            type: integer
+            format: int64
+          description: Список ID институтов
+        position_id:
+          type: integer
+          format: int64
+          description: ID должности
+        year:
+          type: integer
+          format: int64
+          description: Год
+      required:
+        - name_eng
+        - institute_id
+        - position_id
+        - year
+
+    AddProfileResponse:
+      type: object
+      properties:
+        profile_id:
+          type: integer
+          format: int64
+          description: ID версии профиля
+        name_eng:
+          type: string
+          description: Имя на английском языке
+        email:
+          type: string
+          description: Email
+        alias:
+          type: string
+          description: Псевдоним
+        institute_names:
+          type: array
+          items:
+            type: string
+          description: Названия институтов
+        position_name:
+          type: string
+          description: Название должности
+        year:
+          type: integer
+          format: int64
+          description: Год
+
+    GetProfileResponse:
+      type: object
+      properties:
+        profile_id:
+          type: integer
+          format: int64
+          description: ID версии профиля
+        year:
+          type: integer
+          format: int64
+          description: Год
+        name_eng:
+          type: string
+          description: Имя на английском языке
+        name_ru:
+          type: string
+          nullable: true
+          description: Имя на русском языке
+        alias:
+          type: string
+          description: Псевдоним
+        email:
+          type: string
+          description: Email
+        position_name:
+          type: string
+          description: Название должности
+        institute_names:
+          type: array
+          items:
+            type: string
+          description: Названия институтов
+        student_type:
+          type: string
+          nullable: true
+          description: Тип студента
+        degree:
+          type: boolean
+          nullable: true
+          description: Наличие степени
+        fsro:
+          type: string
+          nullable: true
+          description: FSRO
+        languages:
+          type: array
+          nullable: true
+          items:
+            $ref: '#/components/schemas/Language'
+          description: Языки
+        employment_type:
+          type: string
+          nullable: true
+          description: Тип занятости
+        hiring_status:
+          type: string
+          nullable: true
+          description: Статус найма
+        mode:
+          type: string
+          nullable: true
+          description: Режим работы
+        max_load:
+          type: integer
+          format: int64
+          nullable: true
+          description: Максимальная нагрузка
+        frontal_hours:
+          type: integer
+          format: int64
+          nullable: true
+          description: Фронтальные часы
+        extra_activities:
+          type: number
+          format: double
+          nullable: true
+          description: Дополнительные активности
+        workload_stats:
+          $ref: '#/components/schemas/WorkloadStats'
+          nullable: true
+          description: Статистика нагрузки
+
+    GetAllFacultiesResponse:
+      type: object
+      properties:
+        profiles:
+          type: array
+          items:
+            $ref: '#/components/schemas/ShortProfile'
+          description: Список профилей
+
+    ShortProfile:
+      type: object
+      properties:
+        profile_id:
+          type: integer
+          format: int64
+          description: ID версии профиля
+        name_eng:
+          type: string
+          description: Имя на английском языке
+        alias:
+          type: string
+          description: Псевдоним
+        email:
+          type: string
+          description: Email
+        position_name:
+          type: string
+          description: Название должности
+        institute_names:
+          type: array
+          items:
+            type: string
+          description: Названия институтов
+
+    Language:
+      type: object
+      properties:
+        language_code:
+          type: string
+          description: Код языка
+
+    WorkloadStats:
+      type: object
+      properties:
+        t1:
+          $ref: '#/components/schemas/Classes'
+          description: Статистика за триместр 1
+        t2:
+          $ref: '#/components/schemas/Classes'
+          description: Статистика за триместр 2
+        t3:
+          $ref: '#/components/schemas/Classes'
+          description: Статистика за триместр 3
+        total:
+          $ref: '#/components/schemas/Classes'
+          description: Общая статистика
+
+    Classes:
+      type: object
+      properties:
+        lec_hours:
+          type: integer
+          format: int64
+          description: Часы лекций
+        tut_hours:
+          type: integer
+          format: int64
+          description: Часы тьюториалов
+        lab_hours:
+          type: integer
+          format: int64
+          description: Часы лабораторных
+        elective_hours:
+          type: integer
+          format: int64
+          description: Часы элективов
+        rate:
+          type: number
+          format: double
+          description: Ставка
+
+    # ==================== COURSE SCHEMAS ====================
+    Course:
+      type: object
+      properties:
+        course_id:
+          type: integer
+          format: int64
+          nullable: true
+          description: ID экземпляра курса
+        brief_name:
+          type: string
+          nullable: true
+          description: Краткое название курса
+        official_name:
+          type: string
+          nullable: true
+          description: Официальное название курса
+        academic_year_name:
+          type: string
+          nullable: true
+          description: Название академического года
+        semester_name:
+          type: string
+          nullable: true
+          description: Название семестра
+        study_program_names:
+          type: array
+          nullable: true
+          items:
+            type: string
+            nullable: true
+          description: Названия учебных программ
+        responsible_institute_name:
+          type: string
+          nullable: true
+          description: Название ответственного института
+        track_names:
+          type: array
+          nullable: true
+          items:
+            type: string
+            nullable: true
+          description: Названия треков
+        allocation_finished:
+          type: boolean
+          nullable: true
+          description: Завершено ли распределение
+        mode:
+          type: string
+          nullable: true
+          description: Режим курса
+        year:
+          type: integer
+          format: int64
+          nullable: true
+          description: Год обучения
+        form:
+          type: string
+          nullable: true
+          description: Форма курса
+        lecture_hours:
+          type: integer
+          format: int64
+          nullable: true
+          description: Часы лекций
+        lab_hours:
+          type: integer
+          format: int64
+          nullable: true
+          description: Часы лабораторных
+        groups_needed:
+          type: integer
+          format: int64
+          nullable: true
+          description: Необходимое количество групп
+        groups_taken:
+          type: integer
+          format: int64
+          nullable: true
+          description: Взятое количество групп
+        pi:
+          $ref: '#/components/schemas/PI'
+          description: Информация о PI
+        ti:
+          $ref: '#/components/schemas/PI'
+          description: Информация о TI
+        tas:
+          type: array
+          items:
+            $ref: '#/components/schemas/Faculty'
+          description: Список TA
+
+    PI:
+      type: object
+      properties:
+        allocation_status:
+          type: string
+          nullable: true
+          description: Статус распределения
+        profile_data:
+          $ref: '#/components/schemas/Faculty'
+          nullable: true
+          description: Данные профиля
+
+    Faculty:
+      type: object
+      properties:
+        profile_id:
+          type: integer
+          format: int64
+          description: ID версии профиля
+        name_eng:
+          type: string
+          nullable: true
+          description: Имя на английском языке
+        alias:
+          type: string
+          nullable: true
+          description: Псевдоним
+        email:
+          type: string
+          nullable: true
+          description: Email
+        position_name:
+          type: string
+          nullable: true
+          description: Название должности
+        institute_names:
+          type: array
+          items:
+            type: string
+          description: Названия институтов
+        classes:
+          type: array
+          nullable: true
+          items:
+            type: string
+          description: Классы
+        is_confirmed:
+          type: boolean
+          description: Подтверждён ли
+
+    GetCourseResponse:
+      type: object
+      properties:
+        Course:
+          $ref: '#/components/schemas/Course'
+
+    GetCourseListResponse:
+      type: object
+      properties:
+        courses:
+          type: array
+          items:
+            $ref: '#/components/schemas/Course'
+          description: Список курсов
+
+    AddNewCourseRequest:
+      type: object
+      properties:
+        brief_name:
+          type: string
+          description: Краткое название курса
+        official_name:
+          type: string
+          description: Официальное название курса
+        academic_year_id:
+          type: integer
+          format: int64
+          description: ID академического года
+        semester_id:
+          type: integer
+          format: int64
+          description: ID семестра
+        year:
+          type: integer
+          format: int64
+          description: Год обучения
+        program_ids:
+          type: array
+          items:
+            type: integer
+            format: int64
+          description: Список ID программ
+        track_ids:
+          type: array
+          items:
+            type: integer
+            format: int64
+          description: Список ID треков
+        responsible_institute_id:
+          type: integer
+          format: int64
+          description: ID ответственного института
+        groups_needed:
+          type: integer
+          format: int64
+          description: Необходимое количество групп
+        is_elective:
+          type: boolean
+          description: Является ли курс элективом
+      required:
+        - brief_name
+        - official_name
+        - academic_year_id
+        - semester_id
+        - year
+        - program_ids
+        - track_ids
+        - responsible_institute_id
+        - groups_needed
+        - is_elective
+
+    AddNewCourseResponse:
+      type: object
+      properties:
+        course_id:
+          type: integer
+          format: int64
+          description: ID экземпляра курса
+        brief_name:
+          type: string
+          description: Краткое название курса
+        official_name:
+          type: string
+          description: Официальное название курса
+        academic_year_name:
+          type: string
+          description: Название академического года
+        semester_name:
+          type: string
+          description: Название семестра
+        program_names:
+          type: array
+          items:
+            type: string
+          description: Названия программ
+        track_names:
+          type: array
+          items:
+            type: string
+          description: Названия треков
+        responsible_institute_name:
+          type: string
+          description: Название ответственного института
+        groups_needed:
+          type: integer
+          format: int64
+          description: Необходимое количество групп
+        pi:
+          $ref: '#/components/schemas/PI'
+          description: Информация о PI
+        ti:
+          $ref: '#/components/schemas/PI'
+          description: Информация о TI
+        tas:
+          type: array
+          items:
+            $ref: '#/components/schemas/Faculty'
+          description: Список TA
+
+    # ==================== FILTER SCHEMAS ====================
+    FilterObj:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: ID объекта фильтра
+        name:
+          type: string
+          description: Название объекта фильтра
+
+    GetFacultyFiltersResponse:
+      type: object
+      properties:
+        institute:
+          type: array
+          items:
+            $ref: '#/components/schemas/FilterObj'
+          description: Список институтов для фильтрации
+        position:
+          type: array
+          items:
+            $ref: '#/components/schemas/FilterObj'
+          description: Список должностей для фильтрации
+
+    GetCourseFiltersResponse:
+      type: object
+      properties:
+        allocation_not_finished:
+          type: array
+          items:
+            type: boolean
+          description: Статусы распределения
+        academic_year:
+          type: array
+          items:
+            $ref: '#/components/schemas/FilterObj'
+          description: Список академических годов
+        semester:
+          type: array
+          items:
+            $ref: '#/components/schemas/FilterObj'
+          description: Список семестров
+        study_program:
+          type: array
+          items:
+            $ref: '#/components/schemas/FilterObj'
+          description: Список учебных программ
+        institute:
+          type: array
+          items:
+            $ref: '#/components/schemas/FilterObj'
+          description: Список институтов
+
+    # ==================== ALLOCATION SCHEMAS ====================
+    AllocateFacultyRequest:
+      type: object
+      properties:
+        instance_id:
+          type: integer
+          format: int64
+          description: ID экземпляра курса
+        profile_id:
+          type: integer
+          format: int64
+          description: ID профиля преподавателя
+        position_type:
+          type: string
+          description: Тип позиции (PI, TI, TA)
+          enum:
+            - PI
+            - TI
+            - TA
+        groups_assigned:
+          type: integer
+          format: int64
+          nullable: true
+          description: Количество назначенных групп
+      required:
+        - instance_id
+        - profile_id
+        - position_type
+
+    AllocateFacultyResponse:
+      type: object
+      description: Пустой объект при успешном распределении
+
+    # ==================== PARSING SCHEMAS ====================
+    ParseResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Сообщение о результате парсинга
+        error:
+          type: string
+          nullable: true
+          description: Сообщение об ошибке (если есть)

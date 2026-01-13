@@ -18,8 +18,8 @@ type Service struct {
 	logger *zap.Logger
 }
 
-func NewService(repo profileVersion.Repository, logger *zap.Logger) *Service {
-	return &Service{repo: repo, logger: logger}
+func NewService(pool *pgxpool.Pool, repo profileVersion.Repository, logger *zap.Logger) *Service {
+	return &Service{pool: pool, repo: repo, logger: logger}
 }
 
 func (s *Service) GetVersionByProfileID(

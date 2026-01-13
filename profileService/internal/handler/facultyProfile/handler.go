@@ -338,6 +338,9 @@ func (h *Handler) GetProfile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	stats := workloadHandler.WorkloadToClasses(sem1, sem2, sem3)
+	h.logger.Info("stats", zap.String("layer", logctx.LogHandlerLayer),
+		zap.String("function", logctx.LogGetProfileByID),
+		zap.Any("sem2", *stats))
 	resp := GetProfileResponse{
 		ProfileVersionID: version.ProfileVersionId,
 		Year:             version.Year,

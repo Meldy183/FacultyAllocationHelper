@@ -74,6 +74,7 @@ func (r *CourseRepo) GetCourseByID(ctx context.Context, courseID int64) (*course
 }
 
 func (r *CourseRepo) AddNewCourse(ctx context.Context, course *course.Course) error {
+	r.logger.Info("errorcatching", zap.Any("Course", course))
 	err := r.pool.QueryRow(ctx, queryInsertCourse,
 		course.Name,
 		"",

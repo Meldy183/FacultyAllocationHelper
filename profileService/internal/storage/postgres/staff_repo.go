@@ -28,7 +28,8 @@ const (
 	FROM staff WHERE instance_id = $1`
 	queryAddStaff = `INSERT INTO staff (instance_id, profile_version_id, position_type,
     groups_assigned, is_confirmed, lectures_count, tutorials_count, labs_count)
-	VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`
+	VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+	RETURNING assignment_id`
 	queryGetStaffByInstanceAndVersionID = `SELECT assignment_id, instance_id, profile_version_id, position_type,
 	groups_assigned, is_confirmed, lectures_count, tutorials_count, labs_count
 	FROM staff WHERE instance_id = $1 AND profile_version_id = $2`

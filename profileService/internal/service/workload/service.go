@@ -18,8 +18,8 @@ type Service struct {
 	logger *zap.Logger
 }
 
-func NewService(repo workload.Repository, logger *zap.Logger) *Service {
-	return &Service{repo: repo, logger: logger}
+func NewService(pool *pgxpool.Pool, repo workload.Repository, logger *zap.Logger) *Service {
+	return &Service{pool: pool, repo: repo, logger: logger}
 }
 
 func (s *Service) GetSemesterWorkloadByVersionID(

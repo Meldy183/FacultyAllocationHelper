@@ -18,8 +18,8 @@ type Service struct {
 	logger *zap.Logger
 }
 
-func NewStaffService(repo staff.Repository, logger *zap.Logger) *Service {
-	return &Service{repo: repo, logger: logger}
+func NewStaffService(pool *pgxpool.Pool, repo staff.Repository, logger *zap.Logger) *Service {
+	return &Service{pool: pool, repo: repo, logger: logger}
 }
 
 func (s *Service) GetPI(staffs []*staff.Staff) *staff.Staff {

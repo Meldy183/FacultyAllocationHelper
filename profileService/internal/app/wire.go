@@ -9,6 +9,7 @@ import (
 	domainCompleteCourse "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/CompleteCourse"
 	domainCompleteUser "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/CompleteUser"
 	domainAcademicYear "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/academicYear"
+	domainAllocation "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/allocation"
 	domainCourse "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/course"
 	domainCourseInstance "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/courseInstance"
 	domainFacultyProfile "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/facultyProfile"
@@ -28,11 +29,13 @@ import (
 	domainTrack "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/track"
 	domainTrackCourseInstance "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/trackCourseInstance"
 	domainWorkload "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/workload"
+	allocationHandler "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/handler/allocation"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/handler/courses"
 	userprofile2 "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/handler/facultyProfile"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/handler/filters"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/handler/parse"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/academicYear"
+	allocationService "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/allocation"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/completeCourse"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/completeUser"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/service/course"
@@ -187,11 +190,15 @@ func InitializeApp(
 
 		semester.NewService,
 		wire.Bind(new(domainSemester.Service), new(*semester.Service)),
+
+		allocationService.NewService,
+		wire.Bind(new(domainAllocation.Service), new(*allocationService.Service)),
 		// Handlers
 		userprofile2.NewHandler,
 		courses.NewHandler,
 		filters.NewHandler,
 		parse.NewHandler,
+		allocationHandler.NewHandler,
 
 		// App
 		NewApp,
