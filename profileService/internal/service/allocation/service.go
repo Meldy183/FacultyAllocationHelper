@@ -42,6 +42,7 @@ func NewService(pool *pgxpool.Pool, logger *zap.Logger,
 }
 func (s *Service) AllocateFaculty(ctx context.Context, courseID int64, profileID int64, positionType *string, groupsAssigned *int64) error {
 	s.logger.Info("allocation started")
+	var isCommitted bool
 	tx, err := s.pool.Begin(ctx)
 	if err != nil {
 		s.logger.Error("error starting transaction",
@@ -51,11 +52,13 @@ func (s *Service) AllocateFaculty(ctx context.Context, courseID int64, profileID
 		return fmt.Errorf("Internal server error")
 	}
 	defer func() {
-		if rollbackErr := tx.Rollback(ctx); rollbackErr != nil {
-			s.logger.Error("error rolling back transaction",
-				zap.String("layer", logctx.LogServiceLayer),
-				zap.String("function", logctx.LogAllocateFaculty),
-				zap.Error(rollbackErr))
+		if !isCommitted {
+			if rollbackErr := tx.Rollback(ctx); rollbackErr != nil {
+				s.logger.Error("error rolling back transaction",
+					zap.String("layer", logctx.LogServiceLayer),
+					zap.String("function", logctx.LogAllocateFaculty),
+					zap.Error(rollbackErr))
+			}
 		}
 	}()
 	curYear := int64(time.Now().Year())
@@ -99,6 +102,9 @@ func (s *Service) AllocateFaculty(ctx context.Context, courseID int64, profileID
 			)
 			return fmt.Errorf("Internal server error")
 		}
+		s.logger.Info("Course Staff added successfully",
+			zap.String("layer", logctx.LogServiceLayer),
+			zap.String("function", logctx.LogAllocateFaculty))
 	} else {
 		s.logger.Info("Course Staff found successfully",
 			zap.String("layer", logctx.LogServiceLayer),
@@ -142,6 +148,9 @@ func (s *Service) AllocateFaculty(ctx context.Context, courseID int64, profileID
 			)
 			return fmt.Errorf("Internal server error")
 		}
+		s.logger.Info("Course Staff updated successfully",
+			zap.String("layer", logctx.LogServiceLayer),
+			zap.String("function", logctx.LogAllocateFaculty))
 	}
 	// update course instance logic:
 	// if *positionType == "TA" {
@@ -219,8 +228,15 @@ func (s *Service) AllocateFaculty(ctx context.Context, courseID int64, profileID
 			*courseStaff.LabsCount)
 		err := s.workloadRepo.AddSemesterWorkload(ctx, &tx, load)
 		if err != nil {
+			s.logger.Error("error adding workload",
+				zap.String("layer", logctx.LogServiceLayer),
+				zap.String("function", logctx.LogAllocateFaculty),
+				zap.Error(err))
 			return fmt.Errorf("Internal server error")
 		}
+		s.logger.Info("Course Staff found successfully",
+			zap.String("layer", logctx.LogServiceLayer),
+			zap.String("function", logctx.LogAllocateFaculty))
 	} else {
 		s.logger.Info("workload found successfully",
 			zap.String("layer", logctx.LogServiceLayer),
@@ -242,11 +258,16 @@ func (s *Service) AllocateFaculty(ctx context.Context, courseID int64, profileID
 			)
 			return fmt.Errorf("Internal server error")
 		}
-
+		s.logger.Info("workload updated successfully",
+			zap.String("layer", logctx.LogServiceLayer),
+			zap.String("function", logctx.LogAllocateFaculty))
 	}
 
-	return tx.Commit(ctx)
-
+	if err := tx.Commit(ctx); err != nil {
+		return err
+	}
+	isCommitted = true
+	return nil
 }
 func (s *Service) DeallocateFaculty(ctx context.Context, courseInstanceID int64, profileID int64, positionType *string) error {
 	return nil
