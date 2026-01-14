@@ -49,9 +49,43 @@ func (h *Handler) AllocateFaculty(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	resp := AllocateFacultyResponse{}
-	h.logger.Info("success adding profile",
+	h.logger.Info("success allocating profile",
 		zap.String("layer", logctx.LogHandlerLayer),
 		zap.String("function", logctx.LogAllocateFaculty),
+	)
+	writeJSON(w, http.StatusOK, resp)
+}
+func (h *Handler) DeallocateFaculty(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	var req DeallocateFacultyRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		h.logger.Error("error decoding AllocateFaculty request",
+			zap.String("layer", "handler"),
+			zap.String("function", "AllocateFaculty"),
+			zap.Error(err))
+		http.Error(w, "Invalid request payload", http.StatusBadRequest)
+		return
+	}
+	if req.Position_type != "TA" && req.GroupsAssigned != nil || req.Position_type == "TA" && req.GroupsAssigned == nil {
+		h.logger.Error("invalid request body",
+			zap.String("layer", "handler"),
+			zap.String("function", "AllocateFaculty"))
+		writeError(w, http.StatusBadRequest, "invalid request")
+		return
+	}
+	err := h.allocationService.DeallocateFaculty(ctx, req.CourseID, req.ProfileID, &req.Position_type, req.GroupsAssigned)
+	if err != nil {
+		h.logger.Error("error allocating faculty",
+			zap.String("layer", "handler"),
+			zap.String("function", "AllocateFaculty"),
+			zap.Error(err))
+		writeError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	resp := DeallocateFacultyRequest{}
+	h.logger.Info("success deallocating profile",
+		zap.String("layer", logctx.LogHandlerLayer),
+		zap.String("function", logctx.LogDeallocateFaculty),
 	)
 	writeJSON(w, http.StatusOK, resp)
 }
@@ -67,5 +101,6 @@ func writeJSON(w http.ResponseWriter, status int, data interface{}) {
 func RegisterRoutes(router chi.Router, h *Handler) {
 	router.Route("/", func(r chi.Router) {
 		r.Post("/allocate", h.AllocateFaculty)
+		r.Delete("/allocate", h.DeallocateFaculty)
 	})
 }
