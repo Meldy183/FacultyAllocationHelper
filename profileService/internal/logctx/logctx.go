@@ -116,4 +116,5 @@ const (
 	LogGetStaffByInstanceAndVersionID    = "getStaffByInstanceAndVersionID"
 	LogAllocateFaculty                   = "allocateFaculty"
 	LogUpdateStaff                       = "updateStaff"
+	LogDeallocateFaculty                 = "deallocateFaculty"
 )
