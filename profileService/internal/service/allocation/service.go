@@ -379,18 +379,33 @@ func (s *Service) DeallocateFaculty(ctx context.Context, courseID int64, profile
 			}
 			courseStaff.PositionType = nil
 		}
-		err := s.courseStaffRepo.UpdateStaff(ctx, &tx, courseStaff)
-		if err != nil {
-			s.logger.Error("Error updating Course Staff",
+		if courseStaff.PositionType != nil {
+			err := s.courseStaffRepo.UpdateStaff(ctx, &tx, courseStaff)
+			if err != nil {
+				s.logger.Error("Error updating Course Staff",
+					zap.String("layer", logctx.LogServiceLayer),
+					zap.String("function", logctx.LogDeallocateFaculty),
+					zap.Error(err),
+				)
+				return fmt.Errorf("Internal server error")
+			}
+			s.logger.Info("Course Staff updated successfully",
 				zap.String("layer", logctx.LogServiceLayer),
-				zap.String("function", logctx.LogDeallocateFaculty),
-				zap.Error(err),
-			)
-			return fmt.Errorf("Internal server error")
+				zap.String("function", logctx.LogAllocateFaculty))
+		} else {
+			err := s.courseStaffRepo.DeleteStaff(ctx, &tx, courseStaff.AssignmentID)
+			if err != nil {
+				s.logger.Error("Error deleting Course Staff",
+					zap.String("layer", logctx.LogServiceLayer),
+					zap.String("function", logctx.LogDeallocateFaculty),
+					zap.Error(err),
+				)
+				return fmt.Errorf("Internal server error")
+			}
+			s.logger.Info("Course Staff deleted successfully",
+				zap.String("layer", logctx.LogServiceLayer),
+				zap.String("function", logctx.LogAllocateFaculty))
 		}
-		s.logger.Info("Course Staff updated successfully",
-			zap.String("layer", logctx.LogServiceLayer),
-			zap.String("function", logctx.LogAllocateFaculty))
 	}
 	load, err := s.workloadRepo.GetSemesterWorkloadByVersionID(ctx, profileVer.ProfileVersionId, inst.SemesterID)
 	if err != nil {
@@ -429,10 +444,6 @@ func (s *Service) DeallocateFaculty(ctx context.Context, courseID int64, profile
 			return fmt.Errorf("Internal server error")
 		}
 	}
-	if err := tx.Commit(ctx); err != nil {
-		return err
-	}
-	isCommitted = true
 	return nil
 }
 func positionOccupied(instance *courseInstance.CourseInstance, positionType string) bool {

@@ -35,6 +35,7 @@ const (
 	FROM staff WHERE instance_id = $1 AND profile_version_id = $2`
 	queryUpdateStaff = `UPDATE staff SET position_type = $1, groups_assigned = $2, is_confirmed = $3,
 	lectures_count = $4, tutorials_count = $5, labs_count = $6 WHERE assignment_id = $7`
+	queryDeleteStaff = `DELETE FROM staff WHERE assignment_id = $1`
 )
 
 func (r *StaffRepo) GetStaffByInstanceAndVersionID(ctx context.Context, instanceID int64, versionID int64) (*staff.Staff, error) {
@@ -187,6 +188,26 @@ func (r *StaffRepo) UpdateStaff(ctx context.Context, tx *pgx.Tx, staff *staff.St
 		zap.String("layer", logctx.LogRepoLayer),
 		zap.String("function", logctx.LogUpdateStaff),
 		zap.Int64("assignmentID", staff.AssignmentID),
+	)
+	return nil
+}
+func (r *StaffRepo) DeleteStaff(ctx context.Context, tx *pgx.Tx, staffID int64) error {
+	_, err := r.pool.Exec(ctx, queryDeleteStaff,
+		staffID,
+	)
+	if err != nil {
+		r.logger.Error("failed to delete staff",
+			zap.String("layer", logctx.LogRepoLayer),
+			zap.String("function", logctx.LogDeleteStaff),
+			zap.Int64("assignmentID", staffID),
+			zap.Error(err),
+		)
+		return fmt.Errorf("failed to update staff: %w", err)
+	}
+	r.logger.Info("Course Staff deleted",
+		zap.String("layer", logctx.LogRepoLayer),
+		zap.String("function", logctx.LogUpdateStaff),
+		zap.Int64("assignmentID", staffID),
 	)
 	return nil
 }

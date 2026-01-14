@@ -117,4 +117,5 @@ const (
 	LogAllocateFaculty                   = "allocateFaculty"
 	LogUpdateStaff                       = "updateStaff"
 	LogDeallocateFaculty                 = "deallocateFaculty"
+	LogDeleteStaff                       = "deleteStaff"
 )
