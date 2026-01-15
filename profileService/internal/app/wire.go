@@ -28,6 +28,7 @@ import (
 	domainStaff "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/staff"
 	domainTrack "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/track"
 	domainTrackCourseInstance "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/trackCourseInstance"
+	domainTransaction "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/transaction"
 	domainWorkload "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/workload"
 	allocationHandler "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/handler/allocation"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/handler/courses"
@@ -66,6 +67,9 @@ func InitializeApp(
 	logger *zap.Logger,
 ) (*App, error) {
 	wire.Build(
+		// Unit of Work
+		postgres.NewPostgresUnitOfWork,
+		wire.Bind(new(domainTransaction.UnitOfWork), new(*postgres.PostgresUnitOfWork)),
 		// Repositories
 		postgres.NewFacultyProfileRepo,
 		wire.Bind(new(domainFacultyProfile.Repository), new(*postgres.FacultyProfileRepo)),

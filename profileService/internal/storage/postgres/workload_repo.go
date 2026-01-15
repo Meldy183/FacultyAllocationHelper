@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/transaction"
 	workloadDomain "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/workload"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
 	"go.uber.org/zap"
@@ -71,7 +71,7 @@ func (r *WorkloadRepo) GetSemesterWorkloadByVersionID(
 	return &workload, nil
 }
 
-func (r *WorkloadRepo) AddSemesterWorkload(ctx context.Context, tx *pgx.Tx, workload *workloadDomain.Workload) error {
+func (r *WorkloadRepo) AddSemesterWorkload(ctx context.Context, tx transaction.Transaction, workload *workloadDomain.Workload) error {
 	err := r.pool.QueryRow(ctx, queryAddSemesterWorkload,
 		workload.ProfileVersionID,
 		workload.SemesterID,
@@ -96,7 +96,7 @@ func (r *WorkloadRepo) AddSemesterWorkload(ctx context.Context, tx *pgx.Tx, work
 	return nil
 }
 
-func (r *WorkloadRepo) UpdateSemesterWorkload(ctx context.Context, tx *pgx.Tx, workload *workloadDomain.Workload) error {
+func (r *WorkloadRepo) UpdateSemesterWorkload(ctx context.Context, tx transaction.Transaction, workload *workloadDomain.Workload) error {
 	_, err := r.pool.Exec(ctx, queryUpdateSemesterWorkload,
 		workload.LecturesCount,
 		workload.TutorialsCount,

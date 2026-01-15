@@ -1,0 +1,7 @@
+package transaction
+
+import "context"
+
+type UnitOfWork interface {
+	Do(ctx context.Context, fn func(tx Transaction) error) error
+}

@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/jackc/pgx/v5/pgxpool"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/staff"
+	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/transaction"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
 	"go.uber.org/zap"
 )
@@ -13,13 +13,13 @@ import (
 var _ staff.Service = (*Service)(nil)
 
 type Service struct {
-	pool   *pgxpool.Pool // MOCK to avoid import error
+	uow    transaction.UnitOfWork // MOCK to avoid import error
 	repo   staff.Repository
 	logger *zap.Logger
 }
 
-func NewStaffService(pool *pgxpool.Pool, repo staff.Repository, logger *zap.Logger) *Service {
-	return &Service{pool: pool, repo: repo, logger: logger}
+func NewStaffService(uow transaction.UnitOfWork, repo staff.Repository, logger *zap.Logger) *Service {
+	return &Service{uow: uow, repo: repo, logger: logger}
 }
 
 func (s *Service) GetPI(staffs []*staff.Staff) *staff.Staff {
@@ -64,30 +64,20 @@ func (s *Service) GetAllStaffByInstanceID(ctx context.Context, instanceID int64)
 
 func (s *Service) AddStaff(ctx context.Context, staff *staff.Staff) error {
 	//TODO: validations that important field are not nil
-	tx, err := s.pool.Begin(ctx)
-	if err != nil {
-		s.logger.Error("error starting transaction",
-			zap.String("layer", logctx.LogServiceLayer),
-			zap.String("function", logctx.LogAddSemesterWorkload),
-			zap.Error(err))
-		return err
-	}
-	defer func() {
-		if rollbackErr := tx.Rollback(ctx); rollbackErr != nil {
-			s.logger.Error("error rolling back transaction",
+	err := s.uow.Do(ctx, func(tx transaction.Transaction) error {
+		err := s.repo.AddStaff(ctx, tx, staff)
+		if err != nil {
+			s.logger.Error("Error adding staff",
 				zap.String("layer", logctx.LogServiceLayer),
-				zap.String("function", logctx.LogAddSemesterWorkload),
-				zap.Error(rollbackErr))
+				zap.String("function", logctx.LogAddStaff),
+				zap.Error(err),
+			)
+			return fmt.Errorf("failed to add staff: %w", err)
 		}
-	}()
-	err = s.repo.AddStaff(ctx, &tx, staff)
+		return nil
+	})
 	if err != nil {
-		s.logger.Error("Error adding staff",
-			zap.String("layer", logctx.LogServiceLayer),
-			zap.String("function", logctx.LogAddStaff),
-			zap.Error(err),
-		)
-		return fmt.Errorf("failed to add staff: %w", err)
+		return err
 	}
 	return nil
 }

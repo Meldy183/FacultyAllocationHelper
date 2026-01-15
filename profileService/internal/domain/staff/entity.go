@@ -3,15 +3,15 @@ package staff
 import "gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/handler/sharedContent"
 
 type Staff struct {
-	AssignmentID     int64
-	InstanceID       int64
-	ProfileVersionID int64
-	PositionType     *string
-	GroupsAssigned   *int64
-	IsConfirmed      bool
-	LecturesCount    *int64
-	TutorialsCount   *int64
-	LabsCount        *int64
+	AssignmentID     int64   `json:"assignment_id"`
+	InstanceID       int64   `json:"instance_id"`
+	ProfileVersionID int64   `json:"profile_version_id"`
+	PositionType     *string `json:"position_type"`
+	GroupsAssigned   *int64  `json:"groups_assigned"`
+	IsConfirmed      bool    `json:"is_confirmed"`
+	LecturesCount    *int64  `json:"lectures_count"`
+	TutorialsCount   *int64  `json:"tutorials_count"`
+	LabsCount        *int64  `json:"labs_count"`
 }
 
 func NewStaff(instanceID int64, profileVersionID int64, positionType *string, groupsAssigned *int64) *Staff {

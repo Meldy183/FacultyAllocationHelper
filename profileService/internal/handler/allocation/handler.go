@@ -39,7 +39,7 @@ func (h *Handler) AllocateFaculty(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusBadRequest, "invalid request")
 		return
 	}
-	err := h.allocationService.AllocateFaculty(ctx, req.CourseID, req.ProfileID, &req.Position_type, req.GroupsAssigned)
+	staff, err := h.allocationService.AllocateFaculty(ctx, req.CourseID, req.ProfileID, &req.Position_type, req.GroupsAssigned)
 	if err != nil {
 		h.logger.Error("error allocating faculty",
 			zap.String("layer", "handler"),
@@ -48,7 +48,7 @@ func (h *Handler) AllocateFaculty(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
-	resp := AllocateFacultyResponse{}
+	resp := AllocateFacultyResponse{Staff: *staff}
 	h.logger.Info("success allocating profile",
 		zap.String("layer", logctx.LogHandlerLayer),
 		zap.String("function", logctx.LogAllocateFaculty),
@@ -82,12 +82,11 @@ func (h *Handler) DeallocateFaculty(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
-	resp := DeallocateFacultyRequest{}
 	h.logger.Info("success deallocating profile",
 		zap.String("layer", logctx.LogHandlerLayer),
 		zap.String("function", logctx.LogDeallocateFaculty),
 	)
-	writeJSON(w, http.StatusOK, resp)
+	w.WriteHeader(http.StatusNoContent)
 }
 func writeError(w http.ResponseWriter, status int, message string) {
 	writeJSON(w, status, map[string]string{"error": message})

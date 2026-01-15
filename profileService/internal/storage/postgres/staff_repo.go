@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/staff"
+	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/domain/transaction"
 	"gitlab.pg.innopolis.university/f.markin/fah/profileService/internal/logctx"
 	"go.uber.org/zap"
 )
@@ -143,7 +143,7 @@ func (r *StaffRepo) GetAllStaffByInstanceID(ctx context.Context, instanceID int6
 	)
 	return staffs, nil
 }
-func (r *StaffRepo) AddStaff(ctx context.Context, tx *pgx.Tx, staff *staff.Staff) error {
+func (r *StaffRepo) AddStaff(ctx context.Context, tx transaction.Transaction, staff *staff.Staff) error {
 	err := r.pool.QueryRow(ctx, queryAddStaff,
 		staff.InstanceID,
 		staff.ProfileVersionID,
@@ -165,7 +165,7 @@ func (r *StaffRepo) AddStaff(ctx context.Context, tx *pgx.Tx, staff *staff.Staff
 	}
 	return nil
 }
-func (r *StaffRepo) UpdateStaff(ctx context.Context, tx *pgx.Tx, staff *staff.Staff) error {
+func (r *StaffRepo) UpdateStaff(ctx context.Context, tx transaction.Transaction, staff *staff.Staff) error {
 	_, err := r.pool.Exec(ctx, queryUpdateStaff,
 		staff.PositionType,
 		staff.GroupsAssigned,
@@ -191,7 +191,7 @@ func (r *StaffRepo) UpdateStaff(ctx context.Context, tx *pgx.Tx, staff *staff.St
 	)
 	return nil
 }
-func (r *StaffRepo) DeleteStaff(ctx context.Context, tx *pgx.Tx, staffID int64) error {
+func (r *StaffRepo) DeleteStaff(ctx context.Context, tx transaction.Transaction, staffID int64) error {
 	_, err := r.pool.Exec(ctx, queryDeleteStaff,
 		staffID,
 	)
